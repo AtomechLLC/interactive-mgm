@@ -17,11 +17,18 @@ canvas.demo { background: transparent; border: 0; cursor: default; }
 canvas.ln-canvas { cursor: grab; touch-action: none; }
 .beat-mark { display: none; }
 
-/* weapon picker */
-.wpick { display: flex; gap: 8px; }
-.wpick .btn { display: inline-flex; align-items: center; gap: 8px; }
-.wpick img { height: 30px; width: auto; transform: rotate(45deg); filter: brightness(1.8); }
-.wpick .btn.on img { filter: brightness(3); }
+/* weapon picker: cream cards with navy ink, navy with white ink when picked */
+.wpick { display: flex; gap: 10px; }
+.slide .wbtn { display: inline-flex; align-items: center; gap: 12px; padding: 8px 18px 8px 10px; text-align: left; background: #fffaf0; border: 2px solid #b9a578; color: #152044; }
+.slide .wbtn:hover { border-color: #152044; }
+.slide .wbtn.on { background: #152044; border-color: #152044; color: #fff; box-shadow: 0 0 0 3px #ffb951; }
+.wic { width: 46px; height: 46px; flex: none; display: grid; place-items: center; border-radius: 50%; background: #fff; border: 2px solid #152044; font-size: 26px; color: #152044; overflow: hidden; }
+.wic img { height: 40px; width: auto; transform: rotate(45deg); filter: brightness(0) saturate(100%) invert(10%) sepia(40%) saturate(2200%) hue-rotate(210deg); }
+.wic svg { width: 28px; height: 28px; }
+.wtx { display: grid; line-height: 1.15; }
+.wtx b { font-size: 20px; font-weight: 700; }
+.wtx small { font-size: 15px; font-weight: 500; color: #3d4170; }
+.slide .wbtn.on .wtx small { color: #ffd894; }
 
 /* title */
 .title-tokens { display: flex; gap: 34px; align-items: center; justify-content: center; margin-top: 8px; }
@@ -29,19 +36,17 @@ canvas.ln-canvas { cursor: grab; touch-action: none; }
 .title-tokens img.tw { width: auto; height: 130px; transform: rotate(90deg); filter: brightness(1.8); }
 
 /* 304 breakdown */
-.bd-grid { display: grid; grid-template-columns: 520px 1fr; gap: 40px; align-items: start; }
-.bd-left .spine-box { width: 520px; height: 505px; background: #e6e6e6; border-radius: 12px; border: 2px solid #3b3b3b; overflow: hidden; }
-.bd-left p { margin: 8px 0 0; }
-.bd-right { display: grid; gap: 14px; }
+.bd-grid { display: block; }
+.bd-right { display: grid; gap: 18px; }
 .bd-card { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-.bd-stat { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px 18px; display: grid; gap: 4px; }
+.bd-stat { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px 24px; display: grid; gap: 4px; }
 .bd-stat b { color: var(--accent-2); font-size: 22px; }
-.bd-stat span { font-size: 26px; font-weight: 600; }
+.bd-stat span { font-size: 32px; font-weight: 600; }
 .bd-stat small { color: var(--muted); font-size: 15px; }
 .bd-tune { display: grid; grid-template-columns: repeat(5, 1fr) auto; gap: 8px 16px; align-items: end; }
 .bd-tune label { font-size: 17px; color: var(--muted); display: grid; gap: 2px; }
 .bd-tune label b { color: var(--text); font-weight: 500; }
-.bd-canvas { width: 820px; height: 150px; }
+.bd-canvas { width: 1420px; height: 200px; }
 .bd-out { margin-top: 0 !important; }
 
 /* comparison */
@@ -49,9 +54,12 @@ table.cmp { border-collapse: separate; border-spacing: 8px; width: 100%; }
 table.cmp th { text-align: left; font-weight: 500; color: var(--muted); font-size: 20px; padding: 4px 10px; }
 table.cmp tr[data-row] { cursor: pointer; }
 table.cmp tr[data-row] th { color: var(--text); font-size: 24px; white-space: nowrap; }
-table.cmp tr[data-row] th img { height: 34px; vertical-align: middle; transform: rotate(45deg); filter: brightness(1.8); margin-right: 4px; }
-table.cmp tr[data-row] th small { display: block; color: var(--muted); font-size: 16px; }
-table.cmp tr.cur th { color: var(--accent-3); }
+table.cmp tr[data-row] th > * { vertical-align: middle; }
+table.cmp tr[data-row] th .wic { display: inline-grid; margin-right: 10px; }
+table.cmp tr[data-row] th .wtx { display: inline-grid; }
+table.cmp tr[data-row] th .wtx b { font-size: 22px; }
+table.cmp tr.cur th .wic { box-shadow: 0 0 0 3px #ffb951; }
+table.cmp tr.cur th .wtx b { color: var(--accent-3); }
 table.cmp td { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; vertical-align: top; }
 table.cmp td b { display: block; font-size: 22px; }
 table.cmp td span { font-size: 16px; color: var(--muted); }

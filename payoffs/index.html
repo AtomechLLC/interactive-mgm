@@ -8,7 +8,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Orbitron:wght@600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/deck.css">
 <link rel="stylesheet" href="../assets/kit.css">
-<link rel="stylesheet" href="../assets/vendor/spine-player.min.css">
 <link rel="stylesheet" href="payoffs.css">
 <script>
   window.DECK = { title: 'Mastering Game Mechanics · PvP Interactions · Positioning Payoffs', home: '../index.html', audio: null, cues: null };
@@ -80,10 +79,6 @@
   <div class="kicker">deck slide 304</div>
   <h2 class="sm">Power breakdown: <span class="accent-3 bd-name"></span></h2>
   <div class="bd-grid">
-    <div class="bd-left">
-      <div class="spine-box"></div>
-      <p class="muted small bd-anim"></p>
-    </div>
     <div class="bd-right">
       <div class="wpick"></div>
       <div class="bd-card">
@@ -99,7 +94,7 @@
         <label>Poise <input type="range" data-k="poise" min="-30" max="0" step="5"><b data-v="poise"></b></label>
         <button class="btn bd-reset">Reset</button>
       </div>
-      <canvas class="demo bd-canvas" width="820" height="150"></canvas>
+      <canvas class="demo bd-canvas" width="1420" height="200"></canvas>
       <p class="bd-out out small"></p>
     </div>
   </div>
@@ -118,8 +113,6 @@
 <script src="../assets/deck.js"></script>
 <script src="../assets/gi.js"></script>
 <script src="../assets/kit.js"></script>
-<script src="../assets/vendor/spine-player.min.js"></script>
-<script src="../assets/spine/spine-data.js"></script>
 <script src="payoffs.js"></script>
 </body>
 </html>

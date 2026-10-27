@@ -21,9 +21,9 @@
   // kind picks the hitbox drawing; len is the held weapon's length in token radii.
   // The spear is deck slide 304; the fist and sword payoffs are illustrative.
   const WEAPONS = {
-    fist: { name: 'Uppercut', weapon: 'Fists', icon: '👊', kind: 'upper', step: 5, reach: 2, wind: .16, act: .12, rec: .55, dmg: 60, stun: 10, poise: -20, anim: 'Axe Undercut', animNote: 'No uppercut mockup exists: this is the closest, Axe Undercut.' },
-    sword: { name: 'Sword Thrust', weapon: 'Sword', img: 'Sword', len: 1.9, kind: 'thrust', step: 1.5, reach: 3.5, wind: .18, act: .1, rec: .35, dmg: 70, stun: 5, poise: -10, anim: 'Sword Thrust', animNote: 'Forsaken mockup: Sword Thrust.' },
-    spear: { name: 'Shocking Spear Thrust', weapon: 'Spear', img: 'Spear', len: 2.8, kind: 'thrust', step: 2, reach: 8, wind: .32, act: .14, rec: .6, dmg: 100, stun: 25, poise: -5, anim: 'Spear Thrust', animNote: 'Forsaken mockup: Spear Thrust.' },
+    fist: { name: 'Uppercut', weapon: 'Fists', icon: '👊', kind: 'upper', step: 5, reach: 2, wind: .16, act: .12, rec: .55, dmg: 60, stun: 10, poise: -20 },
+    sword: { name: 'Sword Thrust', weapon: 'Sword', img: 'Sword', len: 1.9, kind: 'thrust', step: 1.5, reach: 3.5, wind: .18, act: .1, rec: .35, dmg: 70, stun: 5, poise: -10 },
+    spear: { name: 'Shocking Spear Thrust', weapon: 'Spear', img: 'Spear', len: 2.8, kind: 'thrust', step: 2, reach: 8, wind: .32, act: .14, rec: .6, dmg: 100, stun: 25, poise: -5 },
   };
   const DEFAULTS = JSON.parse(JSON.stringify(WEAPONS));
   const ENEMY = { name: 'Claw swipe', kind: 'claw', step: 2, reach: 4, wind: .28, act: .1, rec: .4, dmg: 80, stun: 0, poise: 0 };
@@ -219,7 +219,7 @@
     } else if (ready(ART.Monster)) g.drawImage(ART.Monster, x - r, y - r, 2 * r, 2 * r);
     if (me.flash) { g.save(); g.globalAlpha = me.flash * .7; g.fillStyle = '#fff'; g.beginPath(); g.arc(x, y, r, 0, TAU); g.fill(); g.restore(); }
     if (me.dazed && ready(ART.Dizzy_Swirl)) { g.save(); g.translate(x, y - r * 1.5); g.rotate(performance.now() / 300); g.globalAlpha = .8; g.drawImage(ART.Dizzy_Swirl, -r * .5, -r * .55, r, r * 1.1); g.restore(); }
-    const ly = v.side ? y - r - 22 : y + (who === 'pc' ^ v.mirror ? r + 16 : -r - 16);
+    const ly = v.side ? y - r - 22 : v.dir[0] ? y + r + 16 : y + (who === 'pc' ^ v.mirror ? r + 16 : -r - 16);
     text(g, name, x, v.side ? y + r + 52 : ly, { size: v.side ? 24 : 15, col: who === 'pc' ? '#1d5fa8' : '#a3262f', weight: 700 });
     if (me.rec > 0) {
       const bw = r * 2, by = v.side ? y - r - 16 : y + r + (v.mirror ^ who === 'pc' ? 28 : -28);
@@ -281,7 +281,7 @@
   function pickers(s, onPick) {
     $$(s, '.wpick').forEach(box => {
       box.innerHTML = Object.entries(WEAPONS).map(([k, w]) =>
-        `<button class="btn" data-w="${k}">${w.img ? `<img src="${IMG}${w.img}.png" alt="">` : w.icon + ' '}${w.weapon}</button>`).join('');
+        `<button class="btn wbtn" data-w="${k}"><span class="wic">${w.img ? `<img src="${IMG}${w.img}.png" alt="">` : w.icon}</span><span class="wtx"><b>${w.weapon}</b><small>${w.name}</small></span></button>`).join('');
       $$(box, '[data-w]').forEach(b => b.onclick = () => { S.w = b.dataset.w; store.set('mgm-payoffs:w', S.w); changed(); });
     });
     const sync = () => { $$(s, '[data-w]').forEach(b => b.classList.toggle('on', b.dataset.w === S.w)); onPick?.(); };
@@ -379,23 +379,12 @@
     };
   }, { enter(s) { /* pick up changes made on other slides */ } });
 
-  /* ================= 304: the power breakdown, with the Spine mockup ================= */
+  /* ================= 304: the power breakdown ================= */
   canvasDemo('breakdown', (s, c, g) => {
-    const W = c.width, H = c.height, out = $(s, '.bd-out'), box = $(s, '.spine-box');
-    const v = view({ x: 4, y: 4, w: W - 8, h: H - 8, ox: W / 2, oy: 92, dir: [1, 0], px: 44, tr: 20, side: false, labels: false });
+    const W = c.width, H = c.height, out = $(s, '.bd-out');
+    const v = view({ x: 4, y: 4, w: W - 8, h: H - 8, ox: W / 2, oy: 116, dir: [1, 0], px: 80, tr: 30, side: false, labels: false });
     const SEQ = [1, 2, 1, 3];
-    let i = 0, t = 0, p = plan(), player = null, anim = null, loaded = false;
-    const playAnim = () => { const a = WEAPONS[S.w].anim; if (player && loaded && a !== anim) { anim = a; player.setAnimation(a, true); } };
-    if (window.spine && window.SPINE_DATA) {
-      player = new spine.SpinePlayer(box, {
-        skeleton: 'basic-strikes.json', atlas: 'forsaken.atlas', rawDataURIs: window.SPINE_DATA,
-        animation: WEAPONS[S.w].anim, showControls: false, alpha: true, backgroundColor: '#00000000', premultipliedAlpha: true,
-        viewport: { x: -175, y: -170, width: 350, height: 340, padLeft: 0, padRight: 0, padTop: 0, padBottom: 0 },
-        success: () => { loaded = true; anim = null; playAnim(); },
-        error: (pl, msg) => { box.textContent = 'Spine error: ' + msg; },
-      });
-      s._player = player;
-    } else box.textContent = 'The Spine player didn’t load.';
+    let i = 0, t = 0, p = plan();
     const inputs = $$(s, '.bd-tune input');
     const show = () => {
       const w = WEAPONS[S.w]; p = plan(); t = 0;
@@ -403,12 +392,11 @@
       $(s, '.bd-pos').textContent = `+${fmt(w.step)} meters`;
       $(s, '.bd-pre').textContent = `${fmt(pressure(w))} meters`;
       $(s, '.bd-pay').textContent = `${w.dmg} dmg, ${w.stun} stun, ${w.poise} poise`;
-      $(s, '.bd-anim').textContent = w.animNote + (w === WEAPONS.spear ? '' : ' Payoff numbers are illustrative.');
       inputs.forEach(r => { r.value = w[r.dataset.k]; $(s, `[data-v="${r.dataset.k}"]`).textContent = r.dataset.k === 'step' || r.dataset.k === 'reach' ? fmt(w[r.dataset.k]) + ' m' : w[r.dataset.k]; });
       say(out, `From ${fmt(p.d0)} m: <b class="${p.hit ? 'good' : ''}">${p.hit ? 'lands' : 'whiffs'}</b>, leaving you ${fmt(p.d1)} m away. `
         + (p.punish ? '<b class="bad">Inside their reach while recovering: punished.</b> ' : p.trade ? '<b class="bad">Inside their reach: a trade.</b> ' : p.dazed && p.theyReach ? 'Inside their reach, but they’re dazed. ' : '<b class="good">Outside their reach.</b> ')
-        + (p.follow ? 'A follow-up reaches.' : 'No follow-up from there.'));
-      playAnim();
+        + (p.follow ? 'A follow-up reaches.' : 'No follow-up from there.')
+        + (w === WEAPONS.spear ? '' : ' <span class="muted">Payoff numbers are illustrative.</span>'));
     };
     inputs.forEach(r => r.oninput = () => { WEAPONS[S.w][r.dataset.k] = +r.value; changed(); });
     $(s, '.bd-reset').onclick = () => { Object.assign(WEAPONS[S.w], DEFAULTS[S.w]); changed(); };
@@ -421,7 +409,7 @@
       g.clearRect(0, 0, W, H);
       scene(g, v, p, frame(p, SEQ[i], Math.min(t, beatLen(p, SEQ[i]))), ['You', 'Enemy']);
     };
-  }, { enter(s) { s._player?.play(); }, leave(s) { s._player?.pause(); } });
+  });
 
   /* ================= the whole sequence, for every weapon ================= */
   demo('compare', {
@@ -435,7 +423,7 @@
           const c301 = p.punish ? cell('bad', 'Punished', `${fmt(p.d1)} m is inside their ${fmt(p.EP)} m`) : p.trade ? cell('bad', 'Trade', 'they hit back') :
             p.dazed && p.theyReach ? cell('good', 'Dazed', 'in range, but stunned') : cell('good', 'Safe', `${fmt(p.d1 - p.EP)} m outside their reach`);
           const c302 = p.follow ? cell('good', 'Follow-up reaches', `${fmt(p.d1)} m ≤ ${fmt(p.P)} m`) : cell('', 'Out of range', `${fmt(p.d1 - p.P)} m short`);
-          return `<tr data-row="${k}" class="${k === S.w ? 'cur' : ''}"><th>${w.img ? `<img src="${IMG}${w.img}.png" alt="">` : w.icon} ${w.weapon}<small>${w.name}</small></th>`
+          return `<tr data-row="${k}" class="${k === S.w ? 'cur' : ''}"><th><span class="wic">${w.img ? `<img src="${IMG}${w.img}.png" alt="">` : w.icon}</span><span class="wtx"><b>${w.weapon}</b><small>${w.name}</small></span></th>`
             + `<td class="num"><b>${fmt(pressure(w))} m</b><span>+${fmt(w.step)} step, ${fmt(w.reach)} reach</span></td>${c300}${c301}${c302}</tr>`;
         }).join('');
         box.innerHTML = `<table class="cmp"><tr><th></th><th>Pressure</th><th>300 · The swing</th><th>301 · Their opening</th><th>302 · Your follow-up</th></tr>${rows}</table>`;
