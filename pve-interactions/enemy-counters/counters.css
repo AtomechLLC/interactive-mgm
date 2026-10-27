@@ -55,3 +55,8 @@ table.mx td:hover { border-color: var(--navy); }
 
 /* the game scenes sit straight on the slide's parchment, like the course deck's own art */
 .slide.slide:not(.center):not(.dk) canvas.demo { background: none; border: 0; border-radius: 0; }
+
+/* framework sequence */
+.fr-row { flex-wrap: nowrap; align-items: flex-start; margin-top: 4px; }
+.fr-row .fr-out { flex: 1; margin: 6px 0 0; }
+.fr-row .btn { font-size: 16px; padding: 6px 12px; white-space: nowrap; margin-top: 8px; }

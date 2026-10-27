@@ -150,25 +150,36 @@
 
   /* ---------- a whole level: walk, meet each enemy with the planned verb, flagpole ---------- */
   const X0 = 160, GAPX = 720, FLAGX = X0 + GAPX * 3 + 120, WORLD = FLAGX + 420;
-  function buildRun(plan) {
-    const segs = []; let t = 0, x = 40, fail = null;
-    const walk = to => { if (to > x) { segs.push({ k: 'walk', t0: t, dur: (to - x) / HV, x0: x, x1: to }); t += (to - x) / HV; x = to; } };
+  // plan[foe] is the verb to use. coach: at each enemy, first try the verb that worked last time, and if it fails,
+  // rewind and switch, so the run shows every decision being made
+  function buildRun(plan, coach = false) {
+    const segs = []; let t = 0, x = 40, fail = null, prev = 'jump';
+    const add = (k, dur, o) => { segs.push({ k, t0: t, dur, ...o }); t += dur; };
+    const walk = to => { if (to > x) { add('walk', (to - x) / HV, { x0: x, x1: to }); x = to; } };
     ORDER.forEach((foe, i) => {
       if (fail) return;
       const b = X0 + GAPX * i; walk(b);
-      const e = encounter(foe, plan[foe], works(foe, plan[foe]));
-      segs.push({ k: 'enc', t0: t, dur: e.dur, b, e, i }); t += e.dur;
-      if (!e.ok) { fail = { foe, verb: plan[foe] }; return; }
-      x = b + e.end;
+      const good = Object.keys(VERBS).filter(v => works(foe, v));
+      const tries = !coach ? [plan[foe]] : good.includes(prev) ? [prev] : [prev, good[0] || (prev === 'jump' ? 'fire' : 'jump')];
+      tries.forEach((verb, j) => {
+        if (coach) add('think', j ? 1.4 : 1.9, { b, i, foe, verb, j, tried: tries.slice(0, j), both: good.length === 2 });
+        const e = encounter(foe, verb, works(foe, verb));
+        add('enc', e.dur, { b, e, i });
+        if (e.ok) x = b + e.end;
+        else if (j < tries.length - 1) add('rewind', .8, { b, i, foe, verb });
+        else fail = { foe, verb };
+      });
+      prev = tries.at(-1);
     });
-    if (!fail) { walk(FLAGX - 50); segs.push({ k: 'flag', t0: t, dur: 2.6, x0: x }); t += 2.6; }
-    else { segs.push({ k: 'hold', t0: t, dur: 1.2 }); t += 1.2; }
+    if (!fail) { walk(FLAGX - 50); add('flag', 2.6, { x0: x }); }
+    else add('hold', 1.2, {});
     return { segs, dur: t, fail, plan };
   }
   function runAt(R, t) {
     t = clamp(t, 0, R.dur - 1e-6);
     const foes = ORDER.map((foe, i) => ({ kind: foe, x: X0 + GAPX * i + D, y: 0, mode: 'walk', step: t }));
-    let hero = { x: 40, y: 0, pose: 'idle', step: t }, fires = [], pops = [], flag = 0, done = null;
+    let hero = { x: 40, y: 0, pose: 'idle', step: t }, fires = [], pops = [], flag = 0, done = null, think = null, fade = 0;
+    const reset = s => { hero = { x: s.b, y: 0, pose: 'idle', step: t }; foes[s.i] = { kind: ORDER[s.i], x: s.b + D, y: 0, mode: 'walk', step: t }; fires = []; pops = []; };
     for (const s of R.segs) {
       const k = t - s.t0;
       if (s.k === 'enc') {
@@ -191,16 +202,21 @@
         else if (k < 1.35) { const u = (k - .45) / .9; hero = { x: px, y: lerp(150, 0, u), pose: 'jump', step: t }; flag = u; }
         else { const u = Math.min(1, (k - 1.35) / .6); hero = { x: lerp(px, px + 90, u), y: 0, pose: u < 1 ? 'walk' : 'idle', step: t }; flag = 1; done = 'clear'; }
         break;
+      } else if (s.k === 'think') {
+        if (k < 0) break;
+        if (k < s.dur) { reset(s); think = { ...s, k }; break; }
+      } else if (s.k === 'rewind') {
+        if (k < 0) break;
+        if (k < s.dur) { fade = Math.sin(Math.PI * k / s.dur); if (k >= s.dur / 2) reset(s); break; }
       } else if (s.k === 'hold') { if (k >= 0) done = 'fail'; }
     }
-    return { hero, foes, fires, pops, flag, done };
+    return { hero, foes, fires, pops, flag, done, think, fade };
   }
 
   /* ---------- drawing ---------- */
   // the scene sits on the slide's own parchment: navy ink for the ground and scenery, gold for the edge
   const INK = '#262c6a';
   function sky(g, W, H, GY, cam = 0) {
-    g.clearRect(0, 0, W, H);
     // hills and clouds drift slower than the ground, drawn as faint ink so the paper shows through
     g.fillStyle = 'rgba(38,44,106,.07)'; g.strokeStyle = 'rgba(38,44,106,.28)'; g.lineWidth = 3;
     for (let i = -1; i < 8; i++) { const x = i * 520 - (cam * .5) % 520; g.beginPath(); g.ellipse(x + 160, GY, 170, 90, 0, Math.PI, 0); g.fill(); g.stroke(); }
@@ -265,14 +281,21 @@
     st.fires.forEach(f => fire(g, f, ox + f.x, GY));
     st.pops.forEach(p => pop(g, p, ox + p.x, GY));
   }
-  function drawRun(g, W, H, R, t) {
-    const GY = H - 70, s = runAt(R, t), cam = clamp(s.hero.x - 380, 0, WORLD - W);
-    sky(g, W, H, GY, cam);
+  // the level at camera x cam and zoom z, scaled about the ground line
+  function drawScene(g, W, H, GY, s, cam, z = 1) {
+    g.save(); g.translate(0, GY); g.scale(z, z); g.translate(0, -GY);
+    sky(g, W / z, GY + (H - GY) / z, GY, cam);
     flagpole(g, FLAGX - cam, GY, s.flag);
     s.foes.forEach(f => foe(g, f, f.x - cam, GY));
     hero(g, s.hero, s.hero.x - cam, GY);
     s.fires.forEach(f => fire(g, f, f.x - cam, GY));
     s.pops.forEach(p => pop(g, p, p.x - cam, GY));
+    g.restore();
+  }
+  const follow = (s, W) => clamp(s.hero.x - 380, 0, WORLD - W);
+  function drawRun(g, W, H, R, t) {
+    const GY = H - 70, s = runAt(R, t), cam = follow(s, W);
+    drawScene(g, W, H, GY, s, cam);
     // where you are along start, opposition, goal
     const bx = 40, bw = 360, by = 30, prog = clamp((s.hero.x - 40) / (FLAGX - 40), 0, 1);
     g.fillStyle = 'rgba(21,32,68,.8)'; g.beginPath(); g.roundRect(bx - 14, by - 16, bw + 28, 50, 10); g.fill();
@@ -314,37 +337,151 @@
     g.save(); g.globalCompositeOperation = 'destination-in'; g.fillStyle = '#000'; g.fillRect(0, 0, c.width, GY + 6); g.restore();
   });
 
-  /* ---------- slide 2: the deck's diagram laid over the level ---------- */
-  canvasDemo('frame', (s, c, g) => (dt, t) => {
-    const W = c.width, H = c.height, GY = H - 120;
-    g.clearRect(0, 0, W, H);
-    g.save(); g.beginPath(); g.roundRect(0, 0, W, GY + 40, 10); g.clip();
-    sky(g, W, GY + 40, GY);
-    g.restore();
-    const hx = 150, fxs = [560, 790, 1020], fl = 1300;
-    hero(g, { pose: 'idle', step: t, y: 0 }, hx, GY);
-    ORDER.forEach((f, i) => spr(g, FOES[f].walk[((t + i * .13) * 4 | 0) % 2], fxs[i] + Math.sin(t * 1.2 + i) * 14, GY, P));
-    flagpole(g, fl, GY, 0);
-    // decisions: the dashed box around the play space, with Mario's two verbs
-    g.save(); g.setLineDash([16, 10]); g.lineDashOffset = -t * 30; g.strokeStyle = INK; g.lineWidth = 3;
-    g.beginPath(); g.roundRect(30, 28, W - 60, GY - 10, 12); g.stroke(); g.restore();
-    label(g, 'Decisions: jump or fireball?', W / 2, 30, { size: 24, col: '#ffb951', edge: '#ffb951' });
-    // start, opposition, goal tags
-    label(g, 'Start', hx, GY - 130, { size: 24, bg: '#2f56c9' });
-    g.save(); g.strokeStyle = '#c47bff'; g.lineWidth = 5; g.beginPath(); g.roundRect(470, 120, 660, GY - 105, 14); g.stroke(); g.restore();
-    label(g, 'Opposition', 800, 120, { size: 24, bg: '#7a3bc4' });
-    label(g, 'Goal', fl - 30, GY - 360, { size: 24, bg: '#2f56c9' });
-    // the flow arrow, start to goal through the opposition
-    const ay = GY - 190, k = (t * .35) % 1;
-    g.save(); g.strokeStyle = 'rgba(38,44,106,.8)'; g.lineWidth = 6; g.setLineDash([22, 14]); g.lineDashOffset = -t * 60;
-    g.beginPath(); g.moveTo(hx + 50, ay); g.lineTo(fl - 80, ay); g.stroke(); g.restore();
-    g.fillStyle = INK; g.beginPath(); g.moveTo(fl - 60, ay); g.lineTo(fl - 86, ay - 16); g.lineTo(fl - 86, ay + 16); g.fill();
-    spr(g, FIRE, lerp(hx + 60, fl - 100, k), ay + 14, 4, { rot: t * 10, a: .9 });
-    // rules and interactions, as in the deck
-    const ry = GY + 74;
-    label(g, 'Rules: stomps beat soft tops, fire beats anything without a hard shell', W / 2, ry, { size: 22, bg: '#5562eb' });
-    g.font = '600 20px Montserrat, Jost, sans-serif'; g.fillStyle = INK; g.textAlign = 'center';
-    g.fillText('⇅  Interactions: the player tries a verb, the rules answer', W / 2, ry + 40);
+  /* ---------- slide 2: the deck's diagram built step by step, then laid over the level and played ---------- */
+  // phase start times in seconds; the run starts at FR.play and the zoom-out follows it
+  const FR = { start: 0, goal: 2.4, opp: 4.8, dec: 7.4, morph: 10.4, over: 12.8, zoom: 14.4, play: 16 };
+  const ez = u => u < .5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2;
+  const ph = (t, a, d) => clamp((t - a) / d, 0, 1);
+  let frameApi = null;
+  canvasDemo('frame', (s, c, g) => {
+    const W = c.width, H = c.height, GY = H - 80, out = $(s, '.fr-out');
+    const zO = W / (WORLD + 200), camO = -130;     // the overview: the whole level fits the canvas
+    const st = { t: 0, slow: false, paused: false, held: false };
+    let R, T, lastCap = '';
+    const rebuild = () => { R = buildRun(null, true); T = { end: FR.play + R.dur, dur: FR.play + R.dur + 5 }; };
+    rebuild(); listeners.push(rebuild);
+    $(s, '.fr-replay').onclick = () => { st.t = 0; st.paused = false; };
+    $(s, '.fr-play').onclick = () => { st.t = FR.morph; st.paused = false; };
+    $(s, '.fr-slow').onclick = e => { st.slow = !st.slow; e.target.classList.toggle('on', st.slow); };
+    $(s, '.fr-pause').onclick = e => { st.paused = !st.paused; e.target.textContent = st.paused ? '▶ Resume' : '❚❚ Pause'; };
+
+    // world to screen at camera cam and zoom z
+    const sx = (x, cam, z) => (x - cam) * z, sy = (y, z) => GY + (y - GY) * z;
+    const targets = (cam, z) => ({
+      start: { cx: sx(40, cam, z), cy: sy(GY - 125, z), w: 110, h: 42, r: 8 },
+      goal: { cx: sx(FLAGX, cam, z), cy: sy(GY - 350, z), w: 100, h: 42, r: 8 },
+      opp: { x0: sx(X0 + D - 95, cam, z), x1: sx(X0 + 2 * GAPX + D + 95, cam, z), y0: sy(GY - 175, z), y1: sy(GY + 6, z) },
+    });
+    const DIA = {
+      start: { cx: 200, cy: 215, w: 220, h: 160, r: 14 },
+      goal: { cx: 1210, cy: 215, w: 200, h: 200, r: 100 },
+      bar: { cx: 705, cy: 215, w: 70, h: 230 },
+      opp: { x0: 590, x1: 820, y0: 80, y1: 350 },
+    };
+    const mix = (a, b, u) => Object.fromEntries(Object.keys(a).map(k => [k, lerp(a[k], b[k], u)]));
+    function box(b, fill, text, size, a = 1, o = {}) {
+      if (a <= 0) return;
+      g.save(); g.globalAlpha = Math.min(1, a);
+      g.translate(b.cx, b.cy); if (o.sc) g.scale(o.sc, o.sc);
+      const gr = g.createLinearGradient(0, -b.h / 2, 0, b.h / 2); gr.addColorStop(0, fill[0]); gr.addColorStop(1, fill[1]);
+      g.fillStyle = gr; g.beginPath(); g.roundRect(-b.w / 2, -b.h / 2, b.w, b.h, Math.min(b.r, b.w / 2, b.h / 2)); g.fill();
+      g.strokeStyle = o.edge || '#ffb951'; g.lineWidth = 3; g.stroke();
+      g.fillStyle = '#fff'; g.font = `800 ${size}px Montserrat, Jost, sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle';
+      if (o.rot) g.rotate(-Math.PI / 2);
+      g.fillText(text, 0, 2); g.restore();
+    }
+    function pipe(o, a, lw = 9) {
+      if (a <= 0) return;
+      g.save(); g.globalAlpha = Math.min(1, a); g.strokeStyle = '#a95be8'; g.lineWidth = lw;
+      g.beginPath(); g.roundRect(o.x0, o.y0, o.x1 - o.x0, o.y1 - o.y0, 14); g.stroke(); g.restore();
+    }
+    function arrow(x0, x1, y, a, grow = 1) {
+      if (a <= 0 || grow <= 0) return;
+      const xe = lerp(x0, x1, grow);
+      g.save(); g.globalAlpha = Math.min(1, a); g.strokeStyle = '#5562eb'; g.fillStyle = '#5562eb'; g.lineWidth = 7;
+      g.beginPath(); g.moveTo(x0, y - 7); g.lineTo(xe - 18, y - 7); g.moveTo(x0, y + 7); g.lineTo(xe - 18, y + 7); g.stroke();
+      g.beginPath(); g.moveTo(xe + 4, y); g.lineTo(xe - 26, y - 22); g.lineTo(xe - 26, y + 22); g.fill(); g.restore();
+    }
+    function frame(text, a) {
+      if (a <= 0) return;
+      g.save(); g.globalAlpha = a; g.setLineDash([18, 12]); g.strokeStyle = INK; g.lineWidth = 3;
+      g.beginPath(); g.roundRect(22, 32, W - 44, GY - 44, 12); g.stroke(); g.restore();
+      g.save(); g.globalAlpha = a; label(g, text, W / 2, 32, { size: 24, col: '#ffb951', edge: '#ffb951', bg: '#152044' }); g.restore();
+    }
+
+    function chips(th, hx) {
+      const both = th.both && !th.j, show = th.k > .55;
+      const cw = 170, gap = 14, x0 = clamp(hx - cw - gap / 2, 30, W - 2 * cw - gap - 30), y = GY - 175;
+      label(g, `${FOES[th.foe].name}: jump or fireball?`, x0 + cw + gap / 2, y - 52, { size: 22, bg: '#152044' });
+      Object.keys(VERBS).forEach((v, i) => {
+        const x = x0 + i * (cw + gap), failed = th.tried.includes(v), pick = show && v === th.verb;
+        const mark = failed ? ' ✗' : both && show ? ' ✓' : '';
+        g.save();
+        g.fillStyle = pick ? '#152044' : '#fffaf0'; g.strokeStyle = pick ? '#ffb951' : failed ? '#cf2f3b' : '#b9a578'; g.lineWidth = pick ? 4 : 3;
+        g.beginPath(); g.roundRect(x, y - 24, cw, 48, 10); g.fill(); g.stroke();
+        g.font = '700 22px Montserrat, Jost, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
+        g.fillStyle = pick ? '#fff' : failed ? '#cf2f3b' : '#152044';
+        g.fillText(VERBS[v] + mark, x + cw / 2, y + 1); g.restore();
+      });
+    }
+
+    function caption(t) {
+      if (t < FR.goal) return '<b>Start:</b> where the player begins.';
+      if (t < FR.opp) return '<b>Goal:</b> where the player is trying to get. With nothing in between, it’s just a walk.';
+      if (t < FR.dec) return '<b>Opposition:</b> something stands between the start and the goal and resists the player.';
+      if (t < FR.morph) return '<b>Decisions:</b> how the player chooses to overcome the opposition. Ideally, a variety of different decisions.';
+      if (t < FR.play) return 'In Mario: start on the left, the <b>flagpole</b> is the goal, the <b>enemies</b> are the opposition, and <b>jump or fireball</b> is the decision.';
+      if (t >= T.end) return R.fail ? `<b class="bad">The opposition wins.</b> Nothing gets past the ${FOES[R.fail.foe].name}, so there is no decision left to make.`
+        : '<b class="good">Goal.</b> Three enemies, and the right answer changed at each one: a variety of different decisions to overcome the opposition.';
+      const rt = t - FR.play, segs = R.segs, i = segs.findIndex(x => rt >= x.t0 && rt < x.t0 + x.dur), cur = segs[i];
+      if (!cur) return '';
+      const last = segs.slice(0, i + 1).reverse().find(x => x.k === 'enc' && rt >= x.t0 + x.e.dur * .55);
+      const name = f => FOES[f].name;
+      if (cur.k === 'think') {
+        if (cur.j) return `So the decision changes: <b>${VERBS[cur.verb].toLowerCase()}</b> the ${name(cur.foe)} instead.`;
+        if (cur.both) return `The <b>${name(cur.foe)}</b>: both verbs work, so any choice beats it. Mario jumps.`;
+        return cur.i ? `The <b>${name(cur.foe)}</b>: ${VERBS[cur.verb].toLowerCase()} worked on the last enemy. Will it work here?` : `The <b>${name(cur.foe)}</b>: try ${VERBS[cur.verb].toLowerCase()}?`;
+      }
+      if (cur.k === 'rewind') return `<b class="bad">${VERBS[cur.verb]} won’t get past the ${name(cur.foe)}.</b> Rewind and decide again.`;
+      if (cur.k === 'enc' && rt < cur.t0 + cur.e.dur * .55) return `<b>${VERBS[cur.e.verb]} vs ${name(cur.e.foe)}…</b>`;
+      if (last) return verdict(last.e.foe, last.e.verb, last.e.ok);
+      return 'Mario sets off from the start.';
+    }
+
+    function render() {
+      const t = st.t % T.dur;
+      g.clearRect(0, 0, W, H);
+      const cap = caption(t);
+      if (cap !== lastCap) { say(out, cap); lastCap = cap; }
+      const a = (x, d = .5) => ez(ph(t, x, d));
+      if (t < FR.morph) {
+        // the deck's diagram, one piece at a time
+        const aS = a(FR.start + .2), aG = a(FR.goal), aO = a(FR.opp), aD = a(FR.dec);
+        arrow(DIA.start.cx + 110, DIA.goal.cx - 104, 215, aG * (1 - aO), ez(ph(t, FR.goal + .3, 1.2)));
+        arrow(DIA.start.cx + 110, DIA.opp.x0 - 6, 215, aO); arrow(DIA.opp.x1 + 6, DIA.goal.cx - 104, 215, aO);
+        pipe(DIA.opp, aO);
+        box({ ...DIA.bar, r: 10 }, ['#7a3bc4', '#3b1f72'], 'Opposition', 24, aO, { rot: true, sc: lerp(.6, 1, aO) });
+        box(DIA.start, ['#4f6fe0', '#2f3fa8'], 'Start', 34, aS, { sc: lerp(.6, 1, aS) });
+        box(DIA.goal, ['#5562eb', '#152044'], 'Goal', 34, aG, { sc: lerp(.6, 1, aG) });
+        frame('Decisions', aD);
+        return;
+      }
+      // the level: overview, zoom in, play, zoom back out
+      const rt = clamp(t - FR.play, 0, R.dur), sR = runAt(R, rt);
+      let cam = camO, z = zO;
+      if (t >= FR.zoom && t < FR.play) { const u = ez(ph(t, FR.zoom, FR.play - FR.zoom)); cam = lerp(camO, follow(sR, W), u); z = lerp(zO, 1, u); }
+      else if (t >= FR.play) { const u = ez(ph(t, T.end + .6, 1.8)); cam = lerp(follow(sR, W), camO, u); z = lerp(1, zO, u); }
+      const k = ez(ph(t, FR.morph, FR.over - FR.morph));
+      g.save(); g.globalAlpha = k; drawScene(g, W, H, GY, sR, cam, z); g.restore();
+      // the diagram's pieces slide onto their Mario counterparts, then stay pinned to the world
+      const tg = targets(cam, z), to = targets(camO, zO);
+      arrow(DIA.start.cx + 110, DIA.opp.x0 - 6, 215, 1 - k * 1.6); arrow(DIA.opp.x1 + 6, DIA.goal.cx - 104, 215, 1 - k * 1.6);
+      box({ ...DIA.bar, r: 10 }, ['#7a3bc4', '#3b1f72'], 'Opposition', 24, 1 - k * 1.4, { rot: true });
+      const opp = k < 1 ? mix(DIA.opp, to.opp, k) : tg.opp;
+      pipe(opp, 1, lerp(9, 5, k));
+      if (k > .5) label(g, 'Opposition', (opp.x0 + opp.x1) / 2, opp.y0, { size: 20, bg: '#7a3bc4', col: '#fff' });
+      const S = k < 1 ? mix(DIA.start, to.start, k) : tg.start, G = k < 1 ? mix(DIA.goal, to.goal, k) : tg.goal;
+      box(S, ['#4f6fe0', '#2f3fa8'], 'Start', lerp(34, 20, k), 1);
+      box(G, ['#5562eb', '#152044'], sR.done === 'clear' ? 'Goal ✓' : 'Goal', lerp(34, 20, k), 1, sR.done === 'clear' ? { edge: '#5fe0a0' } : {});
+      frame(k > .5 ? 'Decisions: jump or fireball?' : 'Decisions', 1);
+      if (sR.think) chips(sR.think, sx(sR.hero.x, cam, z));
+      if (sR.fade > 0) {
+        g.save(); g.globalAlpha = sR.fade * .8; g.fillStyle = '#f3ecdc'; g.fillRect(0, 0, W, H); g.restore();
+        g.save(); g.globalAlpha = sR.fade; label(g, '↺ Rewind', W / 2, GY / 2, { size: 30, bg: '#152044', col: '#ffb951', edge: '#ffb951' }); g.restore();
+      }
+    }
+    frameApi = { seek(t) { st.held = true; st.t = t; render(); }, dur: () => T.dur };
+    return dt => { if (!st.held && !st.paused) st.t += dt * (st.slow ? .5 : 1); render(); };
   });
 
   /* ---------- slide 3: the matchup lab, with a tour through all six ---------- */
@@ -465,7 +602,7 @@
     },
   });
 
-  // GIF hook: render the lab tour at time t without the animation loop
-  window.__ecSeek = t => labApi.seek(t);
-  window.__ecDur = () => labApi.dur();
+  // GIF hooks: render the framework sequence (or the lab tour) at time t without the animation loop
+  window.__ecSeek = (t, which = 'frame') => (which === 'lab' ? labApi : frameApi).seek(t);
+  window.__ecDur = (which = 'frame') => (which === 'lab' ? labApi : frameApi).dur();
 })();

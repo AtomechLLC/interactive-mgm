@@ -1,4 +1,4 @@
-// Renders the enemy counters lab tour (pve-interactions/enemy-counters, slide 3) frame by frame for the course GIF.
+// Renders the enemy counters framework sequence (pve-interactions/enemy-counters, slide 2: the deck's diagram, then Mario plays it) frame by frame for the course GIF.
 // Usage: serve InteractiveMGM on :8141, then  node tools/record-enemy-counters-gif.js <frameDir> [fps] [onlyTimes,comma,separated]
 // Encode: ffmpeg -framerate <fps> -i <frameDir>/f%05d.png -vf "scale=1280:720:flags=neighbor,split[a][b];[a]palettegen=max_colors=96[p];[b][p]paletteuse=dither=none" -loop 0 out.gif
 const { chromium } = require('C:/Projects/game-agent/node_modules/playwright-core');
@@ -11,8 +11,8 @@ const CSS = `.viewport{inset:0!important}
 (async () => {
   const b = await chromium.launch({ executablePath: 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe' });
   const p = await b.newPage({ viewport: { width: 1600, height: 900 } });
-  await p.goto('http://127.0.0.1:8141/pve-interactions/enemy-counters/index.html#3');
-  await p.addStyleTag({ content: CSS });
+  await p.goto('http://127.0.0.1:8141/pve-interactions/enemy-counters/index.html#2');
+  await p.addStyleTag({ content: CSS + ".fr-row .btn{display:none!important}" });
   await p.evaluate(() => document.fonts.ready);
   await p.waitForTimeout(1200);
   fs.mkdirSync(outDir, { recursive: true });
