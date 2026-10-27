@@ -79,3 +79,10 @@ Open `index.html` in a browser (no build step, works straight off disk).
 "C:/Program Files/Spine/Spine.com" -i "C:/Projects/MoonStudios/Forsaken/Design/Abilities/images" -o assets/spine -p forsaken
 python tools/build_spine.py "out/spine/Basic Strikes.json"
 ```
+
+## Separate module: PvE Interactions
+
+`pve-interactions/` has its own home page (`pve-interactions/index.html`), from *MGM C4 M5 - Fundamentals for Designing Engaging PvE Interactions*.
+
+- `hazards/`: the 14 hazard movement patterns (deck slides 186 to 199). Each pattern shows the slide's 3×3 grid, its arrow filling as the hazard moves, next to a top-down example from the slide's list. ← → switch patterns; `?p=N` opens one.
+- `gifs/`: one 1280×720 looping GIF per slide (`p01-across.gif` … `p14-crushing.gif`). Rebuild with `node pve-interactions/tools/record.js [pattern numbers]` (Edge + ffmpeg). Scenes are pure functions of time in `hazards/hazards.js`.

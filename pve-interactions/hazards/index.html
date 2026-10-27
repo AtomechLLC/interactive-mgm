@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hazard Patterns</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; height: 100%; background: #0e1530; overflow: hidden; font-family: Jost, system-ui, sans-serif; }
+  canvas { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+  .nav { position: fixed; left: 0; right: 0; bottom: 10px; display: flex; justify-content: center; gap: 8px; font-size: 14px; }
+  .nav a, .nav span { color: #d6dbef; text-decoration: none; padding: 4px 10px; border-radius: 99px; background: rgba(255, 255, 255, .08); }
+  .nav a:hover { background: rgba(255, 185, 81, .3); }
+  body.rec .nav { display: none; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1280" height="720"></canvas>
+<div class="nav"><a href="../index.html">Module home</a><a id="prev" href="#">← Previous</a><span id="where"></span><a id="next" href="#">Next →</a></div>
+<script src="hazards.js"></script>
+</body>
+</html>
