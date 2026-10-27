@@ -631,6 +631,9 @@
 
   // ---------- frame ----------
   const cv = document.getElementById('c'); X = cv.getContext('2d');
+  // the course deck's parchment texture (same file the deck theme uses)
+  const paper = new Image(); paper.src = '../../assets/img/theme/paper.jpg';
+  const paperReady = paper.decode().catch(() => {});
   const qs = new URLSearchParams(location.search);
   let idx = clamp((+qs.get('p') || 1) - 1, 0, P.length - 1);
   if (qs.has('rec')) document.body.classList.add('rec');
@@ -639,6 +642,7 @@
     const p = P[idx];
     X.setTransform(1, 0, 0, 1, 0, 0);
     X.fillStyle = C.paper; X.fillRect(0, 0, W, H);
+    if (paper.naturalWidth) { const k = Math.max(W / paper.naturalWidth, H / paper.naturalHeight), w = paper.naturalWidth * k, h = paper.naturalHeight * k; X.drawImage(paper, (W - w) / 2, (H - h) / 2, w, h); }
     // header block flush in the top-left corner, angled edge, blue stripe underneath
     X.fillStyle = C.blue; X.beginPath(); X.moveTo(0, 0); X.lineTo(612, 0); X.lineTo(560, 134); X.lineTo(0, 134); X.fill();
     X.fillStyle = C.navy; X.beginPath(); X.moveTo(0, 0); X.lineTo(598, 0); X.lineTo(552, 120); X.lineTo(0, 120); X.fill();
@@ -664,7 +668,7 @@
     X.strokeStyle = C.ink; X.lineWidth = 3; X.beginPath(); X.roundRect(PX, PY, PW, PH, 14); X.stroke();
   }
 
-  window.HAZARDS = { patterns: P.map(p => ({ file: p.file, T: p.T, name: p.name, slide: p.slide, caption: p.caption })), select(i) { idx = i; }, frame };
+  window.HAZARDS = { ready: paperReady, patterns: P.map(p => ({ file: p.file, T: p.T, name: p.name, slide: p.slide, caption: p.caption })), select(i) { idx = i; }, frame };
 
   const go = d => { location.search = '?p=' + (((idx + d) % P.length + P.length) % P.length + 1); };
   document.getElementById('prev').onclick = e => { e.preventDefault(); go(-1); };
@@ -676,6 +680,6 @@
   if (!qs.has('rec')) {
     const t0 = performance.now();
     const loop = now => { frame(((now - t0) / 1000) % P[idx].T); requestAnimationFrame(loop); };
-    document.fonts.ready.then(() => requestAnimationFrame(loop));
+    Promise.all([document.fonts.ready, paperReady]).then(() => requestAnimationFrame(loop));
   }
 })();

@@ -5,17 +5,18 @@
 const { chromium } = require('C:/Projects/game-agent/node_modules/playwright-core');
 const fs = require('fs'), path = require('path'), { execFileSync } = require('child_process');
 const args = process.argv.slice(2);
-const fps = +(args[args.indexOf('--fps') + 1] || 0) || 20;
+const fps = args.includes('--fps') ? +args[args.indexOf('--fps') + 1] : 20;
 const sheet = args.includes('--sheet');
 const only = args.filter((a, i) => /^\d+$/.test(a) && args[i - 1] !== '--fps').map(Number);
 const root = path.resolve(__dirname, '..');
 const page = 'file:///' + path.join(root, 'hazards/index.html').replace(/\\/g, '/') + '?rec=1';
 
 (async () => {
-  const b = await chromium.launch({ executablePath: 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe' });
+  const b = await chromium.launch({ executablePath: 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe', args: ['--allow-file-access-from-files'] });
   const p = await b.newPage({ viewport: { width: 1280, height: 720 } });
   await p.goto(page); await p.evaluate(() => document.fonts.ready);
   await p.evaluate(() => Promise.all(['800 44px Montserrat', '600 20px Jost', '500 20px Jost'].map(f => document.fonts.load(f))));
+  await p.evaluate(() => HAZARDS.ready);
   const pats = await p.evaluate(() => HAZARDS.patterns);
   for (let i = 0; i < pats.length; i++) {
     if (only.length && !only.includes(i + 1)) continue;
