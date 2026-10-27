@@ -2,7 +2,12 @@
 
 Slides from the *Mastering Game Mechanics* course rebuilt as interactive web slides. Same engine and keys as `../InteractiveFPF`.
 
-Open `index.html` in a browser (no build step, works straight off disk).
+Open `index.html` in a browser (no build step, works straight off disk). It lists the course modules, each with its own home page:
+
+- `pvp/`: **PvP Interactions** (`pvp/index.html`), from *MGM C4 M4 - Fundamentals for Designing Engaging PvP Interactions*.
+- `pve-interactions/`: **PvE Interactions** (`pve-interactions/index.html`), from *MGM C4 M5 - Fundamentals for Designing Engaging PvE Interactions*.
+
+Shared engine, theme and art stay in `assets/` at the root, so a deck one level down loads `../../assets/`. `404.html` redirects the old root deck URLs (for example `/core-actions/`) to their `pvp/` homes.
 
 | Key | Action |
 | --- | --- |
@@ -11,9 +16,11 @@ Open `index.html` in a browser (no build step, works straight off disk).
 | `O` | overview of all slides |
 | `F` | fullscreen |
 
-## Decks
+## PvP Interactions decks (`pvp/`)
 
-- `core-actions/`: **Core Gameplay Actions**, from *MGM C4 M4 - Fundamentals for Designing Engaging PvP Interactions*, deck slides 428 to 434.
+Each deck's home button goes back to `pvp/index.html`. Add a card there when you make a new PvP deck.
+
+- `pvp/core-actions/`: **Core Gameplay Actions**, from *MGM C4 M4 - Fundamentals for Designing Engaging PvP Interactions*, deck slides 428 to 434.
   1. Title
   2. The anatomy of an attack (428): anticipation, slash and recovery frames, the human reaction window and online latency. Press K to block.
   3. Offensive verbs (429): drag your token around a sweep and a thrust side by side.
@@ -24,21 +31,21 @@ Open `index.html` in a browser (no build step, works straight off disk).
   8. The original Forsaken Spine mockups (Basic Strikes skeleton), with animation picker and speed.
   9. Every option has a counter.
 
-- `bruiser-meta/`: **Unbalanced Meta: the Bruiser Meta** (League of Legends).
+- `pvp/bruiser-meta/`: **Unbalanced Meta: the Bruiser Meta** (League of Legends).
   1. Title
   2. Every class has a hole: class radar (health, damage, range, mobility, ease) against a shared power budget; the meta bruiser is over budget with no weak stat.
   3. Strong + easy = everywhere: strength and ease sliders drive win rate, pick share and 10 sample lobbies.
   4. Breaking the meta: toggle systems and content fixes (anti-heal, item nerfs, durability update, Mythic removal, class updates, targeted nerfs, counter champions) and watch pick share fall.
   5. Watch it happen: 12 YouTube clips (montages, explainers, Riot changes), click-to-play embeds.
-  6. Takeaways and sources. All numbers are illustrative; the model lives at the top of `bruiser.js`.
+  6. Takeaways and sources. All numbers are illustrative; the model lives at the top of `pvp/bruiser-meta/bruiser.js`.
 
-- `elusives/`: **Unbalanced Meta: Elusives** (Legends of Runeterra).
+- `pvp/elusives/`: **Unbalanced Meta: Elusives** (Legends of Runeterra).
   1. Title
   2. Try to stop the attacker: an Elusive 3|2 attacks; normal blockers bounce off, only an Elusive blocker or a spell works. Toggle Elusive off to see a plain wall stop it.
-  3. The only counter is itself: a toy replicator model of a 20-week season; with no fix the field folds into Elusive + spell decks. Compare "weaker Elusive stats" and "answers in every region". Win rates are illustrative and live in `FIX` at the top of the meta demo in `elusives.js`.
+  3. The only counter is itself: a toy replicator model of a 20-week season; with no fix the field folds into Elusive + spell decks. Compare "weaker Elusive stats" and "answers in every region". Win rates are illustrative and live in `FIX` at the top of the meta demo in `pvp/elusives/elusives.js`.
   4. Design takeaways.
 
-- `counter-cycles/`: **Counter Cycles** (high level meta, other expressions).
+- `pvp/counter-cycles/`: **Counter Cycles** (high level meta, other expressions).
   1. Title
   2. RTS: rush, turtle, expand as a counter wheel. Hover an opening or an arrow to read what it beats and why; click a node to pin it.
   3. Fighting: attack, block, grab, the same triangle at the scale of a fraction of a second.
@@ -47,29 +54,30 @@ Open `index.html` in a browser (no build step, works straight off disk).
   6. Drill: counter-pick. The enemy picks; you pick what beats it.
   7. Same shape, three genres.
 
-- `strike-trades/`: **Strike Trade Balance Techniques**, from the same deck, part 7, slides 265 to 272.
+- `pvp/strike-trades/`: **Strike Trade Balance Techniques**, from the same deck, part 7, slides 265 to 272.
   1. Title: armor, super armor, immunity.
   2. Same hit, different answers: you wind up a heavy hammer swing while the monster attacks. Toggle your protection (1 to 4: none, armor, super armor, immunity) and the attack (jab, heavy, 3-hit flurry, throw) and watch damage, hit stun, knockback and whether your swing lands. The frame strip shows the protected window and every hit. Super armor breaks after 2 hits like Drive Impact; flip it to hyper armor. A table compares all four for the current attack.
   3. Who wins the trade?: the full protection by attack grid; click a cell to watch it.
   4. Which one would you give this move?: Forsaken Spine mockups with a pick-the-technique quiz, answered from the deck's "When to use" slides.
   5. Best applications.
-  The rules (`SWING`, `ATK`, `MODES`, `CAP`, `resolve`) are at the top of `strike-trades/trades.js`.
+  The rules (`SWING`, `ATK`, `MODES`, `CAP`, `resolve`) are at the top of `pvp/strike-trades/trades.js`.
 
-- `payoffs/`: **Positioning Payoffs**, from the same deck, skill expression category 4, slides 299 to 304.
+- `pvp/payoffs/`: **Positioning Payoffs**, from the same deck, skill expression category 4, slides 299 to 304.
   1. Title: payoffs, the reward for a skilfully executed power.
   2. Positioning payoffs (299 to 302): PC and enemy 5 m either side of centre. Press → to step through neutral, the swing, their opening (301) and your follow-up (302). Swap your weapon (fists' uppercut, sword, Shocking Spear Thrust) and the same beats resolve differently: the uppercut whiffs into the enemy's pressure, the sword whiffs safely and gains little, the spear's 10 m pressure lands from neutral and stays out of reach. Drag your token to change the start distance, or have the enemy back off or step in.
   3. Perspective agnostic (303): the same exchange drawn side-on and top-down at once; play as the enemy to see the PC's opening become your payoff.
   4. Power breakdown (304): positioning, pressure and payoff for the selected weapon, with sliders that retune it (and every other slide).
   5. Same sequence, three weapons: the whole sequence re-run for each weapon in one table.
-  The rules (`WEAPONS`, `ENEMY`, `plan`) are at the top of `payoffs/payoffs.js`. Spear numbers are the deck's; fist and sword payoffs are illustrative.
+  The rules (`WEAPONS`, `ENEMY`, `plan`) are at the top of `pvp/payoffs/payoffs.js`. Spear numbers are the deck's; fist and sword payoffs are illustrative.
 
 ## Layout
 
+- `index.html`: the course home, one card per module.
 - `assets/deck.js`, `deck.css`, `kit.js`, `kit.css`, `gi.js`: copied from `InteractiveFPF/assets`. Keep them in sync by hand if the engine changes there.
 - `assets/img/forsaken/`: the token art from `MoonStudios/Forsaken/Design/Abilities/images`.
 - `assets/spine/`: the Basic Strikes skeleton, the packed `forsaken` atlas, and `spine-data.js` (all three as data URIs, since browsers block `fetch` from `file://`).
 - `assets/vendor/spine-player.min.js` / `.css`: `@esotericsoftware/spine-player` 4.3.13 (Spine Runtimes license, see `SPINE-LICENSE.txt`).
-- `core-actions/core.js`: every demo. The rules live at the top (`ATK` hitboxes, `MOVES`, `inHitbox`, `outcome`), so the grids, the 433 diagram and the duel all agree. Tune reach, arc and step distances there.
+- `pvp/core-actions/core.js`: every demo. The rules live at the top (`ATK` hitboxes, `MOVES`, `inHitbox`, `outcome`), so the grids, the 433 diagram and the duel all agree. Tune reach, arc and step distances there.
 - `tools/build_spine.py`: rebuilds `assets/spine/` from the Spine project.
 
 ## Rebuilding the Spine assets
@@ -80,9 +88,9 @@ Open `index.html` in a browser (no build step, works straight off disk).
 python tools/build_spine.py "out/spine/Basic Strikes.json"
 ```
 
-## Separate module: PvE Interactions
+## PvE Interactions module (`pve-interactions/`)
 
-`pve-interactions/` has its own home page (`pve-interactions/index.html`), from *MGM C4 M5 - Fundamentals for Designing Engaging PvE Interactions*.
+Its own home page is `pve-interactions/index.html`, from *MGM C4 M5 - Fundamentals for Designing Engaging PvE Interactions*.
 
 - `hazards/`: the 14 hazard movement patterns (deck slides 186 to 199). Each pattern shows the slide's 3×3 grid, its arrow filling as the hazard moves, next to a top-down example from the slide's list. ← → switch patterns; `?p=N` opens one.
 - `enemy-counters/`: the Start, Opposition, Goal slide (deck slide id g273797b7e36_0_683) as Mario's jump and fireball against a Koopa (both work), a Spiny (only fire) and a Buzzy Beetle (only jump): every matchup, a run to the flagpole with a plan, and an editable rules matrix that the other slides run on. Sprites are original pixel shapes drawn in `counters.js`. GIF: `gifs/enemy-counters-mario.gif` (slide 2's sequence: the deck diagram built as start, goal, opposition, decisions, then laid over the level while Mario tries, rewinds and switches verbs at each enemy), rebuilt with `node tools/record-enemy-counters-gif.js <frameDir>` while serving on :8141, then the ffmpeg line in that file.

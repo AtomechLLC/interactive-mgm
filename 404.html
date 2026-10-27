@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Moved</title>
+<script>
+  // The PvP decks moved from the site root into pvp/. Send old links there; anything else goes home.
+  (function () {
+    var PVP = ['core-actions', 'counter-cycles', 'bruiser-meta', 'elusives', 'strike-trades', 'payoffs'];
+    var base = location.pathname.indexOf('/interactive-mgm/') === 0 ? '/interactive-mgm/' : '/';
+    var parts = location.pathname.slice(base.length).split('/');
+    var to = PVP.indexOf(parts[0]) >= 0 ? base + 'pvp/' + parts.join('/') : base;
+    location.replace(to + location.search + location.hash);
+  })();
+</script>
+</head>
+<body><p>This page moved. <a href="/interactive-mgm/">Go to the course home</a>.</p></body>
+</html>
