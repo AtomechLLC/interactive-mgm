@@ -96,7 +96,7 @@
           s.foe.mode = k < .5 ? 'squash' : 'gone';
           const u = Math.min(1, k / .5);
           Object.assign(s.hero, { x: lerp(xl, xl + 100, u), y: lerp(he, 0, u) + arc(u, 80), pose: u < 1 ? 'jump' : 'idle' });
-          if (k < 1) s.pops.push({ x: xl, y: he + 70 + k * 40, text: 'Stomp!', col: '#5fe0a0', a: 1 - k });
+          if (k < 1) s.pops.push({ x: xl, y: he + 70 + k * 40, text: 'Stomp!', col: '#1a8a4c', a: 1 - k });
         } else {
           s.foe.mode = 'walk'; s.foe.step = t;
           hurt(s, xl, he, k, 'Ouch!');
@@ -119,7 +119,7 @@
           else if (!ok) {
             const k = t - hT;
             if (k < .5) s.fires.push({ x: fx - 260 * k, y: fy + 330 * k - 900 * k * k, a: 1 - k / .5, spin: k * 30 });
-            if (k < .7) s.pops.push({ x: fx + 10, y: fy + 40 + k * 40, text: 'Plink', col: '#ffd23f', a: 1 - k / .7 });
+            if (k < .7) s.pops.push({ x: fx + 10, y: fy + 40 + k * 40, text: 'Plink', col: '#b36b05', a: 1 - k / .7 });
           }
         });
         if (ok) {
@@ -127,7 +127,7 @@
           else {
             const k = t - th[0], x0 = ex(th[0]);
             Object.assign(s.foe, { mode: 'flip', x: x0 + 70 * k, y: 300 * k - 1400 * k * k });
-            if (k < 1) s.pops.push({ x: x0, y: hgt(foe) + 50 + k * 40, text: 'Burned!', col: '#ff8a1e', a: 1 - k });
+            if (k < 1) s.pops.push({ x: x0, y: hgt(foe) + 50 + k * 40, text: 'Burned!', col: '#d0561a', a: 1 - k });
           }
         } else {
           s.foe.x = ex(Math.min(t, tc)); s.foe.step = t;
@@ -145,7 +145,7 @@
   function hurt(s, x0, y0, k, text) {
     const u = Math.min(1, k / .55);
     Object.assign(s.hero, { x: lerp(x0, x0 - 140, u), y: lerp(y0, 0, u) + arc(u, 70), pose: 'hurt', flash: k < 1.2 && (k * 12 | 0) % 2 === 0 });
-    if (k < 1.2) s.pops.push({ x: x0, y: y0 + 90 + k * 40, text, col: '#ff6b6b', a: 1 - k / 1.2 });
+    if (k < 1.2) s.pops.push({ x: x0, y: y0 + 90 + k * 40, text, col: '#cf2f3b', a: 1 - k / 1.2 });
   }
 
   /* ---------- a whole level: walk, meet each enemy with the planned verb, flagpole ---------- */
@@ -197,26 +197,32 @@
   }
 
   /* ---------- drawing ---------- */
+  // the scene sits on the slide's own parchment: navy ink for the ground and scenery, gold for the edge
+  const INK = '#262c6a';
   function sky(g, W, H, GY, cam = 0) {
-    const gr = g.createLinearGradient(0, 0, 0, GY); gr.addColorStop(0, '#5f7fe0'); gr.addColorStop(1, '#9db4f2');
-    g.fillStyle = gr; g.fillRect(0, 0, W, GY);
-    // hills and clouds drift slower than the ground
-    g.fillStyle = '#3c8f4a';
-    for (let i = -1; i < 8; i++) { const x = i * 520 - (cam * .5) % 520; g.beginPath(); g.ellipse(x + 160, GY, 170, 90, 0, Math.PI, 0); g.fill(); }
-    g.fillStyle = 'rgba(255,255,255,.92)';
+    g.clearRect(0, 0, W, H);
+    // hills and clouds drift slower than the ground, drawn as faint ink so the paper shows through
+    g.fillStyle = 'rgba(38,44,106,.07)'; g.strokeStyle = 'rgba(38,44,106,.28)'; g.lineWidth = 3;
+    for (let i = -1; i < 8; i++) { const x = i * 520 - (cam * .5) % 520; g.beginPath(); g.ellipse(x + 160, GY, 170, 90, 0, Math.PI, 0); g.fill(); g.stroke(); }
     for (let i = -1; i < 7; i++) {
       const x = i * 430 - (cam * .3) % 430 + 90, y = 60 + (i & 1) * 40;
-      [[0, 0, 26], [28, -10, 32], [60, 0, 26]].forEach(([dx, dy, r]) => { g.beginPath(); g.arc(x + dx, y + dy, r, 0, Math.PI * 2); g.fill(); });
+      g.beginPath(); [[0, 0, 26], [28, -10, 32], [60, 0, 26]].forEach(([dx, dy, r]) => { g.moveTo(x + dx + r, y + dy); g.arc(x + dx, y + dy, r, 0, Math.PI * 2); });
+      g.fillStyle = 'rgba(255,250,240,.75)'; g.fill();
     }
-    g.fillStyle = '#b4602c'; g.fillRect(0, GY, W, H - GY);
-    g.fillStyle = '#7a3a17';
+    for (let i = -1; i < 7; i++) {
+      const x = i * 430 - (cam * .3) % 430 + 90, y = 60 + (i & 1) * 40;
+      g.strokeStyle = 'rgba(38,44,106,.25)'; g.lineWidth = 2.5;
+      g.beginPath(); g.arc(x, y, 26, Math.PI * .5, Math.PI * 1.5); g.arc(x + 28, y - 10, 32, Math.PI * 1.1, Math.PI * 1.9); g.arc(x + 60, y, 26, Math.PI * 1.5, Math.PI * .5); g.closePath(); g.stroke();
+    }
+    g.fillStyle = INK; g.fillRect(0, GY, W, H - GY);
+    g.fillStyle = '#3a4290';
     const T = 40, off = cam % T;
     for (let y = GY; y < H; y += T / 2) {
-      g.fillRect(0, y, W, 3);
+      g.fillRect(0, y, W, 2);
       const sh = ((y - GY) / (T / 2)) % 2 ? T / 2 : 0;
-      for (let x = -off - T + sh; x < W; x += T) g.fillRect(Math.round(x), y, 3, T / 2);
+      for (let x = -off - T + sh; x < W; x += T) g.fillRect(Math.round(x), y, 2, T / 2);
     }
-    g.fillStyle = '#e08a4a'; g.fillRect(0, GY, W, 4);
+    g.fillStyle = '#ffb951'; g.fillRect(0, GY, W, 5);
   }
   function hero(g, h, x, GY) {
     const rows = h.pose === 'jump' || h.pose === 'hurt' ? HERO_JUMP : h.pose === 'throw' ? HERO_THROW : h.pose === 'walk' && (h.step * 8 | 0) % 2 ? HERO_STEP : HERO;
@@ -232,7 +238,7 @@
   function fire(g, f, x, GY) { spr(g, FIRE, x, GY - f.y, P, { rot: f.spin, a: f.a }); }
   function pop(g, p, x, GY) {
     g.save(); g.globalAlpha = clamp(p.a, 0, 1); g.font = '700 28px Montserrat, Jost, sans-serif'; g.textAlign = 'center';
-    g.lineWidth = 6; g.strokeStyle = '#152044'; g.strokeText(p.text, x, GY - p.y); g.fillStyle = p.col; g.fillText(p.text, x, GY - p.y); g.restore();
+    g.lineWidth = 7; g.strokeStyle = '#fffaf0'; g.strokeText(p.text, x, GY - p.y); g.fillStyle = p.col; g.fillText(p.text, x, GY - p.y); g.restore();
   }
   function label(g, text, x, y, o = {}) {
     g.save(); g.font = `${o.w || 600} ${o.size || 24}px Montserrat, Jost, sans-serif`; g.textAlign = o.align || 'center'; g.textBaseline = 'middle';
@@ -242,13 +248,13 @@
     if (o.edge) { g.strokeStyle = o.edge; g.lineWidth = 3; g.stroke(); }
     g.fillStyle = o.col || '#fff'; g.fillText(text, x, y + 1); g.restore();
   }
-  function flagpole(g, x, GY, down) {
-    g.fillStyle = '#e9e9e9'; g.fillRect(x - 3, GY - 300, 6, 300);
-    g.fillStyle = '#3fa34d'; g.beginPath(); g.arc(x, GY - 304, 9, 0, Math.PI * 2); g.fill();
+  function flagpole(g, x, GY, down, pole = INK) {
+    g.fillStyle = pole; g.fillRect(x - 3, GY - 300, 6, 300);
+    g.fillStyle = '#ffb951'; g.beginPath(); g.arc(x, GY - 304, 9, 0, Math.PI * 2); g.fill();
     const fy = GY - 290 + down * 240;
-    g.fillStyle = '#ffffff'; g.beginPath(); g.moveTo(x - 3, fy); g.lineTo(x - 58, fy + 22); g.lineTo(x - 3, fy + 44); g.fill();
-    g.fillStyle = '#3fa34d'; g.beginPath(); g.arc(x - 20, fy + 22, 8, 0, Math.PI * 2); g.fill();
-    g.fillStyle = '#7a3a17'; g.fillRect(x - 18, GY - 30, 36, 30);
+    g.fillStyle = '#ffb951'; g.strokeStyle = INK; g.lineWidth = 2; g.beginPath(); g.moveTo(x - 3, fy); g.lineTo(x - 58, fy + 22); g.lineTo(x - 3, fy + 44); g.fill(); g.stroke();
+    g.fillStyle = INK; g.beginPath(); g.arc(x - 20, fy + 22, 7, 0, Math.PI * 2); g.fill();
+    g.fillStyle = pole; g.fillRect(x - 18, GY - 30, 36, 30);
   }
   // a single encounter, drawn with Mario's start at ox
   function drawEnc(g, W, H, st, ox) {
@@ -304,7 +310,7 @@
     hero(g, { pose: 'walk', step: t, y: 0 }, 140, GY);
     spr(g, FIRE, 230, GY - 20 - Math.abs(Math.sin(t * 6)) * 30, P, { rot: t * 10 });
     ['koopa', 'spiny', 'buzzy'].forEach((f, i) => spr(g, FOES[f].walk[((t + i * .1) * 5 | 0) % 2], 400 + i * 150, GY, P));
-    g.save(); g.translate(830, GY + 6); g.scale(.42, .42); flagpole(g, 0, 0, 0); g.restore();
+    g.save(); g.translate(830, GY + 6); g.scale(.42, .42); flagpole(g, 0, 0, 0, '#e9e9e9'); g.restore();
     g.save(); g.globalCompositeOperation = 'destination-in'; g.fillStyle = '#000'; g.fillRect(0, 0, c.width, GY + 6); g.restore();
   });
 
@@ -320,7 +326,7 @@
     ORDER.forEach((f, i) => spr(g, FOES[f].walk[((t + i * .13) * 4 | 0) % 2], fxs[i] + Math.sin(t * 1.2 + i) * 14, GY, P));
     flagpole(g, fl, GY, 0);
     // decisions: the dashed box around the play space, with Mario's two verbs
-    g.save(); g.setLineDash([16, 10]); g.lineDashOffset = -t * 30; g.strokeStyle = '#ffffff'; g.lineWidth = 3;
+    g.save(); g.setLineDash([16, 10]); g.lineDashOffset = -t * 30; g.strokeStyle = INK; g.lineWidth = 3;
     g.beginPath(); g.roundRect(30, 28, W - 60, GY - 10, 12); g.stroke(); g.restore();
     label(g, 'Decisions: jump or fireball?', W / 2, 30, { size: 24, col: '#ffb951', edge: '#ffb951' });
     // start, opposition, goal tags
@@ -330,14 +336,14 @@
     label(g, 'Goal', fl - 30, GY - 360, { size: 24, bg: '#2f56c9' });
     // the flow arrow, start to goal through the opposition
     const ay = GY - 190, k = (t * .35) % 1;
-    g.save(); g.strokeStyle = 'rgba(255,255,255,.85)'; g.lineWidth = 6; g.setLineDash([22, 14]); g.lineDashOffset = -t * 60;
+    g.save(); g.strokeStyle = 'rgba(38,44,106,.8)'; g.lineWidth = 6; g.setLineDash([22, 14]); g.lineDashOffset = -t * 60;
     g.beginPath(); g.moveTo(hx + 50, ay); g.lineTo(fl - 80, ay); g.stroke(); g.restore();
-    g.fillStyle = '#fff'; g.beginPath(); g.moveTo(fl - 60, ay); g.lineTo(fl - 86, ay - 16); g.lineTo(fl - 86, ay + 16); g.fill();
+    g.fillStyle = INK; g.beginPath(); g.moveTo(fl - 60, ay); g.lineTo(fl - 86, ay - 16); g.lineTo(fl - 86, ay + 16); g.fill();
     spr(g, FIRE, lerp(hx + 60, fl - 100, k), ay + 14, 4, { rot: t * 10, a: .9 });
     // rules and interactions, as in the deck
     const ry = GY + 74;
     label(g, 'Rules: stomps beat soft tops, fire beats anything without a hard shell', W / 2, ry, { size: 22, bg: '#5562eb' });
-    g.font = '600 20px Montserrat, Jost, sans-serif'; g.fillStyle = '#ffffff'; g.textAlign = 'center';
+    g.font = '600 20px Montserrat, Jost, sans-serif'; g.fillStyle = INK; g.textAlign = 'center';
     g.fillText('⇅  Interactions: the player tries a verb, the rules answer', W / 2, ry + 40);
   });
 

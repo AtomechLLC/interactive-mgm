@@ -52,3 +52,6 @@ table.mx td:hover { border-color: var(--navy); }
 .rl-stats .st span { font-size: 17px; color: var(--muted); }
 .rl-stats .st.good { border-color: var(--good); } .rl-stats .st.good b { color: var(--good); }
 .rl-stats .st.bad { border-color: var(--bad); } .rl-stats .st.bad b { color: var(--bad); }
+
+/* the game scenes sit straight on the slide's parchment, like the course deck's own art */
+.slide.slide:not(.center):not(.dk) canvas.demo { background: none; border: 0; border-radius: 0; }
