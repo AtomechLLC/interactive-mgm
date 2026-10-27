@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Co-op Interactions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* same theme as the PvE module home (../pve-interactions/index.html): navy band over parchment, gold accents */
+  :root { --navy: #152044; --ink: #262c6a; --muted: #5d618c; --gold: #ffb951; --gold-ink: #9a5a06; --line: #cdbf9f; }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; background: #ede7e7 url("../assets/img/theme/paper.jpg") center / cover fixed; color: var(--ink); font-family: Jost, system-ui, sans-serif; border: 4px solid var(--gold); }
+  .band { background: var(--navy); color: #fff; clip-path: polygon(0 0, 100% 0, 100% 78%, 0 100%); padding: 0 0 70px; }
+  header { position: relative; padding: 60px 24px 0; max-width: 1180px; margin: 0 auto; }
+  .up { position: absolute; top: 18px; left: 24px; color: #d6dbef; font-size: 15px; text-decoration: none; }
+  .up:hover { color: var(--gold); }
+  .kicker { color: var(--gold); font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; }
+  h1 { font-family: Montserrat, sans-serif; font-weight: 800; font-size: clamp(34px, 6vw, 68px); margin: 8px 0 10px; }
+  h1 span { color: var(--gold); }
+  header p { color: #d6dbef; font-size: 19px; max-width: 760px; margin-bottom: 0; }
+  section { max-width: 1180px; margin: 0 auto; padding: 24px 24px 0; }
+  h2 { font-family: Montserrat, sans-serif; font-weight: 800; font-size: 26px; margin: 10px 0 4px; }
+  h2 + p { color: var(--muted); margin: 0 0 16px; font-size: 17px; }
+  /* cards: one per interactive page in this module, add an <a class="mod"> to #cards */
+  #cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
+  a.mod { display: grid; grid-template-columns: 72px 1fr; gap: 16px; align-items: center; padding: 18px; border-radius: 12px; background: rgba(255, 252, 244, .82); border: 1px solid var(--line); color: inherit; text-decoration: none; box-shadow: 0 2px 0 rgba(120, 96, 50, .12); transition: transform .15s, border-color .2s; }
+  a.mod:hover { transform: translateY(-4px); border-color: var(--navy); }
+  .mod img { width: 72px; height: 72px; border-radius: 50%; background: var(--navy); padding: 9px; object-fit: contain; }
+  .mod b { font-family: Montserrat, sans-serif; font-weight: 800; font-size: 19px; display: block; }
+  .mod small { color: var(--muted); font-size: 15px; }
+  .tag { display: inline-block; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; font-weight: 600; color: var(--gold-ink); border: 1px solid var(--line); border-radius: 99px; padding: 1px 8px; margin-top: 6px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 18px; padding-bottom: 40px; }
+  figure { margin: 0; background: rgba(255, 252, 244, .82); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  figure img { display: block; width: 100%; aspect-ratio: 16 / 9; background: #e9e1d2; }
+  figcaption { padding: 10px 14px 12px; font-size: 15px; color: var(--muted); }
+  figcaption b { color: var(--ink); font-family: Montserrat, sans-serif; display: block; font-size: 16px; }
+</style>
+</head>
+<body>
+<div class="band"><header>
+  <a class="up" href="../index.html">← All modules</a>
+  <div class="kicker">MGM C3 M6</div>
+  <h1>Co-op <span>Interactions</span></h1>
+  <p>Visuals for <i>Engaging Co-op Interaction Design Fundamentals</i>: teamplay timing, co-op chains, shared-screen cameras, the teamplay targeting matrix and keyword-based classes.</p>
+</header></div>
+
+<section>
+  <h2>Interactive pages</h2>
+  <p>Open one and use ← → to move through it.</p>
+  <div id="cards"></div>
+</section>
+
+<section>
+  <h2>Slide GIFs</h2>
+  <p>1280×720, looping, one per deck section. Right-click a GIF to save it, or open it full size.</p>
+  <div id="gifs" class="grid"></div>
+</section>
+
+<script>
+  // [folder, icon, title, blurb, deck slides, gif file, gif title, gif caption]
+  const PAGES = [
+    ['timing', 'Protect_Friendly', 'Before, during, after the hit', 'Shield before the hit, intervene during it, heal after it: try each on the same enemy swing, then see how shields invite risk', '147 to 160', 'timing-before-during-after', 'Before, during, after', 'One enemy swing, three answers: a shield before the hit, an intervention during it, a heal after it.'],
+    ['chains', 'Chain', 'Co-op chain builder', 'Three players, six keywords and one enemy: put setups, exploits and payoffs in order, or let everyone play their own loop', '186 to 229, 288 to 291', 'chains-setup-exploit-payoff', 'Setup, exploit, payoff', 'Everyone on their own loop, then the same three players chaining slow → bind → charged shot and wet → freeze → shatter.'],
+    ['camera', 'Target_Reticule', 'Shared-screen camera lab', 'Two players and an enemy on one screen: follow one player, frame both, lock the scroll, split the screen or weight what matters', '68 to 78', 'camera-shared-screen', 'Who gets the camera?', 'The same couch co-op moment under five camera rules, with what each one costs.'],
+    ['targeting', 'Grid', 'Teamplay targeting matrix', 'Pick a mechanic and run it through source × target: fire becomes a fireball, a pool of flames, Hellfire and cauterize', '116 to 133, 161 to 171', 'targeting-matrix', 'One mechanic, sixteen ideas', 'Fire, heal, shield and slow, each run through who acts upon whom.'],
+    ['keywords', 'Text', 'Keywords need situations', 'Class keyword sheets with role, class and spec layers, and encounter sliders that show which keywords ever matter', '270 to 285', 'keywords-need-situations', 'Keywords only matter if situations demand them', 'Four classes through four encounters: each keyword lights up only when the content asks for it.'],
+  ];
+  // pages that are built so far; the rest of PAGES are the module's planned top 5
+  const READY = ['timing'];
+  const LIVE = PAGES.filter(p => READY.includes(p[0]));
+  document.getElementById('cards').innerHTML = LIVE.map(([f, ic, t, b, sl, gif]) =>
+    `<a class="mod" href="${f}/index.html"><img src="../assets/img/forsaken/${ic}.png" alt=""><span><b>${t}</b><small>${b} (deck slides ${sl}). GIF: gifs/${gif}.gif</small><br><span class="tag">ready</span></span></a>`).join('');
+  document.getElementById('gifs').innerHTML = LIVE.map(([f, , , , sl, gif, gt, cap]) =>
+    `<figure><a href="gifs/${gif}.gif"><img src="gifs/${gif}.gif" alt="${gt}" loading="lazy"></a><figcaption><b>${gt}</b>${cap} Deck slides ${sl}.</figcaption></figure>`).join('');
+</script>
+</body>
+</html>

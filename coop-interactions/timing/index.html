@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Before, During, After · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="../shared/coop.css">
+<link rel="stylesheet" href="timing.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · Co-op Interactions · Teamplay Timing', home: '../index.html', audio: null, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1 -->
+<section class="slide center" data-title="Teamplay timing" data-demo="title">
+  <div class="kicker rise">engaging co-op interaction design fundamentals</div>
+  <h1 class="rise">Before, during, <span class="accent">after</span></h1>
+  <div class="rule rise" style="margin:22px auto"></div>
+  <canvas class="demo ti-canvas rise" width="900" height="540"></canvas>
+  <p class="lede rise" style="margin:18px auto 0;text-align:center">The same hit, three tools: each one anchored to a different moment around the event.</p>
+</section>
+
+<!-- 2: the sandbox -->
+<section class="slide" data-title="Answer the hit" data-demo="sandbox">
+  <div class="kicker">proactive · coactive · reactive</div>
+  <h2 class="sm">Answer the <span class="accent">same hit</span> three ways</h2>
+  <div class="tm-wrap">
+    <canvas class="demo tm-canvas" width="900" height="540"></canvas>
+    <div class="tm-side">
+      <h4>Pick a tool</h4>
+      <button class="tool" data-tool="shield"><b>Shield</b><span>Before the hit. Prevents future damage for a short time.</span></button>
+      <button class="tool" data-tool="intervene"><b>Intervene</b><span>During the swing. Leap in and take it on your guard.</span></button>
+      <button class="tool" data-tool="heal"><b>Heal</b><span>After the hit. Erases the damage already done.</span></button>
+      <div class="row wrap tm-btns">
+        <button class="btn tm-use">Use it now</button>
+        <button class="btn tm-slow">Slow motion</button>
+        <button class="btn tm-tour">▶ Tour</button>
+      </div>
+      <p class="tm-hint">Click the arena or press U to use the tool. The coloured band on the timeline is when it works.</p>
+      <div class="tm-verdict"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3: slide 153 -->
+<section class="slide" data-title="Shields invite risk" data-demo="risk">
+  <div class="kicker">heal vs shield</div>
+  <h2 class="sm">Healing erases mistakes. Shields <span class="accent">invite risk.</span></h2>
+  <canvas class="demo rk-canvas" width="1420" height="420"></canvas>
+  <div class="rk-cols">
+    <div><h3>Heal after</h3><p>The ally waits out every swing, darts in, darts back. A slip gets healed, but nothing changes how they play.</p></div>
+    <div><h3 class="accent">Shield first</h3><p>The shield is a call to action: the ally steps in and swings freely, and the enemy backs off to wait it out.</p></div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="../shared/topdown.js"></script>
+<script src="timing.js"></script>
+</body>
+</html>
