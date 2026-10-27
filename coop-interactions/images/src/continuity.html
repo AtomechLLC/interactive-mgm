@@ -1,0 +1,208 @@
+<!doctype html>
+<!-- Continuity diagrams for co-op deck slides 98-100 (centralized, single player host, individual).
+     Open with ?n=1, 2 or 3; render.js screenshots each at 1920x1080 into ../continuity-*.png. -->
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; }
+  body { width: 1920px; height: 1080px; overflow: hidden; background: #ede7e7 url("../../../assets/img/theme/paper.jpg") center / cover; }
+  svg { display: block; }
+  .h { font-family: Montserrat, sans-serif; font-weight: 800; }
+  .k { font-family: Montserrat, sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+  .b { font-family: Jost, sans-serif; font-weight: 500; }
+</style></head><body>
+<svg id="s" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
+<script>
+const NAVY = '#152044', INK = '#262c6a', GOLD = '#ffb951', GOLD_INK = '#9a5a06', STRIPE = '#5562eb',
+  CREAM = 'rgba(255,252,244,.86)', TAN = '#cdbf9f', GOOD = '#1a8a4c', BAD = '#cf2f3b', MUTED = '#5d618c';
+const PC = ['#5562eb', '#d9822b', '#2e9e6a', '#c24d7a'];   // P1..P4
+
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+const T = (x, y, s, size, cls = 'b', fill = INK, anchor = 'middle', extra = '') =>
+  `<text x="${x}" y="${y}" class="${cls}" font-size="${size}" fill="${fill}" text-anchor="${anchor}" ${extra}>${esc(s)}</text>`;
+
+// header block flush top-left: navy, angled right edge, blue stripe under it (course template)
+function head(kicker, title, example) {
+  return `<polygon points="0,0 1180,0 1120,196 0,196" fill="${NAVY}"/>
+    <polygon points="0,196 1120,196 1117,206 0,206" fill="${STRIPE}"/>
+    ${T(80, 70, kicker, 26, 'k', GOLD, 'start')}
+    ${T(80, 140, title, 62, 'h', '#fff', 'start')}
+    ${T(80, 182, example, 22, 'k', '#b3bbd8', 'start')}`;
+}
+
+// a player's machine: PC monitor or TV + console, with a player token beside it
+function machine(x, y, p, kind = 'pc', label) {
+  const c = PC[p];
+  let g = `<g transform="translate(${x},${y})">`;
+  if (kind === 'pc') {
+    g += `<rect x="-80" y="-58" width="160" height="104" rx="10" fill="${NAVY}"/>
+      <rect x="-68" y="-46" width="136" height="80" rx="4" fill="${c}" opacity=".85"/>
+      <rect x="-10" y="46" width="20" height="18" fill="${NAVY}"/><rect x="-44" y="62" width="88" height="10" rx="5" fill="${NAVY}"/>`;
+  } else {
+    g += `<rect x="-86" y="-60" width="172" height="102" rx="8" fill="${NAVY}"/>
+      <rect x="-74" y="-48" width="148" height="78" rx="4" fill="${c}" opacity=".85"/>
+      <rect x="-58" y="50" width="116" height="22" rx="6" fill="${INK}"/><circle cx="38" cy="61" r="4" fill="${GOLD}"/>`;
+  }
+  g += token(0, -6, p, 1.15, '#fff');
+  g += T(0, 108, label, 22, 'k', INK) + '</g>';
+  return g;
+}
+// a little person: head + shoulders, numbered
+function token(x, y, p, s = 1, ring = 'none') {
+  const c = PC[p];
+  return `<g transform="translate(${x},${y}) scale(${s})">
+    <circle cx="0" cy="-14" r="11" fill="${c}" stroke="${ring}" stroke-width="3"/>
+    <path d="M-19 20 Q-19 0 0 0 Q19 0 19 20 Z" fill="${c}" stroke="${ring}" stroke-width="3"/>
+    ${T(0, 15, 'P' + (p + 1), 12, 'k', '#fff')}</g>`;
+}
+// a save file: page with a folded corner and a gold title band
+function saveFile(x, y, w, h, title, lines, opts = {}) {
+  const f = 26, band = opts.band || GOLD, dash = opts.dashed ? 'stroke-dasharray="10 7"' : '';
+  let g = `<g transform="translate(${x},${y})" opacity="${opts.opacity || 1}">
+    <path d="M0 0 H${w - f} L${w} ${f} V${h} H0 Z" fill="#fffdf6" stroke="${opts.stroke || INK}" stroke-width="3" ${dash}/>
+    <path d="M${w - f} 0 V${f} H${w}" fill="none" stroke="${opts.stroke || INK}" stroke-width="3"/>
+    <rect x="3" y="3" width="${w - f - 3}" height="40" fill="${band}" opacity=".9"/>
+    ${T(16, 31, title, 19, 'k', opts.titleFill || NAVY, 'start')}`;
+  lines.forEach((l, i) => {
+    const [txt, col] = Array.isArray(l) ? l : [l, INK];
+    g += T(18, 76 + i * 32, txt, 22, 'b', col, 'start');
+  });
+  return g + '</g>';
+}
+function arrow(d, color = INK, opts = {}) {
+  const id = 'm' + Math.random().toString(36).slice(2, 8);
+  const both = opts.both ? `marker-start="url(#${id}s)"` : '';
+  return `<defs>
+      <marker id="${id}" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="${color}"/></marker>
+      <marker id="${id}s" viewBox="0 0 10 10" refX="3" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="${color}"/></marker>
+    </defs><path d="${d}" fill="none" stroke="${color}" stroke-width="${opts.w || 5}" stroke-linecap="round"
+      ${opts.dashed ? 'stroke-dasharray="14 10"' : ''} marker-end="url(#${id})" ${both}/>`;
+}
+function pill(x, y, txt, fill, color = '#fff', size = 18) {
+  const w = txt.length * size * .72 + 30;
+  return `<rect x="${x - w / 2}" y="${y - size - 4}" width="${w}" height="${size + 18}" rx="${(size + 18) / 2}" fill="${fill}"/>
+    ${T(x, y + 4, txt, size, 'k', color)}`;
+}
+// pros and cons strip along the bottom
+function proCon(pro, con) {
+  const card = (x, w, lab, col, txt) => `<rect x="${x}" y="904" width="${w}" height="128" rx="14" fill="${CREAM}" stroke="${TAN}" stroke-width="3"/>
+    <rect x="${x}" y="904" width="12" height="128" rx="6" fill="${col}"/>
+    ${T(x + 40, 948, lab, 22, 'k', col, 'start')}
+    ${txt.map((t, i) => T(x + 40, 984 + i * 32, t, 25, 'b', INK, 'start')).join('')}`;
+  return card(70, 860, 'Pro', GOOD, pro) + card(970, 880, 'Con', BAD, con);
+}
+// the inset panel on the right: "what happens when..."
+function inset(x, y, w, h, title) {
+  return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="16" fill="${CREAM}" stroke="${TAN}" stroke-width="3"/>
+    <rect x="${x}" y="${y}" width="${w}" height="54" rx="16" fill="${NAVY}"/><rect x="${x}" y="${y + 30}" width="${w}" height="24" fill="${NAVY}"/>
+    ${T(x + w / 2, y + 36, title, 20, 'k', GOLD)}`;
+}
+
+/* ---------- 1. Centralized: the authoritative server holds everything ---------- */
+function centralized() {
+  let s = head('Centralized continuity', 'Authoritative server', 'V Rising · Minecraft server');
+  // server rack + its saves
+  const sx = 330, sy = 250;
+  s += `<rect x="${sx}" y="${sy}" width="760" height="370" rx="20" fill="${NAVY}"/>
+    ${T(sx + 30, sy + 46, 'Server A · dedicated', 24, 'k', GOLD, 'start')}
+    ${T(sx + 730, sy + 46, 'Holds all saves', 20, 'k', '#b3bbd8', 'end')}`;
+  for (let i = 0; i < 4; i++) {          // rack units
+    const ry = sy + 78 + i * 68;
+    s += `<rect x="${sx + 30}" y="${ry}" width="170" height="52" rx="6" fill="#1d2a56" stroke="#34437a" stroke-width="2"/>
+      <circle cx="${sx + 52}" cy="${ry + 26}" r="7" fill="${i % 2 ? GOLD : '#5fe0a0'}"/>
+      <rect x="${sx + 72}" y="${ry + 20}" width="110" height="5" rx="2" fill="#34437a"/><rect x="${sx + 72}" y="${ry + 31}" width="80" height="5" rx="2" fill="#34437a"/>`;
+  }
+  s += saveFile(sx + 230, sy + 78, 240, 262, 'World save', ['Map and terrain', 'Castles and bases', 'Bosses beaten', 'Day / night clock']);
+  s += saveFile(sx + 495, sy + 78, 240, 262, 'Player saves', [['P1  Lv 32', PC[0]], ['P2  Lv 28', PC[1]], ['P3  Lv 30', PC[2]], ['P4  Lv 12', PC[3]]]);
+  // four clients below, two way live links
+  const xs = [190, 470, 950, 1230], kinds = ['pc', 'pc', 'console', 'pc'];
+  xs.forEach((x, i) => {
+    s += arrow(`M${x} ${708} L${sx + 120 + i * 175} ${sy + 380}`, STRIPE, { both: true, w: 4 });
+    s += machine(x, 768, i, kinds[i], `P${i + 1} · ${kinds[i] === 'pc' ? 'PC' : 'Console'}`);
+  });
+  s += pill(710, 668, 'Live connection · no local save', STRIPE);
+  // inset: same player, another server
+  s += inset(1440, 330, 420, 540, 'P1 joins another server');
+  s += `<rect x="1490" y="410" width="320" height="86" rx="12" fill="${NAVY}" opacity=".9"/>
+    ${T(1650, 462, 'Server B', 24, 'k', '#fff')}`;
+  s += saveFile(1530, 530, 240, 140, 'P1 on server B', [['Lv 1', BAD], ['Empty inventory', BAD]], { band: '#f3c9c4' });
+  s += token(1650, 742, 0, 1.6);
+  s += T(1650, 812, 'Lv 32 progress', 24, 'h', BAD) + T(1650, 844, 'stayed on server A', 24, 'h', BAD);
+  s += proCon(['Consistent and reliable: one source of truth,', 'no rollbacks, no cheating.'],
+    ['Progress is locked to that server. Play with friends', 'somewhere else and none of it carries over.']);
+  return s;
+}
+
+/* ---------- 2. Single player: the host's save file seeds the session ---------- */
+function hostSave() {
+  let s = head('Single player continuity', 'Host player save file', 'It Takes Two');
+  // host side
+  s += `<rect x="70" y="250" width="560" height="620" rx="20" fill="${CREAM}" stroke="${GOLD}" stroke-width="5"/>
+    ${pill(350, 300, 'Host · owns the world', NAVY, GOLD, 20)}`;
+  s += saveFile(150, 340, 400, 270, "Host's save file", ['Chapter 3 of 7', 'Levels and secrets found', 'Unlocks and collectibles', ['The only copy that counts', GOLD_INK]]);
+  s += machine(350, 720, 0, 'console', 'P1 · Host console');
+  // stream to guest
+  s += arrow('M650 470 C 780 430, 900 430, 1030 470', NAVY, { w: 6 });
+  s += T(840, 410, 'World state streamed', 24, 'k', NAVY);
+  s += T(840, 520, 'Guest plays inside the host’s save', 22, 'b', MUTED);
+  // guest side
+  s += `<rect x="1050" y="250" width="380" height="620" rx="20" fill="${CREAM}" stroke="${TAN}" stroke-width="3" stroke-dasharray="14 10"/>
+    ${pill(1240, 300, 'Guest · a visitor', '#e6dcc6', INK, 20)}`;
+  s += saveFile(1110, 340, 260, 210, 'Guest keeps', ['Some rewards', 'Maybe a copy', ['of the save', MUTED]], { dashed: true, band: '#e6dcc6', opacity: .9 });
+  s += machine(1240, 720, 1, 'pc', 'P2 · Guest PC');
+  s += arrow('M650 640 C 780 640, 900 640, 1030 640', GOLD_INK, { dashed: true, w: 4 });
+  s += T(840, 680, 'Rewards or a copy', 22, 'k', GOLD_INK);
+  // inset: host keeps playing alone
+  s += inset(1480, 330, 380, 540, 'Host plays on alone');
+  const row = (y, p, lab, ch, col) => token(1540, y + 6, p, 1.3) +
+    T(1580, y - 6, lab, 22, 'k', INK, 'start') + T(1580, y + 26, ch, 26, 'h', col, 'start');
+  s += row(440, 0, 'Host', 'Chapter 5', GOOD);
+  s += row(540, 1, 'Guest', 'Still chapter 3', BAD);
+  // little story track
+  for (let i = 0; i < 7; i++) {
+    const x = 1530 + i * 46, on = i < 5;
+    s += `<rect x="${x}" y="640" width="36" height="20" rx="5" fill="${on ? GOOD : '#d8cfbc'}"/>`;
+    if (i === 2) s += `<path d="M${x + 18} 676 l-10 16 h20 z" fill="${BAD}"/>`;
+  }
+  s += T(1670, 724, 'Guest marker', 20, 'k', BAD);
+  s += T(1670, 790, 'Left behind, or', 24, 'h', BAD) + T(1670, 822, 'progress lost', 24, 'h', BAD);
+  s += proCon(['Anyone can join as the extra player.', 'No server, no shared account needed.'],
+    ['Big risk of losing progress, or leaving someone', 'behind if the host continues the story alone.']);
+  return s;
+}
+
+/* ---------- 3. Individual: every character carries its own save ---------- */
+function individual() {
+  let s = head('Individual continuity', 'Local save file', 'Dark Souls III · Diablo 2');
+  // session world in the middle
+  s += `<ellipse cx="760" cy="385" rx="320" ry="105" fill="${NAVY}"/>
+    ${T(760, 362, 'Shared session', 26, 'k', GOLD)}
+    ${T(760, 398, 'The world is just where you meet', 22, 'b', '#b3bbd8')}`;
+  [[600, 0], [690, 1], [830, 2], [920, 3]].forEach(([x, p]) => { s += token(x, 466, p, 1.1, '#fff'); });
+  // each player with their own save
+  const xs = [190, 570, 950, 1330], kinds = ['pc', 'console', 'pc', 'console'];
+  const saves = [['Lv 45', 'Greatsword +8'], ['Lv 38', 'Pyromancy'], ['Lv 41', 'Shield +5'], ['Lv 52', '2× Ring']];
+  xs.forEach((x, i) => {
+    s += saveFile(x - 120, 540, 240, 124, `P${i + 1} save`, saves[i], { band: PC[i], titleFill: '#fff' });
+    s += machine(x, 768, i, kinds[i], `P${i + 1} · Own ${kinds[i] === 'pc' ? 'PC' : 'console'}`);
+    // character carried in, brought home
+    const tx = [600, 690, 830, 920][i];
+    s += arrow(`M${x} 532 Q ${(x + tx) / 2} ${i % 3 ? 520 : 505} ${tx} 500`, PC[i], { w: 4, dashed: true });
+  });
+  s += pill(760, 250, 'Characters travel in, progress goes home', STRIPE, '#fff', 20);
+  // inset: what can go wrong
+  s += inset(1500, 330, 360, 540, 'Without protection');
+  const risk = (y, title, a, b) => `<circle cx="1548" cy="${y - 8}" r="16" fill="${BAD}"/>${T(1548, y, '!', 22, 'h', '#fff')}
+    ${T(1578, y, title, 22, 'k', BAD, 'start')}${T(1578, y + 32, a, 22, 'b', INK, 'start')}${T(1578, y + 62, b, 22, 'b', INK, 'start')}`;
+  s += risk(422, 'Overleveled', 'A max-level friend', 'skips your challenge');
+  s += risk(542, 'Gifts and sales', 'Items handed over', 'cheapen progression');
+  s += risk(662, 'Duplication', 'Item dupes, as was', 'common in Diablo 2');
+  s += T(1680, 804, 'Also on a database:', 20, 'k', MUTED) + T(1680, 834, 'Diablo 3, WoW', 22, 'b', MUTED);
+  s += proCon(['Use the same character in many worlds. It simply', 'tracks the progress you made yourself.'],
+    ['Players can undermine progression for others with', 'stronger characters, traded items or dupe exploits.']);
+  return s;
+}
+
+const n = +(new URLSearchParams(location.search).get('n') || 1);
+document.getElementById('s').innerHTML = [centralized, hostSave, individual][n - 1]();
+</script></body></html>
