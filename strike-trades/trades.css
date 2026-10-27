@@ -58,7 +58,9 @@ table.gr td span { font-size: 15px; opacity: .8; }
 
 /* which would you use */
 .pk-grid { display: grid; grid-template-columns: 760px 1fr; gap: 36px; }
-.spine-box { background: #9a9a9a; border-radius: 16px; height: 520px; overflow: hidden; }
+.spine-box { background: #9a9a9a; border-radius: 16px; height: 470px; overflow: hidden; }
+.pk-shows { font-size: 19px !important; line-height: 1.35 !important; margin: 10px 0 0; min-height: 2.7em; }
+.atk { color: #ff7b8a; } .def { color: var(--accent-2); }
 .pk-cases { margin-top: 14px; }
 .pk-cases .btn, .pk-ans .btn { font-size: 18px; padding: 8px 14px; }
 .pk-q { font-size: 28px !important; min-height: 4em; margin: 0 0 18px; }

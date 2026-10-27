@@ -297,28 +297,40 @@
   }
 
   /* ---------- which would you use? (Spine mockups) ---------- */
-  // answers follow the deck's "When to use" slides
+  // answers follow the deck's "When to use" slides. `shows` says who does what in the mockup, since in several
+  // of them the monster is the one acting and P1 (blue) only reacts.
   const CASES = [
-    { anim: 'Drunk Swing And Recover', name: 'Heavy swing', q: 'A slow, heavy swing. Right now every jab stuffs it before it comes out.', a: 'super',
-      why: { super: 'Yes. Super armor gives slow, weighty attacks a leg up over faster ones, and throws and multi-hits are still counterplay.', armor: 'Armor would make the jabs hurt less, but they’d still interrupt it. The swing would still never come out.', immune: 'Immunity would work, but nothing could ever stop it. Save that for high-investment moves; super armor keeps it answerable.' } },
-    { anim: 'Stab n Dash', name: 'Charging dash', q: 'A charging stab-and-dash, like a bull rampaging across the arena.', a: 'super',
+    { anim: 'Drunk Swing And Recover', name: 'Monster’s heavy swing', a: 'super',
+      shows: 'The <b class="atk">monster</b> winds up and swings its weapon (red hitbox). P1 steps back out of range, and the monster staggers (dizzy swirl) while it recovers from the miss.',
+      q: 'Players keep jabbing the monster out of this wind-up, so the swing never comes out. What do you give the monster during the wind-up?',
+      why: { super: 'Yes. Super armor gives slow, weighty attacks a leg up over faster ones, and throws and multi-hits are still counterplay. Note the stagger at the end: that recovery stays unprotected, so stepping back and punishing still works.', armor: 'Armor would make the jabs hurt less, but they’d still interrupt it. The swing would still never come out.', immune: 'Immunity would work, but nothing could ever stop it. Save that for high-investment moves; super armor keeps it answerable.' } },
+    { anim: 'Stab n Dash', name: 'P1’s charging dash', a: 'super',
+      shows: '<b class="def">P1</b> dashes through a line of monsters, stabbing as it goes (blue cone).',
+      q: 'A charging stab-and-dash, like a bull rampaging across the arena. What do you give P1 during the dash?',
       why: { super: 'Yes. You still want it attackable, just not interruptible. The rampage keeps going but every hit costs health.', armor: 'Armor would let any jab stop the charge. Not much of a rampage.', immune: 'Immune and moving across the arena is a free escape. Super armor keeps the risk.' } },
-    { anim: 'Mace Special', name: 'Super attack', q: 'An expensive super attack. When you spend the meter, it should beat any weaker attack.', a: 'immune',
+    { anim: 'Mace Special', name: 'P1’s super attack', a: 'immune',
+      shows: '<b class="def">P1</b> charges a special (the hitbox in front of P1 turns yellow), then it lands and the monster squashes from the hit.',
+      q: 'An expensive super attack. When the player spends the meter, it should beat any weaker attack. What does P1 get while charging?',
       why: { immune: 'Yes. Immunity forces a high-investment move to always win against weaker attacks: hits simply don’t land.', super: 'Reasonable, and Tekken and Mortal Kombat do exactly this. But the deck’s default for “must always win” is immunity.', armor: 'Armor would let a jab knock the player out of a move they paid meter for.' } },
-    { anim: 'Shield Hold', name: 'Long stance', q: 'A long braced stance (or a 10-second transformation). The character should be tougher, without changing who wins exchanges.', a: 'armor',
+    { anim: 'Shield Hold', name: 'P1’s braced stance', a: 'armor',
+      shows: 'The <b class="atk">monster</b> swings, and it lands on <b class="def">P1</b>’s raised shield (the box flashes). P1 holds still.',
+      q: 'Imagine P1 holds a braced stance (or a 10-second transformation) that should make them tougher, without changing who wins exchanges. What does the stance give?',
       why: { armor: 'Yes. Armor makes characters take less damage without changing any other relationship. Players are stronger but still have to pay attention.', super: 'Seconds of no flinching changes every interaction in the fight. Too much.', immune: 'Seconds of immunity just means the opponent waits it out.' } },
-    { anim: 'Dagger Parry', name: 'Parry', q: 'A quick defensive skill, like this dagger parry. While it’s up, players need a clear and complete sense of safety.', a: 'immune',
+    { anim: 'Dagger Parry', name: 'P1’s parry', a: 'immune',
+      shows: 'The <b class="atk">monster</b> swings, <b class="def">P1</b> parries with a dagger, and the monster is stunned (dizzy swirl) by the parry.',
+      q: 'A quick defensive skill. While P1’s parry is up, players need a clear and complete sense of safety. What covers the parry window?',
       why: { immune: 'Yes. Defensive skills like parries and dodge rolls get i-frames: easy to understand, all or nothing. Balance it with the recovery.', super: 'Taking full damage during a parry would feel like it failed.', armor: 'Half damage and still flinching is not a defense anyone will pick.' } },
   ];
   demo('pick', {
     init(s) {
-      const box = $(s, '.pk-spine'), cases = $(s, '.pk-cases'), q = $(s, '.pk-q'), out = $(s, '.pk-out');
+      const box = $(s, '.pk-spine'), cap = $(s, '.pk-shows'), cases = $(s, '.pk-cases'), q = $(s, '.pk-q'), out = $(s, '.pk-out');
       let cur = 0, loaded = false;
       cases.innerHTML = CASES.map((c, i) => `<button class="btn" data-c="${i}">${c.name}</button>`).join('');
       const show = i => {
         cur = i; const c = CASES[i];
         $$(cases, '.btn').forEach((b, j) => b.classList.toggle('on', j === i));
         $$(s, '[data-pick]').forEach(b => b.classList.remove('yes', 'no'));
+        say(cap, '<span class="muted">On screen:</span> ' + c.shows);
         q.textContent = c.q; say(out, '<span class="muted">Pick one.</span>');
         if (loaded) s._p.setAnimation(c.anim, true);
       };
