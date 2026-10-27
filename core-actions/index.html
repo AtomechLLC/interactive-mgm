@@ -52,7 +52,13 @@
 <section class="slide" data-title="Offensive verbs: sweeps and thrusts" data-demo="offense">
   <div class="kicker">core gameplay actions</div>
   <h2 class="sm">Offensive verbs: <span class="atk">sweeps</span> and <span class="atk">thrusts</span></h2>
-  <canvas class="demo off-canvas" width="1380" height="470"></canvas>
+  <canvas class="demo off-canvas" width="1380" height="410"></canvas>
+  <div class="shape-ctrl">
+    <label>Sweep reach <input type="range" data-shape="sreach" min="70" max="310" step="5"><b data-sv="sreach"></b></label>
+    <label>Sweep arc <input type="range" data-shape="sarc" min="20" max="240" step="5"><b data-sv="sarc"></b></label>
+    <label>Thrust reach <input type="range" data-shape="treach" min="80" max="300" step="5"><b data-sv="treach"></b></label>
+    <label>Thrust width <input type="range" data-shape="twidth" min="8" max="120" step="2"><b data-sv="twidth"></b></label>
+  </div>
   <div class="row ctl-row">
     <span class="muted">Drag your token, or try:</span>
     <button class="btn" data-pos="none">Stand</button>
@@ -60,6 +66,7 @@
     <button class="btn" data-pos="right">Step aside</button>
     <button class="btn" data-pos="dodge">Roll away</button>
     <button class="btn off-reach on">Show reach</button>
+    <button class="btn off-default">Reset shapes</button>
   </div>
   <p class="off-out out"></p>
   <div class="hint">Drag the blue token around either arena</div>

@@ -72,9 +72,10 @@
   };
 
   // does a token at (x, y) overlap the attack fired from (ax, ay) facing f?
-  function inHitbox(kind, ax, ay, f, x, y, r = TR) {
+  // A: optional shape override ({ reach, half } or { reach, arc }), for slides that let students retune it
+  function inHitbox(kind, ax, ay, f, x, y, r = TR, A = ATK[kind]) {
     const dx = x - ax, dy = y - ay, c = Math.cos(f), s = Math.sin(f);
-    const along = dx * c + dy * s, side = -dx * s + dy * c, A = ATK[kind];
+    const along = dx * c + dy * s, side = -dx * s + dy * c;
     if (kind === 'thrust') return along > -r && along < A.reach + r && Math.abs(side) < A.half + r;
     const d = Math.hypot(dx, dy);
     if (d > A.reach + r) return false;
@@ -110,8 +111,7 @@
 
   /* ---------- drawing an attack ---------- */
   // t: 0..1 progress through the swing; tele: draw as a faint telegraph of the whole shape instead
-  function drawAttack(g, kind, ax, ay, f, { t = 1, alpha = 1, tele = false } = {}) {
-    const A = ATK[kind];
+  function drawAttack(g, kind, ax, ay, f, { t = 1, alpha = 1, tele = false, A = ATK[kind] } = {}) {
     g.save(); g.translate(ax, ay); g.rotate(f); g.globalAlpha *= alpha;
     if (kind === 'thrust') {
       const len = tele ? A.reach : A.reach * ease(t / .6);
@@ -247,6 +247,25 @@
       off = { x: p.y, y: -p.x };
     });
     $(s, '.off-reach').onclick = e => { reach = !reach; e.currentTarget.classList.toggle('on', reach); };
+    // this slide's own copies of the shapes, so retuning them here leaves the other slides alone
+    const SH = {}, R2D = 180 / Math.PI;
+    const tune = () => {
+      const v = k => +$(s, `[data-shape=${k}]`).value;
+      SH.sweep = { ...ATK.sweep, reach: v('sreach'), arc: v('sarc') / 2 / R2D };
+      SH.thrust = { ...ATK.thrust, reach: v('treach'), half: v('twidth') / 2 };
+      $(s, '[data-sv=sreach]').textContent = v('sreach') + ' px';
+      $(s, '[data-sv=sarc]').textContent = v('sarc') + '°';
+      $(s, '[data-sv=treach]').textContent = v('treach') + ' px';
+      $(s, '[data-sv=twidth]').textContent = v('twidth') + ' px';
+    };
+    const defaults = () => {
+      const set = (k, val) => $(s, `[data-shape=${k}]`).value = Math.round(val);
+      set('sreach', ATK.sweep.reach); set('sarc', ATK.sweep.arc * 2 * R2D); set('treach', ATK.thrust.reach); set('twidth', ATK.thrust.half * 2);
+      tune();
+    };
+    $$(s, '[data-shape]').forEach(i => i.oninput = tune);
+    $(s, '.off-default').onclick = defaults;
+    defaults();
 
     return dt => {
       t = (t + dt) % 2.2;
@@ -254,17 +273,20 @@
       const res = [];
       panels.forEach(({ kind, cx }) => {
         arena(g, cx - PW / 2 + 12, 12, PW - 24, H - 24);
-        const A = ATK[kind], hx = cx + off.x, hy = MY + off.y;
-        const hit = inHitbox(kind, cx, MY, UP, hx, hy);
+        const A = SH[kind], hx = cx + off.x, hy = MY + off.y;
+        const hit = inHitbox(kind, cx, MY, UP, hx, hy, TR, A);
         res.push([A.name, hit]);
-        if (reach) drawAttack(g, kind, cx, MY, UP, { tele: true, alpha: .55 });
+        if (reach) drawAttack(g, kind, cx, MY, UP, { tele: true, alpha: .55, A });
         const sw = t > .7 && t < 1.25;
-        if (sw) drawAttack(g, kind, cx, MY, UP, { t: (t - .7) / .35, alpha: t > 1.05 ? (1.25 - t) / .2 : 1 });
+        if (sw) drawAttack(g, kind, cx, MY, UP, { t: (t - .7) / .35, alpha: t > 1.05 ? (1.25 - t) / .2 : 1, A });
         foe(g, cx, MY, { glow: t < .7 && t > .2 ? .2 : 0 });
         const f = Math.atan2(MY - hy, cx - hx);
         hero(g, hx, hy, { face: f, hit: hit && sw });
         if (hit && sw && t > .85) sprite(g, 'Hit_Hostile', hx, hy, 64, 64, { alpha: .7 });
-        label(g, kind === 'sweep' ? 'Sweep: wide arc, short reach' : 'Thrust: narrow line, long reach', cx, 40, { size: 24 });
+        const title = kind === 'sweep' ? 'Sweep: wide arc, short reach' : 'Thrust: narrow line, long reach';
+        g.font = '600 24px Jost, sans-serif';
+        g.fillStyle = 'rgba(235,235,235,.92)'; g.fillRect(cx - g.measureText(title).width / 2 - 10, 24, g.measureText(title).width + 20, 32);   // a long reach runs under the title
+        label(g, title, cx, 40, { size: 24 });
         label(g, hit ? 'in the hitbox' : 'safe', hx, hy - 44, { col: hit ? '#b0243a' : '#1f8a4f', size: 17 });
       });
       say(out, res.map(([n, h]) => `<b>${n}:</b> <span class="${h ? 'bad' : 'good'}">${h ? 'hits you' : 'misses'}</span>`).join(' &nbsp;·&nbsp; ')
