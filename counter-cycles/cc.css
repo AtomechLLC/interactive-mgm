@@ -27,9 +27,9 @@ svg.cc-wheel { width: 700px; height: 700px; display: block; overflow: visible; f
 .cc-edge.hot .cc-head { fill: var(--accent-3); }
 
 .cc-node { cursor: pointer; outline: none; }
-.cc-disc { stroke: rgba(0,0,0,.35); stroke-width: 3; transition: transform .2s; }
+.cc-disc { stroke: rgba(0,0,0,.35); stroke-width: 3; }
 .cc-halo { fill: none; stroke: transparent; stroke-width: 7; transition: stroke .2s; }
-.cc-node:hover .cc-disc, .cc-node:focus-visible .cc-disc, .cc-node.sel .cc-disc { transform: scale(1.07); }
+.cc-node:hover .cc-halo, .cc-node:focus-visible .cc-halo { stroke: rgba(251,251,253,.45); }
 .cc-node.sel .cc-halo { stroke: var(--paper); }
 .cc-node.beaten .cc-halo { stroke: var(--good); }
 .cc-node.counter .cc-halo { stroke: var(--bad); }
@@ -47,7 +47,7 @@ svg.cc-wheel { width: 700px; height: 700px; display: block; overflow: visible; f
 .pop .cc-pill rect { stroke: var(--accent-3); } .pop .cc-pill text { fill: var(--accent-3); }
 
 /* ---------- side panel ---------- */
-.cc-panel { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 22px 28px; min-height: 300px; font-size: 22px; line-height: 1.4; }
+.cc-panel { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 22px 28px; height: 330px; overflow: hidden;   /* fixed, so hovering never moves the slide */ font-size: 22px; line-height: 1.4; }
 .cc-panel .cc-idle { color: var(--muted); font-size: 24px; margin: 0; }
 .cc-name { font-family: var(--display); font-size: 30px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; }
 .cc-name b { font-weight: 700; }
@@ -83,9 +83,9 @@ svg.cc-wheel { width: 700px; height: 700px; display: block; overflow: visible; f
 .cc-grid td.n { background: rgba(169,183,214,.08); color: var(--muted); font-weight: 400; }
 .cc-grid td.self { background: repeating-linear-gradient(45deg, transparent 0 6px, rgba(169,183,214,.08) 6px 12px); cursor: default; }
 .cc-grid td:not(.self):hover { outline: 2px solid var(--accent-3); }
-.slide .cc-count { font-size: 21px; margin: 12px 0 0; color: var(--muted); }
+.slide .cc-count { font-size: 21px; margin: 12px 0 0; height: 60px; color: var(--muted); }
 .cc-count .good { color: var(--good); } .cc-count .bad { color: var(--bad); }
-.cc-grid-wrap .cc-panel { min-height: 0; padding: 14px 20px; margin-top: 12px; }
+.cc-grid-wrap .cc-panel { height: 128px; padding: 14px 20px; margin-top: 12px; }
 .cc-grid-wrap .cc-name { font-size: 24px; }
 .cc-grid-wrap .cc-why, .cc-grid-wrap .cc-tag { font-size: 19px; margin: 4px 0 0; }
 
@@ -95,7 +95,7 @@ svg.cc-wheel { width: 700px; height: 700px; display: block; overflow: visible; f
 .cc-q-opts .btn { font-size: 24px; }
 .cc-q-opts .btn.good { background: rgba(95,224,160,.2); border-color: var(--good); }
 .cc-q-opts .btn.bad { background: rgba(255,107,107,.18); border-color: var(--bad); }
-.slide .cc-q-out { font-size: 24px; min-height: 110px; margin: 18px 0; }
+.slide .cc-q-out { font-size: 24px; height: 110px; margin: 18px 0; }
 .cc-q-score { font-family: var(--display); color: var(--accent-3); font-size: 28px; margin-left: 16px; }
 .quiz .cc-node { cursor: default; }
 
@@ -104,3 +104,4 @@ svg.cc-wheel { width: 700px; height: 700px; display: block; overflow: visible; f
 .cc-three svg.cc-wheel { width: 100%; height: auto; aspect-ratio: 1; }
 .cc-three h3 { font-size: 26px; text-align: center; margin-bottom: 0; }
 .slide .cc-three p { font-size: 22px; color: var(--muted); text-align: center; margin: 4px 0 0; }
+[data-demo="cc-moba"] .cc-panel { height: 410px; }
