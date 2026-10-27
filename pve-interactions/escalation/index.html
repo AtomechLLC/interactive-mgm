@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Escalation · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="escalation.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · PvE Interactions · Escalation', home: '../index.html', audio: null, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1 -->
+<section class="slide center" data-title="Escalation" data-demo="title">
+  <div class="kicker rise">fundamentals for designing engaging PvE interactions</div>
+  <h1 class="rise">Harder, or <span class="accent">different?</span></h1>
+  <div class="rule rise" style="margin:22px auto"></div>
+  <canvas class="demo ti-canvas rise" width="900" height="420"></canvas>
+  <p class="lede rise" style="margin:18px auto 0;text-align:center">Once the player has learned an enemy, you raise the stakes, numerically or contextually.</p>
+</section>
+
+<!-- 2: the sandbox -->
+<section class="slide" data-title="Numbers or context" data-demo="sandbox">
+  <div class="kicker">does it change the play pattern or just the risk level?</div>
+  <h2 class="sm">Escalate it <span class="accent">two ways</span></h2>
+  <div class="es-wrap">
+    <div>
+      <canvas class="demo es-canvas" width="900" height="420"></canvas>
+      <div class="es-kind"></div>
+      <div class="es-pat"></div>
+    </div>
+    <div class="es-side">
+      <h4>Numerically</h4>
+      <label><span>Enemy health <b class="es-hp-v"></b></span><input type="range" class="es-hp" min="1" max="8" step="1"></label>
+      <label><span>Enemy damage <b class="es-dmg-v"></b></span><input type="range" class="es-dmg" min="1" max="10" step="1"></label>
+      <label><span>Attack speed <b class="es-spd-v"></b></span><input type="range" class="es-spd" min="0" max="100"></label>
+      <h4>Contextually</h4>
+      <div class="row wrap">
+        <button class="btn" data-ctx="corridor">Narrow corridor</button>
+        <button class="btn" data-ctx="dark">Darkness</button>
+        <button class="btn" data-ctx="ledge">Ledge</button>
+      </div>
+      <h4>Or change a rule</h4>
+      <div class="row wrap">
+        <button class="btn" data-ctx="shield">Give it a shield</button>
+      </div>
+      <div class="es-stats"></div>
+      <div class="row wrap es-opts">
+        <button class="btn es-tour">▶ Tour</button>
+        <button class="btn es-reset">↺ The lesson</button>
+      </div>
+    </div>
+  </div>
+  <p class="out es-out"></p>
+</section>
+
+<!-- 3: slide 148 -->
+<section class="slide" data-title="Escalation vs permutation" data-demo="versus">
+  <div class="kicker">escalation vs permutation</div>
+  <h2 class="sm">Harder is not <span class="accent">new</span></h2>
+  <canvas class="demo vs-canvas" width="1420" height="360"></canvas>
+  <div class="vs-cols">
+    <div><h3>The lesson</h3><div class="vs-pat"></div><p>Read the wind-up, sidestep, strike while it recovers.</p></div>
+    <div><h3>Escalation</h3><div class="vs-pat"></div><p>Twice the health, more damage, a faster swing. The same moves, held to a higher standard.</p></div>
+    <div><h3 class="accent">Permutation</h3><div class="vs-pat"></div><p>A shield turns it into a new kind of challenge: now you have to get behind it.</p></div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="../shared/topdown.js"></script>
+<script src="escalation.js"></script>
+</body>
+</html>

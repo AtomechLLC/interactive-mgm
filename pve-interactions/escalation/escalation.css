@@ -1,0 +1,38 @@
+/* Escalation: per-slide layout. Shared look comes from ../../assets/deck.css and kit.css. */
+.slide { padding: 46px 90px 60px; justify-content: flex-start; }
+.slide.center { justify-content: center; }
+.slide h2.sm { font-size: 44px; margin-bottom: 12px; }
+.good { color: var(--good); }
+.bad { color: var(--bad); }
+.warn { color: #b36b05; }
+.out { font-size: 20px !important; line-height: 1.38 !important; min-height: 2.8em; margin: 6px 0 0; }
+.row.wrap { flex-wrap: wrap; gap: 8px; align-items: center; }
+.slide.center canvas.ti-canvas { display: block; margin: 0 auto; width: 520px; height: 243px; border-radius: 10px; }
+.slide.slide:not(.center):not(.dk) canvas.demo { background: none; border: 0; border-radius: 8px; }
+
+/* slide 2 */
+.es-wrap { display: grid; grid-template-columns: 820px 1fr; gap: 28px; margin-top: -8px; }
+.es-canvas { width: 820px; height: 383px; display: block; }
+.es-side h4 { font-family: var(--display); font-size: 15px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 10px 0 4px; }
+.es-side h4:first-child { margin-top: 0; }
+.es-side label { display: grid; font-size: 16px; color: var(--muted); margin-bottom: 2px; }
+.es-side label b { color: var(--ink); font-weight: 600; }
+.es-side .btn { font-size: 16px; padding: 6px 12px; }
+.es-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 14px; }
+.es-stats div { background: #fffaf0; border: 2px solid #cdbf9f; border-radius: 10px; padding: 6px 10px; display: grid; }
+.es-stats b { font-family: var(--display); font-size: 24px; color: var(--ink); }
+.es-stats span { font-size: 13px; color: var(--muted); }
+.es-opts { margin-top: 12px; }
+.es-kind { display: flex; gap: 22px; align-items: baseline; margin-top: 8px; font-size: 18px; color: var(--muted); }
+.es-kind > b { font-family: var(--display); font-size: 22px; }
+.es-kind .accent { color: var(--gold-ink); }
+.es-pat, .vs-pat { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-top: 6px; }
+.stp { background: #dfe6fb; border: 2px solid #8ea2e6; color: #23306e; border-radius: 8px; padding: 2px 9px; font-size: 15px; font-weight: 600; }
+.stp.new { background: #fde9b8; border-color: #e0a92d; color: #7a4a00; }
+.es-pat i, .vs-pat i { font-style: normal; color: var(--muted); }
+
+/* slide 3 */
+.vs-canvas { width: 1420px; height: 360px; display: block; }
+.vs-cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-top: 4px; }
+.vs-cols h3 { font-size: 28px; margin: 0; color: var(--ink); }
+.vs-cols p { font-size: 18px; color: var(--muted); margin: 6px 0 0; line-height: 1.35; }

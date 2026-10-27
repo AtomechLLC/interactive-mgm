@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Enemy Composer · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="composer.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · PvE Interactions · Enemy Composer', home: '../index.html', audio: null, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1 -->
+<section class="slide center" data-title="Compositional design" data-demo="title">
+  <div class="kicker rise">fundamentals for designing engaging PvE interactions</div>
+  <h1 class="rise">Twelve enemies, <span class="accent">three columns</span></h1>
+  <div class="rule rise" style="margin:22px auto"></div>
+  <canvas class="demo ti-canvas rise" width="940" height="130"></canvas>
+  <p class="lede rise" style="margin:18px auto 0;text-align:center">Every Super Mario Bros. enemy on the slide is one card: how it moves, what a stomp does to it, and what a fireball does to it. Change one column and you get a different enemy.</p>
+</section>
+
+<!-- 2: the slide's table -->
+<section class="slide" data-title="The twelve cards" data-demo="cards">
+  <div class="kicker">sidebar</div>
+  <h2 class="sm">This is <span class="accent">compositional design</span></h2>
+  <div class="cd-wrap">
+    <div class="cd-grid"></div>
+    <div class="cd-side">
+      <canvas class="demo cd-canvas" width="900" height="400"></canvas>
+      <p class="out cd-out"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 3: the composer -->
+<section class="slide" data-title="Compose an enemy" data-demo="composer">
+  <div class="kicker">pick a look and three rules</div>
+  <h2 class="sm">Compose an <span class="accent">enemy</span></h2>
+  <div class="cp-wrap">
+    <div>
+      <canvas class="demo cp-canvas" width="980" height="420"></canvas>
+      <p class="out cp-out"></p>
+    </div>
+    <div class="cp-side">
+      <h4>Look</h4><div class="cp-looks"></div>
+      <h4>Movement</h4><div class="row wrap cp-move"></div>
+      <h4>Stomp</h4><div class="row wrap cp-stomp"></div>
+      <h4>Fireball</h4><div class="row wrap cp-fire"></div>
+      <div class="cp-card"></div>
+      <div class="row wrap cp-opts">
+        <button class="btn cp-tour">▶ One rule at a time</button>
+        <button class="btn cp-reset">↺ Goomba</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4: the design space -->
+<section class="slide" data-title="The design space" data-demo="space">
+  <div class="kicker">6 movements × 4 stomps × 2 fireballs</div>
+  <h2 class="sm">Every card the columns <span class="accent">allow</span></h2>
+  <div class="sp-wrap">
+    <table class="sp-grid"></table>
+    <div class="sp-side">
+      <div class="sp-stats"></div>
+      <canvas class="demo sp-canvas" width="900" height="400"></canvas>
+      <p class="out sp-out"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 5: slide 45 -->
+<section class="slide" data-title="Same card, different feel" data-demo="feel">
+  <div class="kicker">some things behave the same but feel different</div>
+  <h2 class="sm">Same card, <span class="accent">different feel</span></h2>
+  <canvas class="demo fl-canvas" width="1420" height="440"></canvas>
+  <div class="row wrap fl-row">
+    <p class="out fl-out"></p>
+    <button class="btn fl-swap">⇄ Swap their timing</button>
+  </div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="composer.js"></script>
+</body>
+</html>
