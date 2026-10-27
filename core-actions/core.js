@@ -371,7 +371,7 @@
         shown.forEach(d => {
           const m = MOVES[d], to = moved(d, bx, by, UP), o = outcome(kind, d);
           const p = mt > 0 && m.dur ? ease(mt / .35) : 0, x = lerp(bx, to.x, p), y = lerp(by, to.y, p);
-          if (d !== 'none') {
+          if (d !== 'none' && p >= .99) {   // the path and its QS label appear once the step has happened
             arrow(g, bx + (to.x - bx) * .3, by + (to.y - by) * .3, bx + (to.x - bx) * .82, by + (to.y - by) * .82, { bend: d === 'back' ? 0 : (d === 'left' ? .25 : -.25) });
             qsMark(g, lerp(bx, to.x, .55), lerp(by, to.y, .55) - (d === 'back' ? 0 : 22), .95);
           }
