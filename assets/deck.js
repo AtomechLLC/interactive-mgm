@@ -295,7 +295,7 @@
     }
 
     /* ---------- navigation ---------- */
-    // dark slides: widgets that were styled white for the old paper slides get navy cards and light ink
+    // dark slides (title and .dk): widgets styled white for parchment slides get navy cards and light ink
     function darken(s) {
       const lum = c => { const m = c.match(/[\d.]+/g); if (!m) return [-1, 0]; const [r, g, b, a = 1] = m.map(Number); return [(r * .3 + g * .59 + b * .11) / 255, a]; };
       s.querySelectorAll('*').forEach(e => {
@@ -322,7 +322,7 @@
         if (!inited.has(i)) { inited.add(i); d.init?.(s); }
         d.enter?.(s);
       }
-      if (!s.classList.contains('paper')) requestAnimationFrame(() => darken(s));
+      if (s.matches('.center, .dk')) requestAnimationFrame(() => darken(s));
       if (touch) { touchWords(s); showPad(s); }
       notesPanel.querySelector('.body').innerHTML = notesFor(i);
       bar.querySelector('.count').textContent = `${i + 1} / ${slides.length}`;

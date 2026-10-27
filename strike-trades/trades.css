@@ -74,3 +74,14 @@ table.gr td span { font-size: 15px; opacity: .8; }
 .sum3 .sum-c b { font-family: var(--display); font-size: 26px; text-transform: uppercase; }
 .sum3 .sum-c i { font-style: normal; color: var(--text); font-weight: 600; }
 .sum3 .sum-c.ar b { color: #8fd3ff; } .sum3 .sum-c.sa b { color: #ffb547; } .sum3 .sum-c.im b { color: #c79bff; }
+
+/* parchment slides: the technique colours are pastel for navy, so text in them is mixed toward the deck's ink */
+.slide:not(.center) :is(b.ar, th.ar) { color: #2a72b8; }
+.slide:not(.center) :is(b.sa, th.sa) { color: #a8650a; }
+.slide:not(.center) :is(b.im, th.im) { color: #7a48c4; }
+.slide:not(.center) table.tr-cmp tr[data-m] th { color: color-mix(in srgb, var(--c) 45%, #1b2050); }
+.slide:not(.center) table.tr-cmp td { background: rgba(38,44,106,.04); }
+.slide:not(.center) table.tr-cmp tr.cur td, .slide:not(.center) table.tr-cmp tr.cur th { background: rgba(38,44,106,.1); }
+.slide:not(.center) .w-atk { color: #c8323c; } .slide:not(.center) .w-trade { color: #a8650a; }
+.slide:not(.center) .sum3 .sum-c.ar b { color: #2a72b8; } .slide:not(.center) .sum3 .sum-c.sa b { color: #a8650a; } .slide:not(.center) .sum3 .sum-c.im b { color: #7a48c4; }
+.slide:not(.center) .atk { color: #c8323c; }

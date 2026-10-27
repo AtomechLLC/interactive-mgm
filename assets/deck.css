@@ -1,4 +1,5 @@
 /* First Principles of Fun — deck engine styles */
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,500;0,600;0,700;0,800;1,600;1,700&display=swap");
 :root {
   /* brand: matches the original FPGD deck (navy, paper white, electric blue) */
   --bg: #071a3d;          /* page behind the stage */
@@ -293,3 +294,96 @@ em > svg.gi:only-child, b > svg.gi:only-child { width: 1em; height: 1em; vertica
 .slide svg.diagram { display: block; width: 100%; height: auto; overflow: visible; }
 .slide svg.diagram.icon-lg { width: 420px; height: 420px; border-radius: 0; }
 .slide svg.diagram.tc-pic { width: 46%; background: none; }
+
+/* =====================================================================
+   MGM course theme: the Mastering Game Mechanics slide deck's look.
+   Parchment slides with navy ink, deck navy for title slides, header bands
+   and the player chrome, gold for accent words, a thin gold frame.
+   Colours sampled from the course deck: navy #152044, ink #262c6a,
+   gold #ffb951, paper #ede7e7 under the deck's own parchment texture.
+   ===================================================================== */
+:root {
+  --bg: #0c1430;
+  --navy: #152044;
+  --navy-2: #1d2a56;
+  --panel: #1d2a56;
+  --line: #34437a;
+  --text: #ffffff;
+  --muted: #b3bbd8;
+  --accent: #ffb951;      /* deck gold */
+  --accent-2: #9fc4ff;
+  --accent-3: #ffb951;
+  --ink: #262c6a;         /* deck body text */
+  --paper: #ede7e7;
+  --gold: #ffb951;
+  --gold-ink: #9a5a06;    /* gold dark enough to read on parchment */
+  --display: "Montserrat", "Jost", system-ui, sans-serif;
+  --parchment: #ede7e7 url("img/theme/paper.jpg") center / cover;
+}
+/* parchment slides: everything the decks draw with the shared tokens re-inks for a light page */
+.slide:not(.center):not(.dk) {
+  --text: #262c6a;
+  --muted: #5d618c;
+  --line: #cdbf9f;
+  --panel: rgba(255, 252, 244, .78);
+  --navy-2: #e6dcc6;
+  --accent: #152044;
+  --accent-2: #1f5fbf;
+  --accent-3: #b36b05;
+  --good: #1a8a4c;
+  --bad: #cf2f3b;
+  background: var(--parchment);
+  color: var(--text);
+}
+.stage { background: var(--navy); }
+.stage::after { content: ""; position: absolute; inset: 0; border: 3px solid var(--gold); border-radius: 18px; pointer-events: none; z-index: 8; }
+
+/* headings: the deck's heavy Montserrat in title case, not the old all-caps sci-fi face */
+.slide h1, .slide h2, .slide h3 { font-family: var(--display); font-weight: 800; text-transform: none; letter-spacing: 0; }
+.slide h1 { font-size: 92px; }
+.slide .accent, .slide h1 .accent, .slide h2 .accent { color: var(--gold); }
+.slide:not(.center):not(.dk) .accent { color: var(--gold-ink); }
+.rule { background: var(--gold); }
+.kicker { color: var(--gold); font-weight: 500; }
+.slide:not(.center):not(.dk) .kicker { color: var(--gold-ink); }
+.slide:not(.center):not(.dk) a { color: #1f5fbf; }
+
+/* the deck's navy header band with its angled edge, hugging each parchment slide's heading */
+.slide:not(.center):not(.dk) h2 {
+  width: fit-content; max-width: 100%; color: #fff; background: var(--navy);
+  padding: 6px 60px 8px 24px; margin-left: -24px; margin-top: -6px;
+  clip-path: polygon(0 0, 100% 0, calc(100% - 34px) 100%, 0 100%);
+}
+.slide:not(.center):not(.dk) h2 .accent { color: var(--gold); }
+
+/* title slides: deck navy with a parchment wedge along the bottom */
+.slide.center { background: radial-gradient(1200px 700px at 50% 0%, #22306a 0%, rgba(34,48,106,0) 70%), var(--navy); }
+.slide.center::before { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 15%; background: var(--parchment); clip-path: polygon(0 45%, 100% 0, 100% 100%, 0 100%); z-index: 0; pointer-events: none; }
+.slide.center .lede { color: #d6dbef; }
+
+/* cards and buttons on parchment: cream panels with a tan edge, navy when on */
+.slide:not(.center):not(.dk) .card, .slide:not(.center):not(.dk) .btn { box-shadow: 0 2px 0 rgba(120, 96, 50, .12); }
+.slide:not(.center):not(.dk) .btn.on { background: var(--navy); border-color: var(--navy); color: #fff; }
+.slide:not(.center):not(.dk) .btn:hover { border-color: var(--navy); }
+/* canvases and other dark screens keep their navy so the demos read like the deck's navy chart boxes */
+.slide:not(.center):not(.dk) canvas.demo { background: var(--navy); border: 2px solid var(--navy); border-radius: 10px; }
+.slide .navy-scope, .slide .el-board, .slide .lobby, .slide .vid-player {
+  --text: #ffffff; --muted: #b3bbd8; --line: #34437a; --panel: #1d2a56; --navy-2: #1d2a56;
+  --accent: #ffb951; --accent-2: #9fc4ff; --accent-3: #ffb951; --good: #5fe0a0; --bad: #ff6b6b;
+  color: var(--text);
+}
+.slide:not(.center):not(.dk) input[type=range] { accent-color: var(--navy); }
+
+/* player chrome in deck navy and gold */
+.bar, .notes-panel { background: #0f1836; }
+.timeline .tick { background: #3a4677; }
+.timeline .tick.cur { background: var(--gold); }
+.bar .sec-btn.cur, .overview button.cur { color: var(--navy); }
+.edge-nav { background: rgba(21, 32, 68, .78); }
+.edge-nav:hover, .edge-nav:focus-visible { color: var(--navy); }
+.overview { background: rgba(12, 20, 48, .97); }
+/* the old cool-tinted paper slides take the parchment too */
+.slide.paper { background: var(--parchment); }
+.slide.paper.paper h2:not(.accent) { color: #fff; }
+/* key caps inside parchment buttons: outline only, no dark block */
+.slide:not(.center):not(.dk) kbd { background: none; }

@@ -96,3 +96,8 @@
 .take .card b { font-size: 28px; }
 .take .card p { font-size: 24px; margin: 12px 0 0; color: var(--muted); }
 .slide .src { font-size: 17px; color: var(--muted); margin-top: 34px; }
+
+/* parchment slides: selected rows tint instead of going dark blue under navy ink */
+.slide:not(.center) .lever:has(input:checked), .slide:not(.center) .vid.on { background: #e3ebf8; }
+.slide:not(.center) .radar .ghost { stroke: #2a72b8; }
+.slide:not(.center) .q-t { fill: #c05a12; }

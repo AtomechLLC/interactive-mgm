@@ -94,3 +94,8 @@ table.og.small th { padding: 2px 6px; }
 .sum-c { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 22px; display: grid; gap: 10px; font-size: 21px; }
 .sum-c b { font-family: var(--display); font-size: 24px; text-transform: uppercase; }
 .sum-c span:last-child { color: var(--muted); }
+
+/* parchment slides: verb colours dark enough to read on the paper */
+.slide:not(.center) .atk { color: #c8323c; }
+.slide:not(.center) .mov, .slide:not(.center) .verb-card.new h3 { color: #1a8a4c; }
+.slide:not(.center) .f-free { color: #1a8a4c !important; }

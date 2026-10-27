@@ -5,31 +5,33 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Mastering Game Mechanics</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Orbitron:wght@600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root { --navy: #0c2756; --deep: #071a3d; --paper: #fbfbfd; --blue: #2f7bff; --ice: #8fd3ff; --muted: #a9b7d6; --line: #2b4785; }
+  /* the course deck's theme: navy band with an angled edge over parchment, gold accents */
+  :root { --navy: #152044; --ink: #262c6a; --muted: #5d618c; --gold: #ffb951; --gold-ink: #9a5a06; --line: #cdbf9f; }
   * { box-sizing: border-box; }
-  body { margin: 0; background: var(--deep); color: var(--paper); font-family: Jost, system-ui, sans-serif; }
-  header { padding: 64px 24px 30px; max-width: 1180px; margin: 0 auto; }
-  .kicker { color: var(--ice); font-size: 20px; }
-  h1 { font-family: Orbitron, sans-serif; font-size: clamp(34px, 6vw, 68px); margin: 8px 0 10px; text-transform: uppercase; letter-spacing: .02em; }
-  h1 span { color: var(--blue); }
-  header p { color: var(--muted); font-size: 19px; max-width: 720px; }
-  main { max-width: 1180px; margin: 0 auto; padding: 0 24px 80px; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
-  a.mod { display: grid; grid-template-columns: 72px 1fr; gap: 16px; align-items: center; padding: 18px; border-radius: 12px; background: var(--navy); border: 1px solid var(--line); color: inherit; text-decoration: none; transition: transform .15s, border-color .2s; }
-  a.mod:hover { transform: translateY(-4px); border-color: var(--blue); }
-  .mod img { width: 72px; height: 72px; border-radius: 50%; background: #9a9a9a; padding: 9px; }
-  .mod b { font-family: Orbitron, sans-serif; font-size: 17px; display: block; text-transform: uppercase; }
+  body { margin: 0; min-height: 100vh; background: #ede7e7 url("assets/img/theme/paper.jpg") center / cover fixed; color: var(--ink); font-family: Jost, system-ui, sans-serif; border: 4px solid var(--gold); }
+  .band { background: var(--navy); color: #fff; clip-path: polygon(0 0, 100% 0, 100% 78%, 0 100%); padding: 0 0 70px; }
+  header { padding: 60px 24px 0; max-width: 1180px; margin: 0 auto; }
+  .kicker { color: var(--gold); font-size: 20px; }
+  h1 { font-family: Montserrat, sans-serif; font-weight: 800; font-size: clamp(34px, 6vw, 68px); margin: 8px 0 10px; }
+  h1 span { color: var(--gold); }
+  header p { color: #d6dbef; font-size: 19px; max-width: 720px; margin-bottom: 0; }
+  main { max-width: 1180px; margin: 0 auto; padding: 30px 24px 80px; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
+  a.mod { display: grid; grid-template-columns: 72px 1fr; gap: 16px; align-items: center; padding: 18px; border-radius: 12px; background: rgba(255, 252, 244, .82); border: 1px solid var(--line); color: inherit; text-decoration: none; box-shadow: 0 2px 0 rgba(120, 96, 50, .12); transition: transform .15s, border-color .2s; }
+  a.mod:hover { transform: translateY(-4px); border-color: var(--navy); }
+  .mod img { width: 72px; height: 72px; border-radius: 50%; background: var(--navy); padding: 9px; }
+  .mod b { font-family: Montserrat, sans-serif; font-weight: 800; font-size: 19px; display: block; }
   .mod small { color: var(--muted); font-size: 15px; }
-  .tag { display: inline-block; font-size: 12px; color: var(--ice); border: 1px solid var(--line); border-radius: 99px; padding: 1px 8px; margin-top: 6px; }
+  .tag { display: inline-block; font-size: 12px; color: var(--gold-ink); border: 1px solid var(--line); border-radius: 99px; padding: 1px 8px; margin-top: 6px; }
 </style>
 </head>
 <body>
-<header>
+<div class="band"><header>
   <div class="kicker">interactive visuals</div>
   <h1>Mastering Game <span>Mechanics</span></h1>
   <p>Slides from the course, rebuilt so you can poke at them. Use ← → to move, N for speaker notes, O for an overview.</p>
-</header>
+</header></div>
 <main>
   <a class="mod" href="core-actions/index.html"><img src="assets/img/forsaken/Token_Player1.png" alt=""><span><b>Core Gameplay Actions</b><small>PvP interactions: sweeps and thrusts vs. block, dodge and quickstep (deck slides 428 to 434)</small><br><span class="tag">ready</span></span></a>
   <a class="mod" href="bruiser-meta/index.html"><img src="assets/img/forsaken/Monster.png" alt=""><span><b>Unbalanced Meta: Bruisers</b><small>League of Legends’ bruiser meta: class shapes, why strong + easy spreads, the levers that broke it, and video clips</small><br><span class="tag">ready</span></span></a>
