@@ -3,6 +3,7 @@
 // Usage: serve InteractiveMGM on a port, then
 //   node record-slide-gif.js <url with #slide> <which> <out.gif> [fps=15] [hide selectors, comma separated]
 // e.g. node record-slide-gif.js http://127.0.0.1:8151/coop-interactions/timing/index.html#2 tour ../gifs/timing-before-during-after.gif
+// Env GIF_COLORS (default 128), GIF_DITHER (default bayer) and GIF_STATS (default diff) trade quality for size on scrolling scenes.
 // Needs playwright-core and Edge (the bundled chromium does not start on this machine) and ffmpeg on PATH.
 const { chromium } = require('C:/Projects/game-agent/node_modules/playwright-core');
 const fs = require('fs'), path = require('path'), os = require('os'), { execFileSync } = require('child_process');
@@ -29,7 +30,7 @@ ${hide ? hide + '{visibility:hidden!important}' : ''}`;
   }
   await b.close();
   execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-framerate', String(fps), '-i', path.join(dir, 'f%05d.png'),
-    '-vf', 'scale=1280:720:flags=lanczos,split[a][b];[a]palettegen=max_colors=128:stats_mode=diff[p];[b][p]paletteuse=dither=bayer:bayer_scale=4:diff_mode=rectangle',
+    '-vf', `scale=1280:720:flags=lanczos,split[a][b];[a]palettegen=max_colors=${process.env.GIF_COLORS || 128}:stats_mode=${process.env.GIF_STATS || "diff"}[p];[b][p]paletteuse=dither=${process.env.GIF_DITHER || 'bayer:bayer_scale=4'}:diff_mode=rectangle`,
     '-loop', '0', out]);
   fs.rmSync(dir, { recursive: true, force: true });
   console.log(out, n, 'frames', dur.toFixed(1) + 's', (fs.statSync(out).size / 1e6).toFixed(1) + ' MB');

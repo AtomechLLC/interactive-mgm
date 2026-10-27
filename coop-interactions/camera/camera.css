@@ -1,0 +1,21 @@
+/* Shared-screen camera lab: per-slide layout. */
+.cm-wrap { display: grid; grid-template-columns: 960px 1fr; gap: 28px; margin-top: -4px; }
+.cm-canvas { width: 960px; height: 540px; display: block; border-radius: 10px; }
+.cm-meters { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
+.cm-meters div { background: #fffaf0; border: 2px solid #cdbf9f; border-radius: 10px; padding: 6px 12px; }
+.cm-meters b { font-family: var(--display); font-size: 17px; color: var(--ink); display: flex; justify-content: space-between; }
+.cm-meters small { font-size: 13px; color: var(--muted); }
+.cm-meters .bar { height: 8px; background: #e9dfcb; border-radius: 99px; margin-top: 4px; overflow: hidden; }
+.cm-meters .bar i { display: block; height: 100%; border-radius: 99px; transition: width .25s; }
+.cm-side h4 { font-family: var(--display); font-size: 15px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 8px; }
+.cm-mode { display: grid; width: 100%; text-align: left; gap: 1px; margin-bottom: 6px; padding: 7px 12px; border-radius: 10px; border: 2px solid #cdbf9f; background: #fffaf0; color: var(--ink); font: inherit; cursor: pointer; }
+.cm-mode b { font-family: var(--display); font-size: 17px; }
+.cm-mode span { font-size: 14px; color: var(--muted); line-height: 1.25; }
+.cm-mode.on { border-color: var(--navy); background: #e6e9f8; }
+.cm-weights { margin-top: 8px; }
+.cm-weights label { display: grid; font-size: 15px; color: var(--muted); margin-bottom: 2px; }
+.cm-weights label b { color: var(--ink); }
+.cm-weights.off { opacity: .35; pointer-events: none; }
+.cm-btns { margin-top: 8px; }
+.cm-btns .btn { font-size: 16px; padding: 6px 12px; }
+.cm-out { margin-top: 10px; font-size: 17px; line-height: 1.38; color: var(--ink); }
