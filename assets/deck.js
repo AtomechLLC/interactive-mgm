@@ -33,6 +33,19 @@
     const cfg = window.DECK || {};
     const stage = document.querySelector('.stage');
     const slides = [...document.querySelectorAll('.slide')];
+    // parchment slides: the first heading (and the kicker above it) moves into the course template's corner title block
+    slides.forEach(s => {
+      if (s.matches('.center, .dk, .no-head')) return;
+      const h = s.querySelector('h2');
+      if (!h) return;
+      const head = document.createElement('header');
+      head.className = 'slide-head';
+      const k = h.previousElementSibling;
+      if (k && k.classList.contains('kicker')) head.append(k);
+      head.append(h);
+      s.prepend(head);
+      s.classList.add('has-head');
+    });
     let cur = -1;
     const inited = new Set();
 

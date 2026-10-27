@@ -348,13 +348,19 @@ em > svg.gi:only-child, b > svg.gi:only-child { width: 1em; height: 1em; vertica
 .slide:not(.center):not(.dk) .kicker { color: var(--gold-ink); }
 .slide:not(.center):not(.dk) a { color: #1f5fbf; }
 
-/* the deck's navy header band with its angled edge, hugging each parchment slide's heading */
-.slide:not(.center):not(.dk) h2 {
-  width: fit-content; max-width: 100%; color: #fff; background: var(--navy);
-  padding: 6px 60px 8px 24px; margin-left: -24px; margin-top: -6px;
-  clip-path: polygon(0 0, 100% 0, calc(100% - 34px) 100%, 0 100%);
+/* the course template's title block: navy, flush in the top-left corner, angled right edge, a blue offset stripe below.
+   Template proportions: 17% of the slide tall, sized to the title, title inset ~3% from the left. */
+.slide.slide.slide.has-head { padding-top: 200px; }
+.slide > .slide-head {
+  position: absolute !important; top: 0; left: 0; z-index: 3 !important; min-width: 34%; max-width: 74%; min-height: 170px;
+  display: flex; flex-direction: column; justify-content: center; padding: 14px 110px 30px 52px;
+  background: linear-gradient(to bottom, var(--navy) calc(100% - 14px), #5562eb 0); clip-path: polygon(0 0, 100% 0, calc(100% - 92px) 100%, 0 100%);
 }
-.slide:not(.center):not(.dk) h2 .accent { color: var(--gold); }
+.slide .slide-head h2, .slide.paper .slide-head h2:not(.accent) { color: #fff !important; font-size: 50px; line-height: 1.12; margin: 0 !important; background: none; padding: 0; clip-path: none; width: auto; max-width: none; }
+.slide .slide-head .kicker, .slide:not(.center):not(.dk) .slide-head .kicker { color: var(--gold); font-size: 20px; margin: 0 0 4px; }
+.slide .slide-head h2 .accent { color: var(--gold) !important; }
+/* any other h2 on a parchment slide is a plain navy subheading */
+.slide:not(.center):not(.dk) h2 { color: var(--ink); }
 
 /* title slides: deck navy with a parchment wedge along the bottom */
 .slide.center { background: radial-gradient(1200px 700px at 50% 0%, #22306a 0%, rgba(34,48,106,0) 70%), var(--navy); }
