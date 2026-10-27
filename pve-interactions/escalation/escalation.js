@@ -223,12 +223,17 @@
     const cfgs = [{ ...BASE }, { ...BASE, hp: 6, dmg: 5, speed: .55 }, { ...BASE, shield: true }];
     const Fs = cfgs.map(fight), W = cv.width / 3;
     $$(s, '.vs-pat').forEach((el, i) => el.innerHTML = chips(cfgs[i], i === 2 ? 'new' : ''));
-    return (dt, t) => {
+    // on the GIF all three start together and the shorter fights hold their end until the escalated one finishes
+    const LONG = Math.max(...Fs.map(F => F.dur)), st = { held: false, t: 0 };
+    const render = (t, sync) => {
       g.clearRect(0, 0, cv.width, cv.height);
-      Fs.forEach((F, i) => fit(g, i * W + 8, 0, W - 16, cv.height, () => draw(g, F, t % F.dur, { quiet: true }), [300, 70, 420, 280]));
+      Fs.forEach((F, i) => fit(g, i * W + 8, 0, W - 16, cv.height, () => draw(g, F, sync ? Math.min(t % LONG, F.dur - .01) : t % F.dur, { quiet: true }), [300, 70, 420, 280]));
     };
+    vsApi = { seek(t) { st.held = true; render(t, true); }, dur: () => LONG };
+    return (dt, t) => { if (!st.held) render(t, false); };
   });
 
-  window.__seek = t => sbApi.seek(t);
-  window.__dur = () => sbApi.dur();
+  let vsApi = null;
+  window.__seek = (t, which) => (which === 'versus' ? vsApi : sbApi).seek(t);
+  window.__dur = which => (which === 'versus' ? vsApi : sbApi).dur();
 })();
