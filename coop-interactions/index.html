@@ -65,9 +65,10 @@
     ['camera', 'Target_Reticule', 'Shared-screen camera lab', 'Two players and an enemy on one screen: follow one player, frame both, lock the scroll, split the screen or weight what matters', '68 to 78', 'camera-shared-screen', 'Who gets the camera?', 'The same couch co-op moment under five camera rules, with what each one costs.'],
     ['targeting', 'Grid', 'Teamplay targeting matrix', 'Walk one mechanic through source × target, cell by cell, and watch each cell become a drawn ability: fire becomes a fireball, a pool of flames, Hellfire, cauterize and twelve more. Plus trap, hazard and insight', '116 to 133, 161 to 171', 'targeting-matrix', 'One mechanic, sixteen ideas', 'Fire, heal, shield and slow, each run through who acts upon whom.'],
     ['keywords', 'Text', 'Keywords need situations', 'Class keyword sheets with role, class and spec layers, and encounter sliders that show which keywords ever matter', '270 to 285', 'keywords-need-situations', 'Keywords only matter if situations demand them', 'Four classes through four encounters: each keyword lights up only when the content asks for it.'],
+    ['team-roles', 'Sword', 'Cross-class structure', 'Football with fantasy classes, the holy trinity as an HP tug-of-war, and League lanes turning into a frontline, backline and flank: take a role out and watch the team fail', '246 to 255', 'roles-football-fantasy', 'American football, but fantasy', 'Fighters hold the line, the wizard throws, a rogue scores; then the same play with no fighters, and the wizard gets sacked.'],
   ];
   // pages that are built so far; the rest of PAGES are the module's planned top 5
-  const READY = ['timing', 'chains', 'targeting'];
+  const READY = ['timing', 'chains', 'targeting', 'team-roles'];
   const LIVE = PAGES.filter(p => READY.includes(p[0]));
   document.getElementById('cards').innerHTML = LIVE.map(([f, ic, t, b, sl, gif]) =>
     `<a class="mod" href="${f}/index.html"><img src="../assets/img/forsaken/${ic}.png" alt=""><span><b>${t}</b><small>${b} (deck slides ${sl}). GIF: gifs/${gif}.gif</small><br><span class="tag">ready</span></span></a>`).join('');
@@ -76,6 +77,8 @@
     ['timing', '150 and 151', 'timing-revive', 'Heal and revive', 'Reactive tools need the event first: a heal needs damage, a revive needs a death.'],
     ['timing', '156 to 158', 'timing-souls', 'Iron Flesh, block, Estus', 'The same punch on yourself: halve it before, block it during, drink after.'],
     ['timing', '159 and 160', 'timing-stack', 'Stack all three', 'A shield before, an intervention during and a heal after, all on one big hit.'],
+    ['team-roles', '249', 'roles-holy-trinity', 'The holy trinity tug-of-war', 'Tank soaks, healer refills, DPS chips the boss; then the same pull with no healer, and the party wipes.'],
+    ['team-roles', '250 to 253', 'roles-lanes-to-teamfight', 'From lanes to a teamfight', 'Laning duels and a jungle gank, then a frontline, a backline and an assassin flank take the tower.'],
   ];
   const fig = (sl, gif, gt, cap) => `<figure><a href="gifs/${gif}.gif"><img src="gifs/${gif}.gif" alt="${gt}" loading="lazy"></a><figcaption><b>${gt}</b>${cap} Deck slides ${sl}.</figcaption></figure>`;
   document.getElementById('gifs').innerHTML = LIVE.map(([f, , , , sl, gif, gt, cap]) => fig(sl, gif, gt, cap) + EXTRA.filter(e => e[0] === f).map(e => fig(e[1], e[2], e[3], e[4])).join('')).join('');

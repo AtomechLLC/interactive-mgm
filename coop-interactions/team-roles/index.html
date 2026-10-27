@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cross-Class Structure · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="../shared/coop.css">
+<link rel="stylesheet" href="roles.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · Co-op Interactions · Cross-Class Structure', home: '../index.html', audio: null, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1: slides 246-247 -->
+<section class="slide center" data-title="Cross-class structure" data-demo="title">
+  <div class="kicker rise">engaging co-op interaction design fundamentals</div>
+  <h1 class="rise">Cross-class <span class="accent">structure</span></h1>
+  <div class="rule rise" style="margin:22px auto"></div>
+  <canvas class="demo ti-canvas rise" width="1040" height="585"></canvas>
+  <p class="lede rise" style="margin:18px auto 0;text-align:center">How you work together to win: each class holds part of the toolkit.</p>
+</section>
+
+<!-- 2: slide 248, the football play -->
+<section class="slide" data-title="The football play" data-demo="football">
+  <div class="kicker">cross-class structure · interchangeable parts</div>
+  <h2 class="sm">American football, but <span class="accent">fantasy</span></h2>
+  <div class="rl-wrap">
+    <canvas class="demo rl-canvas" width="1560" height="878"></canvas>
+    <div class="rl-side">
+      <h4>Who is on the team</h4>
+      <button class="role on" data-role="fighter"><i class="tok fighter"></i><b>Fighters</b><span>The linemen and linebackers: a wall that holds the line.</span></button>
+      <button class="role on" data-role="wizard"><i class="tok wizard"></i><b>Wizard</b><span>The quarterback, and the one everyone wants to kill first.</span></button>
+      <button class="role on" data-role="rogue"><i class="tok rogue"></i><b>Rogues</b><span>The wide receivers: sneak past the defence and catch.</span></button>
+      <div class="row wrap ctl">
+        <button class="btn rl-run">Run the play</button>
+        <button class="btn rl-slow">Slow motion</button>
+        <button class="btn rl-tour">▶ Tour</button>
+      </div>
+      <div class="rl-verdict"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3: slide 249, the holy trinity -->
+<section class="slide" data-title="Holy trinity" data-demo="trinity">
+  <div class="kicker">cross-class structure · tank, healer, dps</div>
+  <h2 class="sm">The holy trinity is a <span class="accent">tug-of-war</span></h2>
+  <div class="rl-wrap">
+    <canvas class="demo rl-canvas" width="1560" height="878"></canvas>
+    <div class="rl-side">
+      <h4>Each role covers a weakness</h4>
+      <button class="role on" data-role="tank"><svg viewBox="0 0 40 40"><rect x="5" y="5" width="30" height="30" fill="#cfdcfb" stroke="#1f5fd6" stroke-width="3"/></svg><b>Tank</b><ul><li data-w="tank0">Damage too slow</li><li data-w="tank1">Self-healing too slow</li></ul></button>
+      <button class="role on" data-role="healer"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="15" fill="#d9f0d9" stroke="#2e7d32" stroke-width="3"/></svg><b>Healer</b><ul><li data-w="healer0">Durability insufficient</li><li data-w="healer1">Damage too slow</li></ul></button>
+      <button class="role on" data-role="dps"><svg viewBox="0 0 40 40"><path d="M20 4 37 35H3Z" fill="#f8d2d0" stroke="#a8201c" stroke-width="3" stroke-linejoin="round"/></svg><b>DPS</b><ul><li data-w="dps0">Durability insufficient</li><li data-w="dps1">Other healing too low</li></ul></button>
+      <div class="row wrap ctl">
+        <button class="btn rl-run">Pull the boss</button>
+        <button class="btn rl-slow">Slow motion</button>
+        <button class="btn rl-tour">▶ Tour</button>
+      </div>
+      <div class="rl-verdict"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 4: slides 250-253, laning to teamfight -->
+<section class="slide" data-title="Laning to teamfight" data-demo="teamfight">
+  <div class="kicker">cross-class structure · league of legends</div>
+  <h2 class="sm">From lanes to a <span class="accent">front and back line</span></h2>
+  <div class="rl-wrap">
+    <canvas class="demo rl-canvas" width="1560" height="878"></canvas>
+    <div class="rl-side">
+      <h4>Five of six classes</h4>
+      <div class="comps"></div>
+      <div class="legend"></div>
+      <div class="row wrap ctl">
+        <button class="btn rl-run">Replay</button>
+        <button class="btn rl-fight">Skip to the fight</button>
+        <button class="btn rl-slow">Slow motion</button>
+        <button class="btn rl-tour">▶ Tour</button>
+      </div>
+      <div class="rl-verdict"></div>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="../shared/topdown.js"></script>
+<script src="roles.js"></script>
+</body>
+</html>
