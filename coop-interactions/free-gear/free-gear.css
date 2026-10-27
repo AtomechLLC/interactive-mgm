@@ -1,0 +1,14 @@
+/* Free gear plateau: per-slide layout. */
+.fg-wrap { display: grid; grid-template-columns: 980px 1fr; gap: 30px; margin-top: -4px; }
+.fg-canvas { width: 980px; height: 499px; display: block; }
+.fg-sb { display: flex; gap: 10px; align-items: center; font-size: 18px; color: var(--ink); font-weight: 600; margin-bottom: 14px; }
+.fg-sb input { width: 20px; height: 20px; }
+.fg-stats { display: grid; gap: 8px; }
+.fg-stats div { background: #fffaf0; border: 2px solid #cdbf9f; border-left: 6px solid #2ea3dc; border-radius: 10px; padding: 6px 12px; display: flex; align-items: baseline; gap: 10px; }
+.fg-stats div.g { border-left-color: #2fae63; }
+.fg-stats div.r { border-left-color: #e5322d; }
+.fg-stats b { font-family: var(--display); font-size: 32px; color: var(--ink); min-width: 70px; }
+.fg-stats span { font-size: 15px; color: var(--muted); }
+.fg-btns { margin-top: 12px; }
+.fg-btns .btn { font-size: 16px; padding: 6px 12px; }
+.slide .fg-out { font-size: 18px; line-height: 1.4; color: var(--ink); margin: 12px 0 0; }

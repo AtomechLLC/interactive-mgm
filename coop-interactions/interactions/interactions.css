@@ -1,0 +1,22 @@
+/* Interaction count: per-slide layout. */
+.ic-wrap { display: grid; grid-template-columns: 980px 1fr; gap: 30px; margin-top: -4px; }
+.ic-canvas { width: 980px; height: 499px; display: block; }
+.ic-step { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.ic-step span { font-family: var(--display); font-size: 20px; width: 120px; color: var(--ink); }
+.ic-step .btn { font-size: 22px; padding: 2px 16px; }
+.ic-step b { font-family: var(--display); font-size: 30px; width: 34px; text-align: center; color: var(--ink); }
+.ic-dir { display: flex; gap: 8px; align-items: center; font-size: 15px; color: var(--muted); margin: 4px 0 14px; }
+.ic-sum { display: grid; }
+.ic-sum > b { font-family: var(--display); font-size: 64px; line-height: 1; color: var(--ink); }
+.ic-sum span { font-size: 17px; color: var(--muted); }
+.ic-sum span b { color: var(--ink); }
+.ic-bars { margin-top: 14px; display: grid; gap: 6px; }
+.ic-bars div { display: flex; align-items: center; gap: 0; font-size: 15px; color: var(--muted); opacity: .55; }
+.ic-bars div.on { opacity: 1; color: var(--ink); font-weight: 600; }
+.ic-bars span { width: 32px; }
+.ic-bars i { height: 16px; display: block; }
+.ic-bars i.r { background: rgba(229, 50, 45, .7); border-radius: 4px 0 0 4px; }
+.ic-bars i.g { background: rgba(26, 138, 76, .75); border-radius: 0 4px 4px 0; }
+.ic-bars b { margin-left: 8px; font-family: var(--display); }
+.ic-btns { margin-top: 14px; }
+.ic-btns .btn { font-size: 16px; padding: 6px 12px; }

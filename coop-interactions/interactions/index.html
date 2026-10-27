@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interaction Count · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="../shared/coop.css">
+<link rel="stylesheet" href="interactions.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · Co-op Interactions · Interaction Count', home: '../index.html', audio: null, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1 -->
+<section class="slide center" data-title="Interaction count" data-demo="title">
+  <div class="kicker rise">engaging co-op interaction design fundamentals</div>
+  <h1 class="rise">From 3 things <span class="accent">to 15</span></h1>
+  <div class="rule rise" style="margin:22px auto"></div>
+  <canvas class="demo ti-canvas rise" width="1100" height="560"></canvas>
+  <p class="lede rise" style="margin:18px auto 0;text-align:center">Every player you add multiplies what you have to design.</p>
+</section>
+
+<!-- 2: slide 9 -->
+<section class="slide" data-title="Count the interactions" data-demo="count">
+  <div class="kicker">why co-op is unlike any other kind of game design</div>
+  <h2 class="sm">Count what you <span class="accent">have to design</span></h2>
+  <div class="ic-wrap">
+    <canvas class="demo ic-canvas" width="1100" height="560"></canvas>
+    <div class="ic-side">
+      <div class="ic-step"><span>Players</span><button class="btn" data-d="p-1">−</button><b class="ic-p"></b><button class="btn" data-d="p1">+</button></div>
+      <div class="ic-step"><span>Monsters</span><button class="btn" data-d="m-1">−</button><b class="ic-m"></b><button class="btn" data-d="m1">+</button></div>
+      <label class="ic-dir"><input type="checkbox" class="ic-directed" checked> Count each direction (A helps B is not B helps A)</label>
+      <div class="ic-sum"></div>
+      <div class="ic-bars"></div>
+      <div class="row wrap ic-btns"><button class="btn ic-tour">▶ Tour</button></div>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="../shared/topdown.js"></script>
+<script src="interactions.js"></script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+// Speaker notes per slide. Source: "MGM C3 M6 - Engaging Co-op Interaction Design Fundamentals", slides 315-317 (Mechanism 1: Barter).
+window.NOTES = [
+  { script: 'Adding trading might seem simple, but it can have far-reaching consequences. In the World of Warcraft alpha, the patch after trading was added, low-level players walking into town were spammed with trade requests: high-level players offering tons of free stuff, much more powerful than their own gear, asking nothing in return.' },
+  { script: 'The items were quest rewards the high-level players couldn’t equip. They had no level requirement, because it was assumed only players at the right level would get them, and soulbound didn’t exist yet. The newbies went hours or even days questing without getting anything new to equip: the gifts outclassed everything they found. The initial spike felt great, but it meant long plateaus in power growth, boredom and tedium. When you design trading, account for what can be traded, how often, and the psychological impact.' },
+];
