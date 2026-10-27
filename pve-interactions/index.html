@@ -50,7 +50,7 @@
   <h2>Interactive pages</h2>
   <p>Open one and use ← → to move through it.</p>
   <div id="cards">
-    <a class="mod" href="hazards/index.html?p=1"><img src="../assets/img/forsaken/Rock.png" alt=""><span><b>Hazard patterns</b><small>The 14 hazard movement patterns, each played out on a 3×3 grid and in a top-down example (deck slides 186 to 199)</small><br><span class="tag">ready</span></span></a>
+    <a class="mod" href="hazards/index.html?p=1"><img src="../assets/img/forsaken/Rock.png" alt=""><span><b>Hazard patterns</b><small>The 14 hazard movement patterns on a 3×3 grid, each cycling three themed examples from the slide (deck slides 186 to 199). Slide GIFs: hazards/gallery.html</small><br><span class="tag">ready</span></span></a>
     <a class="mod" href="enemy-counters/index.html"><img src="../assets/img/forsaken/Hit_Friendly.png" alt=""><span><b>Enemy counters</b><small>Mario’s jump and fireball against a Koopa, a Spiny and a Buzzy Beetle: every matchup, one level to the flagpole, and a rules matrix to edit (the Start, Opposition, Goal slide). GIF: gifs/enemy-counters-mario.gif</small><br><span class="tag">ready</span></span></a>
     <a class="mod" href="enemy-composer/index.html"><img src="../assets/img/forsaken/Monster.png" alt=""><span><b>Enemy composer</b><small>Every Mario enemy as one card of movement, stomp and fireball: the twelve cards, a composer that spots reskins and new enemies, the 48-card design space, and same card, different feel (deck slides 42 and 45). GIFs: gifs/enemy-composer.gif, gifs/same-card-different-feel.gif</small><br><span class="tag">ready</span></span></a>
     <a class="mod" href="resistance/index.html"><img src="../assets/img/forsaken/Protect_Hostile.png" alt=""><span><b>Resistance</b><small>One corridor and five kinds of resistance (shoot it, avoid it, get behind it, take cover, switch targets), with a strength slider that shows when resistance is too weak to matter (deck slides 74 to 84). GIF: gifs/resistance-strong-enough.gif</small><br><span class="tag">ready</span></span></a>
@@ -71,59 +71,5 @@
   </div>
 </section>
 
-<section>
-  <h2>Slide GIFs: hazard patterns</h2>
-  <p>1280×720, looping, one per deck slide (186 to 199). Right-click a GIF to save it, or open it full size.</p>
-  <div id="gifs" class="grid"></div>
-</section>
-
-<section>
-  <h2>Slide GIFs: hazard patterns in three themes</h2>
-  <p>One meta-GIF per slide that cycles through three themed examples of the same pattern (about 18 seconds per loop). Open the interactive version with <a href="hazards/index.html?p=1&themes">hazards/index.html?themes</a>.</p>
-  <div id="themes" class="grid"></div>
-</section>
-
-<script>
-  // [slide, file, pattern, the example it animates]
-  const GIFS = [
-    [186, 'p01-across', 'Across', 'Spears thrust out of a wall as you walk past'],
-    [187, 'p02-in-path', 'In path', 'Indiana Jones Ball rolling down a corridor'],
-    [188, 'p03-explosive', 'Explosive', 'Explosive barrel'],
-    [189, 'p04-collapsing', 'Collapsing', 'Sand flowing in from the sides of a room (quicksand)'],
-    [190, 'p05-eruption', 'Eruption', 'Volcano exploding with flaming boulders'],
-    [191, 'p06-winding', 'Winding', 'Trench full of oil that gets caught on fire'],
-    [192, 'p07-jumping', 'Jumping', 'Slime ball bouncing across a room'],
-    [193, 'p08-ricochet', 'Ricochet', 'Metal balls bouncing between the walls of a hallway'],
-    [194, 'p09-rotation', 'Rotation', 'Blades spinning repeatedly over time'],
-    [195, 'p10-tethered', 'Tethered', 'Dog on a leash'],
-    [196, 'p11-patrolling', 'Patrolling', 'A rock that rolls back and forth'],
-    [197, 'p12-balancing', 'Balancing', 'A lever which must be weighted down to cross the other side'],
-    [198, 'p13-spiral', 'Spiral', 'A spinning blade that expands and retracts (Zelda 3)'],
-    [199, 'p14-crushing', 'Crushing', 'Two logs that slam together'],
-  ];
-  // [themes shown in each meta-GIF], same order as GIFS
-  const THEMES = [
-    'Dungeon spears · factory flamethrower on a timer · jungle vines',
-    'Indiana Jones ball · animal charging · arrow shot down a walkway',
-    'Explosive barrel · fungal spore cloud · freezing pool',
-    'Quicksand · whirlpool · monster breathing in',
-    'Volcano · cauldron of acid · insect spawner hive',
-    'Oil trench on fire · lightning along a copper wire · tentacle through a maze',
-    'Slime ball · rocks down a mountainside · arcs jumping pole to pole',
-    'Metal ball · electrified orb off magnets · bull charging at walls',
-    'Spinning blades · poison gas fountain · windmill',
-    'Dog on a leash · spiked ball on a chain · electrical conductor on a chain (Tears of the Kingdom)',
-    'Rock rolling back and forth · stampede of creatures · mechanical device',
-    'Lever weighted down to cross · log you balance across a river · the lever again, over lava',
-    'Spinning blade that expands and retracts (Zelda 3) · repulsive whirlwind · growing plant',
-    'Logs that slam together · sci-fi crushing door · crystal spikes',
-  ];
-  document.getElementById('themes').innerHTML = GIFS.map(([s, f, name], i) =>
-    `<figure><a href="gifs/${f}-themes.gif"><img src="gifs/${f}-themes.gif" alt="${name} in three themes" loading="lazy"></a>` +
-    `<figcaption><b>Pattern ${i + 1}: ${name}</b>${THEMES[i]}. Deck slide ${s}.</figcaption></figure>`).join('');
-  document.getElementById('gifs').innerHTML = GIFS.map(([s, f, name, ex], i) =>
-    `<figure><a href="gifs/${f}.gif"><img src="gifs/${f}.gif" alt="${name}: ${ex}" loading="lazy"></a>` +
-    `<figcaption><b>Pattern ${i + 1}: ${name}</b>${ex}. Deck slide ${s}.</figcaption></figure>`).join('');
-</script>
 </body>
 </html>

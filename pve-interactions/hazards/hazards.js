@@ -1024,9 +1024,9 @@
   }
 
   window.HAZARDS = { ready: paperReady, patterns: P.map(p => ({ file: p.file, T: p.T, n: p.themes.length, name: p.name, slide: p.slide, caption: p.caption, themes: p.themes })), select(i) { idx = i; }, frame, frameThemes };
-  const themed = qs.has('themes');
+  const themed = !qs.has('single');   // the themed cycle is the default; ?single shows one theme
 
-  const go = d => { location.search = '?p=' + (((idx + d) % P.length + P.length) % P.length + 1) + (themed ? '&themes' : ''); };
+  const go = d => { location.search = '?p=' + (((idx + d) % P.length + P.length) % P.length + 1) + (themed ? '' : '&single'); };
   document.getElementById('prev').onclick = e => { e.preventDefault(); go(-1); };
   document.getElementById('next').onclick = e => { e.preventDefault(); go(1); };
   addEventListener('keydown', e => { if (e.key === 'ArrowRight' || e.key === ' ') go(1); if (e.key === 'ArrowLeft') go(-1); });
