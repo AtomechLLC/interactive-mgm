@@ -1,0 +1,27 @@
+/* Nintendo model: per-slide layout. Shared look comes from ../../assets/deck.css and kit.css. */
+.slide { padding: 46px 90px 60px; justify-content: flex-start; }
+.slide.center { justify-content: center; }
+.slide h2.sm { font-size: 44px; margin-bottom: 12px; }
+.out { font-size: 20px !important; line-height: 1.38 !important; min-height: 2.8em; margin: 6px 0 0; }
+.row.wrap { flex-wrap: wrap; gap: 8px; align-items: center; }
+.slide.center canvas.ti-canvas { display: block; margin: 0 auto; width: 660px; height: 130px; background: none; border: 0; image-rendering: pixelated; }
+.slide.slide:not(.center):not(.dk) canvas.demo { background: none; border: 0; image-rendering: pixelated; }
+.ld-canvas { width: 1420px; height: 440px; display: block; cursor: pointer; }
+.ld-hint { font-size: 16px; margin: 4px 0 0; }
+.tr-canvas { width: 1420px; height: 560px; display: block; margin-top: -20px; cursor: pointer; }
+
+/* the sort */
+.so-tray { display: flex; flex-wrap: wrap; gap: 8px; min-height: 84px; margin-top: -6px; }
+.so-chip { display: flex; flex-direction: column; align-items: center; width: 118px; padding: 4px 4px 6px; background: #fffaf0; border: 2px solid #cdbf9f; border-radius: 10px; cursor: grab; user-select: none; }
+.so-chip canvas { width: 54px; height: 47px; image-rendering: pixelated; }
+.so-chip span { font: 700 13px var(--display); color: var(--ink); text-align: center; line-height: 1.1; }
+.so-chip.sel { border-color: var(--navy); box-shadow: 0 0 0 3px #ffb951; }
+.so-chip.ok { border-color: #1a8a4c; box-shadow: 0 0 0 2px rgba(26,138,76,.35); }
+.so-chip.no { border-color: #e0a92d; box-shadow: 0 0 0 2px rgba(224,169,45,.45); }
+.so-cols { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 12px; }
+.so-col { background: rgba(255,250,240,.6); border: 2px dashed #b9a578; border-radius: 12px; padding: 8px; min-height: 230px; cursor: pointer; }
+.so-col h4 { font: 800 20px var(--display); color: var(--ink); margin: 0 0 8px; text-align: center; }
+.so-drop { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.so-row { flex-wrap: nowrap; align-items: flex-start; margin-top: 8px; }
+.so-row .so-out { flex: 1; }
+.so-row .btn { font-size: 16px; padding: 6px 14px; margin-top: 6px; }
