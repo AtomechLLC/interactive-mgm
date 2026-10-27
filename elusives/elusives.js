@@ -31,7 +31,7 @@
       function reset() {
         done = false; pass.hidden = false; next.hidden = true;
         atkSlot.innerHTML = card({ ...ATK, elusive: elusive() }, 'atk');
-        blockSlot.innerHTML = '<span>block slot</span>'; blockSlot.className = 'el-block-slot';
+        blockSlot.innerHTML = '<span>Block slot</span>'; blockSlot.className = 'el-block-slot';
         hand.innerHTML = HAND.map(c => card(c)).join('');
         $$(hand, '.el-card').forEach(b => (b.onclick = () => play(HAND.find(c => c.id === b.dataset.id), b)));
       }

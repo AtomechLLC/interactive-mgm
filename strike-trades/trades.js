@@ -234,15 +234,15 @@
       if (state.mode !== 'none') {
         const m = MODES[state.mode], gx = tx(SWING.guard[0]), gw = tx(SWING.guard[1]) - gx;
         g.fillStyle = m.col; g.globalAlpha = .9; g.beginPath(); g.roundRect(gx, y - 10, gw, 7, 3); g.fill(); g.globalAlpha = 1;
-        label(g, `${m.name.toLowerCase()} window`, gx + gw, y - 24, { col: m.col, size: 15, align: 'right' });
+        label(g, `${m.name} window`, gx + gw, y - 24, { col: m.col, size: 15, align: 'right' });
       }
       const seg = (a, b, col, txt, tcol = '#071a3d') => {
         g.fillStyle = col; g.fillRect(tx(a), y, tx(b) - tx(a), h);
         label(g, txt, (tx(a) + tx(b)) / 2, y + h / 2, { col: tcol, size: 15 });
       };
-      seg(0, SWING.start, '#8a94a8', 'wind-up');
-      seg(SWING.start, SWING.active, '#ff7b8a', 'swing');
-      seg(SWING.active, SWING.end, '#6b778f', 'recovery', '#fff');
+      seg(0, SWING.start, '#8a94a8', 'Wind-up');
+      seg(SWING.start, SWING.active, '#ff7b8a', 'Swing');
+      seg(SWING.active, SWING.end, '#6b778f', 'Recovery', '#fff');
       if (r.cut) {   // everything after the interrupt is lost
         const cx = tx(r.cut.t);
         g.fillStyle = 'rgba(7,26,61,.78)'; g.fillRect(cx, y, tx(SWING.end) - cx, h);
@@ -259,7 +259,7 @@
       const px = tx(Math.min(t, SWING.end));
       g.strokeStyle = '#fbfbfd'; g.lineWidth = 2; g.beginPath(); g.moveTo(px, y - 16); g.lineTo(px, y + h + 6); g.stroke();
       // legend
-      const items = [['hit', 'hit'], ['armor', 'reduced'], ['absorb', 'absorbed'], ['whiff', 'missed']];
+      const items = [['hit', 'Hit'], ['armor', 'Reduced'], ['absorb', 'Absorbed'], ['whiff', 'Missed']];
       let lx = x0;
       items.forEach(([k, txt]) => {
         g.fillStyle = KIND[k].col; g.beginPath(); g.moveTo(lx, y + h + 46); g.lineTo(lx - 7, y + h + 58); g.lineTo(lx + 7, y + h + 58); g.fill();

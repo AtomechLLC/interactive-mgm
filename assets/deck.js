@@ -218,7 +218,7 @@
       audio.addEventListener('timeupdate', onTime);
     } else {
       // audio: false marks a deck that was never recorded (read at your own pace)
-      timeEl.innerHTML = `<span class="audio-missing">${cfg.audio === false ? 'no talk for this module: read at your own pace' : 'talk audio not synced yet'}</span>`;
+      timeEl.innerHTML = `<span class="audio-missing">${cfg.audio === false ? 'No talk for this module: read at your own pace' : 'Talk audio not synced yet'}</span>`;
       playBtn.disabled = true; playBtn.style.opacity = .35;
       if (cfg.audio === false) { playBtn.style.display = 'none'; timeline.style.display = 'none'; }
       bar.querySelector('.vol').style.display = 'none';

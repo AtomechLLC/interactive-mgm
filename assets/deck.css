@@ -393,3 +393,8 @@ em > svg.gi:only-child, b > svg.gi:only-child { width: 1em; height: 1em; vertica
 .slide.paper.paper h2:not(.accent) { color: #fff; }
 /* key caps inside parchment buttons: outline only, no dark block */
 .slide:not(.center):not(.dk) kbd { background: none; }
+/* eyebrow labels: the course never sets them in lowercase, so they run as small caps-height uppercase */
+.kicker { text-transform: uppercase; letter-spacing: .08em; font-size: .8em; font-weight: 600; }
+.slide .kicker { font-size: 22px; }
+.slide.center .kicker { font-size: 24px; }
+.slide .slide-head .kicker, .slide:not(.center):not(.dk) .slide-head .kicker { font-size: 17px; margin-bottom: 6px; }
