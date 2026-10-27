@@ -1,6 +1,6 @@
 /* Keywords need situations (MGM C3 M6, deck slides 270-285). Slide 2 is the deck's keyword sheets for three WoW tanks
-   (slides 275-280), sorted into role, class and spec layers. Slide 3 gives four original classes keyword cards and lets
-   you build an encounter with sliders: each keyword's meter shows how much the content asks for it (slide 283: area
+   (slides 275-280), sorted into role, class and spec layers, with Blizzard's class and spec icons. Slide 3 gives four original classes keyword cards and lets
+   you build an encounter with sliders (role badges are League of Legends class icons): each keyword's meter shows how much the content asks for it (slide 283: area
    damage needs clustered enemies, taunt needs allies under threat, durability needs dangerous damage, self healing
    needs danger and the breathing room to use it). DEMAND below is the whole model. */
 (function () {
@@ -10,11 +10,11 @@
   /* ---------- slide 2: the deck's sheets ---------- */
   // [keyword, value, layer]
   const SHEETS = {
-    warrior: { name: 'Warrior', role: 'Tank', rows: [['Durable', '3', 'role'], ['Uncrushable', '✔', 'role'], ['Taunt', '✔', 'role'], ['Slow', '30%', 'class'], ['Interrupt', '✔', 'class'], ['Gap closer', '3', 'class'], ['Has pet', '✗', 'class'], ['Heals others', '✗', 'class'], ['Self healing', '1', 'spec']],
+    warrior: { name: 'Warrior', icon: 'classicon_warrior', spec: ['Protection', 'ability_warrior_defensivestance'], role: 'Tank', rows: [['Durable', '3', 'role'], ['Uncrushable', '✔', 'role'], ['Taunt', '✔', 'role'], ['Slow', '30%', 'class'], ['Interrupt', '✔', 'class'], ['Gap closer', '3', 'class'], ['Has pet', '✗', 'class'], ['Heals others', '✗', 'class'], ['Self healing', '1', 'spec']],
       note: 'It’s a warrior. Durability, uncrushability and taunt are shared by every class that fills the tank role. Slows, interrupts and gap closers are the warrior’s own, in any role; no pet and no healing others, ever.' },
-    druid: { name: 'Guardian Druid', role: 'Tank', rows: [['Durable', '4', 'role'], ['Uncrushable', '✔', 'role'], ['Taunt', '✔', 'role'], ['Slow', '10%', 'class'], ['Interrupt', '✔', 'class'], ['Gap closer', '1', 'class'], ['Has pet', '✗', 'class'], ['Heals others', '✔', 'class'], ['Self healing', '3', 'spec']],
+    druid: { name: 'Guardian Druid', icon: 'classicon_druid', spec: ['Guardian', 'ability_racial_bearform'], role: 'Tank', rows: [['Durable', '4', 'role'], ['Uncrushable', '✔', 'role'], ['Taunt', '✔', 'role'], ['Slow', '10%', 'class'], ['Interrupt', '✔', 'class'], ['Gap closer', '1', 'class'], ['Has pet', '✗', 'class'], ['Heals others', '✔', 'class'], ['Self healing', '3', 'spec']],
       note: 'Still highly durable, uncrushable and able to taunt: the role is met. But only one gap closer and far more self healing. Keywords let each class meet the role and still sit in its own niche.' },
-    dk: { name: 'Blood Death Knight', role: 'Tank', rows: [['Durable', '4', 'role'], ['Uncrushable', '✔', 'role'], ['Taunt', '✔', 'role'], ['Slow', '10%', 'class'], ['Interrupt', '✔', 'class'], ['Gap closer', '3', 'class'], ['Has pet', '✔', 'class'], ['Heals others', '✗', 'class'], ['Self healing', '1', 'spec']],
+    dk: { name: 'Blood Death Knight', icon: 'classicon_deathknight', spec: ['Blood', 'spell_deathknight_bloodpresence'], role: 'Tank', rows: [['Durable', '4', 'role'], ['Uncrushable', '✔', 'role'], ['Taunt', '✔', 'role'], ['Slow', '10%', 'class'], ['Interrupt', '✔', 'class'], ['Gap closer', '3', 'class'], ['Has pet', '✔', 'class'], ['Heals others', '✗', 'class'], ['Self healing', '1', 'spec']],
       note: 'Similar tools again, but here pet access is a class feature, and the spec carries its own healing. It keeps the core role keywords, so the role is still filled.' },
   };
   const LAYER = { role: ['Role', 'shared by every tank'], class: ['Class', 'the class in any role'], spec: ['Spec', 'this specialisation only'] };
@@ -23,7 +23,7 @@
       const st = { k: 'warrior', sorted: false, guessed: false };
       const tabs = $(s, '.ks-tabs'), sheet = $(s, '.ks-sheet'), guess = $(s, '.ks-guess'), out = $(s, '.ks-out');
       tabs.innerHTML = Object.entries(SHEETS).map(([k, v], i) => `<button class="ks-tab" data-k="${k}">Sheet ${i + 1}</button>`).join('');
-      guess.innerHTML = `<h4>Which class is it?</h4>` + Object.entries(SHEETS).map(([k, v]) => `<button class="ks-g" data-k="${k}">${v.name}</button>`).join('');
+      guess.innerHTML = `<h4>Which class is it?</h4>` + Object.entries(SHEETS).map(([k, v]) => `<button class="ks-g" data-k="${k}"><img src="img/wow-${v.icon}.jpg" alt="">${v.name}</button>`).join('');
       // a fixed shuffle so "mixed up" looks random but is the same every time
       const MIX = [4, 0, 7, 2, 5, 8, 1, 6, 3];
       function paint() {
@@ -31,7 +31,7 @@
         $$(tabs, '.ks-tab').forEach(b => { b.classList.toggle('on', b.dataset.k === st.k); b.textContent = st.guessed || b.dataset.k !== st.k ? `Sheet ${Object.keys(SHEETS).indexOf(b.dataset.k) + 1}` : b.textContent; });
         const cell = ([n, v, l]) => `<div class="kw ${st.sorted ? l : ''} ${v === '✗' ? 'no' : ''}"><span>${n}</span><b>${v}</b></div>`;
         sheet.innerHTML = st.sorted
-          ? ['role', 'class', 'spec'].map(l => `<div class="layer ${l}"><div class="lh"><b>${LAYER[l][0]}</b><small>${LAYER[l][1]}</small></div><div class="lk">${S.rows.filter(r => r[2] === l).map(cell).join('')}</div></div>`).join('')
+          ? ['role', 'class', 'spec'].map(l => `<div class="layer ${l}"><div class="lh">${l === 'class' && st.guessed ? `<img src="img/wow-${S.icon}.jpg" alt="">` : l === 'spec' && st.guessed ? `<img src="img/wow-${S.spec[1]}.jpg" alt="">` : ''}<b>${LAYER[l][0]}</b><small>${l === 'spec' && st.guessed ? S.spec[0] + ' only' : LAYER[l][1]}</small></div><div class="lk">${S.rows.filter(r => r[2] === l).map(cell).join('')}</div></div>`).join('')
           : `<div class="cloud">${MIX.map(i => cell(S.rows[i])).join('')}</div>`;
         $$(guess, '.ks-g').forEach(b => { b.classList.toggle('yes', st.guessed && b.dataset.k === st.k); });
         say(out, st.guessed ? `<b>${S.name}.</b> ${S.note}` : 'A random scattering of keywords from one class. The exact keywords aren’t the point: they convey what the class can access, and how well.');
@@ -69,10 +69,10 @@
     'Escapes': x => x.damage * .5 + x.adds * .5,
   };
   const CLASSES = [
-    { name: 'Warden', role: 'Tank', col: C.player, kws: [['Durable', '4', 'role'], ['Taunt', '✔', 'role'], ['Interrupt', '✔', 'class'], ['Gap closer', '2', 'spec']] },
-    { name: 'Pyromancer', role: 'Mage', col: '#e8641c', kws: [['Area damage', '5', 'role'], ['Slow', '30%', 'class'], ['Interrupt', '✔', 'class'], ['Self healing', '0', 'spec']] },
-    { name: 'Cleric', role: 'Healer', col: C.p2, kws: [['Heals others', '4', 'role'], ['Self healing', '2', 'class'], ['Stun', '✔', 'class'], ['Escapes', '1', 'spec']] },
-    { name: 'Stalker', role: 'Assassin', col: C.p3, kws: [['Burst', '5', 'role'], ['Stealth', '✔', 'class'], ['Gap closer', '3', 'class'], ['Escapes', '2', 'spec']] },
+    { name: 'Warden', role: 'Tank', icon: 'tank', col: C.player, kws: [['Durable', '4', 'role'], ['Taunt', '✔', 'role'], ['Interrupt', '✔', 'class'], ['Gap closer', '2', 'spec']] },
+    { name: 'Pyromancer', role: 'Mage', icon: 'mage', col: '#e8641c', kws: [['Area damage', '5', 'role'], ['Slow', '30%', 'class'], ['Interrupt', '✔', 'class'], ['Self healing', '0', 'spec']] },
+    { name: 'Cleric', role: 'Enchanter', icon: 'support', col: C.p2, kws: [['Heals others', '4', 'role'], ['Self healing', '2', 'class'], ['Stun', '✔', 'class'], ['Escapes', '1', 'spec']] },
+    { name: 'Stalker', role: 'Assassin', icon: 'assassin', col: C.p3, kws: [['Burst', '5', 'role'], ['Stealth', '✔', 'class'], ['Gap closer', '3', 'class'], ['Escapes', '2', 'spec']] },
   ];
   const PRESETS = [
     ['Trash pull', { cluster: 1, damage: .3, casters: 0, adds: .6, elite: 0 }],
@@ -119,7 +119,7 @@
     const pre = $(s, '.kb-presets'), sls = $(s, '.kb-sliders'), cards = $(s, '.kb-cards');
     pre.innerHTML = PRESETS.map(([n], i) => `<button class="kb-pre" data-i="${i}">${n}</button>`).join('');
     sls.innerHTML = SIT.map(([k, n, d]) => `<label><span>${n} <small>${d}</small></span><input type="range" min="0" max="100" data-k="${k}"></label>`).join('');
-    cards.innerHTML = CLASSES.map((c, ci) => `<div class="kc" style="--c:${c.col}"><div class="kh"><b>${c.name}</b><span>${c.role}</span></div>` +
+    cards.innerHTML = CLASSES.map((c, ci) => `<div class="kc" style="--c:${c.col}"><div class="kh"><img src="img/lol-${c.icon}.png" alt=""><b>${c.name}</b><span>${c.role}</span></div>` +
       c.kws.map(([n, v, l], ki) => `<div class="kr" data-c="${ci}" data-k="${ki}"><span class="ly ${l}">${l}</span><span class="kn">${n}</span><b>${v}</b><div class="m"><i></i></div><em></em></div>`).join('') + '</div>').join('');
     $$(pre, '.kb-pre').forEach(b => b.onclick = () => { st.tour = false; st.x = { ...PRESETS[+b.dataset.i][1] }; });
     $$(sls, 'input').forEach(el => el.oninput = () => { st.tour = false; st.x[el.dataset.k] = el.value / 100; });
@@ -145,7 +145,7 @@
       });
     }
     api = { seek(t) { st.held = true; st.tour = true; st.tt = t; st.t = t; render(); }, dur: () => DT * PRESETS.length };
-    return dt => { if (!st.held) { st.tt += dt; st.t += dt; } render(); };
+    return dt => { dt = dt || 0; if (!st.held) { st.tt += dt; st.t += dt; } render(); };
   });
 
   window.__seek = t => api.seek(t);

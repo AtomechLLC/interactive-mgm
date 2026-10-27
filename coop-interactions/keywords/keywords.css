@@ -51,3 +51,13 @@
 .kr.dead { opacity: .45; }
 .kr.dead em { color: var(--bad); font-weight: 600; }
 .kr.hot em { color: #1a8a4c; font-weight: 600; }
+
+/* class icons (WoW on slide 2, League class icons on slide 3) */
+.ks-g { display: flex; align-items: center; gap: 12px; }
+.ks-g img { width: 40px; height: 40px; border-radius: 8px; border: 2px solid #3d4270; }
+.layer .lh { display: grid; grid-template-columns: auto 1fr; column-gap: 10px; align-items: center; }
+.layer .lh img { grid-row: span 2; width: 46px; height: 46px; border-radius: 8px; border: 2px solid #3d4270; }
+.layer .lh b, .layer .lh small { grid-column: 2; }
+.kh { align-items: center; gap: 8px; }
+.kh img { width: 34px; height: 34px; border-radius: 50%; background: var(--navy); padding: 4px; }
+.kh b { margin-right: auto; }
