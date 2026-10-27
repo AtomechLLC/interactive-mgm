@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Positioning Payoffs · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Orbitron:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/deck.css">
+<link rel="stylesheet" href="../assets/kit.css">
+<link rel="stylesheet" href="../assets/vendor/spine-player.min.css">
+<link rel="stylesheet" href="payoffs.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · PvP Interactions · Positioning Payoffs', home: '../index.html', audio: null, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1 -->
+<section class="slide center" data-title="Positioning, pressure, payoffs" data-demo="none">
+  <div class="kicker rise">4 categories of action game skill expression</div>
+  <h1 class="rise">Category 4: <span class="accent">Payoffs</span></h1>
+  <div class="rule rise" style="margin:22px auto"></div>
+  <div class="title-tokens rise">
+    <img src="../assets/img/forsaken/Token_Player1.png" alt="">
+    <img class="tw" src="../assets/img/forsaken/Spear.png" alt="">
+    <img src="../assets/img/forsaken/Monster.png" alt="">
+  </div>
+  <p class="lede rise" style="margin:20px auto 0;text-align:center">Payoff (noun): the reward for a skilfully executed power. Payoffs come in more than one form, and the same swing pays out differently depending on what’s in your hand.</p>
+</section>
+
+<!-- 2: deck slides 299 to 302 -->
+<section class="slide" data-title="Positioning payoffs" data-demo="line">
+  <div class="kicker">deck slides 299 to 302</div>
+  <h2 class="sm">Positioning payoffs</h2>
+  <div class="row ctl-row top-row">
+    <span class="muted">You hold:</span><div class="wpick"></div>
+    <span class="muted gap-l">Enemy:</span>
+    <div class="row en-pick">
+      <button class="btn on" data-en="stand">Stands</button>
+      <button class="btn" data-en="back">Backs off</button>
+      <button class="btn" data-en="in">Steps in</button>
+    </div>
+  </div>
+  <canvas class="demo ln-canvas" width="1420" height="420"></canvas>
+  <div class="row ctl-row">
+    <button class="btn" data-beat="0">299 · Neutral</button>
+    <button class="btn" data-beat="1">300 · The swing</button>
+    <button class="btn" data-beat="2">301 · Their opening</button>
+    <button class="btn" data-beat="3">302 · Or: your follow-up</button>
+    <button class="btn ln-replay">↻ Replay</button>
+    <button class="btn ln-slow">¼ speed</button>
+  </div>
+  <p class="ln-out out"></p>
+  <i class="step beat-mark"></i><i class="step beat-mark"></i><i class="step beat-mark"></i>
+  <div class="hint">Press → to step through, swap weapons, or drag your token to change the starting distance</div>
+</section>
+
+<!-- 3: deck slide 303 -->
+<section class="slide" data-title="These payoffs are perspective agnostic" data-demo="views">
+  <div class="kicker">deck slide 303</div>
+  <h2 class="sm">These payoffs are <span class="accent-3">perspective agnostic</span></h2>
+  <div class="row ctl-row top-row">
+    <span class="muted">You hold:</span><div class="wpick"></div>
+    <span class="muted gap-l">Play as:</span>
+    <div class="row as-pick">
+      <button class="btn on" data-as="pc">The PC</button>
+      <button class="btn" data-as="en">The enemy</button>
+    </div>
+    <button class="btn vw-pause">❚❚ Pause</button>
+  </div>
+  <canvas class="demo vw-canvas" width="1420" height="470"></canvas>
+  <p class="vw-out out"></p>
+</section>
+
+<!-- 4: deck slide 304 -->
+<section class="slide" data-title="Power breakdown" data-demo="breakdown">
+  <div class="kicker">deck slide 304</div>
+  <h2 class="sm">Power breakdown: <span class="accent-3 bd-name"></span></h2>
+  <div class="bd-grid">
+    <div class="bd-left">
+      <div class="spine-box"></div>
+      <p class="muted small bd-anim"></p>
+    </div>
+    <div class="bd-right">
+      <div class="wpick"></div>
+      <div class="bd-card">
+        <div class="bd-stat"><b>Positioning</b><span class="bd-pos"></span><small>how far the power carries you</small></div>
+        <div class="bd-stat"><b>Pressure</b><span class="bd-pre"></span><small>how close they have to be to worry about it</small></div>
+        <div class="bd-stat"><b>Payoff</b><span class="bd-pay"></span><small>what it does when it lands</small></div>
+      </div>
+      <div class="bd-tune">
+        <label>Step <input type="range" data-k="step" min="0" max="6" step="0.5"><b data-v="step"></b></label>
+        <label>Reach <input type="range" data-k="reach" min="0.5" max="10" step="0.5"><b data-v="reach"></b></label>
+        <label>Damage <input type="range" data-k="dmg" min="0" max="150" step="5"><b data-v="dmg"></b></label>
+        <label>Stun <input type="range" data-k="stun" min="0" max="40" step="5"><b data-v="stun"></b></label>
+        <label>Poise <input type="range" data-k="poise" min="-30" max="0" step="5"><b data-v="poise"></b></label>
+        <button class="btn bd-reset">Reset</button>
+      </div>
+      <canvas class="demo bd-canvas" width="820" height="150"></canvas>
+      <p class="bd-out out small"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="slide" data-title="Same sequence, three weapons" data-demo="compare">
+  <div class="kicker">putting it together</div>
+  <h2 class="sm">Same sequence, three weapons</h2>
+  <div class="cmp-box"></div>
+  <p class="cmp-note muted small"></p>
+  <p class="lede cmp-lede">Describe every power by its <b class="accent-2">positioning</b>, <b class="accent-2">pressure</b> and <b class="accent-2">payoff</b>. The numbers decide who gets an opening, from either side of the fight.</p>
+</section>
+
+</div></div>
+<script src="../assets/deck.js"></script>
+<script src="../assets/gi.js"></script>
+<script src="../assets/kit.js"></script>
+<script src="../assets/vendor/spine-player.min.js"></script>
+<script src="../assets/spine/spine-data.js"></script>
+<script src="payoffs.js"></script>
+</body>
+</html>

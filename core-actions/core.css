@@ -1,0 +1,96 @@
+/* Core Gameplay Actions: per-slide layout. Shared look comes from ../assets/deck.css and kit.css. */
+.slide { padding: 54px 90px 60px; justify-content: flex-start; }
+.slide.center { justify-content: center; }
+.slide h2.sm { font-size: 44px; margin-bottom: 18px; }
+.slide .kicker { font-size: 24px; }
+.atk { color: #ff7b8a; }
+.def { color: var(--accent-2); }
+.mov { color: #6fe0a8; }
+.good { color: var(--good); }
+.bad { color: var(--bad); }
+.accent-3 { color: var(--accent-3); }
+.small { font-size: 20px !important; }
+.out { font-size: 24px !important; min-height: 2.6em; margin: 14px 0 0; }
+.ctl-row { gap: 12px; margin-top: 14px; flex-wrap: wrap; }
+.ctl-row .btn, .du-btns .btn, .du-opts .btn, .sp-side .btn { font-size: 19px; padding: 9px 16px; }
+.row.wrap { flex-wrap: wrap; gap: 10px; }
+canvas.demo { background: transparent; border: 0; cursor: default; }
+canvas.off-canvas { cursor: grab; touch-action: none; }
+
+/* title */
+.title-tokens { display: flex; gap: 34px; align-items: center; justify-content: center; margin-top: 8px; }
+.title-tokens img { width: 120px; height: 120px; image-rendering: auto; }
+.title-tokens span { font-family: var(--display); font-size: 40px; color: var(--muted); }
+
+/* 428 timing */
+.tm-ctrl { display: grid; grid-template-columns: repeat(4, 1fr) auto auto auto; gap: 14px 22px; align-items: end; margin-top: 4px; }
+.tm-ctrl label { font-size: 19px; color: var(--muted); display: grid; gap: 2px; }
+.tm-ctrl label b { color: var(--text); font-weight: 500; font-size: 18px; }
+.tm-ctrl .btn { font-size: 19px; padding: 10px 16px; }
+
+/* 430 / 431 defensive verbs */
+.verbs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; }
+.verb-card { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 18px 22px; }
+.verb-card h3 { font-size: 30px; color: var(--accent-2); margin-bottom: 10px; }
+.verb-card.new h3 { color: #6fe0a8; }
+.verb-card canvas { display: block; margin: 0 auto 12px; width: 340px; height: 340px; }
+.verb-card p { font-size: 20px; line-height: 1.35; margin: 10px 0 0; }
+.frames { display: flex; height: 30px; border-radius: 6px; overflow: hidden; font-size: 14px; }
+.frames i { font-style: normal; display: flex; align-items: center; justify-content: center; color: #071a3d; font-weight: 600; white-space: nowrap; overflow: hidden; }
+.f-start { background: #8a94a8; }
+.f-guard { background: #8fd3ff; }
+.f-inv { background: #ffb547; }
+.f-rec { background: #6b778f; color: #fff !important; }
+.f-move { background: #6fe0a8; }
+.f-free { background: rgba(111,224,168,.25); color: #6fe0a8 !important; }
+
+/* outcome grid (432 and the duel) */
+.og-row { align-items: flex-start; gap: 40px; }
+.og-side { flex: 1; }
+.og-side .btn { font-size: 20px; }
+table.og { border-collapse: separate; border-spacing: 6px; font-size: 20px; }
+table.og th { text-align: left; font-weight: 500; color: var(--muted); padding: 4px 10px; white-space: nowrap; }
+table.og tr:first-child th { text-align: center; color: var(--text); }
+table.og td { background: var(--c); color: #0b1830; border-radius: 8px; padding: 8px 14px; min-width: 210px; transition: background .35s; }
+table.og td b { display: block; font-size: 21px; }
+table.og td span { font-size: 15px; opacity: .8; }
+/* the deck engine re-inks light cards on dark slides; these cells keep their outcome colour */
+.slide table.og td, .slide table.og td * { background-color: var(--c) !important; color: #0b1830 !important; }
+.slide table.og td b, .slide table.og td span { background: none !important; }
+table.og td.flag { background: none; color: var(--bad); min-width: 120px; font-weight: 600; }
+.slide table.og td.flag { background: none !important; color: var(--bad) !important; }
+table.og tr.dom th { color: var(--bad); }
+.slide table.og td.unk { background: rgba(255,255,255,.06) !important; color: var(--muted) !important; text-align: center; }
+table.og.small { font-size: 16px; border-spacing: 4px; }
+table.og.small td { min-width: 150px; padding: 5px 10px; }
+table.og.small td b { font-size: 16px; }
+table.og.small td span { font-size: 12px; }
+table.og.small th { padding: 2px 6px; }
+
+/* the duel */
+.slide.duel { padding: 30px 50px 40px; }
+.du-grid { display: grid; grid-template-columns: 700px 1fr; gap: 34px; height: 100%; }
+.du-canvas { width: 700px; height: 680px; }
+.du-side h2.sm { margin-bottom: 12px; }
+.bars { display: grid; gap: 8px; }
+.bar-l { display: grid; grid-template-columns: 120px 1fr; align-items: center; font-size: 18px; color: var(--muted); }
+.bar-l i { display: block; height: 16px; border-radius: 8px; background: #3b8cff; transition: width .15s; box-shadow: 0 0 0 1px var(--line); }
+.bar-l.st i { background: #6fe0a8; height: 10px; }
+.bar-l.foe i { background: #ff6b6b; }
+.du-btns, .du-opts { gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+.du-out { font-size: 20px !important; min-height: 3.6em; }
+.du-read { margin: 8px 0 0; }
+.du-map-h { margin-top: 8px; font-size: 18px; }
+.du-map-h .link { background: none; border: 0; color: var(--accent-2); cursor: pointer; text-decoration: underline; font-size: 16px; }
+
+/* spine */
+.sp-grid { display: grid; grid-template-columns: 860px 1fr; gap: 30px; flex: 1; min-height: 0; }
+.spine-box { background: #9a9a9a; border-radius: 16px; height: 640px; overflow: hidden; }
+.sp-side h4 { font-family: var(--display); font-size: 18px; text-transform: uppercase; color: var(--muted); margin: 14px 0 8px; }
+.sp-speed { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; margin-top: 22px; font-size: 18px; color: var(--muted); }
+
+/* summary */
+.sum { display: grid; grid-template-columns: repeat(5, 1fr); gap: 18px; margin-top: 10px; }
+.sum-c { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 22px; display: grid; gap: 10px; font-size: 21px; }
+.sum-c b { font-family: var(--display); font-size: 24px; text-transform: uppercase; }
+.sum-c span:last-child { color: var(--muted); }

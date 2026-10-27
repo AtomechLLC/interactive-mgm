@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Counter Cycles · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Orbitron:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/deck.css">
+<link rel="stylesheet" href="../assets/kit.css">
+<link rel="stylesheet" href="cc.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · High Level Meta: Counter Cycles', home: '../index.html', audio: null, cues: null };
+</script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1 -->
+<section class="slide center" data-title="Counter cycles" data-demo="none">
+  <div class="kicker rise">high level meta · other expressions</div>
+  <h1 class="rise">Counter cycles</h1>
+  <div class="rule rise" style="margin:22px auto"></div>
+  <p class="lede rise">Rock, paper, scissors hides inside RTS openings, fighting game mix-ups and MOBA team comps. Each of the next slides draws one as a wheel.</p>
+  <p class="lede rise" style="font-size:26px">Arrows point from the winner to what it beats. Hover anything; click a node to pin it.</p>
+  <aside class="notes">The slide’s text notation, “A &lt; B”, reads “A loses to B”. Every wheel shows that notation underneath, and hovering a “&lt;” lights up its arrow.</aside>
+</section>
+
+<!-- 2 -->
+<section class="slide cc" data-title="RTS: Rush, Turtle, Expand" data-demo="cc-rts">
+  <div class="cc-split">
+    <svg class="cc-wheel" role="img" aria-label="RTS counter wheel"></svg>
+    <div class="cc-side">
+      <div class="kicker">RTS openings</div>
+      <h2>Rush · Turtle · Expand</h2>
+      <p class="cc-legend">Each opening is a bet on what the opponent is doing. <b>Green</b> arrows: what it beats. <i>Red</i>: what beats it.</p>
+      <div class="cc-panel" data-idle="Hover an opening to see what it beats and what punishes it. Hover an arrow to read why."></div>
+      <div class="cc-notation"></div>
+      <div class="cc-tools"><button class="btn cc-walk">▶ Watch the meta rotate</button></div>
+    </div>
+  </div>
+  <aside class="notes">Turtle beats Rush, Expand beats Turtle, Rush beats Expand. “Watch the meta rotate” walks the cycle: when everyone does one thing, its counter becomes popular, which creates the opening for the next counter.</aside>
+</section>
+
+<!-- 3 -->
+<section class="slide cc" data-title="Fighting: Attack, Block, Grab" data-demo="cc-fight">
+  <div class="cc-split">
+    <svg class="cc-wheel" role="img" aria-label="Fighting game counter wheel"></svg>
+    <div class="cc-side">
+      <div class="kicker">fighting game mix-ups</div>
+      <h2>Attack · Block · Grab</h2>
+      <p class="cc-legend">The same triangle at a scale of fractions of a second. <b>Green</b>: beats. <i>Red</i>: loses to.</p>
+      <div class="cc-panel" data-idle="Hover an option to see what it beats and what punishes it. Hover an arrow to read why."></div>
+      <div class="cc-notation"></div>
+      <div class="cc-tools"><button class="btn cc-walk">▶ Watch the read-and-adapt loop</button></div>
+    </div>
+  </div>
+  <aside class="notes">Block beats Attack, Grab beats Block, Attack beats Grab. The RTS cycle plays out over minutes and whole matches; this one plays out every few seconds, which is why fighting games feel like reading minds.</aside>
+</section>
+
+<!-- 4 -->
+<section class="slide cc" data-title="MOBA: a five-role cycle" data-demo="cc-moba">
+  <div class="cc-split">
+    <svg class="cc-wheel" role="img" aria-label="MOBA counter wheel"></svg>
+    <div class="cc-side">
+      <div class="kicker">MOBA roles</div>
+      <h2>A five-role cycle</h2>
+      <div class="cc-tools" style="margin:0 0 14px">
+        <button class="btn on" data-stage="1">1-stage: the ring</button>
+        <button class="btn" data-stage="2">2-stage: add the star</button>
+      </div>
+      <div class="cc-panel" data-idle="Start with the ring: each role beats its neighbour. Then switch to 2-stage. Each role now beats the next <b style='color:var(--good)'>two</b> roles and loses to the previous <b style='color:var(--bad)'>two</b>."></div>
+      <div class="cc-notation"></div>
+    </div>
+  </div>
+  <aside class="notes">The slide’s chain, Marksman &lt; Mage &lt; Assassin &lt; Tank &lt; Bruiser &lt; Marksman, is the outer ring. The 2-stage model adds the inner star: Assassin beats Mage and Marksman, Tank beats Assassin and Mage, Bruiser beats Tank and Assassin, Marksman beats Bruiser and Tank, Mage beats Marksman and Bruiser.</aside>
+</section>
+
+<!-- 5 -->
+<section class="slide cc" data-title="Why two stages?" data-demo="cc-grid">
+  <div class="cc-split">
+    <svg class="cc-wheel" role="img" aria-label="MOBA counter wheel"></svg>
+    <div class="cc-side cc-grid-wrap">
+      <div class="kicker">why two stages?</div>
+      <h2>No even matchups</h2>
+      <div class="cc-tools" style="margin:0 0 12px">
+        <button class="btn on" data-stage="1">1-stage</button>
+        <button class="btn" data-stage="2">2-stage</button>
+      </div>
+      <div class="cc-grid"></div>
+      <p class="cc-count"></p>
+      <div class="cc-panel" data-idle="Hover a cell to see that matchup on the wheel."></div>
+    </div>
+  </div>
+  <aside class="notes">With five options and one stage, half the pairs have no arrow between them, so a pick only matters against two of the four other roles. Two stages connect every pair: each role has two good matchups and two bad ones, and the cycle stays balanced.</aside>
+</section>
+
+<!-- 6 -->
+<section class="slide cc" data-title="Drill: counter-pick" data-demo="cc-quiz">
+  <div class="cc-split">
+    <svg class="cc-wheel" role="img" aria-label="Counter wheel for the current question"></svg>
+    <div class="cc-side">
+      <div class="kicker">drill</div>
+      <h2>Counter-pick<span class="cc-q-score">0 / 0</span></h2>
+      <p class="cc-q-prompt"></p>
+      <div class="cc-q-opts"></div>
+      <p class="cc-q-out"></p>
+      <button class="btn cc-q-next">Next enemy →</button>
+    </div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="slide" data-title="Same shape, three genres" data-demo="cc-sum">
+  <div class="kicker">summary</div>
+  <h2>Same shape, three genres</h2>
+  <div class="cc-three">
+    <div><svg class="cc-wheel" data-sys="rts"></svg><h3>RTS</h3><p>decided over a whole match</p></div>
+    <div><svg class="cc-wheel" data-sys="fight"></svg><h3>Fighting</h3><p>decided every few seconds</p></div>
+    <div><svg class="cc-wheel" data-sys="moba"></svg><h3>MOBA</h3><p>decided in the draft; 5 roles need 2 stages</p></div>
+  </div>
+</section>
+
+</div></div>
+<script src="../assets/deck.js"></script>
+<script src="../assets/kit.js"></script>
+<script src="cc.js"></script>
+</body>
+</html>

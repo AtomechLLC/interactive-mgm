@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unbalanced Meta: Elusives · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Orbitron:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/deck.css">
+<link rel="stylesheet" href="../assets/kit.css">
+<link rel="stylesheet" href="elusives.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · Unbalanced Meta · Elusives', home: '../index.html', audio: false, cues: null };
+</script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1 -->
+<section class="slide center" data-title="Unbalanced meta: Elusives" data-demo="none">
+  <div class="kicker rise">case study: <i>Legends of Runeterra</i></div>
+  <h1 class="rise">Unbalanced Meta: <span class="accent">Elusives</span></h1>
+  <div class="rule rise" style="margin:22px auto"></div>
+  <p class="lede rise" style="margin:20px auto 0;text-align:center">A keyword that could only be answered by itself, and what that did to the whole game.</p>
+  <aside class="notes">Elusive units could only be blocked by other Elusive units. They were cheap and hit hard for their cost, so the only real answers were your own Elusives or removal spells. And because Elusives lived mostly in one region, the problem could only counter itself.</aside>
+</section>
+
+<!-- 2 -->
+<section class="slide" data-title="Try to block it" data-demo="block">
+  <div class="kicker">the rule</div>
+  <h2 class="sm">Try to stop the attacker</h2>
+  <div class="el-wrap">
+    <div class="el-board">
+      <div class="el-lane foe">
+        <div class="el-label">Opponent attacks with</div>
+        <div class="el-atk-slot"></div>
+        <label class="el-toggle"><input type="checkbox" class="el-has" checked> attacker has <b>Elusive</b></label>
+      </div>
+      <div class="el-clash"><span class="el-vs">⚔</span><div class="el-block-slot"><span>block slot</span></div></div>
+      <div class="el-lane you">
+        <div class="el-label">Your units <small>(click one to block)</small></div>
+        <div class="el-hand"></div>
+      </div>
+      <div class="el-actions">
+        <button class="btn el-pass">Let it through</button>
+        <button class="btn el-next" hidden>Next attack ›</button>
+        <div class="el-nexus">Your Nexus <b>20</b></div>
+      </div>
+    </div>
+    <div class="el-side">
+      <div class="el-out">Click one of your units to block the attacker, or cast the spell on it.</div>
+      <h3>Answers to an Elusive unit</h3>
+      <ul class="el-answers">
+        <li data-a="ground"><i>?</i> Block with a normal unit</li>
+        <li data-a="elusive"><i>?</i> Block with your own Elusive unit</li>
+        <li data-a="spell"><i>?</i> Kill it with a spell</li>
+        <li data-a="pass"><i>?</i> Ignore it and take the hit</li>
+      </ul>
+    </div>
+  </div>
+  <aside class="notes">Start with Elusive on. Try the wall and the brute first: they bounce. Only the Elusive sprite or the spell work. Then untick Elusive: the 0|6 wall stops the same attacker forever. That gap is the whole problem.</aside>
+</section>
+
+<!-- 3 -->
+<section class="slide" data-title="The meta folds in" data-demo="meta">
+  <div class="kicker">the meta</div>
+  <h2 class="sm">The only counter is itself</h2>
+  <div class="mt-wrap">
+    <div>
+      <canvas class="demo mt-canvas" width="900" height="470"></canvas>
+      <div class="mt-ctrl">
+        <button class="btn mt-play">▶ Play the season</button>
+        <span class="muted">Patch:</span>
+        <button class="btn mt-fix on" data-fix="none">No fix</button>
+        <button class="btn mt-fix" data-fix="tax">Weaker Elusive stats</button>
+        <button class="btn mt-fix" data-fix="answers">Answers in every region</button>
+      </div>
+    </div>
+    <div class="mt-side">
+      <ul class="mt-legend"></ul>
+      <div class="mt-out"></div>
+      <p class="mt-note">A toy model: each week, players drift toward the decks that won last week. The win rates are illustrative, not real ladder data.</p>
+    </div>
+  </div>
+  <aside class="notes">Ground decks can’t block Elusives, so they bleed out. The only things that survive are more Elusive decks and spell-heavy decks that can remove them. Two archetypes, one keyword. Try the fixes: making Elusives weaker helps a little; giving every region its own answer brings the whole field back.</aside>
+</section>
+
+<!-- 4 -->
+<section class="slide paper" data-title="The lesson" data-demo="none">
+  <div class="kicker">design takeaway</div>
+  <h2>When a mechanic is its own only answer</h2>
+  <ul class="el-lessons">
+    <li class="rise"><b>Count the answers.</b> For every strong mechanic, list what beats it. If the list is “the same mechanic”, the meta will fold into it.</li>
+    <li class="rise"><b>Check where the answers live.</b> An answer locked in the same region (faction, class, colour) as the threat forces everyone into that region.</li>
+    <li class="rise"><b>Price evasion honestly.</b> Unblockable damage is worth more than its stats suggest. Cheap and hard-hitting is the dangerous combo.</li>
+    <li class="rise"><b>Spread the counters.</b> Give other factions their own way to interact, so players have a choice of how to answer.</li>
+  </ul>
+</section>
+
+</div></div>
+<script src="../assets/deck.js"></script>
+<script src="../assets/kit.js"></script>
+<script src="elusives.js"></script>
+</body>
+</html>

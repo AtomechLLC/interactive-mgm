@@ -1,0 +1,79 @@
+/* Unbalanced Meta: Elusives: per-slide layouts */
+.slide h2.sm { font-size: 44px; margin-bottom: 18px; }
+.slide { --elusive: #b98cff; }
+.good { color: var(--good); }
+.bad { color: var(--bad); }
+
+/* 2: the board */
+.el-wrap { display: grid; grid-template-columns: 900px 1fr; gap: 40px; align-items: start; }
+.el-board { background: #061636; border: 1px solid var(--line); border-radius: 18px; padding: 18px 26px 20px; }
+.el-lane { display: flex; align-items: center; gap: 22px; }
+.el-lane.you { flex-direction: column; align-items: flex-start; gap: 10px; }
+.el-label { font-size: 18px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+.el-label small { text-transform: none; letter-spacing: 0; font-size: 16px; }
+.el-toggle { margin-left: auto; font-size: 20px; color: var(--muted); display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.el-toggle input { width: 22px; height: 22px; accent-color: var(--elusive); }
+.el-toggle b { color: var(--elusive); }
+.el-lane.foe .el-label { width: 210px; }
+.el-clash { display: flex; align-items: center; gap: 22px; margin: 10px 0; }
+.el-vs { width: 210px; text-align: right; font-size: 30px; color: var(--muted); }
+.el-block-slot { width: 150px; height: 200px; border: 2px dashed var(--line); border-radius: 14px; display: grid; place-items: center; color: var(--muted); font-size: 16px; }
+.el-block-slot.filled { border-color: transparent; }
+.el-hand { display: flex; gap: 18px; }
+.el-actions { display: flex; align-items: center; gap: 16px; margin-top: 16px; }
+.el-nexus { margin-left: auto; font-size: 22px; color: var(--muted); }
+.el-nexus b { font-size: 34px; color: var(--text); margin-left: 8px; font-family: var(--display); }
+.el-nexus.ouch b { animation: ouch .5s; }
+@keyframes ouch { 30% { color: var(--bad); transform: scale(1.3); display: inline-block; } }
+
+.el-card { position: relative; width: 150px; height: 200px; border-radius: 14px; border: 2px solid #3b5ea8; background: linear-gradient(170deg, #1c3f80, #0f2758);
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 26px 8px 8px; gap: 4px; cursor: pointer; transition: transform .15s, opacity .4s, filter .4s; }
+.el-card:not(:disabled):hover { transform: translateY(-6px); border-color: var(--accent-2); }
+.el-card:disabled { cursor: default; }
+.el-card .cost { position: absolute; top: -12px; left: -12px; width: 38px; height: 38px; border-radius: 50%; background: var(--accent); display: grid; place-items: center; font-weight: 600; font-size: 20px; border: 2px solid #061636; }
+.el-card .art { font-size: 50px; line-height: 1.1; }
+.el-card b { font-size: 18px; text-align: center; line-height: 1.15; }
+.el-card .kw { font-size: 14px; text-transform: uppercase; letter-spacing: .08em; color: #fff; background: var(--elusive); border-radius: 6px; padding: 1px 8px; }
+.el-card .txt { font-size: 15px; color: var(--muted); text-align: center; }
+.el-card .stats { position: absolute; bottom: 8px; left: 10px; right: 10px; display: flex; justify-content: space-between; }
+.el-card .stats i { font-style: normal; font-weight: 600; font-size: 22px; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; }
+.el-card .stats i:first-child { background: #b5652a; }
+.el-card .stats i:last-child { background: #8d2f3a; }
+.el-card.elusive { border-color: var(--elusive); box-shadow: 0 0 18px rgba(185,140,255,.5); background: linear-gradient(170deg, #3a2a7a, #1a1647); }
+.el-card.elusive .art { animation: shimmer 2.4s ease-in-out infinite; }
+@keyframes shimmer { 50% { opacity: .45; } }
+.el-card.spell { border-color: var(--accent-3); background: linear-gradient(170deg, #4a3a1a, #251c0c); border-radius: 50% 50% 14px 14px / 22% 22% 14px 14px; }
+.el-card.atk { cursor: default; }
+.el-card.atk:hover { transform: none; }
+.el-card.shake { animation: shake .45s; border-color: var(--bad); }
+@keyframes shake { 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
+.el-card.dead { opacity: .25; filter: grayscale(1); transform: rotate(-6deg) scale(.94); }
+.el-card.cast { opacity: 0; transform: translateY(-120px) scale(.6); }
+
+.el-side h3 { font-size: 24px; margin: 26px 0 12px; color: var(--accent-2); }
+.slide .el-out { font-size: 25px; line-height: 1.4; min-height: 210px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 20px 22px; }
+.el-answers { list-style: none; padding: 0; margin: 0; }
+.slide .el-answers li { font-size: 23px; padding: 8px 0; color: var(--muted); display: flex; gap: 14px; align-items: center; }
+.el-answers li i { font-style: normal; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--panel); border: 1px solid var(--line); flex: none; }
+.slide .el-answers li.yes { color: var(--text); }
+.el-answers li.yes i { background: var(--good); color: #061636; border-color: var(--good); }
+.slide .el-answers li.no { color: var(--text); }
+.el-answers li.no i { background: var(--bad); color: #061636; border-color: var(--bad); }
+
+/* 3: meta model */
+.mt-wrap { display: grid; grid-template-columns: 900px 1fr; gap: 40px; align-items: start; }
+.mt-canvas { cursor: default; }
+.mt-ctrl { display: flex; gap: 12px; align-items: center; margin-top: 16px; flex-wrap: wrap; }
+.mt-ctrl .btn { font-size: 19px; padding: 10px 16px; }
+.mt-ctrl .muted { font-size: 19px; margin-left: 10px; }
+.mt-legend { list-style: none; padding: 0; margin: 0 0 18px; }
+.slide .mt-legend li { font-size: 24px; display: flex; align-items: center; gap: 12px; padding: 5px 0; }
+.mt-legend i { width: 20px; height: 20px; border-radius: 5px; }
+.mt-legend b { margin-left: auto; font-variant-numeric: tabular-nums; }
+.slide .mt-out { font-size: 23px; line-height: 1.4; min-height: 160px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px; }
+.slide .mt-note { font-size: 16px; color: var(--muted); margin-top: 14px; }
+
+/* 4: lesson */
+.el-lessons { padding-left: 30px; max-width: 1300px; }
+.slide .el-lessons li { font-size: 29px; margin-bottom: 16px; color: var(--ink); }
+.el-lessons b { color: var(--accent); }

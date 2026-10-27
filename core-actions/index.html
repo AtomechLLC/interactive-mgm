@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Core Gameplay Actions · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Orbitron:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/deck.css">
+<link rel="stylesheet" href="../assets/kit.css">
+<link rel="stylesheet" href="../assets/vendor/spine-player.min.css">
+<link rel="stylesheet" href="core.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · PvP Interactions · Core Gameplay Actions', home: '../index.html', audio: null, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1 -->
+<section class="slide center" data-title="Core Gameplay Actions" data-demo="none">
+  <div class="kicker rise">fundamentals for designing engaging PvP interactions</div>
+  <h1 class="rise">Core Gameplay <span class="accent">Actions</span></h1>
+  <div class="rule rise" style="margin:22px auto"></div>
+  <div class="title-tokens rise">
+    <img src="../assets/img/forsaken/Token_Player1.png" alt="">
+    <span>vs</span>
+    <img src="../assets/img/forsaken/Monster.png" alt="">
+  </div>
+  <p class="lede rise" style="margin:20px auto 0;text-align:center">Two ways to threaten, three ways to answer, and the mind game between them. A case study from <i>No Rest for the Wicked</i>.</p>
+</section>
+
+<!-- 2: deck slide 428 -->
+<section class="slide" data-title="The anatomy of an attack" data-demo="timing">
+  <div class="kicker">reference: refining gameplay &amp; feel</div>
+  <h2 class="sm">The anatomy of an attack</h2>
+  <canvas class="demo tm-canvas" width="1380" height="440"></canvas>
+  <div class="tm-ctrl">
+    <label>Anticipation <input type="range" data-k="ant" min="6" max="45" value="24"><b data-v="ant"></b></label>
+    <label>Slash <input type="range" data-k="act" min="2" max="12" value="5"><b data-v="act"></b></label>
+    <label>Recovery <input type="range" data-k="rec" min="8" max="50" value="26"><b data-v="rec"></b></label>
+    <label>Online latency <input type="range" data-k="lat" min="0" max="250" step="10" value="0"><b data-v="lat"></b></label>
+    <button class="btn tm-play">▶ Attack</button>
+    <button class="btn tm-react">Block! (K)</button>
+    <button class="btn tm-slow">¼ speed</button>
+  </div>
+  <p class="tm-out out"></p>
+</section>
+
+<!-- 3: deck slide 429 -->
+<section class="slide" data-title="Offensive verbs: sweeps and thrusts" data-demo="offense">
+  <div class="kicker">core gameplay actions</div>
+  <h2 class="sm">Offensive verbs: <span class="atk">sweeps</span> and <span class="atk">thrusts</span></h2>
+  <canvas class="demo off-canvas" width="1380" height="470"></canvas>
+  <div class="row ctl-row">
+    <span class="muted">Drag your token, or try:</span>
+    <button class="btn" data-pos="none">Stand</button>
+    <button class="btn" data-pos="back">Step back</button>
+    <button class="btn" data-pos="right">Step aside</button>
+    <button class="btn" data-pos="dodge">Roll away</button>
+    <button class="btn off-reach on">Show reach</button>
+  </div>
+  <p class="off-out out"></p>
+  <div class="hint">Drag the blue token around either arena</div>
+</section>
+
+<!-- 4: deck slides 430 and 431 -->
+<section class="slide" data-title="Defensive verbs: block, dodge, quickstep" data-demo="defense">
+  <div class="kicker">core gameplay actions</div>
+  <h2 class="sm">Defensive verbs</h2>
+  <div class="verbs">
+    <div class="verb-card">
+      <h3>Block</h3>
+      <canvas class="verb" data-verb="block" width="340" height="340"></canvas>
+      <div class="frames"><i class="f-start" style="flex:2">2</i><i class="f-guard" style="flex:30">guard while held</i></div>
+      <p>Hold to absorb. Costs stamina, and heavy hits push you back. <span class="muted">From Elden Ring.</span></p>
+    </div>
+    <div class="verb-card">
+      <h3>Dodge</h3>
+      <canvas class="verb" data-verb="dodge" width="340" height="340"></canvas>
+      <div class="frames"><i class="f-start" style="flex:2">2</i><i class="f-inv" style="flex:20">i-frames</i><i class="f-rec" style="flex:23">recovery</i></div>
+      <p>A long roll that’s invincible on the way. Beats everything, but the recovery gives the initiative back. <span class="muted">From Elden Ring.</span></p>
+    </div>
+    <div class="verb-card step new">
+      <h3>Quickstep</h3>
+      <canvas class="verb" data-verb="qs" width="340" height="340"></canvas>
+      <div class="frames"><i class="f-start" style="flex:2">2</i><i class="f-move" style="flex:8">move</i><i class="f-rec" style="flex:6">rec</i><i class="f-free" style="flex:29">free to punish</i></div>
+      <p>Faster, shorter, and <b>fully vulnerable</b>. Step the right way and counterattack. Guess wrong and you’re hit.</p>
+    </div>
+  </div>
+  <div class="hint">Press → to add the third option</div>
+</section>
+
+<!-- 5: deck slide 432 -->
+<section class="slide" data-title="Quick steps used to be overpowered dodges" data-demo="oldqs">
+  <div class="kicker">quick steps weren’t new to <i>No Rest for the Wicked</i>…</div>
+  <h2 class="sm">…but they used to be overpowered dodges</h2>
+  <div class="row og-row">
+    <div class="og-box"></div>
+    <div class="og-side">
+      <div class="row" style="gap:12px;flex-wrap:wrap">
+        <button class="btn" data-old="1">Before: quickstep had i-frames</button>
+        <button class="btn" data-old="0">After: no i-frames</button>
+      </div>
+      <p class="og-out out"></p>
+      <p class="muted small">Every cell is worked out from the same hitboxes as the other slides. Hover a cell for why.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 6: deck slide 433 -->
+<section class="slide" data-title="Which way to step" data-demo="qs433">
+  <div class="kicker">core gameplay actions</div>
+  <h2 class="sm">Sidestep a thrust. Backstep a sweep.</h2>
+  <canvas class="demo qs-canvas" width="1380" height="500"></canvas>
+  <div class="row ctl-row">
+    <button class="btn" data-qs="all">All at once (Q)</button>
+    <button class="btn" data-qs="left">Step left (A)</button>
+    <button class="btn" data-qs="back">Step back (S)</button>
+    <button class="btn" data-qs="right">Step right (D)</button>
+    <button class="btn" data-qs="none">Stand still (W)</button>
+  </div>
+  <p class="qs-out out"></p>
+</section>
+
+<!-- 7: playable duel -->
+<section class="slide duel" data-title="Read your opponent" data-demo="duel" data-touch-keys="KeyA:◀ QS,KeyS:▼ QS,KeyD:QS ▶,KeyK:🛡,KeyL:Roll,KeyJ:⚔">
+  <div class="du-grid">
+    <canvas class="demo du-canvas" width="700" height="680"></canvas>
+    <div class="du-side">
+      <h2 class="sm">Read your opponent</h2>
+      <div class="bars">
+        <div class="du-hp bar-l"><span>You</span><i></i></div>
+        <div class="du-st bar-l st"><span>Stamina</span><i></i></div>
+        <div class="du-mhp bar-l foe"><span>Opponent</span><i></i></div>
+      </div>
+      <div class="row du-btns">
+        <button class="btn" data-act-btn="left">◀ QS (A)</button>
+        <button class="btn" data-act-btn="back">▼ QS (S)</button>
+        <button class="btn" data-act-btn="right">QS ▶ (D)</button>
+        <button class="btn" data-act-btn="block">🛡 Block (K)</button>
+        <button class="btn" data-act-btn="dodge">Roll (L)</button>
+        <button class="btn" data-act-btn="attack">⚔ Counter (J)</button>
+      </div>
+      <p class="du-out out"></p>
+      <div class="row du-opts">
+        <button class="btn on" data-mode="react">React: see the attack</button>
+        <button class="btn" data-mode="predict">Predict: too fast to see</button>
+        <button class="btn du-adapt on">Opponent adapts</button>
+        <button class="btn du-reset">Restart</button>
+      </div>
+      <p class="du-read muted small"></p>
+      <div class="du-map-h"><b>Your decision map</b> <button class="link du-clear">clear</button></div>
+      <div class="du-map"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 8: the source animations -->
+<section class="slide" data-title="The original ability mockups (Spine)" data-demo="spine">
+  <div class="kicker">from the Forsaken ability mockups</div>
+  <h2 class="sm">The verbs, as animated in Spine</h2>
+  <div class="sp-grid">
+    <div class="spine-box"></div>
+    <div class="sp-side">
+      <h4>Sweeps</h4>
+      <div class="row wrap"><button class="btn" data-anim="Sword Sweep">Sword</button><button class="btn" data-anim="Halberd Sweep">Halberd</button><button class="btn" data-anim="Mace Sweep">Mace</button><button class="btn" data-anim="Halberd Spin">Halberd spin</button></div>
+      <h4>Thrusts</h4>
+      <div class="row wrap"><button class="btn" data-anim="Sword Thrust">Sword</button><button class="btn" data-anim="Spear Thrust">Spear</button><button class="btn" data-anim="Spear Triple Thrust">Spear ×3</button><button class="btn" data-anim="Halberd Thrust">Halberd</button></div>
+      <h4>Defense</h4>
+      <div class="row wrap"><button class="btn" data-anim="Shield Hold">Shield block</button><button class="btn" data-anim="Shield Parry">Shield parry</button><button class="btn" data-anim="Dagger Parry">Dagger parry</button></div>
+      <h4>Other strikes</h4>
+      <div class="row wrap"><button class="btn" data-anim="Axe Undercut">Axe undercut</button><button class="btn" data-anim="Drunk Swing And Recover">Heavy swing</button><button class="btn" data-anim="Stab n Dash">Stab &amp; dash</button></div>
+      <label class="sp-speed">Speed <input type="range" class="spine-speed" min="0.1" max="1.5" step="0.05" value="1"><b class="spine-speed-v">1.00×</b></label>
+    </div>
+  </div>
+</section>
+
+<!-- 9 -->
+<section class="slide" data-title="Every option has a counter" data-demo="none">
+  <div class="kicker">what the mapping revealed</div>
+  <h2 class="sm">Every option has a counter</h2>
+  <div class="sum">
+    <div class="sum-c"><b class="atk">Thrust</b><span>beats a backstep (long reach)</span><span>loses to a sidestep (narrow)</span></div>
+    <div class="sum-c"><b class="atk">Sweep</b><span>beats a sidestep (wide arc)</span><span>loses to a backstep (short reach)</span></div>
+    <div class="sum-c"><b class="def">Block</b><span>cheap against thrusts</span><span>drains stamina against sweeps</span></div>
+    <div class="sum-c"><b class="def">Dodge</b><span>safe against everything</span><span>but the attacker resets first</span></div>
+    <div class="sum-c"><b class="mov">Quickstep</b><span>the highest reward</span><span>only if you read the attack</span></div>
+  </div>
+  <p class="lede" style="margin-top:34px">Dodge stays a universal but weaker answer. The best answers are situational, so players have to read each other. That’s the mind game.</p>
+</section>
+
+</div></div>
+<script src="../assets/deck.js"></script>
+<script src="../assets/gi.js"></script>
+<script src="../assets/kit.js"></script>
+<script src="../assets/vendor/spine-player.min.js"></script>
+<script src="../assets/spine/spine-data.js"></script>
+<script src="core.js"></script>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Strike Trade Balance · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Orbitron:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/deck.css">
+<link rel="stylesheet" href="../assets/kit.css">
+<link rel="stylesheet" href="../assets/vendor/spine-player.min.css">
+<link rel="stylesheet" href="trades.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · PvP Interactions · Strike Trade Balance Techniques', home: '../index.html', audio: null, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1: deck slide 265 -->
+<section class="slide center" data-title="3 Strike Trade Balance Techniques" data-demo="none">
+  <div class="kicker rise">part 7 · fundamentals for designing engaging PvP interactions</div>
+  <h1 class="rise">Strike Trade <span class="accent">Balance</span></h1>
+  <div class="rule rise" style="margin:22px auto"></div>
+  <div class="tri rise">
+    <div class="tri-c ar"><img src="../assets/img/forsaken/Protect_Friendly.png" alt=""><b>Armor</b><span>take less damage</span></div>
+    <div class="tri-c sa"><img src="../assets/img/forsaken/Shielded_Friendly.png" alt=""><b>Super armor</b><span>can’t be interrupted</span></div>
+    <div class="tri-c im"><img src="../assets/img/forsaken/Not_Symbol.png" alt=""><b>Immunity</b><span>can’t be hit at all</span></div>
+  </div>
+  <p class="lede rise" style="margin:26px auto 0;text-align:center">Three ways to change what a hit <i>costs</i>. Same incoming attack, very different trades.</p>
+</section>
+
+<!-- 2: deck slides 266 to 272, the main interactive -->
+<section class="slide" data-title="Same hit, different answers" data-demo="trade">
+  <div class="kicker">you’re winding up a heavy hammer swing. the monster attacks first.</div>
+  <h2 class="sm">Same hit, different answers</h2>
+  <div class="tr-grid">
+    <canvas class="demo tr-canvas" width="840" height="600"></canvas>
+    <div class="tr-side">
+      <h4>Your protection during the wind-up</h4>
+      <div class="row wrap tr-mode">
+        <button class="btn" data-mode="none">None <kbd>1</kbd></button>
+        <button class="btn m-ar" data-mode="armor">Armor <kbd>2</kbd></button>
+        <button class="btn m-sa" data-mode="super">Super armor <kbd>3</kbd></button>
+        <button class="btn m-im" data-mode="immune">Immunity <kbd>4</kbd></button>
+      </div>
+      <h4>The monster’s attack</h4>
+      <div class="row wrap tr-atk">
+        <button class="btn" data-atk="jab">Jab</button>
+        <button class="btn" data-atk="heavy">Heavy strike</button>
+        <button class="btn" data-atk="flurry">3-hit flurry</button>
+        <button class="btn" data-atk="throw">Throw</button>
+      </div>
+      <div class="row wrap tr-opts">
+        <button class="btn tr-cap">Super armor: breaks after 2 hits</button>
+        <button class="btn tr-slow">½ speed</button>
+        <button class="btn tr-replay">↻ Replay <kbd>R</kbd></button>
+      </div>
+      <p class="tr-out out"></p>
+      <table class="tr-cmp"></table>
+    </div>
+  </div>
+</section>
+
+<!-- 3: consequences to trading (the slides after 272) -->
+<section class="slide" data-title="Who wins the trade?" data-demo="grid">
+  <div class="kicker">consequences to trading</div>
+  <h2 class="sm">Who wins the trade?</h2>
+  <div class="row gr-row">
+    <table class="gr"></table>
+    <div class="gr-side">
+      <div class="gr-key">
+        <p><b class="ar">Armor</b> only reduces damage. You still flinch, so your swing is lost.</p>
+        <p><b class="sa">Super armor</b> only prevents hit stun. You pay the full health cost, but your swing lands.</p>
+        <p><b class="im">Immunity</b> prevents both. Hits simply don’t land.</p>
+      </div>
+      <p class="muted small">Every cell is the same simulation as the last slide. Click one to watch it.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 4: when to use each -->
+<section class="slide" data-title="Which one would you use?" data-demo="pick">
+  <div class="kicker">from the Forsaken ability mockups</div>
+  <h2 class="sm">Which one would you give this move?</h2>
+  <div class="pk-grid">
+    <div class="pk-left">
+      <div class="spine-box pk-spine"></div>
+      <div class="row wrap pk-cases"></div>
+    </div>
+    <div class="pk-side">
+      <p class="pk-q"></p>
+      <div class="row wrap pk-ans">
+        <button class="btn m-ar" data-pick="armor">Armor</button>
+        <button class="btn m-sa" data-pick="super">Super armor</button>
+        <button class="btn m-im" data-pick="immune">Immunity</button>
+      </div>
+      <p class="pk-out out"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 5: best applications -->
+<section class="slide" data-title="Best applications" data-demo="none">
+  <div class="kicker">best applications</div>
+  <h2 class="sm">Three dials, three kinds of outcome</h2>
+  <div class="sum3">
+    <div class="sum-c im"><img src="../assets/img/forsaken/Not_Symbol.png" alt=""><b>Immunity</b><i>Binary: all or nothing</i><span>Easy to understand. Dodge rolls, get-ups, high-investment supers.</span><span class="muted">Hits simply don’t land.</span></div>
+    <div class="sum-c sa"><img src="../assets/img/forsaken/Shielded_Friendly.png" alt=""><b>Super armor</b><i>Analog: damage, no reaction</i><span>Gives slow, weighty moves a leg up over fast ones. Still attackable, not interruptible.</span><span class="muted">Counterplay: throws and multi-hits.</span></div>
+    <div class="sum-c ar"><img src="../assets/img/forsaken/Protect_Friendly.png" alt=""><b>Armor</b><i>Analog: less damage, still reacts</i><span>Very specific balance tuning. Stat buffs and long transformations.</span><span class="muted">More powerful, but you still have to pay attention.</span></div>
+  </div>
+  <p class="lede" style="margin-top:34px">Hit stun and damage are the two costs of a strike. These techniques let you, the designer, tune each one separately.</p>
+</section>
+
+</div></div>
+<script src="../assets/deck.js"></script>
+<script src="../assets/gi.js"></script>
+<script src="../assets/kit.js"></script>
+<script src="../assets/vendor/spine-player.min.js"></script>
+<script src="../assets/spine/spine-data.js"></script>
+<script src="trades.js"></script>
+</body>
+</html>

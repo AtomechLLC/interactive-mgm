@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unbalanced Meta: Bruisers · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Orbitron:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/deck.css">
+<link rel="stylesheet" href="../assets/kit.css">
+<link rel="stylesheet" href="bruiser.css">
+<script>
+  window.DECK = {
+    title: 'Mastering Game Mechanics · Unbalanced Meta: the Bruiser Meta',
+    home: '../index.html',
+    audio: false,
+    cues: null
+  };
+</script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1 -->
+<section class="slide center" data-section="1" data-section-title="Unbalanced meta" data-title="Unbalanced Meta: the Bruiser Meta" data-demo="none">
+  <div class="kicker rise">unbalanced meta · League of Legends</div>
+  <h1 class="rise">The Bruiser Meta</h1>
+  <div class="rule rise" style="margin:22px auto"></div>
+  <p class="lede rise" style="margin:10px auto 0">For about two years, one class of champion was <b class="accent-2">tanky</b>, <b class="accent-2">hard-hitting</b>, <b class="accent-2">easy to play</b> and had <b class="accent-2">almost no weaknesses</b>. Everyone played it. Breaking it took a ton of systems <i>and</i> content work.</p>
+  <aside class="notes">Set up the story: a meta is the set of strategies players converge on. When one option is both strong and easy, the meta collapses onto it. The next slides let students see why.</aside>
+</section>
+
+<!-- 2 -->
+<section class="slide" data-title="Every class has a hole" data-demo="shape">
+  <div class="shape-wrap">
+    <div>
+      <div class="kicker rise">class shapes</div>
+      <h2 class="rise">Every class has a hole</h2>
+      <p class="lede rise sm">Click a class. Each one spends the same <b class="accent-2">power budget</b>, and its weak stat is how the enemy beats it.</p>
+      <div class="cls-btns rise"></div>
+      <div class="budget rise"><div class="budget-lbl"><span>power budget</span><b class="budget-n"></b></div><div class="budget-track"><div class="budget-fill"></div><div class="budget-line" title="fair budget"></div></div></div>
+      <p class="shape-out rise"></p>
+    </div>
+    <div class="radar-box rise"><svg class="radar" viewBox="-260 -235 520 470" aria-label="stat radar"></svg><label class="ghost-tog"><input type="checkbox" checked> show the fair bruiser outline</label></div>
+  </div>
+  <div class="hint">Numbers are illustrative 0 to 10 scores, not real game stats.</div>
+  <aside class="notes">Marksmen, mages and assassins all have something obvious missing: health, mobility or forgiveness. Tanks give up damage. The meta bruiser filled in nearly every axis: health, damage, enough mobility to close the range gap, and a low skill floor. Compare it against the fair bruiser outline.</aside>
+</section>
+
+<!-- 3 -->
+<section class="slide" data-title="Strong + easy = everywhere" data-demo="popular">
+  <div class="pop-wrap">
+    <div>
+      <div class="kicker rise">why it spread</div>
+      <h2 class="rise">Strong + easy = everywhere</h2>
+      <p class="lede rise sm">Strong champions get picked by good players. Easy champions get picked by <i>everyone</i>. Push the bruiser into the corner and watch the lobbies fill up.</p>
+      <div class="sl rise"><label>Strength <b class="v-pow"></b></label><input type="range" class="r-pow" min="0" max="10" step=".1"></div>
+      <div class="sl rise"><label>Ease of play <b class="v-ease"></b></label><input type="range" class="r-ease" min="0" max="10" step=".1"></div>
+      <div class="pop-btns rise"><button class="btn small" data-p="fair">fair bruiser</button><button class="btn small" data-p="meta">meta bruiser</button></div>
+      <p class="pop-out rise"></p>
+    </div>
+    <div class="rise">
+      <svg class="quad" viewBox="0 0 560 420" aria-label="strength vs ease chart"></svg>
+      <div class="lobbies"></div>
+      <div class="lobby-cap">10 solo-queue games: each dot is a top or jungle pick (<span class="sw b"></span> bruiser, <span class="sw o"></span> anything else)</div>
+    </div>
+  </div>
+  <aside class="notes">Strength alone makes a champion popular with skilled players. Ease alone makes it popular with new players. Both together and it shows up in every game, so the people facing it every game notice the frustration much sooner.</aside>
+</section>
+
+<!-- 4 -->
+<section class="slide" data-title="Breaking the meta" data-demo="levers">
+  <div class="lev-wrap">
+    <div>
+      <div class="kicker rise">no single fix</div>
+      <h2 class="rise">Breaking the meta</h2>
+      <p class="lede rise sm">Turn on the fixes one at a time. Notice how little any single one moves the needle.</p>
+      <div class="levers rise"></div>
+    </div>
+    <div class="lev-right rise">
+      <svg class="radar radar-sm" viewBox="-260 -235 520 470" aria-label="bruiser shape"></svg>
+      <div class="meter"><div class="meter-lbl"><span>bruiser share of top &amp; jungle picks</span><b class="share-n"></b></div><div class="meter-track"><div class="meter-fill"></div><div class="meter-fair"></div></div></div>
+      <p class="lev-out"></p>
+    </div>
+  </div>
+  <div class="hint">Effects are illustrative. Dates point at real Riot changes from different eras.</div>
+  <aside class="notes">The lesson: when something is overtuned along many axes, and players have learned and invested in it, you have to pull many levers. Systems levers (items, anti-heal, durability) change everyone. Content levers (champion updates, new counters) are targeted but slow to make.</aside>
+</section>
+
+<!-- 5 -->
+<section class="slide" data-title="Watch it happen" data-demo="videos">
+  <div class="vid-wrap">
+    <div class="vid-main">
+      <div class="vid-player"><div class="vid-ph"></div></div>
+      <div class="vid-meta"><b class="vid-title"></b><span class="vid-why"></span><a class="vid-link" target="_blank" rel="noopener">open on YouTube ↗</a></div>
+    </div>
+    <div class="vid-list"></div>
+  </div>
+  <aside class="notes">Pick one bruiser montage to show what dominance looks like, then one explainer. Minimo's video is from patch 13.13; Vars covers juggernauts and why they are balanced around going second. Riot's Dev Update covers the 2024 removal of Mythic items.</aside>
+</section>
+
+<!-- 6 -->
+<section class="slide" data-title="What designers take away" data-demo="none">
+  <div class="kicker rise">takeaways</div>
+  <h2 class="rise">What to take away</h2>
+  <div class="take">
+    <div class="card rise"><b class="accent-2">Give every role a hole.</b><p>A clear weakness is what the other team plays against. No hole, no counterplay.</p></div>
+    <div class="card rise"><b class="accent-2">Strength × accessibility = ubiquity.</b><p>Easy options need a lower power ceiling, or they take over every game.</p></div>
+    <div class="card rise"><b class="accent-2">Overtuned on many axes needs many levers.</b><p>Systems changes and new content together. Catch it early: it only gets more expensive.</p></div>
+  </div>
+  <p class="src rise">Sources: Riot, <a href="https://www.leagueoflegends.com/en-us/news/dev/quick-gameplay-thoughts-5-6/" target="_blank" rel="noopener">Quick Gameplay Thoughts 5/6 (durability update)</a> · <a href="https://www.leagueoflegends.com/en-us/news/game-updates/patch-12-10-notes/" target="_blank" rel="noopener">Patch 12.10 notes</a> · <a href="https://www.surrenderat20.net/2015/08/gameplay-update-juggernauts.html" target="_blank" rel="noopener">Gameplay Update: Juggernauts (2015, via Surrender at 20)</a></p>
+  <aside class="notes">Close by asking students to name a game they know where one option was strong and easy, and what the developers did about it.</aside>
+</section>
+
+</div></div>
+<script src="../assets/deck.js"></script>
+<script src="../assets/kit.js"></script>
+<script src="bruiser.js"></script>
+</body>
+</html>
