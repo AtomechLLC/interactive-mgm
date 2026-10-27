@@ -27,7 +27,13 @@ svg.cc-wheel { width: 700px; height: 700px; display: block; overflow: visible; f
 .cc-edge.hot .cc-head { fill: var(--accent-3); }
 
 .cc-node { cursor: pointer; outline: none; }
-.cc-disc { stroke: rgba(0,0,0,.35); stroke-width: 3; }
+.cc-disc { transition: transform .2s; }
+.cc-node:hover .cc-disc, .cc-node:focus-visible .cc-disc, .cc-node.sel .cc-disc { transform: scale(1.06); }
+.cc-rim { fill: none; stroke-width: 5; }
+.cc-band { fill: rgba(9, 16, 40, .8); }
+.cc-cream { fill: #fffaf0; }
+.cc-shape > * { stroke: rgba(0,0,0,.2); stroke-width: 2; }
+.cc-badge { fill: #152044; stroke: #ffb951; stroke-width: 2; }
 .cc-halo { fill: none; stroke: transparent; stroke-width: 7; transition: stroke .2s; }
 .cc-node:hover .cc-halo, .cc-node:focus-visible .cc-halo { stroke: rgba(251,251,253,.45); }
 .cc-node.sel .cc-halo { stroke: var(--paper); }
@@ -36,8 +42,7 @@ svg.cc-wheel { width: 700px; height: 700px; display: block; overflow: visible; f
 .cc-node.pop .cc-halo { stroke: var(--accent-3); }
 .cc-node.next .cc-halo { stroke: var(--good); }
 .focus .cc-node:not(.sel):not(.beaten):not(.counter):not(.pop):not(.next) { opacity: .35; }
-.cc-ic { text-anchor: middle; dominant-baseline: middle; pointer-events: none; }
-.cc-nm { text-anchor: middle; fill: #071a3d; font-weight: 600; pointer-events: none; text-transform: uppercase; letter-spacing: .04em; }
+.cc-nm { text-anchor: middle; dominant-baseline: middle; fill: #fff; font-weight: 700; pointer-events: none; text-transform: uppercase; letter-spacing: .04em; }
 .cc-pill { opacity: 0; transition: opacity .2s; pointer-events: none; }
 .cc-pill rect { fill: #061636; stroke-width: 2; }
 .cc-pill text { text-anchor: middle; font-size: 19px; font-weight: 600; }
@@ -105,3 +110,8 @@ svg.cc-wheel { width: 700px; height: 700px; display: block; overflow: visible; f
 .cc-three h3 { font-size: 26px; text-align: center; margin-bottom: 0; }
 .slide .cc-three p { font-size: 22px; color: var(--muted); text-align: center; margin: 4px 0 0; }
 [data-demo="cc-moba"] .cc-panel { height: 410px; }
+
+/* inline option pictures in text: game art or the deck shape */
+.cc-mi { width: 1.15em; height: 1.15em; border-radius: 50%; object-fit: cover; vertical-align: -.2em; margin-right: .3em; }
+svg.cc-mi { border-radius: 0; }
+.cc-grid tr:first-child .cc-mi { display: block; width: 34px; height: 34px; margin: 0 auto 2px; }

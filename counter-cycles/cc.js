@@ -2,6 +2,7 @@
 (function () {
   const { $, $$, demo, say } = FPF.kit;
   const NS = 'http://www.w3.org/2000/svg';
+  let clipSeq = 0;
   const svgEl = (tag, attrs, parent) => {
     const e = document.createElementNS(NS, tag);
     for (const k in attrs) e.setAttribute(k, attrs[k]);
@@ -18,9 +19,9 @@
       order: ['expand', 'turtle', 'rush'], reach: 1,
       chain: ['rush', 'turtle', 'expand', 'rush'],
       nodes: {
-        rush:   { name: 'Rush',   icon: '⚔️', col: '#ff7a2a', tag: 'Spend everything on an early army and attack before the opponent is ready.' },
-        turtle: { name: 'Turtle', icon: '🧱', col: '#36c9c6', tag: 'Wall in, build static defence, and stay safe on one base.' },
-        expand: { name: 'Expand', icon: '🏗️', col: '#ffb547', tag: 'Skip the early army and invest in a second base for a bigger economy later.' },
+        rush:   { name: 'Rush',   img: 'img/rts-rush.jpg', col: '#ff7a2a', tag: 'Spend everything on an early army and attack before the opponent is ready.' },
+        turtle: { name: 'Turtle', img: 'img/rts-turtle.jpg', col: '#36c9c6', tag: 'Wall in, build static defence, and stay safe on one base.' },
+        expand: { name: 'Expand', img: 'img/rts-expand.jpg', col: '#ffb547', tag: 'Skip the early army and invest in a second base for a bigger economy later.' },
       },
       why: {
         'turtle>rush': 'Static defence and a wall hold the attack cheaply. The rusher spent everything and is now behind.',
@@ -33,9 +34,9 @@
       order: ['grab', 'block', 'attack'], reach: 1,
       chain: ['attack', 'block', 'grab', 'attack'],
       nodes: {
-        attack: { name: 'Attack', icon: '👊', col: '#ff7a2a', tag: 'Throw out a strike.' },
-        block:  { name: 'Block',  icon: '🛡️', col: '#2f7bff', tag: 'Hold guard and wait for the opponent to commit.' },
-        grab:   { name: 'Grab',   icon: '✊', col: '#a77bff', tag: 'Walk up and throw.' },
+        attack: { name: 'Attack', shape: 'circle', col: '#6e7380', tag: 'Throw out a strike.' },
+        block:  { name: 'Block',  shape: 'triangle', col: '#4f9a4a', tag: 'Hold guard and wait for the opponent to commit.' },
+        grab:   { name: 'Grab',   shape: 'square', col: '#c9545b', tag: 'Walk up and throw.' },
       },
       why: {
         'block>attack': 'The guard absorbs the strike and leaves the attacker open to a punish.',
@@ -48,11 +49,11 @@
       order: ['bruiser', 'tank', 'assassin', 'mage', 'marksman'], reach: 2,
       chain: ['marksman', 'mage', 'assassin', 'tank', 'bruiser', 'marksman'],
       nodes: {
-        marksman: { name: 'Marksman', icon: '🏹', col: '#ffb547', tag: 'Long range, high sustained damage, fragile and immobile.' },
-        mage:     { name: 'Mage',     icon: '🔮', col: '#a77bff', tag: 'Ranged burst and crowd control, fragile.' },
-        assassin: { name: 'Assassin', icon: '🗡️', col: '#ff5fa2', tag: 'Mobile, dives in, bursts one target down.' },
-        tank:     { name: 'Tank',     icon: '🛡️', col: '#2f7bff', tag: 'Huge durability and crowd control, low damage.' },
-        bruiser:  { name: 'Bruiser',  icon: '🪓', col: '#36c9c6', tag: 'Durable melee with steady damage and sustain.' },
+        marksman: { name: 'Marksman', img: 'img/moba-marksman.jpg', role: 'img/role-marksman.png', col: '#ffb547', tag: 'Long range, high sustained damage, fragile and immobile.' },
+        mage:     { name: 'Mage',     img: 'img/moba-mage.jpg', role: 'img/role-mage.png', col: '#a77bff', tag: 'Ranged burst and crowd control, fragile.' },
+        assassin: { name: 'Assassin', img: 'img/moba-assassin.jpg', role: 'img/role-assassin.png', col: '#ff5fa2', tag: 'Mobile, dives in, bursts one target down.' },
+        tank:     { name: 'Tank',     img: 'img/moba-tank.jpg', role: 'img/role-tank.png', col: '#2f7bff', tag: 'Huge durability and crowd control, low damage.' },
+        bruiser:  { name: 'Bruiser',  img: 'img/moba-bruiser.jpg', role: 'img/role-bruiser.png', col: '#36c9c6', tag: 'Durable melee with steady damage and sustain.' },
       },
       why: {
         // stage 1: the outer ring
@@ -80,11 +81,23 @@
   const beats = (sys, id, stage) => edgesOf(sys).filter(e => e.w === id && e.stage <= stage).map(e => e.l);
   const losesTo = (sys, id, stage) => edgesOf(sys).filter(e => e.l === id && e.stage <= stage).map(e => e.w);
   const nm = (sys, id) => sys.nodes[id].name;
-  const tagged = (sys, id) => `<b style="color:${sys.nodes[id].col}">${sys.nodes[id].icon} ${nm(sys, id)}</b>`;
+  // the fighting game options keep the course deck's shapes: Simple is a sphere, Safe a triangle, Risky a square
+  const SHAPES = {
+    circle: (s, f) => `<circle r="${s}" fill="${f}"/>`,
+    triangle: (s, f) => `<polygon points="0,${-s * 1.05} ${s * 1.1},${s * .85} ${-s * 1.1},${s * .85}" fill="${f}" stroke-linejoin="round"/>`,
+    square: (s, f) => `<rect x="${-s * .9}" y="${-s * .9}" width="${s * 1.8}" height="${s * 1.8}" fill="${f}"/>`,
+  };
+  // the small inline picture that stands for an option in text: game art, or the deck shape
+  const mini = (sys, id) => {
+    const N = sys.nodes[id];
+    return N.img ? `<img class="cc-mi" src="${N.img}" alt="">`
+      : `<svg class="cc-mi" viewBox="-12 -12 24 24">${SHAPES[N.shape](10, N.col)}</svg>`;
+  };
+  const tagged = (sys, id) => `<b style="color:${sys.nodes[id].col}">${mini(sys, id)}${nm(sys, id)}</b>`;
 
   /* ---------- the wheel: an SVG, 720 × 720 units ---------- */
   function wheel(svg, sys, opts = {}) {
-    const n = sys.order.length, C = 360, R = n > 3 ? 255 : 230, r = n > 3 ? 70 : 84;
+    const n = sys.order.length, C = 360, R = n > 3 ? 250 : 225, r = n > 3 ? 84 : 100;
     svg.setAttribute('viewBox', '0 0 720 720');
     svg.innerHTML = '';
     const pos = {};
@@ -121,9 +134,26 @@
       const N = sys.nodes[id], P = pos[id];
       const g = svgEl('g', { class: 'cc-node', transform: `translate(${P.x},${P.y})`, tabindex: 0, role: 'button', 'aria-label': N.name }, gN);
       svgEl('circle', { r: r + 9, class: 'cc-halo' }, g);
-      svgEl('circle', { r, fill: N.col, class: 'cc-disc' }, g);
-      svgEl('text', { y: -10, class: 'cc-ic', 'font-size': n > 3 ? 34 : 40 }, g).textContent = N.icon;
-      svgEl('text', { y: n > 3 ? 30 : 34, class: 'cc-nm', 'font-size': n > 3 ? 20 : 24 }, g).textContent = N.name;
+      // the disc: game art clipped to a circle under a name band, or the deck shape on cream
+      const disc = svgEl('g', { class: 'cc-disc' }, g), cid = `cc-clip-${++clipSeq}`, band = n > 3 ? 30 : 36;
+      svgEl('circle', { r }, svgEl('clipPath', { id: cid }, disc));
+      const art = svgEl('g', { 'clip-path': `url(#${cid})` }, disc);
+      if (N.img) {
+        svgEl('image', { href: N.img, x: -r, y: -r, width: r * 2, height: r * 2, preserveAspectRatio: 'xMidYMid slice' }, art);
+        svgEl('rect', { x: -r, y: r - band - 6, width: r * 2, height: band + 6, class: 'cc-band' }, art);
+      } else {
+        svgEl('circle', { r, class: 'cc-cream' }, art);
+        const sh = svgEl('g', { transform: `translate(0,${-band / 2 + 2})`, class: 'cc-shape' }, art);
+        sh.innerHTML = SHAPES[N.shape](r * .42, N.col);
+        svgEl('rect', { x: -r, y: r - band - 6, width: r * 2, height: band + 6, class: 'cc-band', fill: N.col }, art);
+      }
+      svgEl('circle', { r, class: 'cc-rim', stroke: N.col }, disc);
+      svgEl('text', { y: r - band / 2 - 1, class: 'cc-nm', 'font-size': n > 3 ? 16 : 21 }, disc).textContent = N.name;
+      if (N.role) {
+        const bx = -r * .74, by = -r * .74;
+        svgEl('circle', { cx: bx, cy: by, r: 23, class: 'cc-badge' }, disc);
+        svgEl('image', { href: N.role, x: bx - 17, y: by - 17, width: 34, height: 34 }, disc);
+      }
       // the verdict pill sits on the side of the node away from the centre
       const out = { x: Math.cos(P.a), y: Math.sin(P.a) }, py = Math.abs(out.y) > .6 ? out.y * (r + 30) : r + 30;
       const pill = svgEl('g', { class: 'cc-pill', transform: `translate(0,${py})` }, g);
@@ -169,7 +199,7 @@
   function nodeHTML(sys, id, stage) {
     const N = sys.nodes[id];
     const li = (ids, f) => ids.map(x => `<li>${tagged(sys, x)}<span>${sys.why[f(x)]}</span></li>`).join('');
-    return `<div class="cc-name" style="color:${N.col}">${N.icon} ${N.name}</div><p class="cc-tag">${N.tag}</p>
+    return `<div class="cc-name" style="color:${N.col}">${mini(sys, id)}${N.name}</div><p class="cc-tag">${N.tag}</p>
       <div class="cc-row win"><b>Beats</b><ul>${li(beats(sys, id, stage), x => `${id}>${x}`)}</ul></div>
       <div class="cc-row lose"><b>Loses to</b><ul>${li(losesTo(sys, id, stage), x => `${x}>${id}`)}</ul></div>`;
   }
@@ -260,7 +290,7 @@
   function grid(s, W, stage) {
     const sys = SYS.moba, ids = ['marksman', 'mage', 'assassin', 'tank', 'bruiser'], box = $(s, '.cc-grid');
     const res = (a, b) => a === b ? 'self' : beats(sys, a, stage).includes(b) ? 'w' : beats(sys, b, stage).includes(a) ? 'l' : 'n';
-    box.innerHTML = `<table><tr><th class="cc-corner">you ↓ · them →</th>${ids.map(b => `<th>${sys.nodes[b].icon}<small>${nm(sys, b)}</small></th>`).join('')}</tr>${ids.map(a => `<tr><th>${sys.nodes[a].icon} ${nm(sys, a)}</th>${ids.map(b => {
+    box.innerHTML = `<table><tr><th class="cc-corner">you ↓ · them →</th>${ids.map(b => `<th>${mini(sys, b)}<small>${nm(sys, b)}</small></th>`).join('')}</tr>${ids.map(a => `<tr><th>${mini(sys, a)}${nm(sys, a)}</th>${ids.map(b => {
       const r = res(a, b);
       return `<td class="${r}" data-a="${a}" data-b="${b}">${{ w: 'WIN', l: 'LOSE', n: 'even', self: '' }[r]}</td>`;
     }).join('')}</tr>`).join('')}</table>`;
@@ -296,7 +326,7 @@
         W.clear(); svg.classList.add('focus', 'quiz'); W.pill(enemy, 'enemy', 'pop');
         const many = sys.reach > 1;
         say($(s, '.cc-q-prompt'), `<span class="cc-kick">${sys.label}</span><br>The enemy goes ${tagged(sys, enemy)}.<br>${many ? `Which ${sys.noun}s counter it? There are two.` : `What do you pick?`}`);
-        opts.innerHTML = sys.order.filter(x => x !== enemy).map(x => `<button class="btn" data-id="${x}">${sys.nodes[x].icon} ${nm(sys, x)}</button>`).join('');
+        opts.innerHTML = sys.order.filter(x => x !== enemy).map(x => `<button class="btn" data-id="${x}">${mini(sys, x)}${nm(sys, x)}</button>`).join('');
         say(out, '');
         $$(opts, 'button').forEach(b => b.onclick = () => pick(b));
       }
