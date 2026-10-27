@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Enemy Counters · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Orbitron:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="counters.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · PvE Interactions · Enemy Counters', home: '../index.html', audio: null, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1 -->
+<section class="slide center" data-title="A variety of decisions" data-demo="title">
+  <div class="kicker rise">fundamentals for designing engaging PvE interactions</div>
+  <h1 class="rise">One opposition, <span class="accent">many decisions</span></h1>
+  <div class="rule rise" style="margin:22px auto"></div>
+  <canvas class="demo ti-canvas rise" width="900" height="150"></canvas>
+  <p class="lede rise" style="margin:18px auto 0;text-align:center">Ideally, the player has a variety of different decisions to overcome the opposition. Mario has two verbs, jump and fireball, and three enemies that each ask a different question of them.</p>
+</section>
+
+<!-- 2: the deck's Start / Opposition / Goal diagram -->
+<section class="slide" data-title="Start, opposition, goal" data-demo="frame">
+  <div class="kicker">the PvE interaction model</div>
+  <h2 class="sm">Start, <span class="accent">opposition</span>, goal</h2>
+  <canvas class="demo fr-canvas" width="1420" height="520"></canvas>
+  <p class="out fr-out">The level is the whole loop: Mario starts on the left, the flagpole is the goal, and the enemies are the opposition in between. The <b>rules</b> say what each verb does to each enemy, and every enemy is a <b>decision</b>: jump or fireball?</p>
+</section>
+
+<!-- 3: every matchup -->
+<section class="slide" data-title="Two verbs, three enemies" data-demo="lab">
+  <div class="kicker">the rules, one matchup at a time</div>
+  <h2 class="sm">Two verbs, three enemies</h2>
+  <div class="lab-grid">
+    <canvas class="demo lab-canvas" width="980" height="440"></canvas>
+    <div class="lab-side">
+      <h4>Pick a matchup</h4>
+      <table class="mx lab-mx"></table>
+      <div class="row wrap lab-opts">
+        <button class="btn lab-tour">▶ Play all six</button>
+        <button class="btn lab-replay">↻ Replay</button>
+        <button class="btn lab-slow">½ speed</button>
+      </div>
+    </div>
+  </div>
+  <p class="out lab-out"></p>
+</section>
+
+<!-- 4: one level -->
+<section class="slide" data-title="One level, three questions" data-demo="run">
+  <div class="kicker">start to flagpole</div>
+  <h2 class="sm">One level, <span class="accent">three questions</span></h2>
+  <div class="row wrap run-ctl">
+    <span class="muted">Plan:</span>
+    <button class="btn" data-plan="jump">Always jump</button>
+    <button class="btn" data-plan="fire">Always fireball</button>
+    <button class="btn" data-plan="read">Read each enemy</button>
+    <span class="gap-l"></span>
+    <div class="run-picks"></div>
+    <button class="btn run-replay">↻ Replay</button>
+  </div>
+  <canvas class="demo run-canvas" width="1420" height="420"></canvas>
+  <p class="out run-out"></p>
+</section>
+
+<!-- 5: change the rules -->
+<section class="slide" data-title="Change the rules" data-demo="rules">
+  <div class="kicker">designer’s view</div>
+  <h2 class="sm">Change the rules, change the <span class="accent">decisions</span></h2>
+  <div class="rl-grid">
+    <div>
+      <table class="mx rl-mx"></table>
+      <div class="row wrap rl-opts">
+        <button class="btn" data-preset="mario">Mario’s rules</button>
+        <button class="btn" data-preset="all">Everything works</button>
+        <button class="btn" data-preset="fire">Fireball beats all</button>
+      </div>
+      <p class="muted small rl-hint">Click a cell to flip it. The matchups and the level run on these rules too.</p>
+    </div>
+    <div class="rl-read">
+      <div class="rl-stats"></div>
+      <p class="out rl-out"></p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="counters.js"></script>
+</body>
+</html>

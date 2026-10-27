@@ -1,0 +1,54 @@
+/* Enemy counters: per-slide layout. Shared look comes from ../../assets/deck.css and kit.css. */
+.slide { padding: 46px 90px 60px; justify-content: flex-start; }
+.slide.center { justify-content: center; }
+.slide h2.sm { font-size: 44px; margin-bottom: 12px; }
+.good { color: var(--good); }
+.bad { color: var(--bad); }
+.small { font-size: 18px !important; }
+.out { font-size: 23px !important; line-height: 1.38 !important; min-height: 2.8em; margin: 14px 0 0; }
+.row.wrap { flex-wrap: wrap; gap: 10px; align-items: center; }
+.gap-l { margin-left: 14px; }
+canvas.demo { cursor: default; }
+.slide.center canvas.ti-canvas { display: block; margin: 0 auto; background: none; border: 0; width: 900px; height: 150px; image-rendering: pixelated; }
+
+/* outcome matrix */
+table.mx { border-collapse: separate; border-spacing: 6px; }
+table.mx th { font-weight: 500; color: var(--muted); font-size: 18px; text-align: center; }
+table.mx tr th:first-child { text-align: left; color: var(--text); font-size: 19px; font-weight: 600; white-space: nowrap; }
+table.mx tr th:first-child > * { vertical-align: middle; }
+table.mx canvas.mx-ic { width: 54px; height: 42px; margin-right: 8px; image-rendering: pixelated; }
+table.mx td { background: #fffaf0; border: 2px solid #b9a578; border-radius: 10px; padding: 10px 8px; text-align: center; font-size: 19px; font-weight: 600; cursor: pointer; min-width: 96px; }
+table.mx td.ok { border-color: var(--good); }
+table.mx td.no { border-color: var(--bad); }
+table.mx td.unk { color: #9a8c6a; }
+table.mx td.cur { box-shadow: 0 0 0 4px #ffb951; }
+table.mx td:hover { border-color: var(--navy); }
+
+/* lab */
+.lab-grid { display: grid; grid-template-columns: 1020px 1fr; gap: 24px; }
+.lab-canvas { width: 1020px; height: 458px; image-rendering: pixelated; }
+.lab-side h4 { font-family: var(--display); font-size: 16px; text-transform: uppercase; color: var(--muted); margin: 0 0 4px; }
+.lab-opts { margin-top: 12px; }
+.lab-opts .btn { font-size: 17px; padding: 7px 13px; }
+
+/* run */
+.run-ctl { margin: 0 0 12px; }
+.run-ctl .btn { font-size: 18px; padding: 7px 14px; }
+.run-ctl .btn.sm { font-size: 15px; padding: 5px 10px; }
+.run-picks { display: flex; gap: 14px; }
+.run-picks .pk { display: inline-flex; align-items: center; gap: 4px; }
+.run-picks canvas { width: 46px; height: 34px; image-rendering: pixelated; }
+.run-canvas { width: 1420px; height: 420px; image-rendering: pixelated; }
+
+/* rules */
+.rl-grid { display: grid; grid-template-columns: 620px 1fr; gap: 50px; align-items: start; margin-top: 10px; }
+.rl-mx td { font-size: 22px; padding: 16px 18px; min-width: 170px; }
+.rl-opts { margin-top: 14px; }
+.rl-opts .btn { font-size: 18px; padding: 7px 14px; }
+.rl-hint { margin: 12px 0 0 6px; }
+.rl-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.rl-stats .st { background: #fffaf0; border: 2px solid #b9a578; border-radius: 12px; padding: 14px 18px; display: grid; gap: 2px; }
+.rl-stats .st b { font-family: var(--display); font-size: 34px; }
+.rl-stats .st span { font-size: 17px; color: var(--muted); }
+.rl-stats .st.good { border-color: var(--good); } .rl-stats .st.good b { color: var(--good); }
+.rl-stats .st.bad { border-color: var(--bad); } .rl-stats .st.bad b { color: var(--bad); }

@@ -1,0 +1,8 @@
+// Speaker notes per slide. Source: "MGM C4 M5 - Fundamentals for Designing Engaging PvE Interactions Course", the Start / Opposition / Goal slide (id g273797b7e36_0_683).
+window.NOTES = [
+  { script: 'Ideally, a variety of different decisions to overcome the opposition. Mario is the cleanest example: two verbs, jump and fireball, and enemies that each answer them differently.' },
+  { script: 'The deck’s model, laid over a level. Start on the left, the flagpole is the goal, and the enemies are the opposition in between. The rules say what each verb does to each enemy; the interactions are the player trying verbs against them. The dashed box is the space of decisions: at every enemy, jump or fireball?' },
+  { script: 'Play all six matchups. Koopa: both verbs work, so it teaches without testing. Spiny: jumping hurts you, fire works, so it forces you off your favourite verb. Buzzy Beetle: fire bounces off, jumping works, so it forces you back. Then the level asks all three questions in a row. Click any cell to replay one matchup.' },
+  { script: 'Pick a plan. Always jump gets you stuck at the Spiny; always fireball gets you stuck at the Buzzy Beetle. Only reading each enemy reaches the flagpole. Every enemy is a small decision, and the variety comes from the opposition, not from adding more verbs.' },
+  { script: 'Now play designer. Flip cells to change the rules. Make everything work and the decisions vanish; make fire beat everything and jumping becomes decoration; make an enemy immune to both and it becomes a wall with no decision at all. The matchup and level slides re-run on whatever rules you set here.' },
+];
