@@ -4,7 +4,7 @@
 const { chromium } = require('C:/Projects/game-agent/node_modules/playwright-core');
 const fs = require('fs'), path = require('path');
 const [,, slide, outDir] = process.argv;
-const BASE = 'http://127.0.0.1:8137/counter-cycles/index.html';
+const BASE = 'http://127.0.0.1:8137/pvp/counter-cycles/index.html';
 const CSS = `.viewport{inset:0!important}
 .stage{transform:none!important;left:0!important;top:0!important;border-radius:0!important;box-shadow:none!important}
 .stage::after,.bar,.edge-nav,.touch-pad,.rotate-hint{display:none!important}

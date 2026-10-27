@@ -6,7 +6,7 @@
   const $$ = (el, s) => [...el.querySelectorAll(s)];
   const rnd = (a, b) => a + Math.random() * (b - a);
   const COL = { navy: '#0c2756', deep: '#061636', blue: '#2f7bff', ice: '#8fd3ff', gold: '#ffb547', paper: '#fbfbfd', text: '#fbfbfd', muted: '#a9b7d6', line: '#2b4785', good: '#5fe0a0', bad: '#ff6b6b', fire: '#ff7a2a' };
-  const IMG = '../assets/img/';
+  const IMG = new URL('img/', document.currentScript.src).href;
 
   const MODULES = [
     ['Clarity', 'the foundation that supports everything else', 'clarity'],

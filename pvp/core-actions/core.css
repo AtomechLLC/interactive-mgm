@@ -1,4 +1,4 @@
-/* Core Gameplay Actions: per-slide layout. Shared look comes from ../assets/deck.css and kit.css. */
+/* Core Gameplay Actions: per-slide layout. Shared look comes from ../../assets/deck.css and kit.css. */
 .slide { padding: 54px 90px 60px; justify-content: flex-start; }
 .slide.center { justify-content: center; }
 .slide h2.sm { font-size: 44px; margin-bottom: 18px; }

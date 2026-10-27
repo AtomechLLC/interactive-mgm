@@ -11,7 +11,7 @@
   const ART = {};
   ['Token_Player1', 'Token_Player3', 'Monster', 'Hammer', 'Hit_Hostile', 'Hit_Friendly', 'Dizzy_Swirl', 'Protect_Friendly', 'Shielded_Friendly',
     'Not_Symbol', 'ShieldBreak_Left_Hostile', 'Swoosh_Hostile', 'Rect_Hostile', 'Chain', 'Zone_Friendly']
-    .forEach(n => { const i = new Image(); i.src = '../assets/img/forsaken/' + n + '.png'; ART[n] = i; });
+    .forEach(n => { const i = new Image(); i.src = '../../assets/img/forsaken/' + n + '.png'; ART[n] = i; });
   const ready = i => i && i.complete && i.naturalWidth;
   function sprite(g, name, x, y, w, h, { rot = 0, alpha = 1 } = {}) {
     const i = ART[name]; if (!ready(i)) return;

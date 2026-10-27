@@ -11,7 +11,7 @@
   const fmt = n => String(Math.round(n * 10) / 10);
 
   /* ---------- Forsaken ability token art (Design/Abilities/images) ---------- */
-  const IMG = '../assets/img/forsaken/';
+  const IMG = '../../assets/img/forsaken/';
   const ART = {};
   ['Token_Player1', 'Token_Player3', 'Monster', 'Spear', 'Sword', 'Rect_Friendly', 'Swoosh_Friendly', 'Hit_Friendly', 'Hit_Hostile', 'Dizzy_Swirl', 'Zap_Friendly']
     .forEach(n => { const i = new Image(); i.src = IMG + n + '.png'; ART[n] = i; });

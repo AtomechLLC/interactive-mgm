@@ -11,7 +11,7 @@
   /* ---------- Forsaken ability token art (Design/Abilities/images) ---------- */
   const ART = {};
   ['Token_Player1', 'Token_Player3', 'Monster', 'Trapezoid_Friendly', 'Shielded_Friendly', 'Hit_Hostile', 'Hit_Friendly', 'Dizzy_Swirl', 'Arena']
-    .forEach(n => { const i = new Image(); i.src = '../assets/img/forsaken/' + n + '.png'; ART[n] = i; });
+    .forEach(n => { const i = new Image(); i.src = '../../assets/img/forsaken/' + n + '.png'; ART[n] = i; });
   const ready = i => i.complete && i.naturalWidth;
   const TR = 26;   // token radius
 
