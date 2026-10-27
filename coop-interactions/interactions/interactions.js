@@ -2,13 +2,15 @@
    players and three monsters is 9 player-monster pairs plus 6 player-player pairs: 15. The deck counts each direction
    between players (A helps B and B helps A are different designs); the toggle shows the undirected count too.
    draw(g, P, M, k) draws the board with lines growing in by k, so the tour and window.__seek (the GIF) match.
-   The art is the slide's own Mario, Luigi, Peach and Goombas (img/), reused for teaching. */
+   The heroes are the slide's own Mario, Luigi and Peach; the six enemies are official renders from the Super Mario
+   Wiki (img/), reused for teaching. */
 (function () {
   const { $, $$, canvasDemo, say } = FPF.kit;
   const T = TD, C = TD.C, { clamp, lerp, ease } = TD;
   const W = 1100, H = 560, PX = 370, MX = 900, MAXP = 3;
   const sprite = f => { const i = new Image(); i.src = new URL(`img/${f}.png`, document.currentScript.src).href; return i; };
-  const HEROES = [['Mario', sprite('mario')], ['Luigi', sprite('luigi')], ['Peach', sprite('peach')]], GOOMBA = sprite('goomba');
+  const HEROES = [['Mario', sprite('mario')], ['Luigi', sprite('luigi')], ['Peach', sprite('peach')]];
+  const FOES = [['Goomba', 'goomba'], ['Koopa Troopa', 'koopa'], ['Piranha Plant', 'piranha'], ['Bob-omb', 'bobomb'], ['Hammer Bro', 'hammer'], ['Boo', 'boo']].map(([n, f]) => [n, sprite(f)]);
   const blit = (g, img, x, y, h) => { if (!img.complete || !img.naturalWidth) return; const w = h * img.naturalWidth / img.naturalHeight; g.drawImage(img, x - w / 2, y - h / 2, w, h); };
   const pm = (P, M) => P * M, pp = (P, d) => d ? P * (P - 1) : P * (P - 1) / 2;
   const ys = (n, top = 115, bot = 455) => Array.from({ length: n }, (_, i) => n === 1 ? (top + bot) / 2 : lerp(top, bot, i / (n - 1)));
@@ -16,7 +18,7 @@
   function draw(g, P, M, d, k, o = {}) {
     T.use(g); g.clearRect(0, 0, W, H);
     g.fillStyle = 'rgba(255,252,244,.6)'; g.beginPath(); g.roundRect(0, 0, W, H, 14); g.fill();
-    const py = ys(P), my = ys(M, 110, 450);
+    const py = ys(P), my = ys(M, M > 4 ? 72 : 110, M > 4 ? 500 : 450);
     // player-monster pairs: straight red lines
     const pairs = []; py.forEach((a, i) => my.forEach((b, j) => pairs.push([i, j])));
     pairs.forEach(([i, j], n) => {
@@ -35,9 +37,9 @@
       g.stroke(); g.setLineDash([]);
       if (u >= 1 && d) { const y = lerp(a, b, .92), x = PX - 40 - Math.sin(.92 * Math.PI) * bulge; g.fillStyle = g.strokeStyle; g.beginPath(); g.arc(x, y, 4, 0, Math.PI * 2); g.fill(); }
     });
-    const ph = P === 1 ? 170 : 128, mh = M > 4 ? 62 : 104;
+    const ph = P === 1 ? 170 : 128, mh = M > 4 ? 76 : 104;
     py.forEach((y, i) => { blit(g, HEROES[i][1], PX, y, ph); T.label(HEROES[i][0], PX, y + ph / 2 + 10, 'center', C.ink, 15); });
-    my.forEach(y => blit(g, GOOMBA, MX, y, mh));
+    my.forEach((y, j) => { blit(g, FOES[j][1], MX, y, mh); T.label(FOES[j][0], MX + 52, y, 'left', C.ink, 14); });
     T.label('Players', PX, 24, 'center', C.ink, 18); T.label('Monsters', MX, 24, 'center', C.ink, 18);
     const a = pm(P, M), b = pp(P, d), shown = Math.round((a + b) * clamp(k * 1.15));
     const cx = (PX + MX) / 2;
