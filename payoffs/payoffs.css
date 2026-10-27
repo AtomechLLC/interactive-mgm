@@ -1,0 +1,64 @@
+/* Positioning Payoffs: per-slide layout. Shared look comes from ../assets/deck.css and kit.css. */
+.slide { padding: 46px 90px 60px; justify-content: flex-start; }
+.slide.center { justify-content: center; }
+.slide h2.sm { font-size: 44px; margin-bottom: 12px; }
+.slide .kicker { font-size: 24px; }
+.good { color: var(--good); }
+.bad { color: var(--bad); }
+.accent-3 { color: var(--accent-3); }
+.small { font-size: 20px !important; }
+.out { font-size: 24px !important; min-height: 2.6em; margin: 12px 0 0; line-height: 1.35 !important; }
+.ctl-row { gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+.ctl-row .btn, .wpick .btn, .bd-tune .btn { font-size: 19px; padding: 8px 15px; }
+.top-row { margin: 0 0 12px; }
+.gap-l { margin-left: 22px; }
+.row.en-pick, .row.as-pick { gap: 8px; }
+canvas.demo { background: transparent; border: 0; cursor: default; }
+canvas.ln-canvas { cursor: grab; touch-action: none; }
+.beat-mark { display: none; }
+
+/* weapon picker */
+.wpick { display: flex; gap: 8px; }
+.wpick .btn { display: inline-flex; align-items: center; gap: 8px; }
+.wpick img { height: 30px; width: auto; transform: rotate(45deg); filter: brightness(1.8); }
+.wpick .btn.on img { filter: brightness(3); }
+
+/* title */
+.title-tokens { display: flex; gap: 34px; align-items: center; justify-content: center; margin-top: 8px; }
+.title-tokens img { width: 120px; height: 120px; }
+.title-tokens img.tw { width: auto; height: 130px; transform: rotate(90deg); filter: brightness(1.8); }
+
+/* 304 breakdown */
+.bd-grid { display: grid; grid-template-columns: 520px 1fr; gap: 40px; align-items: start; }
+.bd-left .spine-box { width: 520px; height: 505px; background: #e6e6e6; border-radius: 12px; border: 2px solid #3b3b3b; overflow: hidden; }
+.bd-left p { margin: 8px 0 0; }
+.bd-right { display: grid; gap: 14px; }
+.bd-card { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.bd-stat { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px 18px; display: grid; gap: 4px; }
+.bd-stat b { color: var(--accent-2); font-size: 22px; }
+.bd-stat span { font-size: 26px; font-weight: 600; }
+.bd-stat small { color: var(--muted); font-size: 15px; }
+.bd-tune { display: grid; grid-template-columns: repeat(5, 1fr) auto; gap: 8px 16px; align-items: end; }
+.bd-tune label { font-size: 17px; color: var(--muted); display: grid; gap: 2px; }
+.bd-tune label b { color: var(--text); font-weight: 500; }
+.bd-canvas { width: 820px; height: 150px; }
+.bd-out { margin-top: 0 !important; }
+
+/* comparison */
+table.cmp { border-collapse: separate; border-spacing: 8px; width: 100%; }
+table.cmp th { text-align: left; font-weight: 500; color: var(--muted); font-size: 20px; padding: 4px 10px; }
+table.cmp tr[data-row] { cursor: pointer; }
+table.cmp tr[data-row] th { color: var(--text); font-size: 24px; white-space: nowrap; }
+table.cmp tr[data-row] th img { height: 34px; vertical-align: middle; transform: rotate(45deg); filter: brightness(1.8); margin-right: 4px; }
+table.cmp tr[data-row] th small { display: block; color: var(--muted); font-size: 16px; }
+table.cmp tr.cur th { color: var(--accent-3); }
+table.cmp td { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; vertical-align: top; }
+table.cmp td b { display: block; font-size: 22px; }
+table.cmp td span { font-size: 16px; color: var(--muted); }
+table.cmp td.good { border-color: var(--good); }
+table.cmp td.good b { color: var(--good); }
+table.cmp td.bad { border-color: var(--bad); }
+table.cmp td.bad b { color: var(--bad); }
+table.cmp tr[data-row]:hover td { border-color: var(--accent); }
+.cmp-note { margin: 4px 0 0 8px; }
+.slide .lede.cmp-lede { font-size: 28px; margin-top: 26px; color: var(--text); }

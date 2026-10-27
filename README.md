@@ -46,6 +46,14 @@ Open `index.html` in a browser (no build step, works straight off disk).
   5. Best applications.
   The rules (`SWING`, `ATK`, `MODES`, `CAP`, `resolve`) are at the top of `strike-trades/trades.js`.
 
+- `payoffs/`: **Positioning Payoffs**, from the same deck, skill expression category 4, slides 299 to 304.
+  1. Title: payoffs, the reward for a skilfully executed power.
+  2. Positioning payoffs (299 to 302): PC and enemy 5 m either side of centre. Press → to step through neutral, the swing, their opening (301) and your follow-up (302). Swap your weapon (fists' uppercut, sword, Shocking Spear Thrust) and the same beats resolve differently: the uppercut whiffs into the enemy's pressure, the sword whiffs safely and gains little, the spear's 10 m pressure lands from neutral and stays out of reach. Drag your token to change the start distance, or have the enemy back off or step in.
+  3. Perspective agnostic (303): the same exchange drawn side-on and top-down at once; play as the enemy to see the PC's opening become your payoff.
+  4. Power breakdown (304): positioning, pressure and payoff for the selected weapon next to its Forsaken Spine mockup, with sliders that retune it (and every other slide).
+  5. Same sequence, three weapons: the whole sequence re-run for each weapon in one table.
+  The rules (`WEAPONS`, `ENEMY`, `plan`) are at the top of `payoffs/payoffs.js`. Spear numbers are the deck's; fist and sword payoffs are illustrative.
+
 ## Layout
 
 - `assets/deck.js`, `deck.css`, `kit.js`, `kit.css`, `gi.js`: copied from `InteractiveFPF/assets`. Keep them in sync by hand if the engine changes there.
