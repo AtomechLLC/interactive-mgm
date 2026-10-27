@@ -1,0 +1,6 @@
+// Speaker notes per slide. Source: "MGM C3 M6 - Engaging Co-op Interaction Design Fundamentals", slides 186-229 (Teamplay Sequencing Framework) and 288-291 (Cooperative Keyword Chains).
+window.NOTES = [
+  { script: 'Sequencing is like the volleyball of spellcrafting. When the game does not let one person do everything, it increases the opportunities for allies to gain mastery and relatedness by collaborating with friends.' },
+  { script: 'You could just let them attack in whatever order, but you end up with Diablo-esque teamplay where everyone runs their own internal loop. The teamplay sequencing framework has three stages: setups, exploits and payoffs. A setup is not powerful in itself; it puts the enemy into a vulnerable state. An exploit pays off a prior setup and sets up a future payoff. A payoff is high damage but slow or costly, so it needs a vulnerable target. Ashe slows, Morgana binds, Ashe fires her arrow with no chance of escape. In Magicka: wet, freeze, then shatter.' },
+  { script: 'Now instead of abilities, put reusable keywords in place. Cooperative chains are just sequences of keywords, which can work inside one character but are coordinated across several. Chains rarely go past three or four steps.' },
+];

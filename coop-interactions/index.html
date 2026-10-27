@@ -67,7 +67,7 @@
     ['keywords', 'Text', 'Keywords need situations', 'Class keyword sheets with role, class and spec layers, and encounter sliders that show which keywords ever matter', '270 to 285', 'keywords-need-situations', 'Keywords only matter if situations demand them', 'Four classes through four encounters: each keyword lights up only when the content asks for it.'],
   ];
   // pages that are built so far; the rest of PAGES are the module's planned top 5
-  const READY = ['timing'];
+  const READY = ['timing', 'chains'];
   const LIVE = PAGES.filter(p => READY.includes(p[0]));
   document.getElementById('cards').innerHTML = LIVE.map(([f, ic, t, b, sl, gif]) =>
     `<a class="mod" href="${f}/index.html"><img src="../assets/img/forsaken/${ic}.png" alt=""><span><b>${t}</b><small>${b} (deck slides ${sl}). GIF: gifs/${gif}.gif</small><br><span class="tag">ready</span></span></a>`).join('');
