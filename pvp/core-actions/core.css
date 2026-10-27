@@ -64,25 +64,26 @@ table.og td span { font-size: 15px; opacity: .8; }
 table.og td.flag { background: none; color: var(--bad); min-width: 120px; font-weight: 600; }
 .slide table.og td.flag { background: none !important; color: var(--bad) !important; }
 table.og tr.dom th { color: var(--bad); }
-.slide table.og td.unk { background: rgba(255,255,255,.06) !important; color: var(--muted) !important; text-align: center; }
+.slide table.og td.unk { background: rgba(21,32,68,.07) !important; color: var(--muted) !important; text-align: center; }
 table.og.small { font-size: 16px; border-spacing: 4px; }
-table.og.small td { min-width: 150px; padding: 5px 10px; }
-table.og.small td b { font-size: 16px; }
-table.og.small td span { font-size: 12px; }
+table.og.small td { min-width: 0; width: 50%; padding: 4px 10px; white-space: nowrap; }
+.duel table.og.small { width: 100%; }
+table.og.small td b { font-size: 16px; display: inline; }
+table.og.small td span { font-size: 13px; margin-left: 8px; }   /* one line per cell keeps the map short */
 table.og.small th { padding: 2px 6px; }
 
 /* the duel */
 .slide.duel { padding: 30px 50px 40px; }
-.du-grid { display: grid; grid-template-columns: 700px 1fr; gap: 34px; height: 100%; }
-.du-canvas { width: 700px; height: 680px; }
+.du-grid { display: grid; grid-template-columns: 560px 1fr; gap: 40px; height: 100%; align-items: start; }
+.du-canvas { width: 560px; height: 544px; }   /* drawn at 700×680, shown smaller so the side column fits */
 .du-side h2.sm { margin-bottom: 12px; }
 .bars { display: grid; gap: 8px; }
 .bar-l { display: grid; grid-template-columns: 120px 1fr; align-items: center; font-size: 18px; color: var(--muted); }
 .bar-l i { display: block; height: 16px; border-radius: 8px; background: #3b8cff; transition: width .15s; box-shadow: 0 0 0 1px var(--line); }
 .bar-l.st i { background: #6fe0a8; height: 10px; }
 .bar-l.foe i { background: #ff6b6b; }
-.du-btns, .du-opts { gap: 8px; margin-top: 12px; flex-wrap: wrap; }
-.du-out { font-size: 20px !important; min-height: 3.6em; }
+.du-btns, .du-opts { gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.du-out { font-size: 19px !important; min-height: 3.2em; margin-top: 8px !important; }
 .du-read { margin: 8px 0 0; }
 .du-map-h { margin-top: 8px; font-size: 18px; }
 .du-map-h .link { background: none; border: 0; color: var(--accent-2); cursor: pointer; text-decoration: underline; font-size: 16px; }
