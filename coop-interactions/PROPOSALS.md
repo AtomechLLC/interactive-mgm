@@ -107,7 +107,7 @@ Quick wins worth doing early even though they are not top 5:
 
 **Raid board: roles to threats** (slides 254, 266), effort **M**, medium priority
 - Teaches: in PvE the encounter decides which role matters where: area casters and bruisers on the swarm, single target damage on the soldiers, controllers on the wizard, and tanks with the boss.
-- Proposal: drag role tokens onto the enemy groups from slide 254. Each assignment shows how well that role's keywords fit ("area damage needs clustered enemies"). A score shows time to clear. A bad assignment (assassin on the swarm) visibly crawls.
+- Proposal: drag role tokens onto the enemy groups from slide 254. Each assignment shows how well that role's keywords fit ("area damage needs clustered enemies"). A score shows time to clear. A mismatched assignment (assassin on the swarm) visibly crawls.
 
 ## Part 10: Co-op cross-class design pyramid and keywords (slides 260-304)
 

@@ -158,7 +158,7 @@
       Object.entries(V.m).forEach(([k, v]) => {
         const d = $(meters, `[data-k="${k}"]`), c = v > .7 ? '#1a8a4c' : v > .35 ? '#e0a92d' : '#e5322d';
         d.querySelector('i').style.width = `${Math.round(v * 100)}%`; d.querySelector('i').style.background = c;
-        d.querySelector('.v').textContent = v > .7 ? 'good' : v > .35 ? 'weak' : 'lost';
+        d.querySelector('.v').textContent = v > .7 ? 'strong' : v > .35 ? 'weak' : 'lost';
       });
       if (mode !== st.last) { st.last = mode; say(out, MODES[mode].text); }
     }

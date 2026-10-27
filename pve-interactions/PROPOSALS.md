@@ -25,7 +25,7 @@ Quick win worth doing early even though it is not top 5: **WoW mechanical counte
 Mostly motivation and setup. Low priority.
 
 **Quality x Quantity = Engagement** (slides 7-8), effort **S**, low priority
-- Teaches: engagement is the product of content quality and content quantity, which means you need a lot of good content.
+- Teaches: engagement is the product of content quality and content quantity, which means you need a lot of engaging content.
 - Hard as text: "x" reads like "and". Novices miss that zero on either side gives zero.
 - Proposal: two sliders feed a bar for engagement and retention, and a third readout shows "content pieces to build". Pushing quality to zero collapses the bar no matter how much quantity there is.
 
