@@ -59,6 +59,7 @@
     thrust: { name: 'Thrust', reach: 290, half: 15, dmg: 20, block: 18 },
     sweep: { name: 'Sweep', reach: 165, arc: 1.3, dmg: 25, block: 34 },
   };
+  const BLOCK_CUT = .75;   // a block absorbs this share of the attack's damage; the rest chips through
   const DIST = 130;   // where the defender starts, in front of the attacker
   // moves, in the attacker's frame: away = further from the attacker, side = sideways
   const MOVES = {
@@ -480,7 +481,10 @@
       else if (used === 'block') {
         S.st -= A.block;
         if (S.st < 0) { S.st = 0; S.hp -= A.dmg / 2; p.hitT = .5; o = { adv: -2, res: 'Guard broken', tag: ADV[-2].tag, col: ADV[-2].col, why: 'You ran out of stamina holding the block.' }; }
-        else o = outcome(kind, 'block');
+        else {
+          const chip = Math.round(A.dmg * (1 - BLOCK_CUT));
+          S.hp -= chip; o = outcome(kind, 'block'); o = { ...o, why: `${o.why} The block stops ${BLOCK_CUT * 100}%: you take ${chip}.` };
+        }
       } else if (inHitbox(kind, MX, MY, UP, p.x, p.y)) {
         const qs = MOVES[used].qs;
         S.hp -= Math.round(A.dmg * (qs ? 1.4 : 1)); p.hitT = .5;
