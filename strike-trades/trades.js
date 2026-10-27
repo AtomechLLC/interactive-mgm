@@ -91,7 +91,7 @@
   let shared = null;   // the trade slide, so the grid can drive it
 
   canvasDemo('trade', (s, c, g) => {
-    const W = c.width, H = c.height, AY = 230, MX = 240, PX = 560;
+    const W = c.width, H = c.height, AY = 230, MX = 330, PX = 480;   // close enough that the hammer and the monster's strikes connect
     const out = $(s, '.tr-out'), cmp = $(s, '.tr-cmp'), capBtn = $(s, '.tr-cap'), slowBtn = $(s, '.tr-slow');
     let r;
     const tx = t => 70 + (t / SWING.end) * (W - 140);   // timeline x
@@ -163,7 +163,15 @@
     }
 
     function drawHero(t, now) {
-      const x = PX + now.push + (now.done.some(e => e.kind === 'absorb' && t - e.t < .12) ? Math.sin(t * 90) * 3 : 0), R = 34, mode = state.mode;
+      // step into the swing so the hammer head lands on the monster
+      let step = 0;
+      if (!now.cut) {
+        const s0 = SWING.start - .1, s1 = SWING.active + .25;
+        if (t > s0 && t <= s0 + .15) step = -30 * ease((t - s0) / .15);
+        else if (t > s0 + .15 && t <= s1) step = -30;
+        else if (t > s1) step = -30 * (1 - ease((t - s1) / .3));
+      }
+      const x = PX + now.push + step + (now.done.some(e => e.kind === 'absorb' && t - e.t < .12) ? Math.sin(t * 90) * 3 : 0), R = 34, mode = state.mode;
       // protection aura during the guarded window
       if (now.guard) {
         if (mode === 'super') {
@@ -183,8 +191,8 @@
       let rot;
       if (now.cut) rot = -2.1 * clamp(now.cut.t / SWING.start, 0, 1) * (1 - ease((t - now.cut.t) / .3)) + .9 * ease((t - now.cut.t) / .3);
       else if (t < SWING.start) rot = -2.1 * ease(t / SWING.start);
-      else if (t < SWING.active) rot = -2.1 + 3.2 * ease((t - SWING.start) / .12);
-      else rot = 1.1 - 1.1 * ease((t - SWING.active) / (SWING.end - SWING.active));
+      else if (t < SWING.active) rot = -2.1 + 2.1 * ease((t - SWING.start) / .1);   // 0 points the head straight at the monster
+      else rot = 0;
       g.save(); g.translate(x, AY); g.rotate(rot - Math.PI / 2);
       if (ready(ART.Hammer)) g.drawImage(ART.Hammer, -24, -118, 48, 68);
       g.fillStyle = '#5b5b5b'; g.fillRect(-3, -60, 6, 30);
