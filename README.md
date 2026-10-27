@@ -38,6 +38,15 @@ Open `index.html` in a browser (no build step, works straight off disk).
   3. The only counter is itself: a toy replicator model of a 20-week season; with no fix the field folds into Elusive + spell decks. Compare "weaker Elusive stats" and "answers in every region". Win rates are illustrative and live in `FIX` at the top of the meta demo in `elusives.js`.
   4. Design takeaways.
 
+- `counter-cycles/`: **Counter Cycles** (high level meta, other expressions).
+  1. Title
+  2. RTS: rush, turtle, expand as a counter wheel. Hover an opening or an arrow to read what it beats and why; click a node to pin it.
+  3. Fighting: attack, block, grab, the same triangle at the scale of a fraction of a second.
+  4. MOBA: a five-role cycle, in one stage (the ring) or two (each role beats the next two).
+  5. Why two stages?: the full matchup grid, so no matchup is even.
+  6. Drill: counter-pick. The enemy picks; you pick what beats it.
+  7. Same shape, three genres.
+
 - `strike-trades/`: **Strike Trade Balance Techniques**, from the same deck, part 7, slides 265 to 272.
   1. Title: armor, super armor, immunity.
   2. Same hit, different answers: you wind up a heavy hammer swing while the monster attacks. Toggle your protection (1 to 4: none, armor, super armor, immunity) and the attack (jab, heavy, 3-hit flurry, throw) and watch damage, hit stun, knockback and whether your swing lands. The frame strip shows the protected window and every hit. Super armor breaks after 2 hits like Drive Impact; flip it to hyper armor. A table compares all four for the current attack.
