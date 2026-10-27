@@ -1,0 +1,34 @@
+/* Teamplay targeting matrix: per-slide layout. */
+/* slide 2 */
+.tg-wrap { display: grid; grid-template-columns: 720px 1fr; gap: 34px; margin-top: -4px; }
+.tg-mech { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.tg-mech > span { font-family: var(--display); font-size: 15px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-right: 6px; }
+.tg-mech .mk { flex: none; width: auto; font: 600 18px Jost, sans-serif; padding: 6px 14px; border-radius: 99px; border: 2px solid #cdbf9f; background: #fffaf0; color: var(--ink); cursor: pointer; }
+.tg-mech .mk.on { background: var(--navy); color: #fff; border-color: var(--navy); }
+.tg-grid { display: grid; grid-template-columns: 112px repeat(4, 1fr); gap: 6px; }
+.tg-grid .hd { font-family: var(--display); font-weight: 700; font-size: 16px; color: var(--ink); display: flex; align-items: center; justify-content: center; }
+.tg-grid .hd.row { justify-content: flex-end; padding-right: 8px; }
+.tg-grid .corner { display: grid; font-size: 12px; color: var(--muted); align-content: center; text-align: right; padding-right: 8px; }
+.tg-grid .cell { height: 92px; border-radius: 10px; border: 2px dashed #cdbf9f; background: rgba(255, 250, 240, .6); cursor: pointer; font: inherit; color: var(--ink); padding: 4px 6px; position: relative; }
+.tg-grid .cell i { font-style: normal; font-family: var(--display); font-size: 26px; color: #cdbf9f; }
+.tg-grid .cell b { font-family: var(--display); font-size: 16px; line-height: 1.15; }
+.tg-grid .cell.open { border-style: solid; border-color: var(--mc); background: #fffaf0; animation: pop .35s; }
+.tg-grid .cell.cur { box-shadow: 0 0 0 3px var(--navy); background: #fdf3dd; }
+.tg-grid .cell.deck::after { content: '★'; position: absolute; top: 3px; right: 7px; color: #e0a92d; font-size: 15px; }
+@keyframes pop { from { transform: scale(.88); } to { transform: none; } }
+.tg-btns { margin-top: 12px; }
+.tg-btns .btn { font-size: 16px; padding: 6px 12px; }
+.tg-card { background: #fffaf0; border: 2px solid #cdbf9f; border-radius: 14px; padding: 16px 20px; align-self: start; }
+.tg-dir { display: flex; align-items: center; gap: 6px; font-size: 16px; }
+.tg-dir i { font-style: normal; color: var(--muted); }
+.tg-dir .deckb { margin-left: auto; color: #9a5a06; font-weight: 600; font-size: 15px; }
+.slide .tg-name { font-family: var(--display); font-size: 34px; margin: 8px 0 8px; color: var(--ink); }
+.tg-canvas { width: 100%; height: auto; display: block; border-radius: 10px; }
+.slide .tg-line { font-size: 21px; line-height: 1.35; margin: 10px 0 0; color: var(--ink); min-height: 2.8em; }
+
+/* slide 3 */
+.sh-canvas { width: 1420px; height: 330px; display: block; }
+.sh-cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-top: 8px; }
+.sh-cols h3 { font-size: 28px; margin: 0; color: var(--ink); }
+.sh-cols b { font-size: 15px; color: #9a5a06; }
+.slide .sh-cols p { font-size: 18px; color: var(--muted); margin: 4px 0 0; line-height: 1.35; }
