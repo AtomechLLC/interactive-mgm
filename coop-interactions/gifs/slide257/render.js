@@ -9,12 +9,14 @@ const fs = require('fs'), path = require('path');
 const outDir = process.argv[2] || 'frames';
 const FPS = 25, W = 1920, H = 1080;
 const svg = fs.readFileSync(path.join(__dirname, 'src/s257.svg'), 'utf8');
+const hats = Object.fromEntries(Object.entries({ tophat: '1f3a9', helmet: '1fa96', crown: '1f451' })
+  .map(([k, c]) => [k, 'data:image/png;base64,' + fs.readFileSync(path.join(__dirname, `src/hats/${c}.png`)).toString('base64')]));
 
 (async () => {
   const b = await chromium.launch({ executablePath: 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe' });
   const p = await b.newPage({ viewport: { width: W, height: H } });
   await p.setContent('<html><body style="margin:0;overflow:hidden"><div id="stage"></div></body></html>');
-  const total = await p.evaluate(({ svg, W, H }) => {
+  const total = await p.evaluate(({ svg, hats, W, H }) => {
     const NS = 'http://www.w3.org/2000/svg';
     const doc = new DOMParser().parseFromString(svg, 'image/svg+xml').documentElement;
     doc.setAttribute('width', W); doc.setAttribute('height', H);
@@ -34,6 +36,18 @@ const svg = fs.readFileSync(path.join(__dirname, 'src/s257.svg'), 'utf8');
     };
     const C = {}; Object.entries({ ...P, ...S }).forEach(([n, g]) => { if (!Array.isArray(g)) C[n] = centre(g); });
     const swC = S.sw.map(centre);
+    // Headwear from the slide's text boxes (the emoji don't render in Slides), same Noto style as the skulls.
+    // Added inside each skull's group so it moves, shakes and fades with it. [w, x offset, bottom overlap, tilt] as skull fractions.
+    const HAT = { tophat: [.62, .04, .5, -12], helmet: [.8, 0, .5, 0], crown: [.6, 0, .42, 0] };
+    const hat = (g, kind) => {
+      const bb = g.getBBox(), [w, ox, ov, r] = HAT[kind], s = bb.width * w;
+      const x = bb.x + bb.width / 2 + ox * bb.width - s / 2, y = bb.y + ov * bb.height - s;
+      const im = document.createElementNS(NS, 'image');
+      im.setAttribute('href', hats[kind]); im.setAttribute('x', x); im.setAttribute('y', y); im.setAttribute('width', s); im.setAttribute('height', s);
+      im.setAttribute('transform', `rotate(${r} ${x + s / 2} ${y + s})`);
+      g.appendChild(im);
+    };
+    hat(S.wiz, 'tophat'); hat(S.sol1, 'helmet'); hat(S.sol2, 'helmet'); hat(S.ctlSk, 'crown'); hat(S.boss, 'crown');
     const fx = document.createElementNS(NS, 'g'); fx.id = 'fx'; root.appendChild(fx);
     const BLUE = '#1155cc', PALE = '#c9daf8', GOLD = '#ffb951';
 
@@ -130,8 +144,8 @@ const svg = fs.readFileSync(path.join(__dirname, 'src/s257.svg'), 'utf8');
       bolt(t, T.ctlCast + .1, .25, C.ctl, C.ctlSk, 5);
       const stunned = t > T.stun[0] && t < T.ctlSkDie + .3;
       if (stunned) { // spinning stun halo of small octagon-blue dots over the frozen skull
-        for (let i = 0; i < 3; i++) { const a = t * 6 + i * 2.09; el('circle', { cx: C.ctlSk[0] + Math.cos(a) * 16, cy: C.ctlSk[1] - 20 + Math.sin(a) * 5, r: 3.2, fill: GOLD, stroke: BLUE, 'stroke-width': 1 }); }
-        el('ellipse', { cx: C.ctlSk[0], cy: C.ctlSk[1] - 20, rx: 16, ry: 5, fill: 'none', stroke: BLUE, 'stroke-width': 1.6, opacity: .7 });
+        for (let i = 0; i < 3; i++) { const a = t * 6 + i * 2.09; el('circle', { cx: C.ctlSk[0] + Math.cos(a) * 16, cy: C.ctlSk[1] - 33 + Math.sin(a) * 5, r: 3.2, fill: GOLD, stroke: BLUE, 'stroke-width': 1 }); }
+        el('ellipse', { cx: C.ctlSk[0], cy: C.ctlSk[1] - 33, rx: 16, ry: 5, fill: 'none', stroke: BLUE, 'stroke-width': 1.6, opacity: .7 });
       }
       xf(S.ctlSk, C.ctlSk, { r: stunned ? 8 * Math.sin(t * 3) : 0, s: t < T.fadeIn[0] ? lerp(1, .2, seg(t, T.ctlSkDie, T.ctlSkDie + .3)) : 1, o: (stunned ? .75 : 1) * alive(t, T.ctlSkDie) });
       // Assassin path: home -> wizard -> stunned skull -> home
@@ -157,7 +171,7 @@ const svg = fs.readFileSync(path.join(__dirname, 'src/s257.svg'), 'utf8');
       return 0;
     };
     return T.end;
-  }, { svg, W, H });
+  }, { svg, hats, W, H });
 
   fs.mkdirSync(outDir, { recursive: true });
   for (const f of fs.readdirSync(outDir)) fs.unlinkSync(path.join(outDir, f));
