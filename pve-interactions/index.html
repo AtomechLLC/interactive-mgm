@@ -28,7 +28,7 @@
   .mod b { font-family: Montserrat, sans-serif; font-weight: 800; font-size: 19px; display: block; }
   .mod small { color: var(--muted); font-size: 15px; }
   .tag { display: inline-block; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; font-weight: 600; color: var(--gold-ink); border: 1px solid var(--line); border-radius: 99px; padding: 1px 8px; margin-top: 6px; }
-  #gifs { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 18px; padding-bottom: 80px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 18px; padding-bottom: 40px; }
   figure { margin: 0; background: rgba(255, 252, 244, .82); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
   figure img { display: block; width: 100%; aspect-ratio: 16 / 9; background: #e9e1d2; }
   figcaption { padding: 10px 14px 12px; font-size: 15px; color: var(--muted); }
@@ -55,14 +55,20 @@
 <section>
   <h2>Slide GIFs: hazard patterns</h2>
   <p>1280×720, looping, one per deck slide (186 to 199). Right-click a GIF to save it, or open it full size.</p>
-  <div id="gifs"></div>
+  <div id="gifs" class="grid"></div>
+</section>
+
+<section>
+  <h2>Slide GIFs: hazard patterns in three themes</h2>
+  <p>One meta-GIF per slide that cycles through three themed examples of the same pattern (about 18 seconds per loop). Open the interactive version with <a href="hazards/index.html?p=1&themes">hazards/index.html?themes</a>.</p>
+  <div id="themes" class="grid"></div>
 </section>
 
 <script>
   // [slide, file, pattern, the example it animates]
   const GIFS = [
     [186, 'p01-across', 'Across', 'Spears thrust out of a wall as you walk past'],
-    [187, 'p02-in-path', 'In path', 'A giant ball rolling down a corridor toward you'],
+    [187, 'p02-in-path', 'In path', 'Indiana Jones Ball rolling down a corridor'],
     [188, 'p03-explosive', 'Explosive', 'Explosive barrel'],
     [189, 'p04-collapsing', 'Collapsing', 'Sand flowing in from the sides of a room (quicksand)'],
     [190, 'p05-eruption', 'Eruption', 'Volcano exploding with flaming boulders'],
@@ -72,10 +78,30 @@
     [194, 'p09-rotation', 'Rotation', 'Blades spinning repeatedly over time'],
     [195, 'p10-tethered', 'Tethered', 'Dog on a leash'],
     [196, 'p11-patrolling', 'Patrolling', 'A rock that rolls back and forth'],
-    [197, 'p12-balancing', 'Balancing', 'A lever you weigh down to cross to the other side'],
-    [198, 'p13-spiral', 'Spiral', 'A spinning blade that expands and retracts'],
+    [197, 'p12-balancing', 'Balancing', 'A lever which must be weighted down to cross the other side'],
+    [198, 'p13-spiral', 'Spiral', 'A spinning blade that expands and retracts (Zelda 3)'],
     [199, 'p14-crushing', 'Crushing', 'Two logs that slam together'],
   ];
+  // [themes shown in each meta-GIF], same order as GIFS
+  const THEMES = [
+    'Dungeon spears · factory flamethrower on a timer · jungle vines',
+    'Indiana Jones ball · animal charging · arrow shot down a walkway',
+    'Explosive barrel · fungal spore cloud · freezing pool',
+    'Quicksand · whirlpool · monster breathing in',
+    'Volcano · cauldron of acid · insect spawner hive',
+    'Oil trench on fire · lightning along a copper wire · tentacle through a maze',
+    'Slime ball · rocks down a mountainside · arcs jumping pole to pole',
+    'Metal ball · electrified orb off magnets · bull charging at walls',
+    'Spinning blades · poison gas fountain · windmill',
+    'Dog on a leash · spiked ball on a chain · electrical conductor on a chain (Tears of the Kingdom)',
+    'Rock rolling back and forth · stampede of creatures · mechanical device',
+    'Lever weighted down to cross · log you balance across a river · the lever again, over lava',
+    'Spinning blade that expands and retracts (Zelda 3) · repulsive whirlwind · growing plant',
+    'Logs that slam together · sci-fi crushing door · crystal spikes',
+  ];
+  document.getElementById('themes').innerHTML = GIFS.map(([s, f, name], i) =>
+    `<figure><a href="gifs/${f}-themes.gif"><img src="gifs/${f}-themes.gif" alt="${name} in three themes" loading="lazy"></a>` +
+    `<figcaption><b>Pattern ${i + 1}: ${name}</b>${THEMES[i]}. Deck slide ${s}.</figcaption></figure>`).join('');
   document.getElementById('gifs').innerHTML = GIFS.map(([s, f, name, ex], i) =>
     `<figure><a href="gifs/${f}.gif"><img src="gifs/${f}.gif" alt="${name}: ${ex}" loading="lazy"></a>` +
     `<figcaption><b>Pattern ${i + 1}: ${name}</b>${ex}. Deck slide ${s}.</figcaption></figure>`).join('');
