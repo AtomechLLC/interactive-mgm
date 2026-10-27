@@ -2,6 +2,8 @@
    Slide 2 is slide 248, the football play with fantasy classes (fighters hold the line, the wizard throws, a rogue runs).
    Slide 3 is slide 249, the holy trinity as an HP tug-of-war (tank square, healer circle, DPS triangle, skull boss).
    Slide 4 is slides 250-253, League of Legends laning into a teamfight, with slide 251's class shapes and slide 253's comps.
+   Art: slide 248's champions (Sett, Ryze, Akali) as the fighter, wizard and rogue, and League's class and position icons
+   (img/, from Data Dragon and CommunityDragon) inside the slides' shapes, tinted to each shape's team colour.
    Every scene is a pure function of (t, variant): draw(g, t, v) and words(t, v), so the sandboxes, the tours, the title loop
    and window.__seek(t, which) for the GIFs all draw the same thing. A variant is the set of roles (or the comp) in play. */
 (function () {
@@ -11,6 +13,25 @@
   const f1 = x => x.toFixed(1);
 
   /* ---------- shared drawing: the slides' shapes, skulls and the three fantasy classes ---------- */
+  const IMG = {};
+  ['champ-sett', 'champ-ryze', 'champ-akali', 'class-tank', 'class-fighter', 'class-assassin', 'class-support', 'class-marksman', 'class-mage', 'pos-top', 'pos-jungle', 'pos-middle', 'pos-bottom', 'pos-utility']
+    .forEach(n => { const im = new Image(); im.src = `img/${n}.png`; IMG[n] = im; });
+  const ready = im => im && im.complete && im.naturalWidth > 0;
+  const tints = {};
+  // an icon recoloured to one flat colour (source-in), cached per colour; nothing reads pixels back, so file:// works too
+  function tinted(n, col) {
+    const k = n + col; if (tints[k]) return tints[k];
+    const im = IMG[n]; if (!ready(im)) return null;
+    const c = document.createElement('canvas'); c.width = im.naturalWidth; c.height = im.naturalHeight;
+    const x = c.getContext('2d'); x.drawImage(im, 0, 0); x.globalCompositeOperation = 'source-in'; x.fillStyle = col; x.fillRect(0, 0, c.width, c.height);
+    return (tints[k] = c);
+  }
+  function icon(g, n, col, x, y, size) {
+    const c = tinted(n, col); if (!c) return;
+    const k = size / Math.max(c.width, c.height); g.drawImage(c, x - c.width * k / 2, y - c.height * k / 2, c.width * k, c.height * k);
+  }
+  // the League class icon for each class or role in the three scenes
+  const ICON = { tank: 'class-tank', bruiser: 'class-fighter', assassin: 'class-assassin', enchanter: 'class-support', marksman: 'class-marksman', caster: 'class-mage', healer: 'class-support', dps: 'class-marksman' };
   const TEAM = { blue: ['#cfdcfb', '#1f5fd6'], red: ['#f8d2d0', '#a8201c'], green: ['#d9f0d9', '#2e7d32'] };
   function shape(g, kind, x, y, r, team, o = {}) {
     const [fill, stroke] = TEAM[team];
@@ -25,6 +46,7 @@
     else if (kind === 'diamond') { g.moveTo(0, -r * 1.15); g.lineTo(r * .58, 0); g.lineTo(0, r * 1.15); g.lineTo(-r * .58, 0); g.closePath(); }
     else if (kind === 'star') poly(12, -Math.PI / 2, i => i % 2 ? r * .6 : r * 1.08);
     g.fillStyle = fill; g.fill(); g.strokeStyle = stroke; g.lineWidth = o.lw ?? 3.5; g.lineJoin = 'round'; g.stroke();
+    if (o.icon) icon(g, o.icon, stroke, 0, kind === 'triangle' ? r * .18 : 0, r * (kind === 'triangle' ? .85 : kind === 'diamond' ? .7 : 1.05));
     if (o.ko) { g.strokeStyle = C.navy; g.lineWidth = 3; g.beginPath(); g.moveTo(-r * .6, -r * .6); g.lineTo(r * .6, r * .6); g.moveTo(r * .6, -r * .6); g.lineTo(-r * .6, r * .6); g.stroke(); }
     g.restore();
   }
@@ -44,6 +66,7 @@
     g.restore();
   }
   const CLS = { fighter: '#c4622d', wizard: '#7b4fd6', rogue: '#2a9d7a' };
+  const CHAMP = { fighter: 'champ-sett', wizard: 'champ-ryze', rogue: 'champ-akali' };
   function dagger(g, s = 1) {
     g.beginPath(); g.moveTo(0, -13 * s); g.lineTo(3 * s, -3 * s); g.lineTo(3 * s, 4 * s); g.lineTo(-3 * s, 4 * s); g.lineTo(-3 * s, -3 * s); g.closePath(); g.fill();
     g.fillRect(-6 * s, 4 * s, 12 * s, 2.5 * s); g.fillRect(-1.5 * s, 6.5 * s, 3 * s, 6 * s);
@@ -52,6 +75,14 @@
     g.save(); g.globalAlpha *= o.a ?? 1;
     T.shadow(x + 3, y + 5, 19, 14, .25);
     g.translate(x, y);
+    const im = IMG[CHAMP[cls]];
+    if (ready(im)) {
+      // the champion portrait from slide 248, ringed in its class colour
+      g.save(); g.beginPath(); g.arc(0, 0, 20, 0, TAU); g.clip(); g.drawImage(im, -23, -23, 46, 46); g.restore();
+      g.strokeStyle = CLS[cls]; g.lineWidth = 4; g.beginPath(); g.arc(0, 0, 20, 0, TAU); g.stroke();
+      g.strokeStyle = C.navy; g.lineWidth = 1.5; g.beginPath(); g.arc(0, 0, 22.5, 0, TAU); g.stroke();
+      g.restore(); return;
+    }
     g.fillStyle = CLS[cls]; g.strokeStyle = '#fff'; g.lineWidth = 3.5; g.beginPath(); g.arc(0, 0, 18, 0, TAU); g.fill(); g.stroke();
     g.strokeStyle = C.navy; g.lineWidth = 1.5; g.beginPath(); g.arc(0, 0, 20.5, 0, TAU); g.stroke();
     g.fillStyle = '#fff';
@@ -381,7 +412,7 @@
         const [x, y] = TR_POS[k], [kind, team] = TR_SHAPE[k];
         if (!P[k]) { g.save(); g.setLineDash([6, 6]); g.strokeStyle = 'rgba(93,97,140,.6)'; g.lineWidth = 2; g.beginPath(); g.arc(x, y, 34, 0, TAU); g.stroke(); g.restore(); T.label(`No ${k === 'dps' ? 'DPS' : k}`, x, y + 56, 'center', C.muted, 14); return; }
         const d = S.dead[k], gone = d != null && t >= d;
-        shape(g, kind, x, y, 34, team, { a: gone ? .35 : 1, ko: gone });
+        shape(g, kind, x, y, 34, team, { a: gone ? .35 : 1, ko: gone, icon: ICON[k] });
         if (gone) T.poof(x, y, t - d, 40);
         else bar(g, x, y - 52, 84, f.hp[k] / TR.max[k], team === 'green' ? '#2fae63' : team === 'red' ? '#e5322d' : '#3c7be6');
         T.label(k === 'dps' ? 'DPS' : k[0].toUpperCase() + k.slice(1), x, y + 56, 'center', C.ink, 15);
@@ -527,8 +558,11 @@
     draw(g, t, ci) {
       const R = tfPlan(ci), f = t - FIGHT;
       tfMap(g);
-      [['Top', 100], ['Mid', 292], ['Bot', 486]].forEach(([n, y]) => T.label(n, 34, y, 'center', C.muted, 13));
-      T.label('Jungle', 34, 196, 'center', C.muted, 13); T.label('Jungle', 34, 376, 'center', C.muted, 13);
+      // League's position icons down the left edge, like the lane boxes on slides 250-253
+      [['Top', 92, 'pos-top'], ['Jungle', 190, 'pos-jungle'], ['Mid', 286, 'pos-middle'], ['Jungle', 370, 'pos-jungle'], ['Bot', 452, 'pos-bottom'], ['Support', 506, 'pos-utility']].forEach(([n, y, ic]) => {
+        g.fillStyle = 'rgba(21,32,68,.88)'; g.beginPath(); g.arc(32, y, 15, 0, TAU); g.fill();
+        icon(g, ic, C.gold, 32, y, 20); T.label(n, 32, y + 25, 'center', C.ink, 11);
+      });
       // towers: blue and red on each lane; the red mid tower is the objective
       const tk = f < 6.8 ? 1 : 1 - clamp((f - 6.8) / (R.towerEnd - 6.8));
       Object.values(LANE_Y).forEach(y => { tower(g, 196, y, 'blue', 1); if (y !== TOWER[1]) tower(g, TOWER[0], y, 'red', 1); });
@@ -585,8 +619,8 @@
         const fade = u.team === 'red' ? 1 - clamp((f - 5.6) / .8) : 1;
         if (u === R.redMk && hp <= 0) { T.poof(x, y, f - R.kill, 30); return; }
         if (fade <= 0) return;
-        shape(g, kind, x, y, 17, u.team, { a: fade, ang: u.team === 'blue' ? 0 : Math.PI });
-        if (f > 1 && f < 6) bar(g, x, y - 28, 34, hp, u.team === 'blue' ? '#3c7be6' : C.red, fade);
+        shape(g, kind, x, y, 22, u.team, { a: fade, ang: u.team === 'blue' ? 0 : Math.PI, icon: ICON[u.cls] });
+        if (f > 1 && f < 6) bar(g, x, y - 32, 36, hp, u.team === 'blue' ? '#3c7be6' : C.red, fade);
         if (R.has('enchanter') && u.team === 'blue' && u.row === 'front' && f > 2 && f < 4.5) T.bubble(x, y, 26, t, Math.min(1, (4.5 - f) * 3, (f - 2) * 4));
       };
       R.red.forEach(draw); R.blue.forEach(draw);
@@ -608,10 +642,11 @@
       return `<b class="good">Tower down.</b> Comp ${ci + 1} has no ${CL3[miss][1].toLowerCase()}, and still has a front, a back and a flank.`;
     },
   };
-  const svgShape = (cls, team = 'red') => {
+  const svgShape = (cls, team = 'blue') => {
     const [fill, stroke] = TEAM[team], k = CL3[cls][0];
     const d = { square: '<rect x="5" y="5" width="20" height="20"/>', circle: '<circle cx="15" cy="15" r="10"/>', triangle: '<path d="M15 4 26 25H4Z"/>', pentagon: '<path d="M15 4 26 12 22 26H8L4 12Z"/>', diamond: '<path d="M15 2 22 15 15 28 8 15Z"/>', star: '<path d="M15 3 18 10 26 9 21 15 26 21 18 20 15 27 12 20 4 21 9 15 4 9 12 10Z"/>' }[k];
-    return `<svg viewBox="0 0 30 30"><g fill="${fill}" stroke="${stroke}" stroke-width="2.5" stroke-linejoin="round">${d}</g></svg>`;
+    const o = k === 'triangle' ? [9, 11, 12] : k === 'diamond' ? [10, 10, 10] : [8, 8, 14];
+    return `<svg viewBox="0 0 30 30"><g fill="${fill}" stroke="${stroke}" stroke-width="2.5" stroke-linejoin="round">${d}</g><image href="img/${ICON[cls]}.png" x="${o[0]}" y="${o[1]}" width="${o[2]}" height="${o[2]}" filter="url(#tint-${team})"/></svg>`;
   };
 
   /* ---------- slide 1: title, the three scenes in turn ---------- */
@@ -641,7 +676,7 @@
     let sb, ci = 2;
     const box = $(s, '.comps');
     box.innerHTML = COMPS.map((c, i) => `<button class="comp" data-i="${i}"><b>Comp ${i + 1}</b><span class="shapes">${LANES.map(l => svgShape(c[l], 'blue')).join('')}</span><small>${LANES.map(l => `${l}: ${CL3[c[l]][1].split(' /')[0].toLowerCase()}`).join(', ')}</small></button>`).join('');
-    $(s, '.legend').innerHTML = Object.keys(CL3).map(c => `<span>${svgShape(c, 'blue')}${CL3[c][1]}</span>`).join('');
+    $(s, '.legend').innerHTML = Object.keys(CL3).map(c => `<span>${svgShape(c)}${CL3[c][1]}</span>`).join('');
     const btns = $$(box, '.comp');
     const ui = { cur: () => ci, sync: v => { ci = v; btns.forEach((b, i) => b.classList.toggle('on', i === v)); } };
     btns.forEach((b, i) => b.onclick = () => { ui.sync(i); sb.restart(); });

@@ -11,9 +11,11 @@
 .role ul { margin: 0; padding-left: 18px; font-size: 14px; color: var(--muted); line-height: 1.35; }
 .role li.hit { color: #a8201c; font-weight: 600; }
 .tok { display: block; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 0 0 2px #152044; }
-.tok.fighter { background: #c4622d; }
-.tok.wizard { background: #7b4fd6; }
-.tok.rogue { background: #2a9d7a; }
+/* slide 248's champions, ringed in their class colour */
+.tok { background: center / 118% no-repeat; border-width: 3px; }
+.tok.fighter { background-image: url(img/champ-sett.png); border-color: #c4622d; }
+.tok.wizard { background-image: url(img/champ-ryze.png); border-color: #7b4fd6; }
+.tok.rogue { background-image: url(img/champ-akali.png); border-color: #2a9d7a; }
 .ctl { margin-top: 6px; }
 .ctl .btn { font-size: 15px; padding: 5px 11px; }
 .slide .rl-verdict { margin-top: 10px; font-size: 17px; line-height: 1.38; min-height: 5.6em; padding: 10px 14px; border-radius: 10px; background: #fffaf0; border: 2px solid #cdbf9f; }
@@ -23,9 +25,9 @@
 .comp.on { border-color: var(--navy); background: #e6e9f8; }
 .comp b { font-family: var(--display); font-size: 16px; }
 .comp .shapes { display: flex; gap: 3px; }
-.comp .shapes svg { width: 22px; height: 22px; }
+.comp .shapes svg { width: 26px; height: 26px; }
 .comp small { grid-column: 1 / -1; font-size: 13px; color: var(--muted); }
 .legend { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 10px; margin: 10px 0 2px; font-size: 14px; color: var(--muted); }
 .legend span { display: flex; align-items: center; gap: 6px; }
-.legend svg { width: 18px; height: 18px; flex: none; }
+.legend svg { width: 24px; height: 24px; flex: none; }
 .slide .role ul, .slide .role li { font-size: 14px; line-height: 1.35; margin: 0; }

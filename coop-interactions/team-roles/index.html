@@ -16,6 +16,12 @@
 <script src="notes.js"></script>
 </head>
 <body>
+<!-- flat tints for the League class icons in the side panels (team colours) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <filter id="tint-blue"><feFlood flood-color="#1f5fd6"/><feComposite in2="SourceAlpha" operator="in"/></filter>
+  <filter id="tint-green"><feFlood flood-color="#2e7d32"/><feComposite in2="SourceAlpha" operator="in"/></filter>
+  <filter id="tint-red"><feFlood flood-color="#a8201c"/><feComposite in2="SourceAlpha" operator="in"/></filter>
+</defs></svg>
 <div class="viewport"><div class="stage">
 
 <!-- 1: slides 246-247 -->
@@ -35,9 +41,9 @@
     <canvas class="demo rl-canvas" width="1560" height="878"></canvas>
     <div class="rl-side">
       <h4>Who is on the team</h4>
-      <button class="role on" data-role="fighter"><i class="tok fighter"></i><b>Fighters</b><span>The linemen and linebackers: a wall that holds the line.</span></button>
-      <button class="role on" data-role="wizard"><i class="tok wizard"></i><b>Wizard</b><span>The quarterback, and the one everyone wants to kill first.</span></button>
-      <button class="role on" data-role="rogue"><i class="tok rogue"></i><b>Rogues</b><span>The wide receivers: sneak past the defence and catch.</span></button>
+      <button class="role on" data-role="fighter"><i class="tok fighter"></i><b>Fighters</b><span>Sett as the linemen and linebackers: a wall that holds the line.</span></button>
+      <button class="role on" data-role="wizard"><i class="tok wizard"></i><b>Wizard</b><span>Ryze as the quarterback, and the one everyone wants to kill first.</span></button>
+      <button class="role on" data-role="rogue"><i class="tok rogue"></i><b>Rogues</b><span>Akali as the wide receivers: sneak past the defence and catch.</span></button>
       <div class="row wrap ctl">
         <button class="btn rl-run">Run the play</button>
         <button class="btn rl-slow">Slow motion</button>
@@ -56,9 +62,9 @@
     <canvas class="demo rl-canvas" width="1560" height="878"></canvas>
     <div class="rl-side">
       <h4>Each role covers a weakness</h4>
-      <button class="role on" data-role="tank"><svg viewBox="0 0 40 40"><rect x="5" y="5" width="30" height="30" fill="#cfdcfb" stroke="#1f5fd6" stroke-width="3"/></svg><b>Tank</b><ul><li data-w="tank0">Damage too slow</li><li data-w="tank1">Self-healing too slow</li></ul></button>
-      <button class="role on" data-role="healer"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="15" fill="#d9f0d9" stroke="#2e7d32" stroke-width="3"/></svg><b>Healer</b><ul><li data-w="healer0">Durability insufficient</li><li data-w="healer1">Damage too slow</li></ul></button>
-      <button class="role on" data-role="dps"><svg viewBox="0 0 40 40"><path d="M20 4 37 35H3Z" fill="#f8d2d0" stroke="#a8201c" stroke-width="3" stroke-linejoin="round"/></svg><b>DPS</b><ul><li data-w="dps0">Durability insufficient</li><li data-w="dps1">Other healing too low</li></ul></button>
+      <button class="role on" data-role="tank"><svg viewBox="0 0 40 40"><rect x="5" y="5" width="30" height="30" fill="#cfdcfb" stroke="#1f5fd6" stroke-width="3"/><image href="img/class-tank.png" x="10" y="10" width="20" height="20" filter="url(#tint-blue)"/></svg><b>Tank</b><ul><li data-w="tank0">Damage too slow</li><li data-w="tank1">Self-healing too slow</li></ul></button>
+      <button class="role on" data-role="healer"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="15" fill="#d9f0d9" stroke="#2e7d32" stroke-width="3"/><image href="img/class-support.png" x="10" y="10" width="20" height="20" filter="url(#tint-green)"/></svg><b>Healer</b><ul><li data-w="healer0">Durability insufficient</li><li data-w="healer1">Damage too slow</li></ul></button>
+      <button class="role on" data-role="dps"><svg viewBox="0 0 40 40"><path d="M20 4 37 35H3Z" fill="#f8d2d0" stroke="#a8201c" stroke-width="3" stroke-linejoin="round"/><image href="img/class-marksman.png" x="13" y="17" width="14" height="14" filter="url(#tint-red)"/></svg><b>DPS</b><ul><li data-w="dps0">Durability insufficient</li><li data-w="dps1">Other healing too low</li></ul></button>
       <div class="row wrap ctl">
         <button class="btn rl-run">Pull the boss</button>
         <button class="btn rl-slow">Slow motion</button>
