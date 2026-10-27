@@ -270,6 +270,108 @@
     });
   });
 
-  window.__seek = t => sb.seek(t);
-  window.__dur = () => sb.dur();
+  /* ---------- slides 4-6: the deck's own examples as small action scenes (slides 150-160) ----------
+     mini(g, t, kind) draws one 4 s cycle of the same swing with one answer: heal and revive (slides 150-151), the
+     Dark Souls trio on yourself (156-158: Iron Flesh before, a shield block during, Estus after) and all three
+     answers stacked on one big hit (159-160). */
+  const MW = 600, MH = 330, ME = [440, 140], MT = [300, 140], MY = [130, 215], GUARD2 = [380, 140];
+  const MINI = {
+    heal: { self: false, hit: 45, cap: 'Heal', when: 'After', at: 2.5, note: 'needs damage first' },
+    revive: { self: false, hit: 100, cap: 'Revive', when: 'After', at: 2.35, note: 'needs a death first' },
+    iron: { self: true, hit: 45, cap: 'Iron Flesh', when: 'Before', at: .9, note: 'cast, then take half' },
+    block: { self: true, hit: 45, cap: 'Shield block', when: 'During', at: 1.72, note: 'raised as the punch comes' },
+    estus: { self: true, hit: 45, cap: 'Estus', when: 'After', at: 2.55, note: 'take it, then drink' },
+    stack: { self: false, hit: 90, cap: 'All three', when: '', at: 0, note: '' },
+  };
+  const WHEN_COL = { Before: TOOLS.shield.col, During: TOOLS.intervene.col, After: TOOLS.heal.col };
+  function miniHp(kind, t) {
+    const M = MINI[kind];
+    if (kind === 'iron' || kind === 'block') return t >= IMPACT ? 100 - M.hit / 2 : 100;
+    if (kind === 'estus' || kind === 'heal') return 100 - (t >= IMPACT ? M.hit : 0) + (t > M.at ? M.hit * clamp((t - M.at) / .5) : 0);
+    if (kind === 'revive') return t < IMPACT ? 100 : t < 3.35 ? 0 : 50;
+    return 100 - (t >= IMPACT ? 30 : 0) + (t > 2.5 ? 30 * clamp((t - 2.5) / .5) : 0);
+  }
+  function stackYou(t) {
+    if (t < 1.55) return MY;
+    if (t < 1.75) { const k = (t - 1.55) / .2; return [lerp(MY[0], GUARD2[0], k), lerp(MY[1], GUARD2[1], k) - Math.sin(k * Math.PI) * 30]; }
+    if (t < 3) return GUARD2;
+    const k = ease(clamp((t - 3) / .8)); return [lerp(GUARD2[0], MY[0], k), lerp(GUARD2[1], MY[1], k)];
+  }
+  function mini(g, t, kind, o = {}) {
+    T.use(g);
+    const M = MINI[kind], tgt = MT;
+    T.floor(0, 0, MW, MH); T.wall(0, 0, MW, 20); T.wall(0, 250, MW, 14);
+    g.fillStyle = 'rgba(255,252,244,.92)'; g.fillRect(0, 264, MW, MH - 264);
+    enemy(g, ME[0], ME[1], Math.PI, t, { quiet: true });
+    const hp = miniHp(kind, t), down = kind === 'revive' && t >= IMPACT && t < 3.35;
+    // the answer, drawn in the scene
+    if (kind === 'iron' && t >= M.at && t < 3.2) { g.save(); g.globalAlpha = Math.min(1, (t - M.at) / .2, (3.2 - t) / .2); g.strokeStyle = C.gold; g.lineWidth = 6; g.setLineDash([3, 6]); g.beginPath(); g.arc(tgt[0], tgt[1], 32 + 2 * Math.sin(t * 9), 0, Math.PI * 2); g.stroke(); g.restore(); }
+    if (kind === 'block' && t >= M.at && t < 2.3) guardArc(g, tgt[0], tgt[1], 0);
+    if (kind === 'estus' && t >= M.at && t < M.at + .6) { g.fillStyle = '#e8892a'; g.beginPath(); g.roundRect(tgt[0] - 6, tgt[1] - 62, 12, 18, 4); g.fill(); g.strokeStyle = C.navy; g.lineWidth = 2; g.stroke(); T.flash(tgt[0], tgt[1], 46, .5 * (1 - (t - M.at) / .6)); }
+    if ((kind === 'heal' || kind === 'stack') && t >= 2.5 && t < 3) beam(g, kind === 'stack' ? GUARD2 : MY, tgt, TOOLS.heal.rgb, 1);
+    if (kind === 'revive' && t >= M.at && t < 3.35) { beam(g, MY, tgt, TOOLS.heal.rgb, 1); const k = (t - M.at) / (3.35 - M.at); g.strokeStyle = C.good; g.lineWidth = 6; g.beginPath(); g.arc(tgt[0], tgt[1], 30, -Math.PI / 2, -Math.PI / 2 + k * Math.PI * 2); g.stroke(); }
+    if (kind === 'stack') {
+      if (t >= 1 && t < 2.05) T.bubble(tgt[0], tgt[1], 34, t, Math.min(1, (2.05 - t) / .1));
+      if (t >= 1 && t < 1.3) beam(g, MY, tgt, TOOLS.shield.rgb, 1 - (t - 1) / .3);
+    }
+    // the target, and you when you are not the target
+    if (down) { g.fillStyle = '#9a9cae'; g.beginPath(); g.ellipse(tgt[0], tgt[1] + 6, 22, 14, 0, 0, Math.PI * 2); g.fill(); g.strokeStyle = C.navy; g.lineWidth = 2; g.stroke(); T.popText('✝', tgt[0], tgt[1] - 4, C.navy, 1); }
+    else T.player(tgt[0], tgt[1], 0, 1, 1, M.self ? C.player : C.p2);
+    T.label(M.self ? 'You' : 'Ally', tgt[0], tgt[1] + 44, 'center', C.ink, 14);
+    T.hp(tgt[0], tgt[1] - 38, 56, hp, 100);
+    if (!M.self) {
+      const you = kind === 'stack' ? stackYou(t) : MY;
+      T.player(you[0], you[1], Math.atan2(ME[1] - you[1], ME[0] - you[0]));
+      if (you === MY) T.label('You', you[0], you[1] + 40, 'center', C.ink, 14);
+      if (kind === 'stack' && t >= 1.75 && t < 2.3) guardArc(g, GUARD2[0], GUARD2[1], 0);
+    }
+    // the hit
+    const k = (t - IMPACT) / .8;
+    if (k >= 0 && k < 1) {
+      const at = kind === 'stack' ? GUARD2 : tgt;
+      if (k < .25) T.flash(at[0] + 14, at[1], 44, 1 - k * 4);
+      const txt = kind === 'iron' ? '−22, halved' : kind === 'block' ? '−22, blocked half' : kind === 'revive' ? 'Killed' : kind === 'stack' ? '90 → 30' : `−${M.hit}`;
+      T.popText(txt, tgt[0], tgt[1] - 70 - 16 * k, kind === 'iron' || kind === 'block' ? C.goldInk : C.red, 1 - k);
+    }
+    if ((kind === 'heal' || kind === 'estus') && t >= M.at && t < M.at + .8) T.popText(`+${M.hit}`, tgt[0] + 40, tgt[1] - 60, C.good, 1 - (t - M.at) / .8);
+    if (kind === 'stack' && t >= 2.5 && t < 3.3) T.popText('+30', tgt[0] + 40, tgt[1] - 60, C.good, 1 - (t - 2.5) / .8);
+    if (kind === 'revive' && t >= 3.35 && t < 4) T.popText('Back up', tgt[0], tgt[1] - 66, C.good, 1 - (t - 3.35) / .65);
+    // the strip: wind-up, the hit, and when the answer went in
+    const sx = v => 30 + (MW - 60) * v / CYCLE, sy = 274;
+    g.fillStyle = '#e9dfcb'; g.fillRect(30, sy, MW - 60, 14);
+    const gr = g.createLinearGradient(sx(WIND), 0, sx(SWING[0]), 0); gr.addColorStop(0, 'rgba(229,50,45,.05)'); gr.addColorStop(1, 'rgba(229,50,45,.5)');
+    g.fillStyle = gr; g.fillRect(sx(WIND), sy, sx(SWING[0]) - sx(WIND), 14);
+    g.fillStyle = C.red; g.fillRect(sx(IMPACT) - 1.5, sy - 4, 3, 22);
+    const marks = kind === 'stack' ? [[1, 'Before'], [1.6, 'During'], [2.5, 'After']] : [[M.at, M.when]];
+    marks.forEach(([at, w]) => { g.fillStyle = WHEN_COL[w]; g.beginPath(); g.moveTo(sx(at), sy + 16); g.lineTo(sx(at) - 7, sy + 27); g.lineTo(sx(at) + 7, sy + 27); g.closePath(); g.fill(); g.font = '700 14px Jost, sans-serif'; g.textAlign = 'center'; g.fillText(w, sx(at), sy + 42); });
+    g.fillStyle = C.navy; g.fillRect(sx(t) - 1.5, sy - 6, 3, 26);
+    if (!o.quiet) T.label(kind === 'stack' ? 'Shield, intervene, heal' : `${M.cap}: ${M.note}`, 16, 44, 'left', '#fff', 16, 'rgba(21,32,68,.9)');
+    if (kind === 'stack') {
+      // where the 90 went
+      const parts = [['Shield', TOOLS.shield.col, IMPACT], ['Your guard', TOOLS.intervene.col, IMPACT], ['Ally, healed', TOOLS.heal.col, 2.5]];
+      let x = 262; const y = 222;
+      g.font = '600 13px Jost, sans-serif';
+      parts.forEach(([n, col, at]) => { const w = 108; g.globalAlpha = t >= at ? 1 : .2; g.fillStyle = col; g.fillRect(x, y, w, 14); g.globalAlpha = 1; g.fillStyle = C.ink; g.textAlign = 'center'; g.fillText(`${n} 30`, x + w / 2, y - 7); x += w + 3; });
+    }
+  }
+  const miniFit = (g, x, y, w, h, fn) => { const sc = Math.min(w / MW, h / MH); g.save(); g.translate(x + (w - MW * sc) / 2, y + (h - MH * sc) / 2); g.scale(sc, sc); g.beginPath(); g.roundRect(0, 0, MW, MH, 12); g.clip(); fn(); g.restore(); };
+  const SEEK = {};
+  function panels(name, kinds) {
+    canvasDemo(name, (s, cv, g) => {
+      const st = { t: 0, held: false };
+      const render = () => {
+        g.clearRect(0, 0, cv.width, cv.height);
+        const W = cv.width / kinds.length;
+        kinds.forEach((k, i) => miniFit(g, i * W + 8, 0, W - 16, cv.height, () => mini(g, st.t % CYCLE, k)));
+      };
+      SEEK[name] = { seek(t) { st.held = true; st.t = t; render(); }, dur: () => CYCLE * 2 };
+      return dt => { if (!st.held) st.t += dt; render(); };
+    });
+  }
+  panels('revive', ['heal', 'revive']);
+  panels('souls', ['iron', 'block', 'estus']);
+  panels('stack', ['stack']);
+
+  window.__seek = (t, which) => (SEEK[which] || sb).seek(t);
+  window.__dur = which => (SEEK[which] || sb).dur();
 })();

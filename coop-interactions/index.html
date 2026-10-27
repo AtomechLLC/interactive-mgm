@@ -71,8 +71,14 @@
   const LIVE = PAGES.filter(p => READY.includes(p[0]));
   document.getElementById('cards').innerHTML = LIVE.map(([f, ic, t, b, sl, gif]) =>
     `<a class="mod" href="${f}/index.html"><img src="../assets/img/forsaken/${ic}.png" alt=""><span><b>${t}</b><small>${b} (deck slides ${sl}). GIF: gifs/${gif}.gif</small><br><span class="tag">ready</span></span></a>`).join('');
-  document.getElementById('gifs').innerHTML = LIVE.map(([f, , , , sl, gif, gt, cap]) =>
-    `<figure><a href="gifs/${gif}.gif"><img src="gifs/${gif}.gif" alt="${gt}" loading="lazy"></a><figcaption><b>${gt}</b>${cap} Deck slides ${sl}.</figcaption></figure>`).join('');
+  // more GIFs per page: [folder, slides, gif file, title, caption]
+  const EXTRA = [
+    ['timing', '150 and 151', 'timing-revive', 'Heal and revive', 'Reactive tools need the event first: a heal needs damage, a revive needs a death.'],
+    ['timing', '156 to 158', 'timing-souls', 'Iron Flesh, block, Estus', 'The same punch on yourself: halve it before, block it during, drink after.'],
+    ['timing', '159 and 160', 'timing-stack', 'Stack all three', 'A shield before, an intervention during and a heal after, all on one big hit.'],
+  ];
+  const fig = (sl, gif, gt, cap) => `<figure><a href="gifs/${gif}.gif"><img src="gifs/${gif}.gif" alt="${gt}" loading="lazy"></a><figcaption><b>${gt}</b>${cap} Deck slides ${sl}.</figcaption></figure>`;
+  document.getElementById('gifs').innerHTML = LIVE.map(([f, , , , sl, gif, gt, cap]) => fig(sl, gif, gt, cap) + EXTRA.filter(e => e[0] === f).map(e => fig(e[1], e[2], e[3], e[4])).join('')).join('');
 </script>
 </body>
 </html>

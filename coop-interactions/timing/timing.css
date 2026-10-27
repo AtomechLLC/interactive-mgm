@@ -21,3 +21,14 @@
 .rk-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 6px; }
 .rk-cols h3 { font-size: 28px; margin: 0; color: var(--ink); }
 .rk-cols p { font-size: 18px; color: var(--muted); margin: 6px 0 0; line-height: 1.35; }
+
+/* slides 4-6: small action scenes */
+.pn-canvas { display: block; }
+.pn-2 { width: 1420px; height: 390px; }
+.pn-3 { width: 1420px; height: 270px; }
+.pn-1 { width: 1100px; height: 605px; margin: -4px auto 0; }
+.pn-cols { display: grid; gap: 40px; margin-top: 8px; }
+.pn-c2 { grid-template-columns: 1fr 1fr; }
+.pn-c3 { grid-template-columns: 1fr 1fr 1fr; }
+.pn-cols h3 { font-size: 32px; margin: 0; color: var(--ink); }
+.slide .pn-cols p { font-size: 21px; color: var(--muted); margin: 6px 0 0; line-height: 1.35; }
