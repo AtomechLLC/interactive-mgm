@@ -2,7 +2,7 @@
 
 Source: "MGM C4 M1 - The Goal of Mechanics Design - Depth" (Drive 1PA2gQrD1XzZBvGOLVJdaGsrVnwwLUpebCRGspJ8GpTM, 200 slides). First pass 2026-10-28 from the Drive text export (slide text and speaker notes); re-numbered the same day after the deck was made public. Slide numbers below are the `/htmlpresent` `Slide N` numbers. Quotes marked "notes" come from the speaker notes.
 
-Built so far (see `depth/index.html`): the three tiers funnel as `three-tiers/` (rebuilt with counted Dark Souls III and Bloodborne weapons), the sword forge as `sword-forge/`, additive vs multiplicative as `additive/`, and the three quick wins as `go-board/`, `ghost-runs/` and `mtg-keywords/`.
+Built so far (see `depth/index.html`): the slides 28-30 sounding metaphor as `seabed/` (three ships, one seabed), the three tiers funnel as `three-tiers/` (rebuilt with counted Dark Souls III and Bloodborne weapons), the sword forge as `sword-forge/`, additive vs multiplicative as `additive/`, and the three quick wins as `go-board/`, `ghost-runs/` and `mtg-keywords/`.
 
 Effort: **S** = one GIF or a single small widget (under a day), **M** = a page with a few controls or a reusable rules table (1-2 days), **L** = a sandbox with several modes (3+ days).
 

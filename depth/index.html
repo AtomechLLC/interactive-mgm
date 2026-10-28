@@ -65,6 +65,7 @@
 <script>
   // [folder, icon, title, blurb, deck slides, gif file, gif title, gif caption]
   const PAGES = [
+    ['seabed', 'Target_Reticule', 'Three ships, one seabed', 'The deck’s ship on a pitch black sea, three ways: random soundings, downhill only (stuck in the 40m dip), and reading the curve to the 100m trench', '28 to 30', 'three-ships-one-seabed', 'Searching in the dark', 'Same seabed, three ships: random pings, downhill only, and reading the curve.'],
     ['three-tiers', 'Circle_Friendly', 'Three tiers, counted', 'Dark Souls III’s 206 weapons and Bloodborne’s 26 trick weapons as nested circles drawn to scale: weapons collapse into movesets, and the deck’s estimates sit alongside', '56 to 68, 122 to 125', 'three-tiers-counted', '206 weapons, 21 movesets', 'Every dot is a real weapon. Dark Souls III’s collapse into one moveset per class; none of Bloodborne’s trick weapons collapse.'],
     ['sword-forge', 'Sword', 'Sword forge', 'Locked levels keep hits to kill at 3; the slide’s three swords each win a different fight; then five variables pull them into their own niches', '164 to 182', 'sword-forge-three-fights', 'Three swords, three fights', 'A horde, a brute, and both: each of slide 172’s swords suits one fight best.'],
     ['additive', 'Storm', 'Additive vs multiplicative', 'Breath of the Wild: one more sword adds the same four interactions; one more chemistry system adds new ones', '111 to 115', 'additive-vs-multiplicative', 'Add a sword, or add a system?', 'Nine swords still do the same four things. Nine chemistry systems make fourteen reactions.'],
@@ -73,7 +74,7 @@
     ['mtg-keywords', 'Shielded_Friendly', 'MTG keyword combat', 'Two 2/2 creatures and the slide’s keywords: First Strike, Flying and Reach, Deathtouch vs Indestructible, Menace, Trample', '193 to 194', 'mtg-keyword-combat', 'Same stats, different fights', 'The same 2/2 against 2/2, decided only by keywords.'],
   ];
   // pages that are built so far
-  const READY = ['three-tiers', 'sword-forge', 'additive', 'go-board', 'ghost-runs', 'mtg-keywords'];
+  const READY = ['seabed', 'three-tiers', 'sword-forge', 'additive', 'go-board', 'ghost-runs', 'mtg-keywords'];
   const LIVE = PAGES.filter(p => READY.includes(p[0]));
   // deck parts in deck order: [title, first slide, last slide]. Each page sits under the part its first slide is in.
   const PARTS = [
