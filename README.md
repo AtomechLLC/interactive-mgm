@@ -9,6 +9,7 @@ Open `index.html` in a browser (no build step, works straight off disk). It list
 - `coop-interactions/`: **Co-op Interactions** (`coop-interactions/index.html`), from *MGM C3 M6 - Engaging Co-op Interaction Design Fundamentals*.
 - `mechanics-tools/`: **Mechanics Design Tools** (`mechanics-tools/index.html`), from *MGM C4 M3 - Mechanics Design Optimizations and Tools*.
 - `understand-mechanics/`: **Understand Mechanics** (`understand-mechanics/index.html`), from *MGM C4 M2 - Understand, Analyze and Plan Mechanics*.
+- `depth/`: **The Goal: Depth** (`depth/index.html`), from *MGM C4 M1 - The Goal of Mechanics Design - Depth*.
 
 Shared engine, theme and art stay in `assets/` at the root, so a deck one level down loads `../../assets/`. `404.html` redirects the old root deck URLs (for example `/core-actions/`) to their `pvp/` homes.
 
@@ -135,4 +136,18 @@ Home page `understand-mechanics/index.html` (cards from `PAGES` + `READY`, extra
 - `life-tap/`: the same warlock rotation solo and in a raid (226-228).
 - `shared/`: `um.css` layout, a copy of the top-down kit, and `xray.js`, the X-ray diagram renderer (boxes coloured by framework part, timed signal hops, bounces for refused signals).
 - GIFs in `gifs/`: rebuild them all with `sh understand-mechanics/tools/record-all.sh` while serving InteractiveMGM on 127.0.0.1:8171.
+- `PROPOSALS.md`: the rest of the deck's interactive and GIF ideas, by section.
+
+## Depth module (`depth/`)
+
+Home page `depth/index.html` (cards from `PAGES` + `READY`, extra GIFs in `EXTRA`), from *MGM C4 M1 - The Goal of Mechanics Design - Depth*. Slide numbers are the deck's `/htmlpresent` numbers. Each page has a walk-through that the `window.__seek` / `__dur` hooks replay deterministically.
+
+- `three-tiers/`: Dark Souls III vs Bloodborne as nested circles drawn to scale (deck slides 56-68, 122-125). Every dot is a real weapon from `data.js`: Dark Souls III's 206 weapons across 21 classes (base game and both DLCs) and Bloodborne's 26 trick weapons (base game and The Old Hunters), from the Fextralife wikis. Dark Souls III weapons collapse to one moveset per class; Bloodborne's don't collapse. The relevant tier is the deck's estimate, with a slider, since neither game publishes usage data. A toggle shows the deck's own napkin numbers.
+- `sword-forge/`: three slides. Locked vs unlocked levels and hits to kill (164-171); slide 172's swords against a horde, a brute and both (`SWORDS`, `FIGHTS`, `fight()` in `forge.js`); slide 179's five variables on a radar, one at a time (173-182).
+- `additive/`: Breath of the Wild's additive swords (base damage from the game) beside its multiplicative chemistry systems (111-115). Reactions in `REACT` are a simplified slice of the chemistry engine.
+- `go-board/`: 9×9, 19×19 and 31×31 with the edge zone shaded (93). `share(n, d)` is the whole model.
+- `ghost-runs/`: 60 seeded attempts at one level played back at once, then filtered to distinct routes and to routes that reach the flag (77-78). Level and runner in `level.js`.
+- `mtg-keywords/`: two 2/2 creatures and the slide's keywords plus Reach (193-194). Combat rules in `rules.js`.
+- `shared/`: `depth.css` layout and a copy of the top-down kit.
+- GIFs in `gifs/`: rebuild them all with `sh depth/tools/record-all.sh` while serving InteractiveMGM on 127.0.0.1:8171.
 - `PROPOSALS.md`: the rest of the deck's interactive and GIF ideas, by section.

@@ -1,0 +1,4 @@
+// Speaker notes. Source: "MGM C4 M1 - The Goal of Mechanics Design - Depth", slides 193-194.
+window.NOTES = [
+  { script: 'Magic the Gathering only has 2 combat stats on each creature: Power and Toughness. If you only had these 2 stats on creatures and nothing else, then there would be a rather small range of interactions possible in combat. If 2 stats is all you have, you can’t have significant differences of proportion, you can’t have orthogonality. In order to broaden the range of interactions possible for their creatures, Magic the Gathering has created a variety of keywords to help diversify the range of interactions that can take place when creatures fight. Two creatures with the same stats can have very different interactions with one another based on the keywords each have.' },
+];

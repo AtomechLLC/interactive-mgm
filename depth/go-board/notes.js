@@ -1,0 +1,4 @@
+// Speaker notes. Source: "MGM C4 M1 - The Goal of Mechanics Design - Depth", slide 93.
+window.NOTES = [
+  { script: 'So, if depth is the goal, and bigger Go boards have larger possibility spaces, does that mean larger and larger boards are automatically deeper? Not necessarily. There are diminishing returns, and additional state space can end up making less of the states you have actually relevant to play. As boards get bigger, the game gets more self-similar. There’s more symmetry. Without the edge of the board to put pressure on attackers, and to easily reinforce into living shapes, the middle of the board plays out in a more repetitive way than a 19x19 board, where the influence of the edge is still felt. Plus now you’re wasting a bunch of time playing out all these positions that aren’t meaningfully different from one another anymore. In short, you can’t get more depth just by scaling the possibility space.' },
+];

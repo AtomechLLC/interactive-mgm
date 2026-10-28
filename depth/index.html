@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Depth</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* same theme as the other module homes (../understand-mechanics/index.html): navy band over parchment, gold accents */
+  :root { --navy: #152044; --ink: #262c6a; --muted: #5d618c; --gold: #ffb951; --gold-ink: #9a5a06; --line: #cdbf9f; }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; background: #ede7e7 url("../assets/img/theme/paper.jpg") center / cover fixed; color: var(--ink); font-family: Jost, system-ui, sans-serif; border: 4px solid var(--gold); }
+  .band { background: var(--navy); color: #fff; clip-path: polygon(0 0, 100% 0, 100% 78%, 0 100%); padding: 0 0 70px; }
+  header { position: relative; padding: 60px 24px 0; max-width: 1180px; margin: 0 auto; }
+  .up { position: absolute; top: 18px; left: 24px; color: #d6dbef; font-size: 15px; text-decoration: none; }
+  .up:hover { color: var(--gold); }
+  .kicker { color: var(--gold); font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; }
+  h1 { font-family: Montserrat, sans-serif; font-weight: 800; font-size: clamp(34px, 6vw, 68px); margin: 8px 0 10px; }
+  h1 span { color: var(--gold); }
+  header p { color: #d6dbef; font-size: 19px; max-width: 760px; margin-bottom: 0; }
+  section { max-width: 1180px; margin: 0 auto; padding: 24px 24px 0; }
+  h2 { font-family: Montserrat, sans-serif; font-weight: 800; font-size: 26px; margin: 10px 0 4px; }
+  h2 + p { color: var(--muted); margin: 0 0 16px; font-size: 17px; }
+  /* cards: one per interactive page in this module, add an <a class="mod"> to #cards */
+  #cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
+  a.mod { display: grid; grid-template-columns: 72px 1fr; gap: 16px; align-items: center; padding: 18px; border-radius: 12px; background: rgba(255, 252, 244, .82); border: 1px solid var(--line); color: inherit; text-decoration: none; box-shadow: 0 2px 0 rgba(120, 96, 50, .12); transition: transform .15s, border-color .2s; }
+  a.mod:hover { transform: translateY(-4px); border-color: var(--navy); }
+  .mod img { width: 72px; height: 72px; border-radius: 50%; background: var(--navy); padding: 9px; object-fit: contain; }
+  .mod b { font-family: Montserrat, sans-serif; font-weight: 800; font-size: 19px; display: block; }
+  .mod small { color: var(--muted); font-size: 15px; }
+  .tag { display: inline-block; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; font-weight: 600; color: var(--gold-ink); border: 1px solid var(--line); border-radius: 99px; padding: 1px 8px; margin-top: 6px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 18px; padding-bottom: 40px; }
+  figure { margin: 0; background: rgba(255, 252, 244, .82); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  figure img { display: block; width: 100%; aspect-ratio: 16 / 9; background: #e9e1d2; }
+  figcaption { padding: 10px 14px 12px; font-size: 15px; color: var(--muted); }
+  figcaption b { color: var(--ink); font-family: Montserrat, sans-serif; display: block; font-size: 16px; }
+</style>
+</head>
+<body>
+<div class="band"><header>
+  <a class="up" href="../index.html">← All modules</a>
+  <div class="kicker">MGM C4 M1</div>
+  <h1>The Goal: <span>Depth</span></h1>
+  <p>Visuals for <i>The Goal of Mechanics Design: Depth</i>: the three tiers of depth with real weapon counts, elegance, additive vs multiplicative design, proportion and orthogonality.</p>
+</header></div>
+
+<section>
+  <h2>Interactive pages</h2>
+  <p>Open one and use ← → to move through it.</p>
+  <div id="cards"></div>
+</section>
+
+<section>
+  <h2>Slide GIFs</h2>
+  <p>1280×720, looping, one per deck section. Right-click a GIF to save it, or open it full size.</p>
+  <div id="gifs" class="grid"></div>
+</section>
+
+<script>
+  // [folder, icon, title, blurb, deck slides, gif file, gif title, gif caption]
+  const PAGES = [
+    ['three-tiers', 'Circle_Friendly', 'Three tiers, counted', 'Dark Souls III’s 206 weapons and Bloodborne’s 26 trick weapons as nested circles drawn to scale: weapons collapse into movesets, and the deck’s estimates sit alongside', '56 to 68, 122 to 125', 'three-tiers-counted', '206 weapons, 21 movesets', 'Every dot is a real weapon. Dark Souls III’s collapse into one moveset per class; none of Bloodborne’s trick weapons collapse.'],
+    ['sword-forge', 'Sword', 'Sword forge', 'Locked levels keep hits to kill at 3; the slide’s three swords each win a different fight; then five variables pull them into their own niches', '164 to 182', 'sword-forge-three-fights', 'Three swords, three fights', 'A horde, a brute, and both: each of slide 172’s swords suits one fight best.'],
+    ['additive', 'Storm', 'Additive vs multiplicative', 'Breath of the Wild: one more sword adds the same four interactions; one more chemistry system adds new ones', '111 to 115', 'additive-vs-multiplicative', 'Add a sword, or add a system?', 'Nine swords still do the same four things. Nine chemistry systems make fourteen reactions.'],
+    ['go-board', 'Grid', 'Go board size', '9×9, 19×19 and 31×31 with the edge zone shaded: bigger boards add positions but the open middle grows faster', '93', 'go-board-size', 'Bigger board, deeper game?', '89% of a 9×9 board is within three lines of an edge, 53% of 19×19, 35% of 31×31.'],
+    ['ghost-runs', 'Arena', 'Ghost runs', 'Sixty attempts at one level played back at once, filtered to distinct routes and to routes that reach the flag', '77 to 78', 'ghost-runs', 'Every run at once', '60 attempts, 7 distinct routes, 3 that reach the flag.'],
+    ['mtg-keywords', 'Shielded_Friendly', 'MTG keyword combat', 'Two 2/2 creatures and the slide’s keywords: First Strike, Flying and Reach, Deathtouch vs Indestructible, Menace, Trample', '193 to 194', 'mtg-keyword-combat', 'Same stats, different fights', 'The same 2/2 against 2/2, decided only by keywords.'],
+  ];
+  // pages that are built so far
+  const READY = ['three-tiers', 'sword-forge', 'additive', 'go-board', 'ghost-runs', 'mtg-keywords'];
+  const LIVE = PAGES.filter(p => READY.includes(p[0]));
+  document.getElementById('cards').innerHTML = LIVE.map(([f, ic, t, b, sl, gif]) =>
+    `<a class="mod" href="${f}/index.html"><img src="../assets/img/forsaken/${ic}.png" alt=""><span><b>${t}</b><small>${b} (deck slides ${sl}). GIF: gifs/${gif}.gif</small><br><span class="tag">ready</span></span></a>`).join('');
+  // more GIFs per page: [folder, slides, gif file, title, caption]
+  const EXTRA = [
+    ['sword-forge', '164 to 171', 'sword-forge-scale', 'Bigger numbers, same fight', 'Levels locked together keep hits to kill at 3; unlock them and the fight changes.'],
+    ['sword-forge', '173 to 182', 'sword-forge-orthogonality', 'More variables, more directions', 'One variable makes a bigger sword; five give each sword a niche.'],
+  ];
+  const fig = (sl, gif, gt, cap) => `<figure><a href="gifs/${gif}.gif"><img src="gifs/${gif}.gif" alt="${gt}" loading="lazy"></a><figcaption><b>${gt}</b>${cap} Deck slides ${sl}.</figcaption></figure>`;
+  document.getElementById('gifs').innerHTML = LIVE.map(([f, , , , sl, gif, gt, cap]) => fig(sl, gif, gt, cap) + EXTRA.filter(e => e[0] === f).map(e => fig(e[1], e[2], e[3], e[4])).join('')).join('');
+</script>
+</body>
+</html>
