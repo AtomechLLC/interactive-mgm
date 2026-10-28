@@ -169,34 +169,36 @@
       jump: (s, a) => hit(s, [
         { dt: 0, dur: .55, from: 'jump', to: 'mario', kind: 'command', label: 'Jump' },
         { dt: .6, dur: .7, from: 'mario', to: 'goomba', kind: 'effect', label: 'Stomp', ctx: 'detects Goomba' },
-      ], 1.35),
+      ], 1.35, 'stomp'),
       shoot: (s, a) => hit(s, [
         { dt: 0, dur: .55, from: 'shoot', to: 'mario', kind: 'command', label: 'Shoot' },
         { dt: .6, dur: .55, from: 'mario', to: 'ball', kind: 'system', label: 'Create', set: { ball: 'flying' } },
         { dt: 1.2, dur: .8, from: 'ball', to: 'goomba', kind: 'effect', label: 'Hit', ctx: 'detects Goomba', set: { ball: '' } },
-      ], 2.05),
+      ], 2.05, 'burn'),
     },
     tour: [{ at: .6, type: 'jump' }, { at: 7.4, type: 'spawn' }, { at: 8.4, type: 'shoot' }],
     dur: 15.5,
     scene: marioScene,
     stats: v => stat(v.health ? 'g' : 'r', v.health, 'Goomba health') + stat('y', v.level, 'party XP') + stat('', v.anim, 'what the animation system shows'),
-    out: v => v.level >= 200 ? 'Shoot runs a different route (Mario creates a Fireball, the Fireball hits) but it lands in the same Health, Death, Animation, Reward and Level-Up systems.'
+    out: v => v.level >= 200 ? 'Shoot runs a different route (Mario creates a Fireball, the Fireball hits) but it lands in the same Health, Death, Animation, Reward and Level-Up systems. The death carries its cause as context, so the animation system burns and flips the Goomba instead of squashing it.'
       : v.level >= 100 ? 'One button press, and six parts of the game changed: Mario, the Goomba, its health, the death signal, the animation, the reward and the party’s level. Jump and Shoot are command signals; Stomp and Hit are side effects.'
         : 'Press Jump or Shoot. Watch the signal leave the player, become a stomp or a fireball, and ripple through the game’s systems.',
   });
-  function hit(s, lead, d) {
-    const xp = s.level + 100;
+  // how the Goomba died decides what the animation system plays: a stomp squashes it, a fireball burns it and flips it off screen
+  function hit(s, lead, d, how) {
+    const xp = s.level + 100, stomp = how === 'stomp';
     return [...lead,
-      { dt: d, dur: .7, from: 'goomba', to: 'health', kind: 'system', label: 'Damage -1', set: { goomba: 'hit', health: 0 } },
-      { dt: d + .75, dur: .55, from: 'health', to: 'death', kind: 'system', label: '0 HP' },
-      { dt: d + 1.35, dur: .7, from: 'death', to: 'anim', kind: 'system', set: { anim: 'squashed' } },
+      { dt: d, dur: .7, from: 'goomba', to: 'health', kind: 'system', label: 'Damage -1', set: { goomba: stomp ? 'stomped' : 'burning', health: 0 } },
+      { dt: d + .75, dur: .55, from: 'health', to: 'death', kind: 'system', label: '0 HP', ctx: stomp ? 'cause: stomp' : 'cause: fire' },
+      { dt: d + 1.35, dur: .7, from: 'death', to: 'anim', kind: 'system', ctx: stomp ? 'cause: stomp' : 'cause: fire', set: { anim: stomp ? 'squashed' : 'burn, flip' } },
       { dt: d + 1.35, dur: .7, from: 'death', to: 'reward', kind: 'system' },
       { dt: d + 2.1, dur: .8, from: 'reward', to: 'level', kind: 'system', label: '+100 XP', set: { level: xp } },
     ];
   }
-  function walker(g, x, y, squash, a = 1) {
-    g.save(); g.globalAlpha = a; g.translate(x, y); g.scale(1 + squash * .5, 1 - squash * .7);
-    g.fillStyle = '#9b5a2c'; g.strokeStyle = '#4e2a10'; g.lineWidth = 3;
+  // squash: 0..1 flattened by a stomp; flip: 0..1 turned upside down; burnt: charred colours
+  function walker(g, x, y, squash, a = 1, flip = 0, burnt = false) {
+    g.save(); g.globalAlpha = a; g.translate(x, y - 23 * Math.sin(flip * Math.PI / 2)); g.rotate(flip * Math.PI); g.translate(0, 23 * Math.sin(flip * Math.PI / 2) * (flip ? 1 : 0)); g.scale(1 + squash * .5, 1 - squash * .7);
+    g.fillStyle = burnt ? '#4a3326' : '#9b5a2c'; g.strokeStyle = '#4e2a10'; g.lineWidth = 3;
     g.beginPath(); g.moveTo(-26, 0); g.quadraticCurveTo(-30, -44, 0, -46); g.quadraticCurveTo(30, -44, 26, 0); g.closePath(); g.fill(); g.stroke();
     g.fillStyle = '#f2d9b0'; g.fillRect(-14, -8, 28, 10);
     g.fillStyle = '#fff'; g.beginPath(); g.ellipse(-8, -24, 6, 9, 0, 0, Math.PI * 2); g.ellipse(8, -24, 6, 9, 0, 0, Math.PI * 2); g.fill();
@@ -228,11 +230,17 @@
     // the fireball, its own entity with its own attack zone
     const fb = flow.find(f => f.from === 'ball' && f.to === 'goomba' && t >= f.t - .55 && t <= f.t + f.dur);
     if (fb) { const k = clamp((t - (fb.t - .55)) / (fb.dur + .55)); const x = lerp(350, GOOMBA_X - 20, k), y = gy - 22 - Math.abs(Math.sin(k * Math.PI * 3)) * 40; T.flash(x, y, 26, 1); g.fillStyle = '#e5322d'; g.beginPath(); g.arc(x, y, 9, 0, Math.PI * 2); g.fill(); }
-    // the Goomba: walks until the animation system says squashed
-    const sq = v.anim === 'squashed', gx = GOOMBA_X + Math.sin(t * 2) * (v.goomba === 'walking' ? 14 : 0);
-    const since = sq ? Math.max(0, t - (flow.filter(f => f.to === 'anim' && t >= f.t + f.dur).at(-1)?.t + .7 || t)) : 0;
-    walker(g, gx, gy, sq ? 1 : v.goomba === 'hit' ? .3 : 0, sq ? clamp(1 - (since - 1) / .6) : 1);
-    if (v.goomba === 'hit' && !sq) T.popText('stomp!', gx, gy - 70, '#9a5a06', 1);
+    // the Goomba: walks until the animation system plays its death: squashed by a stomp, or burned and flipped off screen by fire
+    const sq = v.anim === 'squashed', fl = v.anim === 'burn, flip', gx = GOOMBA_X + Math.sin(t * 2) * (v.goomba === 'walking' ? 14 : 0);
+    const since = sq || fl ? Math.max(0, t - (flow.filter(f => f.to === 'anim' && t >= f.t + f.dur).at(-1)?.t + .7 || t)) : 0;
+    if (fl) {
+      // pops up, turns over and drops through the floor, still smoking
+      const k = clamp(since / 1.1), x = gx + 60 * k, y = gy - 70 * Math.sin(Math.min(k * 1.6, 1) * Math.PI / 2) + 260 * Math.max(0, k - .45) * Math.max(0, k - .45) * 3;
+      walker(g, x, y, 0, 1, clamp(since / .35), true);
+      if (k < 1) T.poof(x, y - 30, since % .8, 18);
+    } else walker(g, gx, gy, sq ? 1 : v.goomba === 'stomped' ? .3 : 0, sq ? clamp(1 - (since - 1) / .6) : 1, 0, v.goomba === 'burning');
+    if (v.goomba === 'burning' && !fl) { for (let f = 0; f < 5; f++) { const ph = t * 7 + f * 1.9, fx = gx + (f - 2) * 11, fh = 28 + 12 * Math.sin(ph); g.fillStyle = f % 2 ? '#ff7a2a' : '#ffb951'; g.beginPath(); g.moveTo(fx - 8, gy - 10); g.quadraticCurveTo(fx, gy - 10 - fh * 1.5, fx + 8, gy - 10); g.fill(); } T.flash(gx, gy - 24, 50, .4); T.popText('burn!', gx, gy - 86, C.redDk, 1); }
+    if (v.goomba === 'stomped' && !sq) T.popText('stomp!', gx, gy - 70, '#9a5a06', 1);
     const lv = flow.filter(f => f.to === 'level' && t >= f.t + f.dur).at(-1);
     if (lv && t - lv.t - lv.dur < 1.6) { const a = t - lv.t - lv.dur; T.popText('+100 XP · Level-Up!', 880, 90 - 20 * a, '#9a5a06', 1.6 - a); }
     T.label('Mario 3 mechanics X-ray', 120, 22, 'center', '#fff', 13, C.navy);
