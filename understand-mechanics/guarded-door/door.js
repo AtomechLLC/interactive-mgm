@@ -12,6 +12,7 @@
 
   /* ---------- 1. the guarded door ---------- */
   const TOOLS = { key: 'Key', pick: 'Lockpick', hammer: 'Hammer' };
+  const GI = { key: 'key', pick: 'lockpick', hammer: 'hammer' };   // game-icons.net glyphs, ../shared/icons.js
   const TARGETS = { door: 'Door', chest: 'Chest', enemy: 'Enemy' };
   const WORKS = { key: { door: 'unlocks it' }, pick: { door: 'picks the lock', chest: 'picks the lock' }, hammer: { door: 'smashes it', chest: 'smashes it', enemy: 'fights it' } };
   const GUARD = {
@@ -27,7 +28,14 @@
   function keyIcon(g, x, y, s = 1) { g.save(); g.translate(x, y); g.scale(s, s); g.strokeStyle = '#9a5a06'; g.fillStyle = '#ffb951'; g.lineWidth = 3; g.beginPath(); g.arc(-10, 0, 8, 0, Math.PI * 2); g.fill(); g.stroke(); g.fillRect(-2, -3, 22, 6); g.strokeRect(-2, -3, 22, 6); g.fillRect(12, 3, 4, 6); g.fillRect(17, 3, 3, 5); g.restore(); }
   function pickIcon(g, x, y, s = 1) { g.save(); g.translate(x, y); g.scale(s, s); g.strokeStyle = '#62688a'; g.lineWidth = 3; g.lineCap = 'round'; g.beginPath(); g.moveTo(-16, 6); g.lineTo(14, -2); g.lineTo(18, -8); g.stroke(); g.beginPath(); g.moveTo(-16, -6); g.lineTo(12, 4); g.stroke(); g.restore(); }
   function hammerIcon(g, x, y, s = 1, rot = 0) { g.save(); g.translate(x, y); g.rotate(rot); g.scale(s, s); g.fillStyle = '#8b6136'; g.fillRect(-3, -4, 6, 34); g.fillStyle = C.stone; g.strokeStyle = C.navy; g.lineWidth = 2; g.fillRect(-16, -14, 32, 14); g.strokeRect(-16, -14, 32, 14); g.restore(); }
-  const ICON = { key: keyIcon, pick: pickIcon, hammer: hammerIcon };
+  const TOOL_ICON = { key: keyIcon, pick: pickIcon, hammer: hammerIcon };
+  // the hammer in the hero's hand: it pivots at the grip, so the head arcs through the swing
+  function heldHammer(g, hx, hy, ang) {
+    g.save(); g.translate(hx + Math.cos(ang) * 14, hy + Math.sin(ang) * 14); g.rotate(ang);
+    g.fillStyle = '#8b6136'; g.strokeStyle = '#4e2a10'; g.lineWidth = 2; g.fillRect(0, -4, 44, 8); g.strokeRect(0, -4, 44, 8);
+    g.fillStyle = C.stone; g.strokeStyle = C.navy; g.fillRect(38, -17, 18, 34); g.strokeRect(38, -17, 18, 34);
+    g.restore();
+  }
 
   function room(g, st) {
     T.floor(RX, RY, RW, RH); T.wall(RX, RY, RW, 40);
@@ -87,7 +95,7 @@
     g.fillText('Guard', gx, y0 + 30);
     Object.entries(TOOLS).forEach(([tk, tn], i) => {
       const y = y0 + 56 + rh * i;
-      ICON[tk](g, x0 + 24, y + rh / 2 - 18, .8); g.fillStyle = C.ink; g.font = '700 14px Jost, sans-serif'; g.textAlign = 'left'; g.fillText(tn, x0 + 12, y + rh / 2 + 14);
+      ICON.draw(g, GI[tk], x0 + 28, y + rh / 2 - 12, 30); g.fillStyle = C.ink; g.font = '700 14px Jost, sans-serif'; g.textAlign = 'left'; g.fillText(tn, x0 + 50, y + rh / 2 - 12);
       g.textAlign = 'center';
       Object.keys(TARGETS).forEach((gk, j) => {
         const x = x0 + hw + cw * j, d = done[tk + gk], isCur = cur && cur.tool === tk && cur.target === gk;
@@ -140,8 +148,8 @@
       T.player(S.hero[0], S.hero[1], S.face, 1.05);
       if (cur && a < ACT) {
         const tool = cur.tool, using = a > .7 && a < 1.3, [hx, hy] = S.hero;
-        if (tool === 'hammer') hammerIcon(g, hx + Math.cos(S.face) * 26, hy + Math.sin(S.face) * 26, 1, S.face + Math.PI / 2 + (using ? Math.sin((a - .7) / .6 * Math.PI) * 1.2 : 0));
-        else ICON[tool](g, hx + Math.cos(S.face) * 30, hy + Math.sin(S.face) * 30 + (using ? Math.sin(a * 30) * 2 : 0), 1);
+        if (tool === 'hammer') heldHammer(g, hx, hy, S.face + (using ? lerp(-1.3, .25, ease(clamp((a - .7) / .45))) : -.6));
+        else TOOL_ICON[tool](g, hx + Math.cos(S.face) * 30, hy + Math.sin(S.face) * 30 + (using ? Math.sin(a * 30) * 2 : 0), 1);
         if (S.res && a < 2.2) {
           const [tx, ty] = SPOT[cur.target];
           T.popText(S.ok ? `✔ ${WORKS[tool][cur.target]}` : `✕ the ${TOOLS[tool].toLowerCase()} does nothing`, clamp(S.hero[0], 150, RX + RW - 150), S.hero[1] + 52 + 10 * (a - 1.25), S.ok ? C.good : C.muted, 2.2 - a);
@@ -164,7 +172,7 @@
       const ks = Object.keys(TOOLS);
       ks.forEach((tk, i) => {
         const n = Object.keys(TARGETS).filter(gk => done[tk + gk]).length, x = 40 + i * 330, y = 490;
-        ICON[tk](g, x + 20, y + 22, 1.1);
+        ICON.draw(g, GI[tk], x + 20, y + 22, 36);
         g.fillStyle = '#e7dec9'; g.beginPath(); g.roundRect(x + 50, y + 10, 240, 24, 12); g.fill();
         g.fillStyle = [C.muted, '#2ea3dc', C.good][Math.max(0, n - 1)] || C.muted; g.beginPath(); g.roundRect(x + 50, y + 10, 240 * n / 3, 24, 12); g.fill();
         g.fillStyle = C.ink; g.font = '700 14px Jost, sans-serif'; g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillText(`${TOOLS[tk]}: useful in ${n} of 3 situations`, x + 50, y + 54);

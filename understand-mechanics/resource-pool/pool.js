@@ -82,7 +82,7 @@
     outs.forEach(([k], i) => { const y = 160 + i * 40; g.strokeStyle = '#e5322d'; g.lineWidth = 8; g.beginPath(); g.moveTo(tx + tw + 4, y); g.lineTo(346, y + 20); g.stroke(); T.label(k, 318, y - 12, 'center', C.redDk, 11); });
     T.label('inflow', 54, 36, 'center', '#fff', 12, C.good); T.label('outflow', 318, 36, 'center', '#fff', 12, C.redDk);
     // recent events float off the tank
-    r.ev.filter(e => e.t <= play && play - e.t < .9 && e.kind !== 'blocked' && e.kind !== 'cast').forEach(e => T.popText(`+${Math.round(e.v)} ${e.kind}`, tx + tw / 2, vy(p) - 20 - 30 * (play - e.t), C.good, 1 - (play - e.t)));
+    r.ev.filter(e => e.t <= play && play - e.t < .9 && e.kind !== 'blocked' && e.kind !== 'cast').forEach(e => { const y = vy(p) - 20 - 30 * (play - e.t); T.popText(`+${Math.round(e.v)} ${e.kind}`, tx + tw / 2, y, C.good, 1 - (play - e.t)); const ic = { potion: 'potion', convert: 'lifetap' }[e.kind]; if (ic) ICON.draw(g, ic, tx - 30, y, 30, 1 - (play - e.t)); });
     r.ev.filter(e => e.t <= play && play - e.t < .6 && e.kind === 'blocked').forEach(e => T.popText('not enough mana!', tx + tw / 2, 50, C.redDk, 1 - (play - e.t) / .6));
   }
   function tallies(g, r, play) {

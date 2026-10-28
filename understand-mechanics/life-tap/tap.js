@@ -52,9 +52,9 @@
     const wl = [x0 + 120, 230], fx = o.raid ? x0 + 400 : x0 + 300, fy = o.raid ? 140 : 190;
     if (o.raid) {
       T.foe(fx, fy, 46, Math.PI * .85, C.red, { mark: 'horns' });
-      T.player(x0 + 330, 175, -.6, 1, 1, TANK); T.label('Tank', x0 + 330, 214, 'center', C.ink, 12);
+      T.player(x0 + 330, 175, -.6, 1, 1, TANK); T.label('Tank', x0 + 330, 214, 'center', C.ink, 12); ICON.draw(g, 'warrior', x0 + 376, 214, 24);
       if (Math.floor(t * 1.4) % 2) T.tracer(fx - 30, fy + 20, x0 + 345, 168, .7, C.red, 3);
-      T.player(x0 + 90, 120, 0, 1, 1, PRIEST); T.label('Priest', x0 + 90, 82, 'center', C.ink, 12);
+      T.player(x0 + 90, 120, 0, 1, 1, PRIEST); T.label('Priest', x0 + 90, 82, 'center', C.ink, 12); ICON.draw(g, 'priest', x0 + 46, 120, 28);
     } else {
       // a monster right in your face, hitting every two seconds
       const h = ago(s, 'hit', t), lunge = h && h.a < .25 ? Math.sin(h.a / .25 * Math.PI) * 30 : 0;
@@ -62,14 +62,15 @@
       if (h && h.a < .5) T.popText(`-${R.hit}`, wl[0] + 30, wl[1] - 40 - 30 * h.a, C.redDk, 1 - h.a * 2);
     }
     T.player(wl[0], wl[1], Math.atan2(fy - wl[1], fx - wl[0]), 1.1, down ? .3 : 1, WARLOCK);
-    T.label('Warlock', wl[0], wl[1] + 40, 'center', C.ink, 12);
+    T.label('Warlock', wl[0], wl[1] + 40, 'center', C.ink, 12); ICON.draw(g, 'warlock', wl[0] - 54, wl[1], 30);
     if (down) T.stamp('Down', wl[0], wl[1] - 60, C.redDk, clamp((t - s.down) / .3), 30);
-    const b = ago(s, 'bolt', t); if (b && b.a < .4 && !down) { T.tracer(wl[0], wl[1], lerp(wl[0], fx, b.a / .4), lerp(wl[1], fy, b.a / .4), 1, WARLOCK, 6); }
-    const tp = ago(s, 'tap', t); if (tp && tp.a < 1.1) { T.flash(wl[0], wl[1], 60, 1 - tp.a); T.popText(`-${o.tap} HP  +${o.tap} mana`, wl[0] + 140, wl[1] + 20 - 20 * tp.a, WARLOCK, 1.3 - tp.a); }
+    const b = ago(s, 'bolt', t); if (b && b.a < .4 && !down) { T.tracer(wl[0], wl[1], lerp(wl[0], fx, b.a / .4), lerp(wl[1], fy, b.a / .4), 1, WARLOCK, 6); ICON.draw(g, 'shadowbolt', lerp(wl[0], fx, b.a / .4), lerp(wl[1], fy, b.a / .4), 24); }
+    const tp = ago(s, 'tap', t); if (tp && tp.a < 1.1) { T.flash(wl[0], wl[1], 60, 1 - tp.a); T.popText(`-${o.tap} HP  +${o.tap} mana`, wl[0] + 150, wl[1] - 76 - 16 * tp.a, WARLOCK, 1.3 - tp.a); ICON.draw(g, 'lifetap', wl[0], wl[1] - 76 - 16 * tp.a, 34, clamp(1.3 - tp.a)); }
     const hl = ago(s, 'heal', t);
     if (hl && hl.a < 1.2) {
+      ICON.draw(g, 'heal', x0 + 140, 120 - 14 * hl.a, 32, clamp(1.2 - hl.a));
       T.beam(x0 + 90, 120, wl[0], wl[1], t, 1 - hl.a / 1.2);
-      T.popText(`+${o.tap} HP`, x0 + 90, 70 - 16 * hl.a, C.good, 1.2 - hl.a);
+      T.popText(`+${o.tap} HP`, x0 + 200, 100 - 16 * hl.a, C.good, 1.2 - hl.a);
       T.label(hl.e.n % 2 ? 'LOL!' : 'THX, BRO~', wl[0] - 10, wl[1] + 70, 'center', '#fff', 15, WARLOCK);
     }
     // bars, like slide 227

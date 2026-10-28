@@ -3,16 +3,16 @@
       restoration removes the Life Tap and the warlock does 52 (30% more).
    2. Tokens: 4 tokens per window, 25 damage each = 100 whatever you do; shorter casts and back to back casting keep 100
       but free up time.
-   3. Weakness window: a 5-second "2x damage taken" window. The locked rotation always lands 2 casts in it; with tokens
-      the player saves up and lands 3.
-   Slide numbers are the slides'; token cast time (1.5 s) and window length (5 s) are chosen so the notes' "3 instead of 2"
-   always holds. Every scene is a pure function of time, so the GIFs can seek. */
+   3. Weakness windows: three short "2x damage taken" windows, each shorter than a cast. The locked rotation's casts end
+      wherever the cast bar puts them; with tokens the player holds each cast so it ends inside a window.
+   Slide numbers are the slides'; the token cast time (1.5 s) and window length (0.8 s) are illustrative. Every scene is a pure function of time, so the GIFs can seek. */
 (function () {
   const { $, $$, canvasDemo, say } = FPF.kit;
   const T = TD, C = TD.C, { clamp, lerp, ease } = TD;
   const W = 1040, H = 585, X0 = 150, X1 = 1010, WIN = 10, sx = s => lerp(X0, X1, s / WIN);
   const COL = { fb: '#e5322d', sb: '#8a4fd6', lt: '#2fae63', gap: '#cdbf9f' };
   const NAME = { fb: 'Fireball', sb: 'Shadow Bolt', lt: 'Life Tap' };
+  const SPELL = { fb: 'fireball', sb: 'shadowbolt', lt: 'lifetap' };
 
   function axis(g, y) {
     g.strokeStyle = '#b9ab88'; g.lineWidth = 1.5; g.font = '600 13px Jost, sans-serif'; g.fillStyle = C.muted; g.textAlign = 'center'; g.textBaseline = 'middle';
@@ -22,10 +22,11 @@
   function grid(g, y0, y1) { g.strokeStyle = 'rgba(160,140,100,.35)'; g.lineWidth = 1; g.setLineDash([4, 5]); [0, 2.5, 5, 7.5, 10].forEach(s => { g.beginPath(); g.moveTo(sx(s), y0); g.lineTo(sx(s), y1); g.stroke(); }); g.setLineDash([]); }
 
   // one caster's row: blocks fill as the playhead passes them; cut blocks end with ✕
-  function lane(g, y, h, name, col, casts, play) {
+  function lane(g, y, h, name, col, casts, play, cls) {
     g.fillStyle = 'rgba(255,252,244,.85)'; g.beginPath(); g.roundRect(10, y, W - 20, h, 10); g.fill();
     g.fillStyle = col; g.beginPath(); g.roundRect(10, y, 128, h, [10, 0, 0, 10]); g.fill();
-    g.fillStyle = '#fff'; g.font = '800 17px Montserrat, Jost, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(name, 74, y + h / 2);
+    g.fillStyle = '#fff'; g.font = '800 17px Montserrat, Jost, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(name, 74, y + h / 2 + (cls ? 24 : 0));
+    if (cls) ICON.draw(g, cls, 74, y + h / 2 - 14, 38, 1, 'rgba(255,255,255,.85)');
     let dmg = 0;
     casts.forEach(c => {
       const x = sx(c.s), w = sx(Math.min(c.e, WIN)) - x, k = clamp((play - c.s) / (c.e - c.s));
@@ -34,10 +35,11 @@
       const cc = COL[c.kind];
       g.fillStyle = cc + '33'; g.strokeStyle = cc; g.lineWidth = 2.5; g.beginPath(); g.roundRect(x + 2, y + 8, w - 4, h - 16, 8); g.fill(); g.stroke();
       g.fillStyle = cc + 'cc'; g.beginPath(); g.roundRect(x + 2, y + 8, Math.max(0, (w - 4) * k), h - 16, 8); g.fill();
-      g.fillStyle = '#fff'; g.font = `700 ${w > 120 ? 14 : 12}px Jost, sans-serif`;
-      const done = k >= 1 && c.e <= WIN + 1e-6;
-      g.fillText(`${NAME[c.kind]} ${done ? '✔' : c.e > WIN && play >= WIN ? '✕' : ''}`, x + w / 2, y + h / 2 - (c.dmg ? 9 : 0));
-      if (c.dmg && done) { dmg += c.dmg; g.font = '800 15px Montserrat, Jost, sans-serif'; g.fillText(c.bonus ? `${c.dmg}!` : c.dmg, x + w / 2, y + h / 2 + 11); }
+      const done = k >= 1 && c.e <= WIN + 1e-6, isz = Math.min(34, h - 34), ix = x + 8 + isz / 2 + 4, tx = x + (w + isz + 8) / 2;
+      ICON.draw(g, SPELL[c.kind], ix, y + h / 2, isz, 1, 'rgba(21,32,68,.7)');
+      g.fillStyle = '#fff'; g.font = `700 ${w > 150 ? 14 : 12}px Jost, sans-serif`;
+      g.fillText(`${w > 150 || !c.dmg ? NAME[c.kind] : NAME[c.kind].split(' ').at(-1)} ${done ? '✔' : c.e > WIN && play >= WIN ? '✕' : ''}`, tx, y + h / 2 - (c.dmg ? 9 : 0));
+      if (c.dmg && done) { dmg += c.dmg; g.font = '800 15px Montserrat, Jost, sans-serif'; g.fillText(c.bonus ? `${c.dmg}!` : c.dmg, tx, y + h / 2 + 11); }
     });
     return dmg;
   }
@@ -89,10 +91,10 @@
     sync(s, o) { $(s, '.ct-break').checked = o.brk; $(s, '.ct-warlock').checked = o.wl; $(s, '.ct-bc').checked = o.bc; },
     draw(g, o, play) {
       axis(g, 34); grid(g, 50, o.wl ? 312 : 160);
-      const md = lane(g, 60, 92, 'Mage', COL.fb, mageCasts(o.brk), play);
+      const md = lane(g, 60, 92, 'Mage', COL.fb, mageCasts(o.brk), play, 'mage');
       let wd = null;
       if (o.wl) {
-        wd = lane(g, 172, 92, 'Warlock', COL.sb, warlockCasts(o.bc), play);
+        wd = lane(g, 172, 92, 'Warlock', COL.sb, warlockCasts(o.bc), play, 'warlock');
         // warlock mana under the lane: 3 bolts empty it, Life Tap refills it; with ally restore it never runs out
         const casts = warlockCasts(o.bc), spent = casts.filter(c => c.kind === 'sb' && play >= c.e).length, tapped = casts.some(c => c.kind === 'lt' && play >= c.e);
         const mana = o.bc ? 60 : Math.max(0, 60 - 20 * spent) + (tapped ? 60 : 0);
@@ -134,12 +136,12 @@
       const S = STEP[o.step] || STEP[0];
       axis(g, 34); grid(g, 50, 170);
       T.label(`Step ${o.step + 1}: ${S.name}`, 22, 210, 'left', '#fff', 14, C.navy);
-      const dmg = lane(g, 60, 100, 'Warlock', COL.sb, S.casts, play);
+      const dmg = lane(g, 60, 100, 'Warlock', COL.sb, S.casts, play, 'warlock');
       playhead(g, play, 52, 164);
       // the token tray: 4 per window, one spent as each cast starts
       const bolts = S.casts.filter(c => c.kind === 'sb'), used = bolts.filter(c => play > c.s).length;
       if (S.tokens) {
-        for (let i = 0; i < 4; i++) { const x = 330 + i * 70, y = 210, on = i >= used; g.fillStyle = on ? '#ffb951' : 'rgba(205,191,159,.5)'; g.strokeStyle = on ? '#9a5a06' : '#b9ab88'; g.lineWidth = 3; g.beginPath(); g.arc(x, y, 24, 0, Math.PI * 2); g.fill(); g.stroke(); g.fillStyle = on ? '#9a5a06' : '#b9ab88'; g.font = '800 15px Montserrat, Jost, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(TOK_DMG, x, y + 1); }
+        for (let i = 0; i < 4; i++) { const x = 330 + i * 70, y = 210, on = i >= used; g.fillStyle = on ? '#ffb951' : 'rgba(205,191,159,.5)'; g.strokeStyle = on ? '#9a5a06' : '#b9ab88'; g.lineWidth = 3; g.beginPath(); g.arc(x, y, 24, 0, Math.PI * 2); g.fill(); g.stroke(); g.fillStyle = on ? '#9a5a06' : '#b9ab88'; g.font = '800 15px Montserrat, Jost, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(TOK_DMG, x, y + 1); ICON.draw(g, 'shadowbolt', x, y - 2, 30, on ? 1 : .25, on ? '#9a5a06' : '#b9ab88'); }
         T.label(used >= 4 ? 'out of tokens until the window resets' : `${4 - used} tokens left`, 720, 210, 'center', '#fff', 14, used >= 4 ? C.muted : '#9a5a06');
       } else T.label('no tokens: the only limit is the cast bar', 470, 210, 'center', '#fff', 14, C.muted);
       const castT = bolts[0].e - bolts[0].s, freeT = S.casts.filter(c => c.kind === 'gap').reduce((a, c) => a + c.e - c.s, 0), done = play >= WIN;
@@ -161,41 +163,48 @@
     },
   });
 
-  /* ---------- 3. the weakness window ---------- */
-  const WLEN = 5;
-  const inWin = (e, ws) => e > ws + 1e-6 && e <= ws + WLEN + 1e-6;
-  function plans(ws) {
-    const locked = [0, 1, 2, 3].map(i => { const e = i * 2.5 + 2.5; return { s: i * 2.5, e, kind: 'sb', dmg: inWin(e, ws) ? 2 * TOK_DMG : TOK_DMG, bonus: inWin(e, ws) }; });
-    // save tokens: three back to back from the moment the window opens, the fourth outside it
-    const burst = [0, 1, 2].map(i => ({ s: ws + i * TOK_CAST, e: ws + (i + 1) * TOK_CAST, kind: 'sb' }));
-    const extra = ws >= TOK_CAST ? { s: 0, e: TOK_CAST, kind: 'sb' } : { s: ws + WLEN, e: ws + WLEN + TOK_CAST, kind: 'sb' };
-    const tok = [extra, ...burst].sort((a, b) => a.s - b.s).map(c => ({ ...c, dmg: inWin(c.e, ws) ? 2 * TOK_DMG : TOK_DMG, bonus: inWin(c.e, ws) }));
+  /* ---------- 3. the weakness windows ---------- */
+  // three short 2x windows, each shorter than one cast: the skill is making a cast END inside one
+  const WLEN = .8, WINS = off => [0, 1, 2].map(i => off + 1 + i * 3);
+  const inAny = (e, off) => WINS(off).some(ws => e >= ws - 1e-6 && e <= ws + WLEN + 1e-6);
+  function plans(off) {
+    const mark = c => ({ ...c, kind: 'sb', dmg: inAny(c.e, off) ? 2 * TOK_DMG : TOK_DMG, bonus: inAny(c.e, off) });
+    // locked: the cast bar decides when each bolt lands
+    const locked = [0, 1, 2, 3].map(i => mark({ s: i * 2.5, e: i * 2.5 + 2.5 }));
+    // tokens: hold each bolt and release it so it ends mid-window; the spare token goes right after the first
+    const ends = WINS(off).map(ws => ws + WLEN / 2);
+    const tok = [...ends.map(e => ({ s: e - TOK_CAST, e })), { s: ends[0], e: ends[0] + TOK_CAST }].sort((a, b) => a.s - b.s).map(mark);
     return { locked, tok };
   }
   const win = stageDemo('window', {
-    stages: [1, 3.5, 5, 2].map(ws => ({ ws })),
+    stages: [2, 1.2, .5].map(ws => ({ ws })),
     wire(s, st, free, sync) { $(s, '.ct-ws').oninput = e => { free(); st.o = { ws: +e.target.value }; sync(); }; },
-    sync(s, o) { $(s, '.ct-ws').value = o.ws; $(s, '.ct-v').textContent = `${o.ws} sec`; },
+    sync(s, o) { $(s, '.ct-ws').value = o.ws; $(s, '.ct-v').textContent = `+${o.ws} sec`; },
     draw(g, o, play) {
       const { locked, tok } = plans(o.ws);
       axis(g, 34);
-      // the boss's weakness window across both lanes
-      const wx = sx(o.ws), ww = sx(o.ws + WLEN) - wx;
-      g.fillStyle = 'rgba(229,50,45,.10)'; g.fillRect(wx, 48, ww, 288); g.strokeStyle = C.red; g.lineWidth = 2; g.setLineDash([8, 6]); g.strokeRect(wx, 48, ww, 288); g.setLineDash([]);
-      T.label('2x damage taken!', wx + ww / 2, 322, 'center', '#fff', 14, C.redDk);
+      // the boss's weakness windows across both lanes, each shorter than any cast
+      WINS(o.ws).forEach(ws => {
+        const wx = sx(ws), ww = sx(ws + WLEN) - wx, open = play >= ws && play <= ws + WLEN;
+        g.fillStyle = open ? 'rgba(229,50,45,.28)' : 'rgba(229,50,45,.12)'; g.fillRect(wx, 48, ww, 262); g.strokeStyle = C.red; g.lineWidth = 2; g.setLineDash([6, 5]); g.strokeRect(wx, 48, ww, 262); g.setLineDash([]);
+        T.label('2x', wx + ww / 2, 322, 'center', '#fff', 13, C.redDk);
+      });
+      T.label('2x damage taken: each window is shorter than a cast', W / 2, 352, 'center', C.redDk, 14);
       grid(g, 50, 300);
-      const a = lane(g, 64, 100, 'Locked', '#62688a', locked, play), b = lane(g, 192, 100, 'Tokens', COL.sb, tok, play);
+      const a = lane(g, 64, 100, 'Locked', '#62688a', locked, play, 'warlock'), b = lane(g, 192, 100, 'Tokens', COL.sb, tok, play, 'warlock');
+      // where each cast ends: a tick, red if it landed in a window
+      [[locked, 64], [tok, 192]].forEach(([cs, y]) => cs.forEach(c => { if (play < c.e || c.e > WIN) return; g.strokeStyle = c.bonus ? C.red : '#9a9cb0'; g.lineWidth = 3; g.beginPath(); g.moveTo(sx(c.e) - 2, y + 2); g.lineTo(sx(c.e) - 2, y + 98); g.stroke(); }));
       playhead(g, play, 52, 296);
       const nA = locked.filter(c => c.bonus && play >= c.e).length, nB = tok.filter(c => c.bonus && play >= c.e).length, done = play >= WIN;
-      tile(g, 20, 360, 240, `${nA}`, 'locked casts in the window', '#62688a');
-      tile(g, 276, 360, 240, `${nB}`, 'token casts in the window', COL.sb);
-      tile(g, 532, 360, 240, done ? a : '…', 'locked damage');
-      tile(g, 788, 360, 232, done ? b : '…', 'token damage', COL.sb);
-      if (done) T.label(`+${b - a} damage from choosing when to cast`, W / 2, 500, 'center', '#fff', 16, C.good);
+      tile(g, 20, 380, 240, `${nA} of 3`, 'locked casts ending in a window', '#62688a');
+      tile(g, 276, 380, 240, `${nB} of 3`, 'token casts ending in a window', COL.sb);
+      tile(g, 532, 380, 240, done ? a : '…', 'locked damage');
+      tile(g, 788, 380, 232, done ? b : '…', 'token damage', COL.sb);
+      if (done) T.label(`+${b - a} damage from timing when each cast ends`, W / 2, 516, 'center', '#fff', 16, C.good);
       const out = done
-        ? `Wherever the window opens, the locked rotation lands 2 casts in it. With tokens the player saved up and burned 3 inside it: ${b} against ${a}. The player chooses where to time their attacks.`
-        : 'The boss telegraphs a weakness window. Watch both rotations play through it.';
-      return { done, stats: stat('', done ? a : '…', 'locked rotation') + stat('g', done ? b : '…', 'token rotation') + stat('r', `${o.ws}–${o.ws + WLEN} s`, 'weakness window'), out };
+        ? `The windows are shorter than a cast, so what matters is when a cast ends. Locked, the cast bar decides: ${nA} of 3 bolts happened to land in a window. With tokens the player held each bolt and released it to end inside the window: 3 of 3, ${b} against ${a}.`
+        : 'The boss opens three short weakness windows. Watch where each rotation’s casts end.';
+      return { done, stats: stat('', done ? a : '…', 'locked rotation') + stat('g', done ? b : '…', 'token rotation') + stat('r', `${WLEN} s`, 'each window (a cast is 1.5 to 2.5 s)'), out };
     },
   });
 
