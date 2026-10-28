@@ -1,11 +1,13 @@
-/* Resource pool sandbox (MGM C4 M2, deck slides 198-216, 257).
+/* Resource pool sandbox (MGM C4 M2, deck slides 198-216, 219, 257).
    1. A mana pool over 30 seconds of play. Generators (inflow): passive regen, a potion, conversion (health into mana) and
       conditional (crits refund 50% more). Spenders (outflow): casting, a passive leak above an equilibrium point, a
       triggered drain when struck, and theft. Capacity caps it. sim() runs the whole 30 s for the current setup, so the
       graph is instant and the playhead just reveals it; the x2 / x½ buttons are slide 257's "explore the extremes".
       Numbers are illustrative: R.
    2. Discrete vs continuous: Jhin-style four-shot clip (every 4th shot hits harder, then reload) next to a battery that
-      drains while a boost is held (the Subnautica Seaglide). */
+      drains while a boost is held (the Subnautica Seaglide).
+   3. Resources & states (slide 219): hold to charge a two-segment energy bar; at the threshold it bursts into flame and
+      Mario is On Fire, spend a segment and it goes out. The walk-through is replayed from its inputs, so seeking is exact. */
 (function () {
   const { $, $$, canvasDemo, say } = FPF.kit;
   const T = TD, C = TD.C, { clamp, lerp, ease } = TD;
@@ -207,6 +209,141 @@
     return dt => { if (!st.held) st.t += Math.max(0, dt); if (st.tour && st.t > SDUR) st.t = 0; render(); };
   });
 
-  window.__seek = (t, w) => (w === 'spend' ? api2 : api1).seek(t);
-  window.__dur = w => (w === 'spend' ? api2 : api1).dur();
+  /* ---------- 3. resources & states: a full energy bar sets you on fire ---------- */
+  // Super Mario Bros. sprite (Super Mario Wiki), drawn pixel-sharp; educational use, per Xelnath
+  const MARIO = new Image(); MARIO.src = new URL('../img/smb-fire-mario.png', location.href).href;
+  const SEG = 50, FULL = 100, RATE = 34, HIST = 12, BDT = 1 / 60;
+  // the walk-through as inputs: charge held over [a, b], one segment spent at each time
+  const BHOLDS = [[.5, 3.6], [7, 8], [9, 9.6]], BSPENDS = [6, 12, 12.8], BDUR = 14.5;
+  const BCAP = [[0, 'Hold to charge: the energy bar fills one segment at a time. Below the threshold, nothing changes.'],
+    [3.44, 'Full: energy crosses the threshold and triggers a state. Mario is on fire for as long as the bar stays full.'],
+    [6, 'Spend a segment and the bar drops below the threshold: the state ends at once.'],
+    [7, '84 of 100 is close, but a threshold is all or nothing: still no fire.'],
+    [9.47, 'Full again, on fire again. The state follows the resource, not a timer.'],
+    [12, 'Spend both segments: back to empty, back to normal.']];
+  const fresh = () => ({ t: 0, e: 0, fire: false, ign: -9, out: -9, spent: -9, fail: -9, hist: [], next: 0 });
+  function bstep(s, dt, held, thr) {
+    s.t += dt; if (held) s.e = Math.min(FULL, s.e + RATE * dt);
+    const on = s.e >= thr - 1e-6;
+    if (on && !s.fire) s.ign = s.t; if (!on && s.fire) s.out = s.t; s.fire = on;
+    if (s.t >= s.next) { s.hist.push([s.t, s.e, on]); s.next = s.t + .05; while (s.hist[0][0] < s.t - HIST - .5) s.hist.shift(); }
+  }
+  function bspend(s, thr) { if (s.e < SEG - 1e-6) { s.fail = s.t; return; } s.e -= SEG; s.spent = s.t; bstep(s, 0, false, thr); }
+  function btour(t) {
+    const s = fresh(); let k = 0;
+    while (s.t < t - 1e-9) {
+      while (k < BSPENDS.length && BSPENDS[k] <= s.t + 1e-9) bspend(s, FULL), k++;
+      bstep(s, Math.min(BDT, t - s.t), BHOLDS.some(([a, b]) => s.t >= a && s.t < b), FULL);
+    }
+    return s;
+  }
+  // flames rising off an element at x, y, w, h: three layers, licks across the top, sides wobbling. k: 0..1 size.
+  function flame(g, x, y, w, h, t, k, n = 4) {
+    if (k <= 0) return;
+    [['#ff5a00', 1], ['#ff9d1c', .7], ['#ffe27a', .42]].forEach(([col, sc], L) => {
+      const pad = 20 * sc * k, lick = 54 * sc * k, x0 = x - pad, x1 = x + w + pad, top = y - pad * .4, bot = y + h;
+      g.fillStyle = col; g.beginPath(); g.moveTo(x + w * .2, bot);
+      for (let i = 0; i <= 8; i++) g.lineTo(x0 + Math.sin(t * 7 + i * 1.3 + L) * 4 * k * (i / 8), lerp(bot, top, i / 8));
+      for (let i = 0; i < n; i++) {
+        const a = lerp(x0, x1, i / n), b = lerp(x0, x1, (i + 1) / n), hg = lick * (.6 + .4 * Math.sin(t * 9 + i * 2.1 + L));
+        const tip = (a + b) / 2 + Math.sin(t * 6 + i * 1.7) * 7 * k;
+        g.quadraticCurveTo(a, top - hg * .3, tip, top - hg); g.quadraticCurveTo(b, top - hg * .3, b, top);
+      }
+      for (let i = 8; i >= 0; i--) g.lineTo(x1 + Math.sin(t * 7.5 + i * 1.1 + L) * 4 * k * (i / 8), lerp(bot, top, i / 8));
+      g.lineTo(x + w * .8, bot); g.closePath(); g.fill();
+    });
+    for (let i = 0; i < 9; i++) {
+      const ph = (t * .8 + i * .137) % 1, ex = x + ((i * 53) % w) + Math.sin(t * 3 + i) * 10, ey = y - 30 - ph * 110;
+      g.fillStyle = `rgba(255,${120 + (i % 3) * 40},30,${(1 - ph) * k})`; g.beginPath(); g.arc(ex, ey, 3.5 - ph * 2, 0, TD.TAU); g.fill();
+    }
+  }
+  // 0..1 flame size: grows in on ignite, shrinks away when it goes out
+  const fireK = s => s.fire ? ease(clamp((s.t - s.ign) / .35)) : 1 - clamp((s.t - s.out) / .3);
+  let api3;
+  canvasDemo('burn', (s, cv, g) => {
+    const st = { tour: true, t: 0, held: false, down: false, thr: FULL, b: fresh(), key: '' };
+    const tourBtn = $(s, '.rp-tour'), hold = $(s, '.rp-charge');
+    $(s, '.rp-thr').innerHTML = [[FULL, 'Full (100)'], [SEG, 'Half (50)']].map(([v, l]) => `<button class="btn" data-v="${v}">${l}</button>`).join('');
+    const sync = () => $$(s, '.rp-thr .btn').forEach(b => b.classList.toggle('on', +b.dataset.v === (st.tour ? FULL : st.thr)));
+    const free = () => { if (!st.tour) return; st.tour = false; tourBtn.classList.remove('on'); st.b = fresh(); sync(); };
+    hold.onpointerdown = () => { free(); st.down = true; hold.classList.add('on'); };
+    const up = () => { st.down = false; hold.classList.remove('on'); };
+    hold.onpointerup = up; hold.onpointerleave = up;
+    $(s, '.rp-use').onclick = () => { free(); bspend(st.b, st.thr); };
+    $$(s, '.rp-thr .btn').forEach(b => b.onclick = () => { free(); st.thr = +b.dataset.v; bstep(st.b, 0, false, st.thr); sync(); });
+    tourBtn.onclick = () => { st.tour = true; st.t = 0; tourBtn.classList.add('on'); sync(); };
+    function render() {
+      const b = st.tour ? btour(st.t) : st.b, thr = st.tour ? FULL : st.thr, t = b.t, k = fireK(b);
+      T.use(g); g.clearRect(0, 0, W, H);
+      g.fillStyle = 'rgba(255,252,244,.9)'; g.beginPath(); g.roundRect(10, 10, 330, 565, 12); g.fill(); g.beginPath(); g.roundRect(350, 10, 680, 565, 12); g.fill();
+      // the slide's bar: black outline, pale yellow rim, two orange segments that fill from the bottom
+      const bx = 105, by = 130, bw = 140, bh = 370, sh = (bh - 16 - 12) / 2;
+      flame(g, bx, by, bw, bh * .62, t, k);
+      g.fillStyle = '#fff'; g.strokeStyle = '#111'; g.lineWidth = 3; g.beginPath(); g.roundRect(bx, by, bw, bh, 14); g.fill(); g.stroke();
+      g.fillStyle = '#fff6b8'; g.beginPath(); g.roundRect(bx + 4, by + 4, bw - 8, bh - 8, 11); g.fill();
+      [0, 1].forEach(i => {
+        const x = bx + 10, w = bw - 20, y = i ? by + 8 : by + 8 + sh + 12, f = clamp((b.e - (1 - i) * SEG) / SEG);
+        g.fillStyle = '#fffdf2'; g.beginPath(); g.roundRect(x, y, w, sh, 10); g.fill();
+        g.save(); g.clip(); g.fillStyle = '#ffc477'; g.fillRect(x, y + sh * (1 - f), w, sh * f); g.restore();
+        g.strokeStyle = f > 0 ? '#b9a98a' : '#d8ccb0'; g.lineWidth = 1.5; g.setLineDash(f > 0 ? [] : [6, 5]); g.beginPath(); g.roundRect(x, y, w, sh, 10); g.stroke(); g.setLineDash([]);
+      });
+      // the threshold, marked beside the bar
+      const ty = thr >= FULL ? by + 8 : by + 8 + sh + 6;
+      g.strokeStyle = C.navy; g.lineWidth = 2; g.setLineDash([6, 4]); g.beginPath(); g.moveTo(bx + bw + 6, ty); g.lineTo(bx + bw + 40, ty); g.stroke(); g.setLineDash([]);
+      g.fillStyle = C.navy; g.beginPath(); g.moveTo(bx + bw + 4, ty); g.lineTo(bx + bw + 14, ty - 6); g.lineTo(bx + bw + 14, ty + 6); g.fill();
+      T.label('threshold', bx + bw + 46, ty - 18, 'center', C.navy, 12);
+      if (t - b.ign < .5) { T.flash(bx + bw / 2, by + 60, 150, 1 - (t - b.ign) * 2); }
+      if (t - b.out < .8) T.poof(bx + bw / 2, by + 20, t - b.out, 40);
+      g.fillStyle = C.ink; g.font = '800 30px Montserrat, Jost, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(`${Math.round(b.e)} / ${FULL}`, bx + bw / 2, 532);
+      g.fillStyle = C.muted; g.font = '600 14px Jost, sans-serif'; g.fillText('energy', bx + bw / 2, 558);
+      if (t - b.spent < .7) T.popText(`-${SEG} energy`, bx + bw / 2, by + bh / 2 - 40 * (t - b.spent), C.redDk, 1 - (t - b.spent) / .7);
+      if (t - b.fail < .7) T.popText('not a full segment!', bx + bw / 2, by + bh / 2, C.redDk, 1 - (t - b.fail) / .7);
+      // the character: Mario with the On fire state drawn over him
+      const mx = 470, my = 300, ms = 5;
+      T.shadow(mx, my, 46, 12, .25);
+      flame(g, mx - 34, my - 150, 68, 150, t + 3, k, 3);
+      if (MARIO.complete && MARIO.naturalWidth) { g.save(); g.imageSmoothingEnabled = false; g.drawImage(MARIO, mx - 8 * ms, my - 32 * ms, 16 * ms, 32 * ms); g.restore(); }
+      if (t - b.ign < .9) T.popText('ignite!', mx, my - 190 - 40 * (t - b.ign), '#d2470a', 1 - (t - b.ign) / .9);
+      if (t - b.out < .8) T.poof(mx, my - 80, t - b.out, 50);
+      // the state and the rule that sets it
+      const on = b.fire;
+      g.fillStyle = on ? '#fff0dc' : '#f3efe4'; g.strokeStyle = on ? '#ff6a00' : '#cdbf9f'; g.lineWidth = 3; g.beginPath(); g.roundRect(610, 60, 390, 230, 14); g.fill(); g.stroke();
+      g.fillStyle = C.muted; g.font = '600 14px Jost, sans-serif'; g.textAlign = 'left'; g.fillText('STATE', 636, 92);
+      g.fillStyle = on ? '#d2470a' : C.ink; g.font = '800 44px Montserrat, Jost, sans-serif'; g.fillText(on ? 'On Fire' : 'Normal', 634, 140);
+      g.fillStyle = C.ink; g.font = '600 18px Jost, sans-serif'; g.fillText(`If energy ≥ ${thr}: On Fire`, 636, 196);
+      g.fillStyle = on ? '#d2470a' : C.muted; g.font = '600 16px Jost, sans-serif';
+      g.fillText(`now: ${Math.round(b.e)} ${on ? '≥' : '<'} ${thr}, so ${on ? 'the state is on' : 'no state'}`, 636, 232);
+      g.fillStyle = C.muted; g.font = '600 14px Jost, sans-serif'; g.fillText(on ? 'spend energy and it ends' : 'charge to the threshold to trigger it', 636, 262);
+      // the last 12 seconds of energy, with the threshold and the time spent on fire
+      const gx0 = 420, gx1 = 1005, gy0 = 540, gy1 = 380, gx = tt => lerp(gx0, gx1, (tt - (t - HIST)) / HIST), gy = v => lerp(gy0, gy1, v / FULL);
+      g.fillStyle = C.muted; g.font = '600 12px Jost, sans-serif'; g.textAlign = 'right'; [0, 50, 100].forEach(v => g.fillText(v, gx0 - 8, gy(v)));
+      g.strokeStyle = '#d8ccb0'; g.lineWidth = 1; [0, 50, 100].forEach(v => { g.beginPath(); g.moveTo(gx0, gy(v)); g.lineTo(gx1, gy(v)); g.stroke(); });
+      const pts = b.hist.filter(([tt]) => tt >= t - HIST);
+      g.save(); g.beginPath(); g.rect(gx0, gy1 - 30, gx1 - gx0, gy0 - gy1 + 30); g.clip();
+      pts.forEach(([tt, , f], i) => { if (f && pts[i + 1]) { g.fillStyle = 'rgba(255,106,0,.18)'; g.fillRect(gx(tt), gy1 - 24, gx(pts[i + 1][0]) - gx(tt) + .5, gy0 - gy1 + 24); } });
+      g.fillStyle = 'rgba(255,196,119,.45)'; g.beginPath(); g.moveTo(gx(pts.length ? pts[0][0] : t), gy0); pts.forEach(([tt, v]) => g.lineTo(gx(tt), gy(v))); g.lineTo(gx(t), gy(b.e)); g.lineTo(gx(t), gy0); g.closePath(); g.fill();
+      g.strokeStyle = '#e07a10'; g.lineWidth = 3.5; g.beginPath(); pts.forEach(([tt, v], i) => i ? g.lineTo(gx(tt), gy(v)) : g.moveTo(gx(tt), gy(v))); g.lineTo(gx(t), gy(b.e)); g.stroke();
+      g.restore();
+      g.setLineDash([8, 6]); g.strokeStyle = C.navy; g.lineWidth = 2; g.beginPath(); g.moveTo(gx0, gy(thr)); g.lineTo(gx1, gy(thr)); g.stroke(); g.setLineDash([]);
+      T.label('energy, last 12 s', gx0 + 70, gy1 - 40, 'center', C.ink, 13); T.label('shaded: on fire', gx1 - 60, gy1 - 40, 'center', '#d2470a', 13);
+      const ci = st.tour ? BCAP.filter(([a]) => st.t >= a).length - 1 : -1;
+      const key = st.tour ? 'c' + ci : `${on}${Math.round(b.e)}${thr}`; if (key === st.key) return; st.key = key;
+      say($(s, '.rp-out'), st.tour ? BCAP[ci][1]
+        : on ? `On fire: energy is at or above the threshold (${thr}). Spend a segment to drop below it.`
+          : b.e > 0 ? `${Math.round(b.e)} energy, ${thr} needed. Keep holding to cross the threshold.`
+            : 'Hold the charge button to fill the bar.');
+    }
+    sync();
+    api3 = { seek(t) { st.held = st.tour = true; st.t = t; render(); }, dur: () => BDUR };
+    return dt => {
+      dt = Math.max(0, dt);
+      if (st.tour) { if (!st.held) st.t += dt; if (st.t > BDUR) st.t = 0; }
+      else for (let left = Math.min(dt, .25); left > 1e-9; left -= BDT) bstep(st.b, Math.min(BDT, left), st.down, st.thr);
+      render();
+    };
+  });
+
+  const APIS = () => ({ pool: api1, spend: api2, burn: api3 });
+  window.__seek = (t, w) => APIS()[w].seek(t);
+  window.__dur = w => APIS()[w].dur();
 })();
