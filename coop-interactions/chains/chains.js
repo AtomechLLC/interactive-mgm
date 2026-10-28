@@ -26,8 +26,8 @@
   const plan = (rows) => rows.map(r => r.split(' ').map(x => x === '.' ? '' : x));
   const PRESETS = [
     { name: 'Everyone on their own', sub: 'each player loops their own best damage', plan: plan(['shot shot shot shot shot shot shot shot', 'freeze freeze freeze freeze freeze freeze freeze freeze', 'shatter shatter shatter shatter shatter shatter shatter shatter']) },
-    { name: 'Slow → Bind → Charged shot', sub: 'Ashe and Morgana (slides 218-221)', plan: plan(['slow . shot . slow . shot .', '. . . . . . . .', '. bind . . . bind . .']) },
-    { name: 'Wet → Freeze → Shatter', sub: 'Magicka (slides 210, 222)', plan: plan(['. . . . . . . .', 'soak freeze . . soak freeze . .', '. . shatter . . . shatter .']) },
+    { name: 'Slow → Bind → Charged shot', sub: 'Ashe and Morgana', plan: plan(['slow . shot . slow . shot .', '. . . . . . . .', '. bind . . . bind . .']) },
+    { name: 'Wet → Freeze → Shatter', sub: 'Magicka', plan: plan(['. . . . . . . .', 'soak freeze . . soak freeze . .', '. . shatter . . . shatter .']) },
     { name: 'All three chains', sub: 'setups feed two different payoffs', plan: plan(['slow . shot . . . shot .', 'soak freeze . . soak freeze . .', '. bind shatter . . . shatter .']) },
   ];
 

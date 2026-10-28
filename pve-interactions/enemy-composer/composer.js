@@ -424,7 +424,7 @@
     function sync() {
       $$(tbl, 'td').forEach(td => td.classList.toggle('on', td.dataset.c === st.cell));
       const cd = card(), ls = matches(cd);
-      say(out, ls.length ? `<b>${list(names(ls))}.</b> ${cardText(cd).replace(/^./, m => m.toUpperCase())}.${ls.length > 1 ? ' Two enemies share this card; slide 45 shows why they still feel different.' : ''}`
+      say(out, ls.length ? `<b>${list(names(ls))}.</b> ${cardText(cd).replace(/^./, m => m.toUpperCase())}.${ls.length > 1 ? ' Two enemies share this card; the next slide shows why they still feel different.' : ''}`
         : `<b class="good">Unused.</b> ${cardText(cd).replace(/^./, m => m.toUpperCase())}.${cd.stomp === 'hurt' && cd.fire === 'ignore' ? ' <b class="bad">Nothing beats this one,</b> so the whole column is a wall.' : ' A real enemy nobody has built yet: the same three columns, recombined.'}`);
     }
     sync();

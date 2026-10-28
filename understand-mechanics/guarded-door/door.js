@@ -194,11 +194,11 @@
   // purposes = how many different jobs; targets = how many kinds of thing it acts on. Examples from slides 68, 73, 88.
   const KIT = [
     { id: 'key', name: 'Small key', from: 'one door, one lock', purposes: ['open a locked door'], targets: ['locked door'] },
-    { id: 'boss', name: 'Boss key', from: 'Zelda (slide 88)', purposes: ['open the boss door'], targets: ['boss door'] },
-    { id: 'cane', name: 'Cane of Somaria', from: 'A Link to the Past (slide 68)', purposes: ['hold down a plate'], targets: ['pressure plate'] },
-    { id: 'pick', name: 'Lockpick', from: 'Skyrim (slide 88)', purposes: ['open a lock'], targets: ['locked door', 'chest', 'gate'] },
-    { id: 'hammer', name: 'Hammer', from: 'Ocarina of Time (slides 87-88)', purposes: ['weapon', 'remove barriers', 'slam rusty switches', 'break shields'], targets: ['enemy', 'barrier', 'rusty switch', 'shield'] },
-    { id: 'bomb', name: 'Bombs', from: 'A Link to the Past (slide 68)', purposes: ['weapon', 'blow open walls', 'clear rocks'], targets: ['enemy', 'cracked wall', 'rock'] },
+    { id: 'boss', name: 'Boss key', from: 'Zelda', purposes: ['open the boss door'], targets: ['boss door'] },
+    { id: 'cane', name: 'Cane of Somaria', from: 'A Link to the Past', purposes: ['hold down a plate'], targets: ['pressure plate'] },
+    { id: 'pick', name: 'Lockpick', from: 'Skyrim', purposes: ['open a lock'], targets: ['locked door', 'chest', 'gate'] },
+    { id: 'hammer', name: 'Hammer', from: 'Ocarina of Time', purposes: ['weapon', 'remove barriers', 'slam rusty switches', 'break shields'], targets: ['enemy', 'barrier', 'rusty switch', 'shield'] },
+    { id: 'bomb', name: 'Bombs', from: 'A Link to the Past', purposes: ['weapon', 'blow open walls', 'clear rocks'], targets: ['enemy', 'cracked wall', 'rock'] },
   ];
   const quad = k => (k.targets.length > 1 ? 'broad' : 'narrow') + ' and ' + (k.purposes.length > 1 ? 'versatile' : 'shallow');
   const core = k => k.targets.length > 1 && k.purposes.length > 1;
@@ -243,7 +243,7 @@
     g.fillStyle = C.good; g.beginPath(); g.roundRect(x0 + 16, by + 10, (w - 32) * share, 34, 10); g.fill();
     g.strokeStyle = C.navy; g.setLineDash([5, 4]); g.lineWidth = 2; g.beginPath(); g.moveTo(x0 + 16 + (w - 32) * .2, by + 2); g.lineTo(x0 + 16 + (w - 32) * .2, by + 52); g.stroke(); g.setLineDash([]);
     g.fillStyle = C.ink; g.font = '700 13px Jost, sans-serif'; g.textAlign = 'left'; g.fillText(`core (broad and versatile): ${Math.round(share * 100)}%`, x0 + 16, by + 66);
-    g.textAlign = 'right'; g.fillStyle = C.muted; g.fillText('slide 90 aims for about 20%', x0 + w - 16, by + 86);
+    g.textAlign = 'right'; g.fillStyle = C.muted; g.fillText('the deck aims for about 20%', x0 + w - 16, by + 86);
     const covered = targets.size;
     g.textAlign = 'center'; g.font = '800 26px Montserrat, Jost, sans-serif'; g.fillStyle = C.ink; g.fillText(`${covered}`, x0 + w / 2, by + 140);
     g.font = '600 13px Jost, sans-serif'; g.fillStyle = C.muted; g.fillText('kinds of situation the kit can act on', x0 + w / 2, by + 166);

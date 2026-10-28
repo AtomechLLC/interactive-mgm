@@ -42,7 +42,7 @@
   function strip(g, back, a) {
     const y = 500, xs = [200, 520, 840];
     g.fillStyle = 'rgba(255,252,244,.8)'; g.beginPath(); g.roundRect(20, 420, W - 40, 150, 12); g.fill();
-    g.fillStyle = C.muted; g.font = '600 14px Jost, sans-serif'; g.textAlign = 'left'; g.fillText(back ? 'Goal-driven (World of Warcraft, slide 119)' : 'Action-driven (World of Warcraft, slide 117)', 40, 440);
+    g.fillStyle = C.muted; g.font = '600 14px Jost, sans-serif'; g.textAlign = 'left'; g.fillText(back ? 'Goal-driven (World of Warcraft)' : 'Action-driven (World of Warcraft)', 40, 440);
     const box = (x, t, col) => { T.label(t, x, y, 'center', '#fff', 18, col); };
     if (!back) { box(xs[0], 'Grinding', C.stoneDk); box(xs[1], 'Level-up', C.player); box(xs[2], 'Raid', C.p2); arrow(g, [xs[0] + 20, y], [xs[1] - 20, y], C.ink, 3); arrow(g, [xs[1] + 20, y], [xs[2] - 20, y], C.ink, 3); return; }
     g.save(); g.globalAlpha = a;

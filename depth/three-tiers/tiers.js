@@ -107,7 +107,7 @@
         g.fillText(D.name, cx, 30);
         GI.draw(g, GAME_ICON[game], cx - g.measureText(D.name).width / 2 - 22, 30, 30, C.ink);
         g.font = '600 14px Jost, sans-serif'; g.fillStyle = C.muted;
-        g.fillText(mode === 'counted' ? (game === 'ds3' ? 'all 21 weapon classes, base game + both DLCs' : 'all trick weapons, base game + The Old Hunters') : `the deck’s numbers, slide ${game === 'ds3' ? 123 : 125}`, cx, 54);
+        g.fillText(mode === 'counted' ? (game === 'ds3' ? 'all 21 weapon classes, base game + both DLCs' : 'all trick weapons, base game + The Old Hunters') : 'the deck’s numbers', cx, 54);
         if (mode === 'deck') {
           const m = buildDeck(game, cx, base, R);
           m.cs.forEach(c => disc(g, c));
