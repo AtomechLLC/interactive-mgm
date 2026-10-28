@@ -17,28 +17,102 @@
   h1 { font-family: Montserrat, sans-serif; font-weight: 800; font-size: clamp(34px, 6vw, 68px); margin: 8px 0 10px; }
   h1 span { color: var(--gold); }
   header p { color: #d6dbef; font-size: 19px; max-width: 720px; margin-bottom: 0; }
-  main { max-width: 1180px; margin: 0 auto; padding: 30px 24px 80px; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
-  a.mod { display: grid; grid-template-columns: 72px 1fr; gap: 16px; align-items: center; padding: 18px; border-radius: 12px; background: rgba(255, 252, 244, .82); border: 1px solid var(--line); color: inherit; text-decoration: none; box-shadow: 0 2px 0 rgba(120, 96, 50, .12); transition: transform .15s, border-color .2s; }
-  a.mod:hover { transform: translateY(-4px); border-color: var(--navy); }
-  .mod img { width: 72px; height: 72px; border-radius: 50%; background: var(--navy); padding: 9px; }
-  .mod b { font-family: Montserrat, sans-serif; font-weight: 800; font-size: 19px; display: block; }
-  .mod small { color: var(--muted); font-size: 15px; }
-  .mod .count { color: var(--gold-ink); font-size: 14px; font-weight: 600; display: block; margin-top: 4px; }
+  main { max-width: 1180px; margin: 0 auto; padding: 30px 24px 80px; }
+  /* one section per course module, in course order; its pages listed in deck order */
+  section.mod { margin-bottom: 34px; }
+  a.head { display: grid; grid-template-columns: 64px 1fr auto; gap: 16px; align-items: center; padding: 14px 18px; border-radius: 12px; background: rgba(255, 252, 244, .82); border: 1px solid var(--line); color: inherit; text-decoration: none; box-shadow: 0 2px 0 rgba(120, 96, 50, .12); transition: border-color .2s; }
+  a.head:hover { border-color: var(--navy); }
+  .head img { width: 64px; height: 64px; border-radius: 50%; background: var(--navy); padding: 8px; object-fit: contain; }
+  .head .code { color: var(--gold-ink); font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; display: block; }
+  .head b { font-family: Montserrat, sans-serif; font-weight: 800; font-size: 22px; display: block; }
+  .head small { color: var(--muted); font-size: 15px; }
+  .head .go { color: var(--gold-ink); font-weight: 600; font-size: 15px; white-space: nowrap; }
+  .pages { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; margin: 10px 0 0 24px; }
+  a.pg { display: grid; grid-template-columns: 40px 1fr; gap: 12px; align-items: center; padding: 10px 12px; border-radius: 10px; background: rgba(255, 252, 244, .6); border: 1px solid var(--line); color: inherit; text-decoration: none; transition: transform .15s, border-color .2s; }
+  a.pg:hover { transform: translateY(-2px); border-color: var(--navy); }
+  .pg img { width: 40px; height: 40px; border-radius: 50%; background: var(--navy); padding: 6px; object-fit: contain; }
+  .pg b { font-family: Montserrat, sans-serif; font-weight: 700; font-size: 15px; display: block; }
+  .pg small { color: var(--muted); font-size: 13px; }
+  @media (max-width: 560px) { a.head { grid-template-columns: 52px 1fr; } .head img { width: 52px; height: 52px; } .head .go { display: none; } .pages { margin-left: 0; } }
 </style>
 </head>
 <body>
 <div class="band"><header>
   <div class="kicker">Interactive visuals</div>
   <h1>Mastering Game <span>Mechanics</span></h1>
-  <p>Slides from the course, rebuilt so you can poke at them. Pick a module, then use ← → to move, N for speaker notes, O for an overview.</p>
+  <p>Slides from the course, rebuilt so you can poke at them. Every interactive page, grouped by the course module it comes from and listed in deck order. Open one, then use ← → to move, N for speaker notes, O for an overview.</p>
 </header></div>
 <main>
-  <a class="mod" href="depth/index.html"><img src="assets/img/forsaken/Circle_Friendly.png" alt="" style="object-fit:contain"><span><b>The Goal: Depth</b><small>The three tiers of depth with real Dark Souls III and Bloodborne weapon counts, proportion and orthogonality, additive vs multiplicative design, Go board size, ghost runs and MTG keywords, with slide-ready GIFs (<i>The Goal of Mechanics Design: Depth</i>)</small><span class="count">6 interactive pages + GIFs</span></span></a>
-  <a class="mod" href="pvp/index.html"><img src="assets/img/forsaken/Swoosh_Friendly.png" alt=""><span><b>PvP Interactions</b><small>Core actions, counter cycles, unbalanced metas, strike trades and positioning payoffs (<i>Fundamentals for Designing Engaging PvP Interactions</i>)</small><span class="count">6 decks</span></span></a>
-  <a class="mod" href="pve-interactions/index.html"><img src="assets/img/forsaken/Rock.png" alt="" style="object-fit:contain"><span><b>PvE Interactions</b><small>Hazard movement patterns and enemy counters, with slide-ready GIFs (<i>Fundamentals for Designing Engaging PvE Interactions</i>)</small><span class="count">6 interactive pages + GIFs</span></span></a>
-  <a class="mod" href="coop-interactions/index.html"><img src="assets/img/forsaken/Token_Player2.png" alt="" style="object-fit:contain"><span><b>Co-op Interactions</b><small>Teamplay timing, co-op chains, shared-screen cameras, the targeting matrix, keyword classes, cross-class structure, the interaction count and the free gear plateau, with slide-ready GIFs (<i>Engaging Co-op Interaction Design Fundamentals</i>)</small><span class="count">8 interactive pages + GIFs</span></span></a>
-  <a class="mod" href="understand-mechanics/index.html"><img src="assets/img/forsaken/Zap_Friendly.png" alt="" style="object-fit:contain"><span><b>Understand Mechanics</b><small>The mechanics X-ray, the guarded door and tool matrix, time as a resource, resource pools, mechanic or aesthetic, type weakness and Life Tap, with slide-ready GIFs (<i>Understand, Analyze and Plan Mechanics</i>)</small><span class="count">7 interactive pages + GIFs</span></span></a>
-  <a class="mod" href="mechanics-tools/index.html"><img src="assets/img/forsaken/Target_Cursor.png" alt="" style="object-fit:contain"><span><b>Mechanics Design Tools</b><small>Switch, plate and pulley, contrapositive thinking, inversion, reverse sequencing, diminishing returns and life per hit, with slide-ready GIFs (<i>Mechanics Design Optimizations and Tools</i>)</small><span class="count">6 interactive pages + GIFs</span></span></a>
+  <section class="mod">
+    <a class="head" href="coop-interactions/index.html"><img src="assets/img/forsaken/Token_Player2.png" alt=""><span><span class="code">MGM C3 M6</span><b>Co-op Interactions</b><small><i>Engaging Co-op Interaction Design Fundamentals</i></small></span><span class="go">Module home →</span></a>
+    <div class="pages">
+      <a class="pg" href="coop-interactions/interactions/index.html"><img src="assets/img/forsaken/Token_Player3.png" alt=""><span><b>Interaction count</b><small>Part 1 · slide 9</small></span></a>
+      <a class="pg" href="coop-interactions/camera/index.html"><img src="assets/img/forsaken/Target_Reticule.png" alt=""><span><b>Shared-screen camera lab</b><small>Part 4 · slides 68 to 78</small></span></a>
+      <a class="pg" href="coop-interactions/targeting/index.html"><img src="assets/img/forsaken/Grid.png" alt=""><span><b>Teamplay targeting matrix</b><small>Part 5-6 · slides 116 to 133, 161 to 171</small></span></a>
+      <a class="pg" href="coop-interactions/timing/index.html"><img src="assets/img/forsaken/Protect_Friendly.png" alt=""><span><b>Before, during, after the hit</b><small>Part 7 · slides 147 to 160</small></span></a>
+      <a class="pg" href="coop-interactions/chains/index.html"><img src="assets/img/forsaken/Chain.png" alt=""><span><b>Co-op chain builder</b><small>Part 8 · slides 186 to 229, 288 to 291</small></span></a>
+      <a class="pg" href="coop-interactions/team-roles/index.html"><img src="assets/img/forsaken/Sword.png" alt=""><span><b>Cross-class structure</b><small>Part 9 · slides 246 to 255</small></span></a>
+      <a class="pg" href="coop-interactions/keywords/index.html"><img src="assets/img/forsaken/Text.png" alt=""><span><b>Keywords need situations</b><small>Part 10 · slides 270 to 285</small></span></a>
+      <a class="pg" href="coop-interactions/free-gear/index.html"><img src="assets/img/forsaken/Mana_Crystal.png" alt=""><span><b>Free gear plateau</b><small>Part 11 · slides 316 and 317</small></span></a>
+    </div>
+  </section>
+  <section class="mod">
+    <a class="head" href="depth/index.html"><img src="assets/img/forsaken/Circle_Friendly.png" alt=""><span><span class="code">MGM C4 M1</span><b>The Goal: Depth</b><small><i>The Goal of Mechanics Design: Depth</i></small></span><span class="go">Module home →</span></a>
+    <div class="pages">
+      <a class="pg" href="depth/three-tiers/index.html"><img src="assets/img/forsaken/Circle_Friendly.png" alt=""><span><b>Three tiers, counted</b><small>Part 3 · slides 56 to 68, 122 to 125</small></span></a>
+      <a class="pg" href="depth/ghost-runs/index.html"><img src="assets/img/forsaken/Arena.png" alt=""><span><b>Ghost runs</b><small>Part 3 · slides 77 to 78</small></span></a>
+      <a class="pg" href="depth/go-board/index.html"><img src="assets/img/forsaken/Grid.png" alt=""><span><b>Go board size</b><small>Part 4 · slide 93</small></span></a>
+      <a class="pg" href="depth/additive/index.html"><img src="assets/img/forsaken/Storm.png" alt=""><span><b>Additive vs multiplicative</b><small>Part 4 · slides 111 to 115</small></span></a>
+      <a class="pg" href="depth/sword-forge/index.html"><img src="assets/img/forsaken/Sword.png" alt=""><span><b>Sword forge</b><small>Part 6 · slides 164 to 182</small></span></a>
+      <a class="pg" href="depth/mtg-keywords/index.html"><img src="assets/img/forsaken/Shielded_Friendly.png" alt=""><span><b>MTG keyword combat</b><small>Part 6 · slides 193 to 194</small></span></a>
+    </div>
+  </section>
+  <section class="mod">
+    <a class="head" href="understand-mechanics/index.html"><img src="assets/img/forsaken/Zap_Friendly.png" alt=""><span><span class="code">MGM C4 M2</span><b>Understand Mechanics</b><small><i>Understand, Analyze and Plan Mechanics</i></small></span><span class="go">Module home →</span></a>
+    <div class="pages">
+      <a class="pg" href="understand-mechanics/grass/index.html"><img src="assets/img/forsaken/Sword.png" alt=""><span><b>Mechanic or aesthetic?</b><small>Part 1 · slide 18</small></span></a>
+      <a class="pg" href="understand-mechanics/xray/index.html"><img src="assets/img/forsaken/Circle_Friendly.png" alt=""><span><b>Mechanics X-ray</b><small>Part 1 · slides 20 to 33, 49 to 54, 99 to 100</small></span></a>
+      <a class="pg" href="understand-mechanics/guarded-door/index.html"><img src="assets/img/forsaken/Hammer.png" alt=""><span><b>The guarded door</b><small>Part 2 · slides 58 to 63, 73 to 74, 83 to 90</small></span></a>
+      <a class="pg" href="understand-mechanics/type-weakness/index.html"><img src="assets/img/forsaken/Zap_Friendly.png" alt=""><span><b>Type weakness X-ray</b><small>Part 4 · slides 104 to 107</small></span></a>
+      <a class="pg" href="understand-mechanics/resource-pool/index.html"><img src="assets/img/forsaken/Zone_Friendly.png" alt=""><span><b>Resource pool</b><small>Part 6 · slides 198 to 216, 257</small></span></a>
+      <a class="pg" href="understand-mechanics/cast-timeline/index.html"><img src="assets/img/forsaken/Mana_Crystal.png" alt=""><span><b>Time as a resource</b><small>Part 6 · slides 225 to 256</small></span></a>
+      <a class="pg" href="understand-mechanics/life-tap/index.html"><img src="assets/img/forsaken/Plague.png" alt=""><span><b>Life Tap solo vs raid</b><small>Part 6 · slides 226 to 228</small></span></a>
+    </div>
+  </section>
+  <section class="mod">
+    <a class="head" href="mechanics-tools/index.html"><img src="assets/img/forsaken/Target_Cursor.png" alt=""><span><span class="code">MGM C4 M3</span><b>Mechanics Design Tools</b><small><i>Mechanics Design Optimizations and Tools</i></small></span><span class="go">Module home →</span></a>
+    <div class="pages">
+      <a class="pg" href="mechanics-tools/doors/index.html"><img src="assets/img/forsaken/Target_Cursor.png" alt=""><span><b>Switch, plate, pulley</b><small>Part 3 · slides 79 to 94</small></span></a>
+      <a class="pg" href="mechanics-tools/inversion/index.html"><img src="assets/img/forsaken/Zone_Hostile.png" alt=""><span><b>Danger zone or safe rune</b><small>Part 4 · slides 110 to 113</small></span></a>
+      <a class="pg" href="mechanics-tools/reverse-map/index.html"><img src="assets/img/forsaken/Mark_1.png" alt=""><span><b>Reverse sequencing map</b><small>Part 4 · slides 115 to 119</small></span></a>
+      <a class="pg" href="mechanics-tools/contrapositive/index.html"><img src="assets/img/forsaken/Arrow.png" alt=""><span><b>Contrapositive arena</b><small>Part 4 · slides 132 to 134</small></span></a>
+      <a class="pg" href="mechanics-tools/life-per-hit/index.html"><img src="assets/img/forsaken/Hit_Friendly.png" alt=""><span><b>Lifesteal vs life per hit</b><small>Part 5 · slides 177 to 180</small></span></a>
+      <a class="pg" href="mechanics-tools/diminishing/index.html"><img src="assets/img/forsaken/Mana_Crystal.png" alt=""><span><b>Diminishing returns</b><small>Part 5 · slides 183 to 186</small></span></a>
+    </div>
+  </section>
+  <section class="mod">
+    <a class="head" href="pvp/index.html"><img src="assets/img/forsaken/Swoosh_Friendly.png" alt=""><span><span class="code">MGM C4 M4</span><b>PvP Interactions</b><small><i>Fundamentals for Designing Engaging PvP Interactions</i></small></span><span class="go">Module home →</span></a>
+    <div class="pages">
+      <a class="pg" href="pvp/strike-trades/index.html"><img src="assets/img/forsaken/Shielded_Friendly.png" alt=""><span><b>Strike Trade Balance</b><small>Part 7 · slides 265 to 272</small></span></a>
+      <a class="pg" href="pvp/payoffs/index.html"><img src="assets/img/forsaken/Spear.png" alt=""><span><b>Positioning Payoffs</b><small>slides 299 to 304</small></span></a>
+      <a class="pg" href="pvp/core-actions/index.html"><img src="assets/img/forsaken/Token_Player1.png" alt=""><span><b>Core Gameplay Actions</b><small>slides 428 to 434</small></span></a>
+      <a class="pg" href="pvp/bruiser-meta/index.html"><img src="assets/img/forsaken/Monster.png" alt=""><span><b>Unbalanced Meta: Bruisers</b></span></a>
+      <a class="pg" href="pvp/elusives/index.html"><img src="assets/img/forsaken/Not_Symbol.png" alt=""><span><b>Unbalanced Meta: Elusives</b></span></a>
+      <a class="pg" href="pvp/counter-cycles/index.html"><img src="assets/img/forsaken/Swoosh_Friendly.png" alt=""><span><b>Counter Cycles</b></span></a>
+    </div>
+  </section>
+  <section class="mod">
+    <a class="head" href="pve-interactions/index.html"><img src="assets/img/forsaken/Rock.png" alt=""><span><span class="code">MGM C4 M5</span><b>PvE Interactions</b><small><i>Fundamentals for Designing Engaging PvE Interactions</i></small></span><span class="go">Module home →</span></a>
+    <div class="pages">
+      <a class="pg" href="pve-interactions/nintendo-model/index.html"><img src="assets/img/forsaken/Mark_1.png" alt=""><span><b>Nintendo model</b><small>Part 3 · slide 40</small></span></a>
+      <a class="pg" href="pve-interactions/enemy-composer/index.html"><img src="assets/img/forsaken/Monster.png" alt=""><span><b>Enemy composer</b><small>Part 3 · slides 42 and 45</small></span></a>
+      <a class="pg" href="pve-interactions/resistance/index.html"><img src="assets/img/forsaken/Protect_Hostile.png" alt=""><span><b>Resistance</b><small>Part 4 · slides 74 to 84</small></span></a>
+      <a class="pg" href="pve-interactions/enemy-counters/index.html"><img src="assets/img/forsaken/Hit_Friendly.png" alt=""><span><b>Enemy counters</b><small>Part 4 · slide 76</small></span></a>
+      <a class="pg" href="pve-interactions/counters-wow/index.html"><img src="assets/img/forsaken/ShieldBreak_Left_Hostile.png" alt=""><span><b>Mechanical counters</b><small>Part 4 · slide 96</small></span></a>
+      <a class="pg" href="pve-interactions/escalation/index.html"><img src="assets/img/forsaken/Cone_Hostile.png" alt=""><span><b>Escalation</b><small>Part 5 · slides 126 to 133 and 148</small></span></a>
+      <a class="pg" href="pve-interactions/hazards/index.html?p=1"><img src="assets/img/forsaken/Rock.png" alt=""><span><b>Hazard patterns</b><small>Part 8 · slides 186 to 199</small></span></a>
+    </div>
+  </section>
 </main>
 </body>
 </html>

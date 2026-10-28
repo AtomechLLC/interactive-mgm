@@ -76,7 +76,8 @@ Each deck's home button goes back to `pvp/index.html`. Add a card there when you
 
 ## Layout
 
-- `index.html`: the course home, one card per module.
+- `index.html`: the course home. One section per module in course order (C3 M6, then C4 M1 to M5), each listing that module's interactive pages in deck order with their part and slide range. Add a line here when you add a page to a module.
+- Each module home groups its pages under the deck part they come from (`PARTS` in the data-driven homes, `<div class="part">` blocks in `pvp/` and `pve-interactions/`), in deck order.
 - `assets/deck.js`, `deck.css`, `kit.js`, `kit.css`, `gi.js`: copied from `InteractiveFPF/assets`. Keep them in sync by hand if the engine changes there.
 - `assets/img/forsaken/`: the token art from `MoonStudios/Forsaken/Design/Abilities/images`.
 - `assets/spine/`: the Basic Strikes skeleton, the packed `forsaken` atlas, and `spine-data.js` (all three as data URIs, since browsers block `fetch` from `file://`).

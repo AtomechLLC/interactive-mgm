@@ -22,8 +22,13 @@
   section { max-width: 1180px; margin: 0 auto; padding: 24px 24px 0; }
   h2 { font-family: Montserrat, sans-serif; font-weight: 800; font-size: 26px; margin: 10px 0 4px; }
   h2 + p { color: var(--muted); margin: 0 0 16px; font-size: 17px; }
-  /* cards: one per interactive page in this module, add an <a class="mod"> to #cards */
-  #cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
+  /* cards: one per interactive page in this module, grouped under the deck part (PARTS) it comes from */
+  /* parts flow side by side when they have few pages: each .part is as wide as its --n cards */
+  #cards { display: flex; flex-wrap: wrap; gap: 26px 18px; }
+  #cards .part { flex: var(--n) 1 calc(var(--n) * 318px - 18px); min-width: 0; }
+  #cards h3 { font-family: Montserrat, sans-serif; font-weight: 700; font-size: 18px; margin: 0 0 10px; }
+  #cards h3 span { color: var(--gold-ink); font-weight: 600; font-size: 14px; margin-left: 6px; white-space: nowrap; }
+  #cards .row { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
   a.mod { display: grid; grid-template-columns: 72px 1fr; gap: 16px; align-items: center; padding: 18px; border-radius: 12px; background: rgba(255, 252, 244, .82); border: 1px solid var(--line); color: inherit; text-decoration: none; box-shadow: 0 2px 0 rgba(120, 96, 50, .12); transition: transform .15s, border-color .2s; }
   a.mod:hover { transform: translateY(-4px); border-color: var(--navy); }
   .mod img { width: 72px; height: 72px; border-radius: 50%; background: var(--navy); padding: 9px; object-fit: contain; }
@@ -47,7 +52,7 @@
 
 <section>
   <h2>Interactive pages</h2>
-  <p>Open one and use ← → to move through it.</p>
+  <p>Grouped by the part of the deck each one comes from, in deck order. Open one and use ← → to move through it.</p>
   <div id="cards"></div>
 </section>
 
@@ -72,8 +77,27 @@
   // pages that are built so far
   const READY = ['timing', 'chains', 'camera', 'targeting', 'keywords', 'team-roles', 'interactions', 'free-gear'];
   const LIVE = PAGES.filter(p => READY.includes(p[0]));
-  document.getElementById('cards').innerHTML = LIVE.map(([f, ic, t, b, sl, gif]) =>
-    `<a class="mod" href="${f}/index.html"><img src="../assets/img/forsaken/${ic}.png" alt=""><span><b>${t}</b><small>${b} (deck slides ${sl}). GIF: gifs/${gif}.gif</small><br><span class="tag">ready</span></span></a>`).join('');
+  // deck parts in deck order: [title, first slide, last slide]. Each page sits under the part its first slide is in.
+  const PARTS = [
+    ['Part 1: What is co-op and why it matters', 2, 17],
+    ['Part 2: Symmetrical vs asymmetrical', 19, 45],
+    ['Part 3: 3 types of teamplay', 47, 62],
+    ['Part 4: 3 dev cost sinks: camera, control, continuity', 64, 103],
+    ['Part 5-6: Teamplay frameworks and the targeting matrix', 106, 143],
+    ['Part 7: Teamplay timing framework', 145, 171],
+    ['Part 8: Teamplay sequencing framework', 174, 232],
+    ['Part 9: Cross-class structures', 234, 258],
+    ['Part 10: Co-op cross-class design pyramid and keywords', 260, 304],
+    ['Part 11: Co-op economics', 306, 341]
+  ];
+  const first = sl => parseInt(sl, 10);
+  LIVE.sort((a, b) => first(a[4]) - first(b[4]));
+  const card = ([f, ic, t, b, sl, gif]) =>
+    `<a class="mod" href="${f}/index.html"><img src="../assets/img/forsaken/${ic}.png" alt=""><span><b>${t}</b><small>${b} (deck slides ${sl}). GIF: gifs/${gif}.gif</small><br><span class="tag">ready</span></span></a>`;
+  document.getElementById('cards').innerHTML = PARTS.map(([pt, from, to]) => {
+    const here = LIVE.filter(p => first(p[4]) >= from && first(p[4]) <= to);
+    return here.length ? `<div class="part" style="--n:${here.length}"><h3>${pt}<span>slides ${from} to ${to}</span></h3><div class="row">${here.map(card).join('')}</div></div>` : '';
+  }).join('');
   // more GIFs per page: [folder, slides, gif file, title, caption]
   const EXTRA = [
     ['timing', '150 and 151', 'timing-revive', 'Heal and revive', 'Reactive tools need the event first: a heal needs damage, a revive needs a death.'],
