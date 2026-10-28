@@ -1,0 +1,5 @@
+// Speaker notes per slide. Source: "MGM C4 M3 - Mechanics Design Optimizations and Tools", slides 110-113.
+window.NOTES = [
+  { script: 'The first and truest form of inversion is to write down your assumptions about the situation and reverse them. In game design you want to apply inversion thinking spatially: what if there is not a white island in a black pit, but a black pit in a white field? That changes how the player perceives where they can stand completely.' },
+  { script: 'When I was designing boss fights on the World of Warcraft team, the boss Ragnaros had a lava pool near him, and one option for an ability was to make the space near him very dangerous. If I inverted that by putting a safe rune on the ground to protect you from an attack, it becomes the opposite picture. That wasn’t a match for that fight, but it was a cool idea for another one later on. The inversion changes how players behave while being a very simple feature to code. The same idea shows up in the rings of PUBG and Apex Legends, at the heart of making battle royale work.' },
+];

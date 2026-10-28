@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contrapositive Arena · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="../shared/mech.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · Mechanics Design Tools · Contrapositive Arena', home: '../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1 -->
+<section class="slide center" data-title="Contrapositive" data-demo="title">
+  <div class="kicker rise">mechanics design tool 5</div>
+  <h1 class="rise">Where can you <span class="accent">stand and still hit?</span></h1>
+  <div class="rule rise" style="margin:22px auto"></div>
+  <canvas class="demo ti-canvas rise" width="1040" height="520"></canvas>
+  <p class="lede rise" style="margin:18px auto 0;text-align:center">Flip a rule around and a hidden imbalance shows up: melee vs ranged against the same monster.</p>
+</section>
+
+<!-- 2: slides 132-134 -->
+<section class="slide" data-title="Melee vs ranged" data-demo="arena">
+  <div class="kicker">contrapositive thinking</div>
+  <h2 class="sm">Ranged can hit everyone, <span class="accent">melee only who’s close</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Tune the fight</h4>
+      <label class="rng">Ranged reach <b class="ct-v-rr"></b><input type="range" class="ct-rr" min="2" max="10" step="0.1" value="9"></label>
+      <label class="rng">Melee reach <b class="ct-v-mr"></b><input type="range" class="ct-mr" min="1.2" max="6" step="0.1" value="2.2"></label>
+      <label class="rng">Shot lanes <b class="ct-v-ln"></b><input type="range" class="ct-ln" min="0" max="8" step="1" value="4"></label>
+      <div class="row wrap"><button class="btn ct-tour on">▶ Walk-through</button><button class="btn ct-reset">Reset</button></div>
+      <div class="mt-stats ct-stats"></div>
+      <p class="mt-out ct-out"></p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="../shared/topdown.js"></script>
+<script src="contrapositive.js"></script>
+</body>
+</html>

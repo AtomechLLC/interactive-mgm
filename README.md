@@ -6,6 +6,8 @@ Open `index.html` in a browser (no build step, works straight off disk). It list
 
 - `pvp/`: **PvP Interactions** (`pvp/index.html`), from *MGM C4 M4 - Fundamentals for Designing Engaging PvP Interactions*.
 - `pve-interactions/`: **PvE Interactions** (`pve-interactions/index.html`), from *MGM C4 M5 - Fundamentals for Designing Engaging PvE Interactions*.
+- `coop-interactions/`: **Co-op Interactions** (`coop-interactions/index.html`), from *MGM C3 M6 - Engaging Co-op Interaction Design Fundamentals*.
+- `mechanics-tools/`: **Mechanics Design Tools** (`mechanics-tools/index.html`), from *MGM C4 M3 - Mechanics Design Optimizations and Tools*.
 
 Shared engine, theme and art stay in `assets/` at the root, so a deck one level down loads `../../assets/`. `404.html` redirects the old root deck URLs (for example `/core-actions/`) to their `pvp/` homes.
 
@@ -104,3 +106,17 @@ Its own home page is `pve-interactions/index.html`, from *MGM C4 M5 - Fundamenta
 - `PROPOSALS.md`: further slides in the deck that could use an interactive or GIF, by section.
 - `gifs/`: one 1280×720 looping GIF per slide (`p01-across.gif` … `p14-crushing.gif`). Rebuild with `node pve-interactions/tools/record.js [pattern numbers]` (Edge + ffmpeg). Scenes are pure functions of time in `hazards/hazards.js`.
 - Themed meta-GIFs: `gifs/pNN-name-themes.gif` cycles three themed examples per pattern (the original plus two more from each slide's list, same timing, new art and setting). `hazards/index.html` plays the themed cycle live (`?single` for one theme), and `hazards/gallery.html` lists every GIF; rebuild with `node pve-interactions/tools/record.js --themes`.
+
+## Mechanics Design Tools module (`mechanics-tools/`)
+
+Home page `mechanics-tools/index.html` (cards from `PAGES` + `READY`, extra GIFs in `EXTRA`), from *MGM C4 M3 - Mechanics Design Optimizations and Tools*. Each page has a walk-through that the `window.__seek` / `__dur` hooks replay deterministically.
+
+- `doors/`: switch, pressure plate and pulley (deck slides 79-94), plus binary, discrete and continuous (89-91). Model in `step()` at the top of `doors.js`.
+- `contrapositive/`: melee vs ranged safe room against a monster with shot lanes (132-134). `room()` counts the area.
+- `inversion/`: danger zone, safe rune and shrinking ring with ten raiders (110-113). `MODES` and `targetOf()`.
+- `reverse-map/`: the slide 116 map example, forward vs backward, with the WoW grind/level/raid strip (115-119).
+- `diminishing/`: stun per rank as linear, diminishing or capped (the deck's illustrative Xerath curve; live Xerath scales by distance, up to 2.25 s) beside Elden Ring's real Vigor HP (183-186).
+- `life-per-hit/`: 6% lifesteal vs 12 life per hit as damage rises, the Diablo III beta story (177-180). Numbers are illustrative.
+- `shared/`: `mech.css` layout and a copy of the top-down kit.
+- GIFs in `gifs/`: rebuild with `node mechanics-tools/tools/record-slide-gif.js <page url#slide> <which> <out.gif> [fps] [selectors to hide]` while serving InteractiveMGM locally.
+- `PROPOSALS.md`: the rest of the deck's interactive and GIF ideas, by section.

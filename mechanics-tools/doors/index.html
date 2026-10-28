@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Switch, Plate, Pulley · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="../shared/mech.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · Mechanics Design Tools · Switch, Plate, Pulley', home: '../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1 -->
+<section class="slide center" data-title="Three doors" data-demo="title">
+  <div class="kicker rise">mechanics design tools 1 and 2</div>
+  <h1 class="rise">A switch, a plate <span class="accent">and a pulley</span></h1>
+  <div class="rule rise" style="margin:22px auto"></div>
+  <canvas class="demo ti-canvas rise" width="1040" height="350"></canvas>
+  <p class="lede rise" style="margin:18px auto 0;text-align:center">Three ways to open a door. The same result, but each one checks something different.</p>
+</section>
+
+<!-- 2: slides 79-84, 94 -->
+<section class="slide" data-title="What the door checks" data-demo="doors">
+  <div class="kicker">evaluation and output type</div>
+  <h2 class="sm">Same door, <span class="accent">different checks</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Try it</h4>
+      <p style="font-size:16px;margin:0 0 8px;color:var(--muted)">Click the lever. Drag the crate onto the plate. Drag the rope handle down.</p>
+      <div class="row wrap"><button class="btn dr-tour on">▶ Walk-through</button><button class="btn dr-reset">Reset</button></div>
+      <div class="mt-stats dr-stats"></div>
+      <p class="mt-out dr-out"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 3: slides 89-91 -->
+<section class="slide" data-title="Binary, discrete, continuous" data-demo="kinds">
+  <div class="kicker">tool 1: binary vs analog</div>
+  <h2 class="sm">On/off, steps, or <span class="accent">anything in between</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Try it</h4>
+      <p style="font-size:16px;margin:0 0 8px;color:var(--muted)">Click the switch, press a blender speed, drag the rope.</p>
+      <div class="row wrap"><button class="btn kd-tour on">▶ Walk-through</button></div>
+      <p class="mt-out kd-out">Binary is true or false. Analog is many values between two extremes: discrete when it moves in steps (0, 1, 2 … 5), continuous when any value in between is possible (0.0 to 1.0).</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="../shared/topdown.js"></script>
+<script src="doors.js"></script>
+</body>
+</html>

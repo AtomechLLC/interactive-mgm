@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Life Per Hit · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="../shared/mech.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · Mechanics Design Tools · Life Per Hit', home: '../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1: slides 177-180 -->
+<section class="slide" data-title="Life Per Hit" data-demo="life-per-hit">
+  <div class="kicker">controlling feedback loops</div>
+  <h2 class="sm">Lifesteal snowballs, <span class="accent">life per hit doesn’t</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Gear</h4><div class="lp-modes"></div><label class="rng">Damage per hit <b class="lp-v"></b><input type="range" class="lp-dmg" min="10" max="400" step="10" value="40"></label><div class="row wrap"><button class="btn lp-tour on">▶ Walk-through</button></div>
+      <div class="mt-stats st"></div>
+      <p class="mt-out out1"></p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="../shared/topdown.js"></script>
+<script src="life-per-hit.js"></script>
+</body>
+</html>
