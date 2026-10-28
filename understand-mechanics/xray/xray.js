@@ -166,7 +166,7 @@
       { id: 'lsys', back: true, x: 812, y: 418, w: 216, h: 152, part: 'system', title: 'Party Level-Up System' },
       { id: 'jump', x: 6, y: 272, w: 70, h: 76, part: 'signal', title: 'Jump' },
       { id: 'shoot', x: 6, y: 384, w: 70, h: 76, part: 'signal', title: 'Shoot' },
-      { id: 'mario', x: 88, y: 268, w: 122, h: 104, part: 'entity', title: 'Mario', sub: 'attack zone below', art: (g, x, y) => { g.save(); g.translate(x, y + 20); g.scale(.6, .6); hero(g, 0, 0, false); g.restore(); } },
+      { id: 'mario', x: 88, y: 268, w: 122, h: 104, part: 'entity', title: 'Mario', sub: 'attack zone below', art: (g, x, y) => sprite(g, 'fire-mario', x, y + 24, 1.5) },
       { id: 'ball', x: 88, y: 448, w: 122, h: 112, part: 'entity', title: 'Fireball', value: '', art: (g, x, y) => { T.flash(x, y, 24, .8); g.fillStyle = '#e5322d'; g.beginPath(); g.arc(x, y, 9, 0, Math.PI * 2); g.fill(); } },
       { id: 'stomp', x: 222, y: 278, w: 80, h: 76, part: 'signal', title: 'Stomp' },
       { id: 'hit', x: 222, y: 448, w: 80, h: 76, part: 'signal', title: 'Hit' },
@@ -226,52 +226,51 @@
       { dt: d + 4.6, dur: .5, from: 'level', to: 'lvUp', kind: 'system' },
     ];
   }
-  // squash: 0..1 flattened by a stomp; flip: 0..1 turned upside down; burnt: charred colours
-  function walker(g, x, y, squash, a = 1, flip = 0, burnt = false) {
-    g.save(); g.globalAlpha = a; g.translate(x, y - 23 * Math.sin(flip * Math.PI / 2)); g.rotate(flip * Math.PI); g.translate(0, 23 * Math.sin(flip * Math.PI / 2) * (flip ? 1 : 0)); g.scale(1 + squash * .5, 1 - squash * .7);
-    g.fillStyle = burnt ? '#4a3326' : '#9b5a2c'; g.strokeStyle = '#4e2a10'; g.lineWidth = 3;
-    g.beginPath(); g.moveTo(-26, 0); g.quadraticCurveTo(-30, -44, 0, -46); g.quadraticCurveTo(30, -44, 26, 0); g.closePath(); g.fill(); g.stroke();
-    g.fillStyle = '#f2d9b0'; g.fillRect(-14, -8, 28, 10);
-    g.fillStyle = '#fff'; g.beginPath(); g.ellipse(-8, -24, 6, 9, 0, 0, Math.PI * 2); g.ellipse(8, -24, 6, 9, 0, 0, Math.PI * 2); g.fill();
-    g.fillStyle = '#2a1a0c'; g.beginPath(); g.arc(-7, -22, 3, 0, Math.PI * 2); g.arc(7, -22, 3, 0, Math.PI * 2); g.fill();
-    g.fillStyle = '#3a2412'; g.beginPath(); g.ellipse(-14, 4, 11, 6, 0, 0, Math.PI * 2); g.ellipse(14, 4, 11, 6, 0, 0, Math.PI * 2); g.fill();
-    g.restore();
+  // Super Mario Bros. sprites (Super Mario Wiki), drawn pixel-sharp at 3x; educational use, per Xelnath
+  const SPR = {}; ['fire-mario', 'fire-mario-jump', 'goomba', 'goomba-flat'].forEach(n => { const i = new Image(); i.src = new URL(`../img/smb-${n}.png`, location.href).href; SPR[n] = i; });
+  function sprite(g, name, x, y, sc = 3, o = {}) {
+    const i = SPR[name]; if (!i.complete || !i.naturalWidth) return;
+    const w = i.naturalWidth * sc, h = i.naturalHeight * sc;
+    g.save(); g.imageSmoothingEnabled = false; g.globalAlpha *= o.a ?? 1; if (o.filter) g.filter = o.filter;
+    g.translate(x, y - h / 2); if (o.rot) g.rotate(o.rot); g.scale(o.flip ? -1 : 1, 1);
+    g.drawImage(i, -w / 2, -h / 2, w, h); g.restore();
   }
-  function hero(g, x, y, fire) {
-    g.save(); g.translate(x, y);
-    g.fillStyle = fire ? '#fff' : '#e5322d'; g.strokeStyle = C.navy; g.lineWidth = 3;
-    g.beginPath(); g.roundRect(-14, -36, 28, 24, 6); g.fill(); g.stroke();
-    g.fillStyle = fire ? '#e5322d' : '#2e5fd6'; g.beginPath(); g.roundRect(-14, -14, 28, 18, 5); g.fill(); g.stroke();
-    g.fillStyle = '#f2c79a'; g.beginPath(); g.arc(0, -46, 13, 0, Math.PI * 2); g.fill(); g.stroke();
-    g.fillStyle = fire ? '#fff' : '#e5322d'; g.beginPath(); g.arc(0, -50, 13, Math.PI, 0); g.fill(); g.stroke(); g.fillRect(0, -52, 18, 5);
-    g.fillStyle = '#5a3416'; g.fillRect(-14, 4, 11, 7); g.fillRect(3, 4, 11, 7);
-    g.restore();
+  // squash: flattened by a stomp; flip: 0..1 turned upside down; burnt: charred
+  function walker(g, x, y, squash, a = 1, flip = 0, burnt = false, t = 0) {
+    if (squash >= 1) { sprite(g, 'goomba-flat', x, y, 3, { a }); return; }
+    sprite(g, 'goomba', x, y, 3, { a, flip: !flip && Math.floor(t * 4) % 2 === 1, rot: flip * Math.PI, filter: burnt ? 'brightness(.45) sepia(.6)' : '' });
   }
+  function hero(g, x, y, air) { sprite(g, air ? 'fire-mario-jump' : 'fire-mario', x, y, 3); }
   function marioScene(g, v, flow, t) {
     const gy = 176;
     g.fillStyle = '#9fd3f5'; g.fillRect(0, 0, W, gy);
     g.fillStyle = 'rgba(255,255,255,.8)'; [[120, 50], [430, 36], [820, 58]].forEach(([x, y]) => { g.beginPath(); g.ellipse(x, y, 46, 16, 0, 0, Math.PI * 2); g.ellipse(x + 30, y - 8, 30, 14, 0, 0, Math.PI * 2); g.fill(); });
     g.fillStyle = '#d98b3a'; g.fillRect(0, gy, W, 30); g.strokeStyle = '#8a4f18'; g.lineWidth = 2; for (let x = 0; x < W; x += 40) { g.strokeRect(x, gy, 40, 15); g.strokeRect(x + 20, gy + 15, 40, 15); }
-    // Mario: jumps in an arc onto the Goomba during the Jump and Stomp hops
-    let mx = 330, my = gy;
-    const j = flow.find(f => f.from === 'jump' && t >= f.t && t <= f.t + 2.2);
-    if (j) { const k = clamp((t - j.t) / 1.3); mx = lerp(330, GOOMBA_X - 10, ease(k)); my = gy - Math.sin(Math.min(k, 1) * Math.PI) * 110 * (k < 1 ? 1 : 0); if (t - j.t > 1.3) { const b = clamp((t - j.t - 1.3) / .9); mx = lerp(GOOMBA_X - 10, 330, ease(b)); my = gy - Math.sin(b * Math.PI) * 60; } }
-    const shooter = flow.some(f => f.from === 'shoot' && t >= f.t);
-    hero(g, mx, my, shooter);
+    // Mario: jumps onto the Goomba, then freezes on it until the animation system has squashed it, then bounces off
+    let mx = 330, my = gy, air = false;
+    const j = flow.filter(f => f.from === 'jump' && t >= f.t).at(-1);
+    if (j) {
+      const sq = flow.find(f => f.to === 'anim' && f.t > j.t), tSq = sq ? sq.t + sq.dur : j.t + 1, top = gy - 48, e = t - j.t;
+      if (e < 1) { const k = e; mx = lerp(330, GOOMBA_X, ease(k)); my = lerp(gy, top, k) - Math.sin(k * Math.PI) * 110; air = true; }
+      else if (t < tSq) { mx = GOOMBA_X; my = top; air = true; }
+      else if (t < tSq + .9) { const b = (t - tSq) / .9; mx = lerp(GOOMBA_X, 330, ease(b)); my = lerp(top, gy, b) - Math.sin(b * Math.PI) * 90; air = true; }
+      if (e >= 1 && t < tSq) T.label('frozen until the systems resolve', GOOMBA_X, top - 118, 'center', '#fff', 12, C.navy);
+    }
+    hero(g, mx, my, air);
     // the fireball, its own entity with its own attack zone
     const fb = flow.find(f => f.from === 'ball' && f.to === 'hit' && t >= f.t - .5 && t <= f.t + f.dur + .5);
     if (fb) { const k = clamp((t - (fb.t - .5)) / (fb.dur + 1)); const x = lerp(350, GOOMBA_X - 20, k), y = gy - 22 - Math.abs(Math.sin(k * Math.PI * 3)) * 40; T.flash(x, y, 26, 1); g.fillStyle = '#e5322d'; g.beginPath(); g.arc(x, y, 9, 0, Math.PI * 2); g.fill(); }
     // the Goomba: walks until the animation system plays its death: squashed by a stomp, or burned and flipped off screen by fire
-    const sq = v.anim === 'squashed', fl = v.anim === 'burn, flip', gx = GOOMBA_X + Math.sin(t * 2) * (v.goomba === 'walking' ? 14 : 0);
+    const sq = v.anim === 'squashed', fl = v.anim === 'burn, flip', gx = GOOMBA_X + Math.sin(t * 2) * (v.goomba === 'walking' && !flow.some(f => f.from === 'jump' && t >= f.t && t < f.t + 6) ? 14 : 0);
     const since = sq || fl ? Math.max(0, t - (flow.filter(f => f.to === 'anim' && t >= f.t + f.dur).at(-1)?.t + .7 || t)) : 0;
     if (fl) {
       // pops up, turns over and drops through the floor, still smoking
       const k = clamp(since / 1.1), x = gx + 60 * k, y = gy - 70 * Math.sin(Math.min(k * 1.6, 1) * Math.PI / 2) + 260 * Math.max(0, k - .45) * Math.max(0, k - .45) * 3;
-      walker(g, x, y, 0, 1, clamp(since / .35), true);
+      walker(g, x, y, 0, 1, clamp(since / .35), true, t);
       if (k < 1) T.poof(x, y - 30, since % .8, 18);
-    } else walker(g, gx, gy, sq ? 1 : v.goomba === 'stomped' ? .3 : 0, sq ? clamp(1 - (since - 1) / .6) : 1, 0, v.goomba === 'burning');
+    } else walker(g, gx, gy, sq ? 1 : 0, sq ? clamp(1 - (since - 1) / .6) : 1, 0, v.goomba === 'burning', v.goomba === 'walking' ? t : 0);
     if (v.goomba === 'burning' && !fl) { for (let f = 0; f < 5; f++) { const ph = t * 7 + f * 1.9, fx = gx + (f - 2) * 11, fh = 28 + 12 * Math.sin(ph); g.fillStyle = f % 2 ? '#ff7a2a' : '#ffb951'; g.beginPath(); g.moveTo(fx - 8, gy - 10); g.quadraticCurveTo(fx, gy - 10 - fh * 1.5, fx + 8, gy - 10); g.fill(); } T.flash(gx, gy - 24, 50, .4); T.popText('burn!', gx, gy - 86, C.redDk, 1); }
-    if (v.goomba === 'stomped' && !sq) T.popText('stomp!', gx, gy - 70, '#9a5a06', 1);
+    if (v.goomba === 'stomped' && !sq) T.popText('stomp!', gx + 80, gy - 70, '#9a5a06', 1);
     const lv = flow.filter(f => f.to === 'level' && t >= f.t + f.dur).at(-1);
     if (lv && t - lv.t - lv.dur < 1.6 && t - lv.t - lv.dur >= 0) { const a = t - lv.t - lv.dur; T.popText('+100 XP · Level-Up!', 880, 90 - 20 * a, '#9a5a06', 1.6 - a); }
     T.label('Mario 3 mechanics X-ray', 120, 22, 'center', '#fff', 13, C.navy);

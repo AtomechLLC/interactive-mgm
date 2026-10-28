@@ -48,7 +48,7 @@
     const img = ART[kind === 'atk' ? 'pikachu' : 'squirtle'];
     g.save(); g.globalAlpha = a; g.translate(x + Math.sin(shake * 60) * 6 * clamp(shake * 3), y); g.rotate(tilt);
     T.shadow(4, 52, 52, 12, .22);
-    if (img.complete && img.naturalWidth) { g.save(); if (kind !== 'atk') g.scale(-1, 1); g.drawImage(img, -70, -82, 140, 140); g.restore(); }
+    if (img.complete && img.naturalWidth) { g.save(); if (kind === 'atk') g.scale(-1, 1); g.drawImage(img, -70, -82, 140, 140); g.restore(); }
     g.restore();
   }
   function hpBar(g, x, y, v) {
