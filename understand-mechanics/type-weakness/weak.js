@@ -9,42 +9,46 @@
   const TYPES = { electric: { name: 'Electric', col: '#e0a92d' }, fire: { name: 'Fire', col: '#e5322d' }, physical: { name: 'Physical', col: '#8b8fa8' } };
   const doubled = c => c.type === 'electric' && c.vuln;
 
-  // the slide 107 diagram, laid out under the battle scene
+  // the slide 107 diagram: Damage + Damage Type into Attackable, then the Type Vulnerability box with its two rows
   function nodes(c) {
     return [
-      { id: 'atk', x: 14, y: 300, w: 150, h: 92, part: 'entity', title: 'Attacker', sub: `${TYPES[c.type].name.toLowerCase()} attack` },
-      { id: 'rcv', x: 214, y: 300, w: 150, h: 92, part: 'receiver', title: 'Attackable', sub: 'accepts damage' },
-      { id: 'chk', x: 414, y: 288, w: 200, h: 116, part: 'context', tag: 'Context check', title: 'Is electric damage?\nElectric vulnerable?', fs: 14, sub: c.vuln ? 'target: electric vulnerable' : 'target: not vulnerable' },
-      { id: 'x2', x: 664, y: 236, w: 130, h: 80, part: 'transform', title: `(-${DMG}) x2` },
-      { id: 'x1', x: 664, y: 376, w: 130, h: 80, part: 'transform', title: `(-${DMG}) x1` },
-      { id: 'hp', x: 852, y: 236, w: 170, h: 92, part: 'state', title: 'Health', value: HP },
-      { id: 'cond', x: 852, y: 368, w: 170, h: 92, part: 'state', title: 'Condition', value: 'Healthy' },
+      { id: 'tv', back: true, x: 300, y: 262, w: 560, h: 310, part: 'entity', title: 'Type Vulnerability' },
+      { id: 'dtype', x: 10, y: 268, w: 130, h: 76, part: 'context', title: 'Damage Type', links: ['dsig'] },
+      { id: 'atk', x: 10, y: 410, w: 140, h: 110, part: 'entity', title: 'Pikachu', sub: `${TYPES[c.type].name.toLowerCase()} attack`, art: (g, x, y) => { const i = ART.pikachu; if (i.complete && i.naturalWidth) g.drawImage(i, x - 30, y - 30, 60, 60); } },
+      { id: 'dsig', x: 168, y: 332, w: 90, h: 80, part: 'signal', title: 'Damage' },
+      { id: 'rcv', x: 262, y: 336, w: 76, h: 76, part: 'receiver', title: 'Attackable' },
+      { id: 'chk', x: 356, y: 336, w: 140, h: 76, part: 'receiver', title: 'Is electric damage?', sub: c.vuln ? 'Electric Vulnerable' : 'not vulnerable', fs: 12 },
+      { id: 'hpA', x: 500, y: 296, w: 70, h: 76, part: 'state', title: '', value: HP },
+      { id: 'x2', x: 572, y: 296, w: 110, h: 76, part: 'transform', title: `(-${DMG}) x2` },
+      { id: 'a0', x: 684, y: 296, w: 74, h: 76, part: 'state', title: '', value: '' },
+      { id: 'dying', x: 880, y: 296, w: 120, h: 76, part: 'signal', title: 'Dying' },
+      { id: 'hpB', x: 500, y: 460, w: 70, h: 76, part: 'state', title: '', value: HP },
+      { id: 'x1', x: 572, y: 460, w: 110, h: 76, part: 'transform', title: `(-${DMG}) x1` },
+      { id: 'b0', x: 684, y: 460, w: 74, h: 76, part: 'state', title: '', value: '' },
+      { id: 'wounded', x: 880, y: 460, w: 120, h: 76, part: 'signal', title: 'Wounded' },
     ];
   }
   function flow(c) {
-    const two = doubled(c), hp = HP - DMG * (two ? 2 : 1);
+    const two = doubled(c), hp = HP - DMG * (two ? 2 : 1), r = two ? ['hpA', 'x2', 'a0', 'dying'] : ['hpB', 'x1', 'b0', 'wounded'];
     return [
-      { t: .4, dur: 1.3, from: 'atk', to: 'rcv', kind: 'effect', label: `Damage ${DMG}`, ctx: `type: ${TYPES[c.type].name}` },
-      { t: 1.8, dur: .9, from: 'rcv', to: 'chk', kind: 'system', label: 'check context', ctx: `type: ${TYPES[c.type].name}` },
-      { t: 2.8, dur: .8, from: 'chk', to: two ? 'x2' : 'x1', kind: 'system', label: two ? 'yes and yes' : 'no' },
-      { t: 3.7, dur: .8, from: two ? 'x2' : 'x1', to: 'hp', kind: 'system', label: `-${DMG * (two ? 2 : 1)}`, set: { hp } },
-      { t: 4.6, dur: .7, from: 'hp', to: 'cond', kind: 'system', label: hp <= 0 ? '0 HP' : `${hp} HP`, set: { cond: hp <= 0 ? 'Dying' : 'Wounded' } },
+      { t: .4, dur: .7, from: 'atk', to: 'dsig', kind: 'command', ctx: `type: ${TYPES[c.type].name}` },
+      { t: 1.15, dur: .45, from: 'dsig', to: 'rcv', kind: 'effect', label: `Damage ${DMG}`, ctx: `type: ${TYPES[c.type].name}` },
+      { t: 1.65, dur: .6, from: 'rcv', to: 'chk', kind: 'system', ctx: `type: ${TYPES[c.type].name}` },
+      { t: 2.3, dur: .5, from: 'chk', to: r[0], kind: 'system', label: two ? 'yes and yes' : 'no' },
+      { t: 2.85, dur: .4, from: r[0], to: r[1], kind: 'system' },
+      { t: 3.3, dur: .5, from: r[1], to: r[2], kind: 'system', set: { [r[2]]: hp, hp } },
+      { t: 3.85, dur: .5, from: r[2], to: r[3], kind: 'system', set: { cond: hp <= 0 ? 'Dying' : 'Wounded' } },
     ];
   }
   const RUN = 7;
 
-  // a round critter: attacker (gold, zig ears) or target (blue, with a fin)
+  // Pikachu and Squirtle (official artwork via PokeAPI, ../img/); educational use, per Xelnath
+  const ART = {}; ['pikachu', 'squirtle'].forEach(n => { const i = new Image(); i.src = new URL(`../img/${n}.png`, location.href).href; ART[n] = i; });
   function critter(g, x, y, kind, a = 1, shake = 0, tilt = 0) {
+    const img = ART[kind === 'atk' ? 'pikachu' : 'squirtle'];
     g.save(); g.globalAlpha = a; g.translate(x + Math.sin(shake * 60) * 6 * clamp(shake * 3), y); g.rotate(tilt);
-    T.shadow(4, 46, 48, 12, .22);
-    const body = kind === 'atk' ? '#ffd25a' : '#5fb7e8', edge = kind === 'atk' ? '#b77d07' : '#1f6c9a';
-    g.fillStyle = body; g.strokeStyle = edge; g.lineWidth = 4;
-    if (kind === 'atk') { [-1, 1].forEach(s => { g.beginPath(); g.moveTo(s * 18, -30); g.lineTo(s * 34, -70); g.lineTo(s * 8, -40); g.closePath(); g.fill(); g.stroke(); }); }
-    else { g.beginPath(); g.moveTo(-10, -40); g.quadraticCurveTo(0, -78, 22, -44); g.closePath(); g.fill(); g.stroke(); }
-    g.beginPath(); g.ellipse(0, 0, 46, 42, 0, 0, Math.PI * 2); g.fill(); g.stroke();
-    g.fillStyle = C.navy; const fx = kind === 'atk' ? 1 : -1;
-    g.beginPath(); g.arc(fx * 14, -8, 5, 0, Math.PI * 2); g.arc(fx * 30, -8, 5, 0, Math.PI * 2); g.fill();
-    if (kind === 'atk') { g.fillStyle = '#e5322d'; g.beginPath(); g.arc(fx * 10, 10, 7, 0, Math.PI * 2); g.fill(); }
+    T.shadow(4, 52, 52, 12, .22);
+    if (img.complete && img.naturalWidth) { g.save(); if (kind !== 'atk') g.scale(-1, 1); g.drawImage(img, -70, -82, 140, 140); g.restore(); }
     g.restore();
   }
   function hpBar(g, x, y, v) {
@@ -54,9 +58,9 @@
     g.fillStyle = 'rgba(21,32,68,.8)'; for (let i = 1; i < HP; i++) g.fillRect(x + 16 * i - .75, y, 1.5, 16);
     g.fillStyle = '#fff'; g.font = '700 13px Jost, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(`${Math.max(0, v)} / ${HP} HP`, x + 80, y + 8);
   }
-  // the attack itself, in sync with the first signal (t .4 to 1.7)
+  // the attack itself, in sync with the first two signal hops (t .4 to 1.6)
   function shot(g, c, t) {
-    const k = clamp((t - .4) / 1.3); if (k <= 0 || k >= 1) return;
+    const k = clamp((t - .4) / 1.2); if (k <= 0 || k >= 1) return;
     const x0 = 260, x1 = 760, y = 120, x = lerp(x0, x1, ease(k)), col = TYPES[c.type].col;
     if (c.type === 'electric') {
       g.strokeStyle = col; g.lineWidth = 6; g.lineJoin = 'round'; g.shadowColor = col; g.shadowBlur = 14;
@@ -75,17 +79,18 @@
     // battle scene
     g.fillStyle = 'rgba(255,252,244,.75)'; g.beginPath(); g.roundRect(0, 0, W, 214, 14); g.fill();
     g.fillStyle = 'rgba(143,174,106,.35)'; g.beginPath(); g.ellipse(200, 172, 120, 22, 0, 0, Math.PI * 2); g.ellipse(820, 172, 120, 22, 0, 0, Math.PI * 2); g.fill();
-    const { val } = XR.replay(N, F, t), hp = val.hp, hit = t - 4.5, dying = val.cond === 'Dying';
+    const { val } = XR.replay(N, F, t), hp = val.hp ?? HP, hit = t - 4.35, dying = val.cond === 'Dying';
+    val.hp = hp; val.cond = val.cond || 'Healthy';
     critter(g, 200, 128, 'atk', 1, 0, Math.sin(clamp((t - .2) / .3) * Math.PI) * -.15);
     critter(g, 820, 128, 'tgt', dying ? lerp(1, .45, clamp(hit / .8)) : 1, hit > 0 && hit < .5 ? hit : 0, dying ? lerp(0, 1.2, ease(clamp(hit / .8))) : 0);
     hpBar(g, 740, 22, hp);
-    T.label(c.vuln ? 'Electric vulnerable' : 'Not vulnerable', 820, 196, 'center', '#fff', 13, c.vuln ? '#1f6c9a' : C.muted);
-    T.label(`${TYPES[c.type].name} attack · ${DMG} damage`, 200, 196, 'center', '#fff', 13, TYPES[c.type].col === '#e0a92d' ? '#b77d07' : TYPES[c.type].col);
+    T.label(c.vuln ? 'Squirtle · electric vulnerable' : 'Squirtle · not vulnerable', 820, 196, 'center', '#fff', 13, c.vuln ? '#1f6c9a' : C.muted);
+    T.label(`Pikachu · ${TYPES[c.type].name.toLowerCase()} attack · ${DMG} damage`, 200, 196, 'center', '#fff', 13, TYPES[c.type].col === '#e0a92d' ? '#b77d07' : TYPES[c.type].col);
     shot(g, c, t);
     if (hit > 0 && hit < 1.6) T.popText(dying ? `-${HP} · Dying!` : `-${DMG} · Wounded`, 935, 110 - 18 * hit, dying ? C.redDk : '#9a5a06', 1.6 - hit);
     // the X-ray
-    g.fillStyle = 'rgba(255,252,244,.6)'; g.beginPath(); g.roundRect(0, 224, W, H - 224, 14); g.fill();
-    XR.legend(g, 16, 244, ['entity', 'receiver', 'context', 'transform', 'state'], ['effect', 'system']);
+    XR.frame(g, 0, 224, W, H - 224);
+    XR.legend(g, 20, 246, ['state', 'signal', 'receiver', 'transform', 'context', 'entity']);
     XR.draw(g, N, F, t);
     return val;
   }

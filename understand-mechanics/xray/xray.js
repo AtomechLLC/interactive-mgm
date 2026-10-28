@@ -5,7 +5,7 @@
 (function () {
   const { $, $$, canvasDemo, say } = FPF.kit;
   const T = TD, C = TD.C, { clamp, lerp, ease } = TD;
-  const W = 1040, H = 585, SCENE = 206;
+  const W = 1040, H = 585, SCENE = 206, LEGEND = ['state', 'signal', 'receiver', 'transform', 'context', 'entity'];
 
   // hops in flight between from and to at time t
   const flying = (flow, from, to, t) => flow.find(f => f.from === from && f.to === to && t >= f.t && t <= f.t + f.dur);
@@ -32,8 +32,8 @@
         const { val } = XR.replay(cfg.nodes, st.flow, t);
         g.fillStyle = 'rgba(255,252,244,.75)'; g.beginPath(); g.roundRect(0, 0, W, SCENE, 14); g.fill();
         g.save(); g.beginPath(); g.roundRect(0, 0, W, SCENE, 14); g.clip(); cfg.scene(g, val, st.flow, t); g.restore();
-        g.fillStyle = 'rgba(255,252,244,.6)'; g.beginPath(); g.roundRect(0, SCENE + 10, W, H - SCENE - 10, 14); g.fill();
-        XR.legend(g, 16, SCENE + 30, cfg.parts, cfg.kinds);
+        XR.frame(g, 0, SCENE + 10, W, H - SCENE - 10);
+        XR.legend(g, 20, SCENE + 32, LEGEND);
         const phase = st.tour && cfg.phases ? cfg.phases.filter(p => t >= p.at).at(-1) : null;
         XR.draw(g, cfg.nodes, st.flow, t, { focus: phase?.focus });
         if (phase?.cap) T.label(phase.cap, W / 2, 24, 'center', '#fff', 15, C.navy);
@@ -55,26 +55,30 @@
     opts: { warm: true, cool: true },
     toggles: [['.xr-warm', 'warm', 'recv'], ['.xr-cool', 'cool', 'recv']],
     nodes: [
-      { id: 'fire', x: 14, y: 262, w: 130, h: 74, part: 'entity', title: 'Fire spell', sub: 'sends Heat' },
-      { id: 'frost', x: 14, y: 470, w: 130, h: 74, part: 'entity', title: 'Frost spell', sub: 'sends Cool' },
-      { id: 'warm', x: 214, y: 262, w: 150, h: 74, part: 'receiver', title: 'Warmable', value: 'on' },
-      { id: 'cool', x: 214, y: 470, w: 150, h: 74, part: 'receiver', title: 'Coolable', value: 'on' },
-      { id: 'up', x: 430, y: 262, w: 130, h: 74, part: 'transform', title: 'Heat: add', value: '+1' },
-      { id: 'down', x: 430, y: 470, w: 130, h: 74, part: 'transform', title: 'Cool: add', value: '-1' },
-      { id: 'temp', x: 630, y: 352, w: 160, h: 102, part: 'state', title: 'Temperature', value: 5 },
-      { id: 'lit', x: 850, y: 352, w: 176, h: 102, part: 'state', title: 'Candle', sub: `lit at ${LIT_AT} or more`, value: 'Unlit' },
+      { id: 'box', back: true, x: 395, y: 266, w: 625, h: 300, part: 'entity', title: 'Candle' },
+      { id: 'fire', x: 14, y: 280, w: 140, h: 84, part: 'entity', title: 'Fire spell', art: (g, x, y) => { T.flash(x, y, 26, 1); g.fillStyle = '#e5322d'; g.beginPath(); g.arc(x, y, 9, 0, Math.PI * 2); g.fill(); } },
+      { id: 'frost', x: 14, y: 462, w: 140, h: 84, part: 'entity', title: 'Frost spell', art: (g, x, y) => { g.strokeStyle = '#2ea3dc'; g.lineWidth = 4; for (let i = 0; i < 3; i++) { const a = i * Math.PI / 3; g.beginPath(); g.moveTo(x - Math.cos(a) * 14, y - Math.sin(a) * 14); g.lineTo(x + Math.cos(a) * 14, y + Math.sin(a) * 14); g.stroke(); } } },
+      { id: 'heatS', x: 200, y: 280, w: 100, h: 76, part: 'signal', title: 'Heat' },
+      { id: 'coolS', x: 200, y: 462, w: 100, h: 76, part: 'signal', title: 'Cool' },
+      { id: 'warm', x: 345, y: 280, w: 110, h: 76, part: 'receiver', title: 'Warmable', value: 'on' },
+      { id: 'cool', x: 345, y: 462, w: 110, h: 76, part: 'receiver', title: 'Coolable', value: 'on' },
+      { id: 'up', x: 500, y: 280, w: 130, h: 76, part: 'transform', title: 'Heat', value: '+1' },
+      { id: 'down', x: 500, y: 462, w: 130, h: 76, part: 'transform', title: 'Cool', value: '-1' },
+      { id: 'temp', x: 680, y: 362, w: 140, h: 90, part: 'state', title: 'Temperature', value: 5 },
+      { id: 'lit', x: 860, y: 362, w: 150, h: 90, part: 'state', title: 'Candle', sub: `lit at ${LIT_AT} or more`, value: 'Unlit' },
     ],
     rules: {
       recv: (s, a) => [{ dt: 0, dur: .01, set: { warm: a.warm ? 'on' : 'off', cool: a.cool ? 'on' : 'off' } }],
       heat: (s, a) => heat(s, a, 1),
       heatx: (s, a) => heat(s, a, 2),
       cool: (s, a) => {
-        if (s.cool !== 'on') return [{ dt: 0, dur: 1.2, from: 'frost', to: 'cool', kind: 'command', label: 'Cool', bounce: 'not Coolable' }];
+        if (s.cool !== 'on') return [{ dt: 0, dur: .6, from: 'frost', to: 'coolS', kind: 'command', fizzle: true }, { dt: .6, dur: 1, from: 'coolS', to: 'cool', kind: 'effect', label: 'Cool', bounce: 'not Coolable' }];
         const v = s.temp - 1;
         return [
-          { dt: 0, dur: .9, from: 'frost', to: 'cool', kind: 'command', label: 'Cool' },
-          { dt: .95, dur: .7, from: 'cool', to: 'down', kind: 'system' },
-          { dt: 1.7, dur: .8, from: 'down', to: 'temp', kind: 'system', label: '-1', set: { temp: v } },
+          { dt: 0, dur: .6, from: 'frost', to: 'coolS', kind: 'command' },
+          { dt: .6, dur: .5, from: 'coolS', to: 'cool', kind: 'effect', label: 'Cool' },
+          { dt: 1.15, dur: .6, from: 'cool', to: 'down', kind: 'system' },
+          { dt: 1.8, dur: .7, from: 'down', to: 'temp', kind: 'system', label: '-1', set: { temp: v } },
           { dt: 2.55, dur: .7, from: 'temp', to: 'lit', kind: 'system', label: `${v} ≥ ${LIT_AT}?`, set: { lit: v >= LIT_AT ? 'Lit' : 'Unlit' } },
         ];
       },
@@ -108,12 +112,14 @@
     })[ph.at] : 'Send Heat or Cool, or switch a receiver off and try again. Every change goes signal, receiver, transform, state.',
   });
   function heat(s, a, n) {
-    if (s.warm !== 'on') return [{ dt: 0, dur: 1.2, from: 'fire', to: 'warm', kind: 'command', label: 'Heat', bounce: 'not Warmable' }];
+    const ctx = n > 1 ? 'context: strong fire, x2' : null;
+    if (s.warm !== 'on') return [{ dt: 0, dur: .6, from: 'fire', to: 'heatS', kind: 'command', fizzle: true }, { dt: .6, dur: 1, from: 'heatS', to: 'warm', kind: 'effect', label: 'Heat', bounce: 'not Warmable' }];
     const v = s.temp + n;
     return [
-      { dt: 0, dur: .9, from: 'fire', to: 'warm', kind: 'command', label: 'Heat', ctx: n > 1 ? 'context: strong fire, x2' : null },
-      { dt: .95, dur: .7, from: 'warm', to: 'up', kind: 'system', ctx: n > 1 ? 'x2' : null, set: { up: `+${n}` } },
-      { dt: 1.7, dur: .8, from: 'up', to: 'temp', kind: 'system', label: `+${n}`, set: { temp: v } },
+      { dt: 0, dur: .6, from: 'fire', to: 'heatS', kind: 'command', ctx },
+      { dt: .6, dur: .5, from: 'heatS', to: 'warm', kind: 'effect', label: 'Heat', ctx },
+      { dt: 1.15, dur: .6, from: 'warm', to: 'up', kind: 'system', ctx: n > 1 ? 'x2' : null, set: { up: `+${n}` } },
+      { dt: 1.8, dur: .7, from: 'up', to: 'temp', kind: 'system', label: `+${n}`, set: { temp: v } },
       { dt: 2.55, dur: .7, from: 'temp', to: 'lit', kind: 'system', label: `${v} ≥ ${LIT_AT}?`, set: { lit: v >= LIT_AT ? 'Lit' : 'Unlit', up: '+1' } },
     ];
   }
@@ -137,12 +143,12 @@
     T.label(`lights at ${LIT_AT}`, tx + 80, ty(LIT_AT), 'center', '#9a5a06', 13);
     T.label(`${v.temp}`, tx - 48, ty(v.temp), 'center', C.ink, 18);
     // spells flying in with the first hop
-    [['fire', 'warm', '#e5322d'], ['frost', 'cool', '#2ea3dc']].forEach(([a, b, col]) => {
+    [['fire', 'heatS', '#e5322d'], ['frost', 'coolS', '#2ea3dc']].forEach(([a, b, col]) => {
       const f = flying(flow, a, b, t); if (!f) return;
-      const k = progress(f, t), reach = f.bounce ? .82 : 1, x = lerp(120, 500, ease(Math.min(k / .9, 1)) * reach), y = 110 + (a === 'frost' ? 20 : -10);
+      const k = progress(f, t), reach = f.fizzle ? .82 : 1, x = lerp(120, 500, ease(Math.min(k / .9, 1)) * reach), y = 110 + (a === 'frost' ? 20 : -10);
       if (a === 'fire') { T.flash(x, y, 34, 1); g.fillStyle = col; g.beginPath(); g.arc(x, y, 11, 0, Math.PI * 2); g.fill(); }
       else { g.strokeStyle = col; g.lineWidth = 4; for (let i = 0; i < 3; i++) { const an = i * Math.PI / 3 + t * 4; g.beginPath(); g.moveTo(x - Math.cos(an) * 14, y - Math.sin(an) * 14); g.lineTo(x + Math.cos(an) * 14, y + Math.sin(an) * 14); g.stroke(); } }
-      if (f.bounce && k > .75) T.popText('no effect', 470, 60, C.muted, (1 - k) * 4);
+      if (f.fizzle && k > .75) T.popText('no effect', 470, 60, C.muted, (1 - k) * 4);
       if (f.ctx && k < .9) T.label('strong fire', x, y - 30, 'center', '#fff', 12, C.red);
     });
     T.label('Fire spell', 70, 100, 'center', '#fff', 13, C.red); T.label('Frost spell', 70, 140, 'center', '#fff', 13, '#2ea3dc');
@@ -153,46 +159,71 @@
   const mario = xrDemo('mario', {
     parts: ['signal', 'entity', 'receiver', 'system'], kinds: ['command', 'effect', 'system'],
     nodes: [
-      { id: 'jump', x: 10, y: 266, w: 96, h: 60, part: 'signal', tag: 'Command', title: 'Jump' },
-      { id: 'shoot', x: 10, y: 470, w: 96, h: 60, part: 'signal', tag: 'Command', title: 'Shoot' },
-      { id: 'mario', x: 134, y: 258, w: 112, h: 78, part: 'entity', title: 'Mario', sub: 'attack zone below' },
-      { id: 'ball', x: 134, y: 460, w: 112, h: 78, part: 'entity', title: 'Fireball', sub: 'created at (x, y)', value: '' },
-      { id: 'goomba', x: 280, y: 352, w: 124, h: 92, part: 'receiver', tag: 'Receiver · enemy', title: 'Goomba', value: 'walking' },
-      { id: 'health', x: 436, y: 352, w: 126, h: 92, part: 'system', tag: 'Health system', title: 'Health', value: 1 },
-      { id: 'death', x: 594, y: 364, w: 100, h: 68, part: 'signal', tag: 'Signal', title: 'Death' },
-      { id: 'anim', x: 726, y: 262, w: 130, h: 80, part: 'system', tag: 'Animation system', title: 'Goomba', value: 'walking' },
-      { id: 'reward', x: 726, y: 456, w: 130, h: 80, part: 'system', tag: 'Reward system', title: 'Reward XP' },
-      { id: 'level', x: 888, y: 344, w: 142, h: 110, part: 'system', tag: 'Party level-up', title: 'XP', value: 0, sub: 'level up at 100' },
+      { id: 'gbox', back: true, x: 318, y: 262, w: 480, h: 310, part: 'system', title: 'Goomba Enemy' },
+      { id: 'hsys', back: true, x: 420, y: 292, w: 262, h: 124, part: 'system', title: 'Health System' },
+      { id: 'asys', back: true, x: 332, y: 436, w: 214, h: 124, part: 'system', title: 'Animation System' },
+      { id: 'rsys', back: true, x: 560, y: 436, w: 226, h: 124, part: 'system', title: 'Reward System' },
+      { id: 'lsys', back: true, x: 812, y: 418, w: 216, h: 152, part: 'system', title: 'Party Level-Up System' },
+      { id: 'jump', x: 6, y: 272, w: 70, h: 76, part: 'signal', title: 'Jump' },
+      { id: 'shoot', x: 6, y: 384, w: 70, h: 76, part: 'signal', title: 'Shoot' },
+      { id: 'mario', x: 88, y: 268, w: 122, h: 104, part: 'entity', title: 'Mario', sub: 'attack zone below', art: (g, x, y) => { g.save(); g.translate(x, y + 20); g.scale(.6, .6); hero(g, 0, 0, false); g.restore(); } },
+      { id: 'ball', x: 88, y: 448, w: 122, h: 112, part: 'entity', title: 'Fireball', value: '', art: (g, x, y) => { T.flash(x, y, 24, .8); g.fillStyle = '#e5322d'; g.beginPath(); g.arc(x, y, 9, 0, Math.PI * 2); g.fill(); } },
+      { id: 'stomp', x: 222, y: 278, w: 80, h: 76, part: 'signal', title: 'Stomp' },
+      { id: 'hit', x: 222, y: 448, w: 80, h: 76, part: 'signal', title: 'Hit' },
+      { id: 'goomba', x: 282, y: 352, w: 76, h: 76, part: 'receiver', title: 'Goomba', value: 'walking' },
+      { id: 'hpR', x: 416, y: 322, w: 60, h: 76, part: 'receiver', title: '' },
+      { id: 'hpWas', x: 474, y: 322, w: 62, h: 76, part: 'state', title: '', value: 1 },
+      { id: 'hpT', x: 532, y: 322, w: 58, h: 76, part: 'transform', title: '-1' },
+      { id: 'health', x: 590, y: 322, w: 66, h: 76, part: 'state', title: '', value: '' },
+      { id: 'death', x: 704, y: 322, w: 80, h: 76, part: 'signal', title: 'Death' },
+      { id: 'anR', x: 330, y: 468, w: 60, h: 76, part: 'receiver', title: '' },
+      { id: 'anim', x: 392, y: 468, w: 146, h: 76, part: 'state', title: '', value: 'walking' },
+      { id: 'rwR', x: 556, y: 468, w: 60, h: 76, part: 'receiver', title: '' },
+      { id: 'xpS', x: 640, y: 468, w: 120, h: 76, part: 'signal', title: 'Reward XP' },
+      { id: 'lvR', x: 808, y: 466, w: 60, h: 76, part: 'receiver', title: '' },
+      { id: 'xpT', x: 862, y: 466, w: 66, h: 76, part: 'transform', title: '+100' },
+      { id: 'level', x: 930, y: 466, w: 94, h: 76, part: 'state', title: 'XP', value: 0 },
+      { id: 'lvUp', x: 880, y: 300, w: 130, h: 76, part: 'signal', title: 'Level-Up!' },
     ],
     rules: {
-      spawn: () => [{ dt: 0, dur: .01, set: { goomba: 'walking', health: 1, anim: 'walking', ball: '' } }],
+      spawn: () => [{ dt: 0, dur: .01, set: { goomba: 'walking', health: '', anim: 'walking', ball: '' } }],
       jump: (s, a) => hit(s, [
-        { dt: 0, dur: .55, from: 'jump', to: 'mario', kind: 'command', label: 'Jump' },
-        { dt: .6, dur: .7, from: 'mario', to: 'goomba', kind: 'effect', label: 'Stomp', ctx: 'detects Goomba' },
-      ], 1.35, 'stomp'),
+        { dt: 0, dur: .5, from: 'jump', to: 'mario', kind: 'command' },
+        { dt: .55, dur: .45, from: 'mario', to: 'stomp', kind: 'effect' },
+        { dt: 1.05, dur: .5, from: 'stomp', to: 'goomba', kind: 'effect', label: 'Stomp', ctx: 'detects Goomba' },
+      ], 1.6, 'stomp'),
       shoot: (s, a) => hit(s, [
-        { dt: 0, dur: .55, from: 'shoot', to: 'mario', kind: 'command', label: 'Shoot' },
-        { dt: .6, dur: .55, from: 'mario', to: 'ball', kind: 'system', label: 'Create', set: { ball: 'flying' } },
-        { dt: 1.2, dur: .8, from: 'ball', to: 'goomba', kind: 'effect', label: 'Hit', ctx: 'detects Goomba', set: { ball: '' } },
-      ], 2.05, 'burn'),
+        { dt: 0, dur: .5, from: 'shoot', to: 'mario', kind: 'command' },
+        { dt: .55, dur: .5, from: 'mario', to: 'ball', kind: 'system', label: 'Create', set: { ball: '(x, y)' } },
+        { dt: 1.1, dur: .45, from: 'ball', to: 'hit', kind: 'effect' },
+        { dt: 1.6, dur: .5, from: 'hit', to: 'goomba', kind: 'effect', label: 'Hit', ctx: 'detects Goomba', set: { ball: '' } },
+      ], 2.15, 'burn'),
     },
-    tour: [{ at: .6, type: 'jump' }, { at: 7.4, type: 'spawn' }, { at: 8.4, type: 'shoot' }],
-    dur: 15.5,
+    tour: [{ at: .6, type: 'jump' }, { at: 8.6, type: 'spawn' }, { at: 9.4, type: 'shoot' }],
+    dur: 18.5,
     scene: marioScene,
-    stats: v => stat(v.health ? 'g' : 'r', v.health, 'Goomba health') + stat('y', v.level, 'party XP') + stat('', v.anim, 'what the animation system shows'),
+    stats: v => stat(v.health === '' ? 'g' : 'r', v.health === '' ? 1 : v.health, 'Goomba health') + stat('y', v.level, 'party XP') + stat('', v.anim, 'what the animation system shows'),
     out: v => v.level >= 200 ? 'Shoot runs a different route (Mario creates a Fireball, the Fireball hits) but it lands in the same Health, Death, Animation, Reward and Level-Up systems. The death carries its cause as context, so the animation system burns and flips the Goomba instead of squashing it.'
       : v.level >= 100 ? 'One button press, and six parts of the game changed: Mario, the Goomba, its health, the death signal, the animation, the reward and the party’s level. Jump and Shoot are command signals; Stomp and Hit are side effects.'
         : 'Press Jump or Shoot. Watch the signal leave the player, become a stomp or a fireball, and ripple through the game’s systems.',
   });
   // how the Goomba died decides what the animation system plays: a stomp squashes it, a fireball burns it and flips it off screen
   function hit(s, lead, d, how) {
-    const xp = s.level + 100, stomp = how === 'stomp';
+    const xp = s.level + 100, stomp = how === 'stomp', cause = stomp ? 'cause: stomp' : 'cause: fire';
     return [...lead,
-      { dt: d, dur: .7, from: 'goomba', to: 'health', kind: 'system', label: 'Damage -1', set: { goomba: stomp ? 'stomped' : 'burning', health: 0 } },
-      { dt: d + .75, dur: .55, from: 'health', to: 'death', kind: 'system', label: '0 HP', ctx: stomp ? 'cause: stomp' : 'cause: fire' },
-      { dt: d + 1.35, dur: .7, from: 'death', to: 'anim', kind: 'system', ctx: stomp ? 'cause: stomp' : 'cause: fire', set: { anim: stomp ? 'squashed' : 'burn, flip' } },
-      { dt: d + 1.35, dur: .7, from: 'death', to: 'reward', kind: 'system' },
-      { dt: d + 2.1, dur: .8, from: 'reward', to: 'level', kind: 'system', label: '+100 XP', set: { level: xp } },
+      { dt: d, dur: .45, from: 'goomba', to: 'hpR', kind: 'system', label: 'Damage', set: { goomba: stomp ? 'stomped' : 'burning' } },
+      { dt: d + .5, dur: .3, from: 'hpR', to: 'hpWas', kind: 'system' },
+      { dt: d + .85, dur: .35, from: 'hpWas', to: 'hpT', kind: 'system' },
+      { dt: d + 1.25, dur: .4, from: 'hpT', to: 'health', kind: 'system', set: { health: 0 } },
+      { dt: d + 1.7, dur: .45, from: 'health', to: 'death', kind: 'system', label: '0 HP', ctx: cause },
+      { dt: d + 2.2, dur: .55, from: 'death', to: 'anR', kind: 'system', ctx: cause },
+      { dt: d + 2.8, dur: .4, from: 'anR', to: 'anim', kind: 'system', set: { anim: stomp ? 'squashed' : 'burn, flip' } },
+      { dt: d + 2.2, dur: .55, from: 'death', to: 'rwR', kind: 'system' },
+      { dt: d + 2.8, dur: .35, from: 'rwR', to: 'xpS', kind: 'system' },
+      { dt: d + 3.2, dur: .5, from: 'xpS', to: 'lvR', kind: 'system', label: '+100 XP' },
+      { dt: d + 3.75, dur: .35, from: 'lvR', to: 'xpT', kind: 'system' },
+      { dt: d + 4.15, dur: .4, from: 'xpT', to: 'level', kind: 'system', set: { level: xp } },
+      { dt: d + 4.6, dur: .5, from: 'level', to: 'lvUp', kind: 'system' },
     ];
   }
   // squash: 0..1 flattened by a stomp; flip: 0..1 turned upside down; burnt: charred colours
@@ -228,8 +259,8 @@
     const shooter = flow.some(f => f.from === 'shoot' && t >= f.t);
     hero(g, mx, my, shooter);
     // the fireball, its own entity with its own attack zone
-    const fb = flow.find(f => f.from === 'ball' && f.to === 'goomba' && t >= f.t - .55 && t <= f.t + f.dur);
-    if (fb) { const k = clamp((t - (fb.t - .55)) / (fb.dur + .55)); const x = lerp(350, GOOMBA_X - 20, k), y = gy - 22 - Math.abs(Math.sin(k * Math.PI * 3)) * 40; T.flash(x, y, 26, 1); g.fillStyle = '#e5322d'; g.beginPath(); g.arc(x, y, 9, 0, Math.PI * 2); g.fill(); }
+    const fb = flow.find(f => f.from === 'ball' && f.to === 'hit' && t >= f.t - .5 && t <= f.t + f.dur + .5);
+    if (fb) { const k = clamp((t - (fb.t - .5)) / (fb.dur + 1)); const x = lerp(350, GOOMBA_X - 20, k), y = gy - 22 - Math.abs(Math.sin(k * Math.PI * 3)) * 40; T.flash(x, y, 26, 1); g.fillStyle = '#e5322d'; g.beginPath(); g.arc(x, y, 9, 0, Math.PI * 2); g.fill(); }
     // the Goomba: walks until the animation system plays its death: squashed by a stomp, or burned and flipped off screen by fire
     const sq = v.anim === 'squashed', fl = v.anim === 'burn, flip', gx = GOOMBA_X + Math.sin(t * 2) * (v.goomba === 'walking' ? 14 : 0);
     const since = sq || fl ? Math.max(0, t - (flow.filter(f => f.to === 'anim' && t >= f.t + f.dur).at(-1)?.t + .7 || t)) : 0;
@@ -242,7 +273,7 @@
     if (v.goomba === 'burning' && !fl) { for (let f = 0; f < 5; f++) { const ph = t * 7 + f * 1.9, fx = gx + (f - 2) * 11, fh = 28 + 12 * Math.sin(ph); g.fillStyle = f % 2 ? '#ff7a2a' : '#ffb951'; g.beginPath(); g.moveTo(fx - 8, gy - 10); g.quadraticCurveTo(fx, gy - 10 - fh * 1.5, fx + 8, gy - 10); g.fill(); } T.flash(gx, gy - 24, 50, .4); T.popText('burn!', gx, gy - 86, C.redDk, 1); }
     if (v.goomba === 'stomped' && !sq) T.popText('stomp!', gx, gy - 70, '#9a5a06', 1);
     const lv = flow.filter(f => f.to === 'level' && t >= f.t + f.dur).at(-1);
-    if (lv && t - lv.t - lv.dur < 1.6) { const a = t - lv.t - lv.dur; T.popText('+100 XP · Level-Up!', 880, 90 - 20 * a, '#9a5a06', 1.6 - a); }
+    if (lv && t - lv.t - lv.dur < 1.6 && t - lv.t - lv.dur >= 0) { const a = t - lv.t - lv.dur; T.popText('+100 XP · Level-Up!', 880, 90 - 20 * a, '#9a5a06', 1.6 - a); }
     T.label('Mario 3 mechanics X-ray', 120, 22, 'center', '#fff', 13, C.navy);
   }
 
@@ -250,35 +281,41 @@
   const sw = xrDemo('switch', {
     parts: ['signal', 'entity', 'receiver', 'transform', 'state', 'system'], kinds: ['command', 'effect', 'system'],
     nodes: [
-      { id: 'btnA', x: 12, y: 268, w: 110, h: 66, part: 'signal', tag: 'Command', title: 'Walk (stick)' },
-      { id: 'btnY', x: 12, y: 466, w: 110, h: 66, part: 'signal', tag: 'Command', title: 'Y: hammer' },
-      { id: 'boots', x: 152, y: 268, w: 128, h: 66, part: 'entity', title: 'Link’s feet', sub: 'step' },
-      { id: 'hammer', x: 152, y: 466, w: 128, h: 66, part: 'entity', title: 'Hammer', sub: 'tool' },
-      { id: 'recv', x: 330, y: 354, w: 150, h: 92, part: 'receiver', title: 'Switchable', sub: 'rusted: tool only' },
-      { id: 'set', x: 530, y: 354, w: 140, h: 92, part: 'transform', title: 'Set Active' },
-      { id: 'state', x: 720, y: 354, w: 140, h: 92, part: 'state', title: 'Switch', value: 'Inactive' },
-      { id: 'door', x: 900, y: 354, w: 128, h: 92, part: 'system', tag: 'Door', title: 'Gate', value: 'Shut' },
+      { id: 'swBox', back: true, x: 400, y: 266, w: 410, h: 304, part: 'entity', title: 'Switch' },
+      { id: 'btnA', x: 8, y: 280, w: 80, h: 76, part: 'signal', title: 'Walk' },
+      { id: 'btnY', x: 8, y: 466, w: 80, h: 76, part: 'signal', title: 'Y' },
+      { id: 'boots', x: 98, y: 272, w: 130, h: 96, part: 'entity', title: 'Link’s feet', art: (g, x, y) => T.player(x, y, 0, .85) },
+      { id: 'hammer', x: 98, y: 456, w: 130, h: 96, part: 'entity', title: 'Hammer', sub: 'tool', art: (g, x, y) => { g.save(); g.translate(x, y); g.rotate(-.6); g.fillStyle = '#8b6136'; g.fillRect(-4, -6, 8, 34); g.fillStyle = C.stone; g.strokeStyle = C.navy; g.lineWidth = 2; g.fillRect(-16, -18, 32, 14); g.strokeRect(-16, -18, 32, 14); g.restore(); } },
+      { id: 'stepS', x: 246, y: 282, w: 100, h: 76, part: 'signal', title: 'Step' },
+      { id: 'lever', x: 238, y: 466, w: 130, h: 76, part: 'signal', title: 'Lever tool used' },
+      { id: 'recv', x: 362, y: 372, w: 80, h: 76, part: 'receiver', title: 'Switchable', sub: 'rusted: tools only' },
+      { id: 'set', x: 600, y: 300, w: 120, h: 96, part: 'transform', title: 'Set Active', vertical: true },
+      { id: 'was', x: 470, y: 440, w: 140, h: 84, part: 'state', title: '', value: 'Inactive', links: ['state'] },
+      { id: 'state', x: 650, y: 440, w: 140, h: 84, part: 'state', title: '', value: '' },
+      { id: 'door', x: 850, y: 380, w: 172, h: 130, part: 'system', title: 'Gate', value: 'Shut' },
     ],
     rules: {
       step: () => [
-        { dt: 0, dur: .6, from: 'btnA', to: 'boots', kind: 'command', label: 'Walk' },
-        { dt: .65, dur: 1.2, from: 'boots', to: 'recv', kind: 'effect', label: 'Step', bounce: 'rusted: needs a tool' },
+        { dt: 0, dur: .5, from: 'btnA', to: 'boots', kind: 'command' },
+        { dt: .55, dur: .45, from: 'boots', to: 'stepS', kind: 'effect' },
+        { dt: 1.05, dur: 1.1, from: 'stepS', to: 'recv', kind: 'effect', label: 'Step', bounce: 'rusted: needs a tool' },
       ],
       hammer: s => {
         const first = s.state !== 'Active';
         return [
-          { dt: 0, dur: .6, from: 'btnY', to: 'hammer', kind: 'command', label: 'Y' },
-          { dt: .65, dur: .8, from: 'hammer', to: 'recv', kind: 'effect', label: 'Lever tool used' },
-          { dt: 1.5, dur: .7, from: 'recv', to: 'set', kind: 'system' },
-          { dt: 2.25, dur: .7, from: 'set', to: 'state', kind: 'system', label: first ? 'Inactive → Active' : 'already Active', set: { state: 'Active' } },
-          ...(first ? [{ dt: 3, dur: .7, from: 'state', to: 'door', kind: 'system', label: 'open', set: { door: 'Open' } }] : []),
+          { dt: 0, dur: .5, from: 'btnY', to: 'hammer', kind: 'command' },
+          { dt: .55, dur: .45, from: 'hammer', to: 'lever', kind: 'effect' },
+          { dt: 1.05, dur: .5, from: 'lever', to: 'recv', kind: 'effect', label: 'Lever tool used' },
+          { dt: 1.6, dur: .6, from: 'recv', to: 'set', kind: 'system' },
+          { dt: 2.25, dur: .6, from: 'set', to: 'state', kind: 'system', label: first ? 'Inactive → Active' : 'already Active', set: { state: 'Active' } },
+          ...(first ? [{ dt: 2.9, dur: .7, from: 'state', to: 'door', kind: 'system', label: 'open', set: { door: 'Open' } }] : []),
         ];
       },
     },
     tour: [{ at: .8, type: 'step' }, { at: 4.2, type: 'hammer' }, { at: 9.4, type: 'hammer' }],
     dur: 13.5,
     scene: switchScene,
-    stats: v => stat(v.state === 'Active' ? 'g' : '', v.state, 'switch (state)') + stat(v.door === 'Open' ? 'g' : 'y', v.door, 'gate'),
+    stats: v => stat(v.state === 'Active' ? 'g' : '', v.state || 'Inactive', 'switch (state)') + stat(v.door === 'Open' ? 'g' : 'y', v.door, 'gate'),
     out: v => v.state === 'Active'
       ? 'The hammer sends a “lever tool used” signal, the Switchable receiver accepts it, the transform sets it Active, and the gate opens. It is a one-time switch: hit it again and Active stays Active.'
       : 'Stepping on a rusted switch sends a signal, but this receiver only accepts a tool. Some mechanics need both the right situation and the right tool.',
@@ -315,32 +352,38 @@
     opts: { dry: true },
     toggles: [['.xr-dry', 'dry', 'dry']],
     nodes: [
-      { id: 'arrow', x: 10, y: 268, w: 110, h: 72, part: 'entity', title: 'Fire arrow', sub: 'sends Burn' },
-      { id: 'ra', x: 160, y: 268, w: 150, h: 72, part: 'receiver', title: 'Grass A', sub: 'Flammable' },
-      { id: 'ta', x: 350, y: 268, w: 130, h: 72, part: 'transform', title: 'Set on fire' },
-      { id: 'sa', x: 520, y: 268, w: 150, h: 72, part: 'state', title: 'Grass A', value: 'Not on fire' },
-      { id: 'rb', x: 160, y: 372, w: 150, h: 72, part: 'receiver', title: 'Grass B', sub: 'Flammable', value: '' },
-      { id: 'tb', x: 350, y: 372, w: 130, h: 72, part: 'transform', title: 'Set on fire' },
-      { id: 'sb', x: 520, y: 372, w: 150, h: 72, part: 'state', title: 'Grass B', value: 'Not on fire' },
-      { id: 'stone', x: 160, y: 476, w: 150, h: 72, part: 'entity', title: 'Stone', sub: 'no Flammable receiver' },
-      { id: 'look', x: 760, y: 300, w: 260, h: 104, part: 'system', tag: 'Visual + mechanical', title: 'On fire: particles,\nburns, spreads', fs: 14 },
+      { id: 'boxA', back: true, x: 300, y: 262, w: 420, h: 146, part: 'entity', title: 'Grass A' },
+      { id: 'boxB', back: true, x: 300, y: 424, w: 420, h: 146, part: 'entity', title: 'Grass B' },
+      { id: 'arrow', x: 8, y: 280, w: 130, h: 100, part: 'entity', title: 'Fire arrow', art: (g, x, y) => { g.strokeStyle = '#8b6136'; g.lineWidth = 4; g.beginPath(); g.moveTo(x - 34, y); g.lineTo(x + 20, y); g.stroke(); T.flash(x + 24, y, 20, 1); } },
+      { id: 'burn', x: 160, y: 296, w: 90, h: 76, part: 'signal', title: 'Burn' },
+      { id: 'ra', x: 266, y: 300, w: 70, h: 76, part: 'receiver', title: 'Flammable' },
+      { id: 'ta', x: 440, y: 262, w: 120, h: 80, part: 'transform', title: '', vertical: true },
+      { id: 'sa0', x: 340, y: 320, w: 130, h: 80, part: 'state', title: '', value: 'Not On Fire', links: ['sa'] },
+      { id: 'sa', x: 540, y: 320, w: 140, h: 80, part: 'state', title: '', value: '' },
+      { id: 'rb', x: 266, y: 462, w: 70, h: 76, part: 'receiver', title: 'Flammable', value: '' },
+      { id: 'tb', x: 440, y: 424, w: 120, h: 80, part: 'transform', title: '', vertical: true },
+      { id: 'sb0', x: 340, y: 482, w: 130, h: 80, part: 'state', title: '', value: 'Not On Fire', links: ['sb'] },
+      { id: 'sb', x: 540, y: 482, w: 140, h: 80, part: 'state', title: '', value: '' },
+      { id: 'look', x: 760, y: 278, w: 260, h: 112, part: 'system', title: 'On Fire', sub: 'particles, burns, spreads' },
+      { id: 'stone', x: 760, y: 448, w: 260, h: 112, part: 'entity', title: 'Stone', sub: 'no Flammable receiver' },
     ],
     rules: {
       dry: (s, a) => [{ dt: 0, dur: .01, set: { rb: a.dry ? '' : 'wet' } }],
-      reset: () => [{ dt: 0, dur: .01, set: { sa: 'Not on fire', sb: 'Not on fire' } }],
+      reset: () => [{ dt: 0, dur: .01, set: { sa: '', sb: '' } }],
       arrow: s => {
-        if (s.sa === 'On fire') return [{ dt: 0, dur: 1.1, from: 'arrow', to: 'ra', kind: 'command', label: 'Burn', bounce: 'already on fire' }];
+        if (s.sa === 'On Fire') return [{ dt: 0, dur: .5, from: 'arrow', to: 'burn', kind: 'command' }, { dt: .5, dur: 1, from: 'burn', to: 'ra', kind: 'effect', label: 'Burn', bounce: 'already on fire' }];
         const hops = [
-          { dt: 0, dur: .9, from: 'arrow', to: 'ra', kind: 'command', label: 'Burn' },
-          { dt: .95, dur: .6, from: 'ra', to: 'ta', kind: 'system' },
-          { dt: 1.6, dur: .6, from: 'ta', to: 'sa', kind: 'system', set: { sa: 'On fire' } },
-          { dt: 2.25, dur: .6, from: 'sa', to: 'look', kind: 'system', via: [720, 300] },
-          { dt: 2.9, dur: .9, from: 'sa', to: 'rb', kind: 'effect', label: 'Burn (spreads)', via: [420, 345], bounce: s.rb === 'wet' ? 'not Flammable (wet)' : undefined },
+          { dt: 0, dur: .5, from: 'arrow', to: 'burn', kind: 'command' },
+          { dt: .55, dur: .45, from: 'burn', to: 'ra', kind: 'effect', label: 'Burn' },
+          { dt: 1.05, dur: .5, from: 'ra', to: 'ta', kind: 'system', label: 'Set On Fire' },
+          { dt: 1.6, dur: .5, from: 'ta', to: 'sa', kind: 'system', set: { sa: 'On Fire' } },
+          { dt: 2.15, dur: .55, from: 'sa', to: 'look', kind: 'system' },
+          { dt: 2.75, dur: .9, from: 'sa', to: 'rb', kind: 'effect', label: 'Burn (spreads)', via: [500, 430], bounce: s.rb === 'wet' ? 'not Flammable (wet)' : undefined },
         ];
         if (s.rb !== 'wet') hops.push(
-          { dt: 3.85, dur: .6, from: 'rb', to: 'tb', kind: 'system' },
-          { dt: 4.5, dur: .6, from: 'tb', to: 'sb', kind: 'system', set: { sb: 'On fire' } },
-          { dt: 5.15, dur: .9, from: 'sb', to: 'stone', kind: 'effect', label: 'Burn (spreads)', via: [470, 460], bounce: 'not Flammable' },
+          { dt: 3.7, dur: .5, from: 'rb', to: 'tb', kind: 'system', label: 'Set On Fire' },
+          { dt: 4.25, dur: .5, from: 'tb', to: 'sb', kind: 'system', set: { sb: 'On Fire' } },
+          { dt: 4.8, dur: .9, from: 'sb', to: 'stone', kind: 'effect', label: 'Burn (spreads)', bounce: 'not Flammable' },
         );
         return hops;
       },
@@ -348,8 +391,8 @@
     tour: [{ at: .8, type: 'arrow' }, { at: 8.5, type: 'reset' }, { at: 8.6, type: 'dry', dry: false }, { at: 9.4, type: 'arrow' }, { at: 15.5, type: 'dry', dry: true }],
     dur: 16,
     scene: flameScene,
-    stats: v => stat(v.sa === 'On fire' ? 'r' : '', v.sa, 'Grass A') + stat(v.sb === 'On fire' ? 'r' : '', v.sb, `Grass B${v.rb === 'wet' ? ' (wet)' : ''}`) + stat('', 'Stable', 'Stone, always'),
-    out: v => v.sb === 'On fire'
+    stats: v => stat(v.sa === 'On Fire' ? 'r' : '', v.sa || 'Not On Fire', 'Grass A') + stat(v.sb === 'On Fire' ? 'r' : '', v.sb || 'Not On Fire', `Grass B${v.rb === 'wet' ? ' (wet)' : ''}`) + stat('', 'Stable', 'Stone, always'),
+    out: v => v.sb === 'On Fire'
       ? 'The arrow sends Burn. Grass is Flammable, so it accepts it and is set on fire, and anything on fire sends Burn to its neighbours. The stone has no Flammable receiver, so the fire stops there.'
       : v.rb === 'wet'
         ? 'Wet grass B has lost its Flammable receiver: the spreading Burn signal bounces off, and the fire stops at A.'
@@ -359,7 +402,7 @@
   function flameScene(g, v, flow, t) {
     g.fillStyle = '#cfe0ae'; g.fillRect(0, 0, W, SCENE);
     // stone and two tufts in a row
-    const burning = [v.sa === 'On fire', v.sb === 'On fire'];
+    const burning = [v.sa === 'On Fire', v.sb === 'On Fire'];
     [0, 1].forEach(i => {
       const x = FIRE_X[i], y = 120, wet = i === 1 && v.rb === 'wet';
       g.lineCap = 'round';
@@ -370,7 +413,7 @@
     });
     T.pillar(FIRE_X[2] - 30, 100, 60, 50); T.label('Stone', FIRE_X[2], 186, 'center', '#fff', 12, C.stoneDk);
     T.player(120, 120, 0, 1.05); T.label('Player', 120, 160, 'center', C.ink, 12);
-    const f = flying(flow, 'arrow', 'ra', t);
+    const f = flying(flow, 'arrow', 'burn', t);
     if (f) { const k = progress(f, t), x = lerp(150, FIRE_X[0] - 20, Math.min(k / .9, 1)); g.strokeStyle = '#8b6136'; g.lineWidth = 4; g.beginPath(); g.moveTo(x - 40, 110); g.lineTo(x, 110); g.stroke(); T.flash(x, 110, 22, 1); }
     // spread: a spark hopping from A to B, then B to the stone
     [['sa', 'rb', 0], ['sb', 'stone', 1]].forEach(([a, b, i]) => { const s = flying(flow, a, b, t); if (!s) return; const k = progress(s, t), reach = s.bounce ? .75 : 1; const x = lerp(FIRE_X[i] + 20, FIRE_X[i + 1] - 20, Math.min(k / .8, 1) * reach); T.flash(x, 100 - Math.sin(k * Math.PI) * 30, 24, 1); if (s.bounce && k > .75) T.popText('no effect', FIRE_X[i + 1], 52, C.muted, (1 - k) * 4); });
