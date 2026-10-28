@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Understand Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* same theme as the other module homes (../mechanics-tools/index.html): navy band over parchment, gold accents */
+  :root { --navy: #152044; --ink: #262c6a; --muted: #5d618c; --gold: #ffb951; --gold-ink: #9a5a06; --line: #cdbf9f; }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; background: #ede7e7 url("../assets/img/theme/paper.jpg") center / cover fixed; color: var(--ink); font-family: Jost, system-ui, sans-serif; border: 4px solid var(--gold); }
+  .band { background: var(--navy); color: #fff; clip-path: polygon(0 0, 100% 0, 100% 78%, 0 100%); padding: 0 0 70px; }
+  header { position: relative; padding: 60px 24px 0; max-width: 1180px; margin: 0 auto; }
+  .up { position: absolute; top: 18px; left: 24px; color: #d6dbef; font-size: 15px; text-decoration: none; }
+  .up:hover { color: var(--gold); }
+  .kicker { color: var(--gold); font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; }
+  h1 { font-family: Montserrat, sans-serif; font-weight: 800; font-size: clamp(34px, 6vw, 68px); margin: 8px 0 10px; }
+  h1 span { color: var(--gold); }
+  header p { color: #d6dbef; font-size: 19px; max-width: 760px; margin-bottom: 0; }
+  section { max-width: 1180px; margin: 0 auto; padding: 24px 24px 0; }
+  h2 { font-family: Montserrat, sans-serif; font-weight: 800; font-size: 26px; margin: 10px 0 4px; }
+  h2 + p { color: var(--muted); margin: 0 0 16px; font-size: 17px; }
+  /* cards: one per interactive page in this module, add an <a class="mod"> to #cards */
+  #cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
+  a.mod { display: grid; grid-template-columns: 72px 1fr; gap: 16px; align-items: center; padding: 18px; border-radius: 12px; background: rgba(255, 252, 244, .82); border: 1px solid var(--line); color: inherit; text-decoration: none; box-shadow: 0 2px 0 rgba(120, 96, 50, .12); transition: transform .15s, border-color .2s; }
+  a.mod:hover { transform: translateY(-4px); border-color: var(--navy); }
+  .mod img { width: 72px; height: 72px; border-radius: 50%; background: var(--navy); padding: 9px; object-fit: contain; }
+  .mod b { font-family: Montserrat, sans-serif; font-weight: 800; font-size: 19px; display: block; }
+  .mod small { color: var(--muted); font-size: 15px; }
+  .tag { display: inline-block; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; font-weight: 600; color: var(--gold-ink); border: 1px solid var(--line); border-radius: 99px; padding: 1px 8px; margin-top: 6px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 18px; padding-bottom: 40px; }
+  figure { margin: 0; background: rgba(255, 252, 244, .82); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  figure img { display: block; width: 100%; aspect-ratio: 16 / 9; background: #e9e1d2; }
+  figcaption { padding: 10px 14px 12px; font-size: 15px; color: var(--muted); }
+  figcaption b { color: var(--ink); font-family: Montserrat, sans-serif; display: block; font-size: 16px; }
+</style>
+</head>
+<body>
+<div class="band"><header>
+  <a class="up" href="../index.html">← All modules</a>
+  <div class="kicker">MGM C4 M2</div>
+  <h1>Understand <span>Mechanics</span></h1>
+  <p>Visuals for <i>Understand, Analyze and Plan Mechanics</i>: X-ray any mechanic into states, signals, receivers, transforms and context, plan player tools, and see how resources shape play.</p>
+</header></div>
+
+<section>
+  <h2>Interactive pages</h2>
+  <p>Open one and use ← → to move through it.</p>
+  <div id="cards"></div>
+</section>
+
+<section>
+  <h2>Slide GIFs</h2>
+  <p>1280×720, looping, one per deck section. Right-click a GIF to save it, or open it full size.</p>
+  <div id="gifs" class="grid"></div>
+</section>
+
+<script>
+  // [folder, icon, title, blurb, deck slides, gif file, gif title, gif caption]
+  const PAGES = [
+    ['xray', 'Circle_Friendly', 'Mechanics X-ray', 'Press a button and watch the signal travel: a candle (states, signals, receivers, transforms, context), Mario 3’s stomp, a rusted switch that needs the hammer, and fire spreading through grass', '20 to 33, 49 to 54, 99 to 100', 'xray-mario-3', 'One stomp, six systems', 'Jump becomes a Stomp, the Goomba’s health hits 0, Death fires the animation and reward systems, and the party gets +100 XP. Then Shoot takes a different route to the same systems.'],
+    ['guarded-door', 'Hammer', 'The guarded door', 'Use a key, a lockpick and a hammer on a door, a chest and an enemy, then add the notes’ security guard; plus the narrow/broad x shallow/versatile tool matrix with a cost meter and the 80/20 split', '58 to 63, 73 to 74, 83 to 90', 'guarded-door', 'Key, lockpick, hammer and a guard', 'The key acts on 1 of 3 things, the lockpick on 2, the hammer on 3. With a guard watching, the key gets you waved in, the lockpick gets you questioned, the hammer gets you shot at.'],
+    ['cast-timeline', 'Mana_Crystal', 'Time as a resource', 'The WoW caster case study on one 10-second window: Fireball vs Shadow Bolt and Life Tap, the Burning Crusade +30%, the token redesign, and a boss weakness window where tokens land 3 casts instead of 2', '225 to 256', 'cast-time-as-resource', 'Time is a resource, and Life Tap spends it', '4 Fireballs for 40; take breaks and only 3 fit. 3 Shadow Bolts and a Life Tap for 39, until ally mana restore makes it 52.'],
+    ['resource-pool', 'Zone_Friendly', 'Resource pool', 'A mana pool over 30 seconds: switch generators and spenders on, watch the cap waste regen and blocked casts pile up, and try slide 257’s x2 and x½ extremes; plus discrete vs continuous spending', '198 to 216, 257', 'resource-pool', 'Generators, spenders, capacity', 'Inflow alone fills and wastes at the cap; add spenders, more generators, a leak, theft, then double and halve inflow, outflow and capacity.'],
+    ['grass', 'Sword', 'Mechanic or aesthetic?', 'Two fields of grass, one sword: on the left the grass just falls over, on the right it can hide a gem or a way down', '18', 'grass-mechanic-or-aesthetic', 'Does the world change?', 'The same hero cuts the same eight tufts in both fields. Only the right-hand field changes: two gems and a staircase.'],
+    ['type-weakness', 'Zap_Friendly', 'Type weakness X-ray', 'The slide’s 10 HP creature takes a 5 damage hit: the damage type rides along as context and picks the transform, x2 or x1', '104 to 107', 'type-weakness-xray', 'Same hit, different transform', 'Electric on an electric-vulnerable target is (-5) x2: Dying. Fire, or a target that isn’t vulnerable, is (-5) x1: Wounded.'],
+    ['life-tap', 'Plague', 'Life Tap solo vs raid', 'The same warlock rotation twice: solo, a monster is always hitting you and the taps get you killed; in a raid the priest heals them straight back', '226 to 228', 'life-tap-solo-vs-raid', 'Risky alone, free in a raid', 'Cast until out of mana, then trade 40 HP for 40 mana. Solo the warlock goes down; in the raid the priest heals every tap back.'],
+  ];
+  // pages that are built so far
+  const READY = ['xray', 'guarded-door', 'cast-timeline', 'resource-pool', 'grass', 'type-weakness', 'life-tap'];
+  const LIVE = PAGES.filter(p => READY.includes(p[0]));
+  document.getElementById('cards').innerHTML = LIVE.map(([f, ic, t, b, sl, gif]) =>
+    `<a class="mod" href="${f}/index.html"><img src="../assets/img/forsaken/${ic}.png" alt=""><span><b>${t}</b><small>${b} (deck slides ${sl}). GIF: gifs/${gif}.gif</small><br><span class="tag">ready</span></span></a>`).join('');
+  // more GIFs per page: [folder, slides, gif file, title, caption]
+  const EXTRA = [
+    ['xray', '20 to 25', 'xray-candle', 'A candle, X-rayed', 'Built up part by part: the temperature and candle states, Heat and Cool signals, Warmable and Coolable receivers (switch one off and the signal bounces), the +1 transform, then a strong fire’s context making it +2.'],
+    ['xray', '49 to 54', 'xray-rusted-switch', 'A rusted switch needs the right tool', 'Stepping on it is refused: the receiver only accepts a tool. The hammer’s “lever tool used” signal sets it Active and opens the gate; a second hit changes nothing.'],
+    ['xray', '99 to 100', 'xray-flammable', '“Flammable”, X-rayed', 'A fire arrow sends Burn; flammable grass catches and passes Burn on; the stone has no Flammable receiver, so the fire stops. Then wet grass B refuses it too.'],
+    ['guarded-door', '83 to 90', 'tool-matrix', 'Narrow or broad, shallow or versatile', 'Small key, boss key, Cane of Somaria, lockpick, hammer and bombs land on the matrix one by one while the cost of designing, building and teaching the kit climbs.'],
+    ['cast-timeline', '246 to 254', 'cast-tokens', 'Tokens: same damage, more freedom', 'Locked casts, then one token per cast, then shorter casts, then back to back: always 100 damage and 10 DPS on average, with up to 4 seconds free.'],
+    ['cast-timeline', '255 to 256', 'cast-weakness-window', 'With tokens, you choose when to hit', 'Wherever the 2x window opens, the locked rotation lands 2 casts in it and the token rotation lands 3.'],
+    ['resource-pool', '215 to 216', 'discrete-vs-continuous', 'Spent in chunks, or drained like a battery', 'A four-round clip whose 4th shot hits harder, then a reload, next to a battery that drains while a boost is held.'],
+  ];
+  const fig = (sl, gif, gt, cap) => `<figure><a href="gifs/${gif}.gif"><img src="gifs/${gif}.gif" alt="${gt}" loading="lazy"></a><figcaption><b>${gt}</b>${cap} Deck slides ${sl}.</figcaption></figure>`;
+  document.getElementById('gifs').innerHTML = LIVE.map(([f, , , , sl, gif, gt, cap]) => fig(sl, gif, gt, cap) + EXTRA.filter(e => e[0] === f).map(e => fig(e[1], e[2], e[3], e[4])).join('')).join('');
+</script>
+</body>
+</html>

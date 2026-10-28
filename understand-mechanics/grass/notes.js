@@ -1,0 +1,4 @@
+// Speaker notes. Source: "MGM C4 M2 - Understand, Analyze and Plan Mechanics", slide 18.
+window.NOTES = [
+  { script: 'As a matter of great importance, I want to clarify an important boundary: if it doesn’t leave a significant gameplay change on the world, it’s not a mechanic, it’s aesthetic. Famously, in Zelda games, you can cut the grass with your sword and occasionally treasure will be revealed. In this context it’s a mechanic: something new exists in the world, or has been changed or removed. In another game, if you slash the grass and it visibly gets cut down but nothing happens, it’s just an aesthetic. Both have their place in games. It’s awesome when grass bends around you and reacts to your attacks, but if it has no impact on the gameplay, it is outside the domain of mechanics.' },
+];

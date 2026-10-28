@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Guarded Door · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="../shared/um.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · Understand Mechanics · The Guarded Door', home: '../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1: slides 58-63 -->
+<section class="slide" data-title="Key, lockpick, hammer" data-demo="door">
+  <div class="kicker">from the weakest tool to ideal mechanics</div>
+  <h2 class="sm">Key, lockpick, hammer <span class="accent">and a guard</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Tool</h4>
+      <div class="seg gd-tool"><button class="btn" data-v="key">Key</button><button class="btn" data-v="pick">Lockpick</button><button class="btn" data-v="hammer">Hammer</button></div>
+      <h4>Use it on</h4>
+      <div class="seg gd-target"><button class="btn" data-v="door">Door</button><button class="btn" data-v="chest">Chest</button><button class="btn" data-v="enemy">Enemy</button></div>
+      <label class="chk"><input type="checkbox" class="gd-guard"> A guard watches the door</label>
+      <div class="row wrap"><button class="btn gd-tour on">▶ Walk-through</button><button class="btn gd-reset">Clear grid</button></div>
+      <div class="mt-stats gd-stats"></div>
+      <p class="mt-out gd-out"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 2: slides 73-74, 83-90, 190 -->
+<section class="slide" data-title="The tool matrix" data-demo="matrix">
+  <div class="kicker">how to plan mechanics and tools</div>
+  <h2 class="sm">Narrow or broad, <span class="accent">shallow or versatile</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Your toolkit</h4>
+      <div class="gd-kit"></div>
+      <div class="row wrap"><button class="btn gd-tour on">▶ Walk-through</button></div>
+      <div class="mt-stats gd-stats"></div>
+      <p class="mt-out gd-out"></p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="../shared/topdown.js"></script>
+<script src="door.js"></script>
+</body>
+</html>

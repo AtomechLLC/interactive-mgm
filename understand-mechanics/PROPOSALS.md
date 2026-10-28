@@ -2,7 +2,7 @@
 
 Source: "MGM C4 M2 - Understand, Analyze and Plan Mechanics" (Drive 1-0SYOoFgQ-RLPE0lmzjR0C1ZauN624Afp0n0z4ZjN5w, 259 slides). First pass 2026-10-27 from slide text only; revised the same day after the deck was made public with speaker notes (`/htmlpresent`, notes in `<aside aria-label="Slide N" class="slide-notes">`, 214 slides have notes). Slide numbers below are the `/htmlpresent` `Slide N` numbers. Quotes and examples marked "notes" come from the speaker notes.
 
-Nothing is built for this deck yet.
+Built so far (see the module home `index.html`): the three quick wins (`grass/`, `type-weakness/`, `life-tap/`) and top picks 1-4 (`xray/`, `cast-timeline/`, `guarded-door/`, `resource-pool/`, which also covers discrete vs continuous). Not built yet: the context web (top 5 #5) and everything else below.
 
 Effort: **S** = one GIF or a single small widget (under a day), **M** = a page with a few controls or a reusable rules table (1-2 days), **L** = a sandbox with several modes (3+ days).
 

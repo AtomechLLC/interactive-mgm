@@ -1,0 +1,4 @@
+// Speaker notes. Source: "MGM C4 M2 - Understand, Analyze and Plan Mechanics", slides 226-228.
+window.NOTES = [
+  { script: 'The most popular ability of the raiding warlock was Life Tap. It let you transfer your health into mana, so when other characters ran out of mana, the warlock could keep going. In single player this was a meaningful risk: losing a big chunk of your health could be the difference between life or death, with monsters always attacking you or your pet directly. But in raids it didn’t mean anything. Others could heal you, monsters weren’t usually in your face, and you could keep this cycle going basically forever. Warlocks were either overpowered at all times, or underpowered unless the rest of the team actually ran out. Warlocks were still having fun, and would only be balanced when the rest of the raid was dead.' },
+];

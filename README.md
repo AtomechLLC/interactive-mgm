@@ -8,6 +8,7 @@ Open `index.html` in a browser (no build step, works straight off disk). It list
 - `pve-interactions/`: **PvE Interactions** (`pve-interactions/index.html`), from *MGM C4 M5 - Fundamentals for Designing Engaging PvE Interactions*.
 - `coop-interactions/`: **Co-op Interactions** (`coop-interactions/index.html`), from *MGM C3 M6 - Engaging Co-op Interaction Design Fundamentals*.
 - `mechanics-tools/`: **Mechanics Design Tools** (`mechanics-tools/index.html`), from *MGM C4 M3 - Mechanics Design Optimizations and Tools*.
+- `understand-mechanics/`: **Understand Mechanics** (`understand-mechanics/index.html`), from *MGM C4 M2 - Understand, Analyze and Plan Mechanics*.
 
 Shared engine, theme and art stay in `assets/` at the root, so a deck one level down loads `../../assets/`. `404.html` redirects the old root deck URLs (for example `/core-actions/`) to their `pvp/` homes.
 
@@ -119,4 +120,19 @@ Home page `mechanics-tools/index.html` (cards from `PAGES` + `READY`, extra GIFs
 - `life-per-hit/`: 6% lifesteal vs 12 life per hit as damage rises, the Diablo III beta story (177-180). Numbers are illustrative.
 - `shared/`: `mech.css` layout and a copy of the top-down kit.
 - GIFs in `gifs/`: rebuild with `node mechanics-tools/tools/record-slide-gif.js <page url#slide> <which> <out.gif> [fps] [selectors to hide]` while serving InteractiveMGM locally.
+- `PROPOSALS.md`: the rest of the deck's interactive and GIF ideas, by section.
+
+## Understand Mechanics module (`understand-mechanics/`)
+
+Home page `understand-mechanics/index.html` (cards from `PAGES` + `READY`, extra GIFs in `EXTRA`), from *MGM C4 M2 - Understand, Analyze and Plan Mechanics*. Each page has a walk-through that the `window.__seek` / `__dur` hooks replay deterministically.
+
+- `xray/`: the Universal Mechanics Description Framework as a stepper: a candle (deck slides 20-25), Mario 3 (27-33), a rusted one-time switch (49-54) and flammable grass (99-100). Each scene is `nodes` + `rules` + `tour` in `xray.js`; buttons become actions and `XR.script` turns them into signal hops.
+- `guarded-door/`: key, lockpick and hammer on a door, a chest and an enemy, plus the notes' security guard (58-63); the narrow/broad x shallow/versatile tool matrix with a cost meter and the 80/20 split (73-74, 83-90). Rules in `WORKS`, `GUARD`, `KIT`.
+- `cast-timeline/`: time as a resource, Fireball vs Shadow Bolt + Life Tap and the Burning Crusade +30% (225-245), the token redesign (246-254) and the boss weakness window (255-256). Token cast time (1.5 s) and window length (5 s) are chosen so the notes' "3 casts instead of 2" always holds.
+- `resource-pool/`: generators, spenders and capacity over 30 seconds with slide 257's x2 / x½ extremes (198-213, 257), and discrete vs continuous spending (215-216). Numbers are illustrative: `R` in `pool.js`.
+- `grass/`: mechanic or aesthetic, cutting grass that hides things or doesn't (18).
+- `type-weakness/`: the slide 107 X-ray, 5 damage with a type context, x2 or x1 (104-107).
+- `life-tap/`: the same warlock rotation solo and in a raid (226-228).
+- `shared/`: `um.css` layout, a copy of the top-down kit, and `xray.js`, the X-ray diagram renderer (boxes coloured by framework part, timed signal hops, bounces for refused signals).
+- GIFs in `gifs/`: rebuild them all with `sh understand-mechanics/tools/record-all.sh` while serving InteractiveMGM on 127.0.0.1:8171.
 - `PROPOSALS.md`: the rest of the deck's interactive and GIF ideas, by section.

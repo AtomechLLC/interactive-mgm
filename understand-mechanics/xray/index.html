@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mechanics X-ray · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="../shared/um.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · Understand Mechanics · Mechanics X-ray', home: '../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1: slides 20-25 -->
+<section class="slide" data-title="Five parts of every mechanic" data-demo="candle">
+  <div class="kicker">universal mechanics description framework</div>
+  <h2 class="sm">A candle, <span class="accent">X-rayed</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Send a signal</h4>
+      <div class="row wrap"><button class="btn xr-act" data-a="heat">🔥 Heat</button><button class="btn xr-act" data-a="heatx">🔥 Strong fire</button><button class="btn xr-act" data-a="cool">❄ Cool</button></div>
+      <h4>Receivers</h4>
+      <label class="chk"><input type="checkbox" class="xr-warm" checked> Candle is Warmable</label>
+      <label class="chk"><input type="checkbox" class="xr-cool" checked> Candle is Coolable</label>
+      <div class="row wrap"><button class="btn xr-tour on">▶ Walk-through</button><button class="btn xr-reset">Reset</button></div>
+      <div class="mt-stats xr-stats"></div>
+      <p class="mt-out xr-out"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 2: slides 27-33 -->
+<section class="slide" data-title="Mario 3 mechanics X-ray" data-demo="mario">
+  <div class="kicker">verbs, mechanics and systems</div>
+  <h2 class="sm">One stomp, <span class="accent">six systems</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Player commands</h4>
+      <div class="row wrap"><button class="btn xr-act" data-a="jump">Jump</button><button class="btn xr-act" data-a="shoot">Shoot</button></div>
+      <div class="row wrap"><button class="btn xr-tour on">▶ Walk-through</button><button class="btn xr-reset">Reset</button></div>
+      <div class="mt-stats xr-stats"></div>
+      <p class="mt-out xr-out"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 3: slides 49-54 -->
+<section class="slide" data-title="A switch with a tool" data-demo="switch">
+  <div class="kicker">let’s peek under the hood</div>
+  <h2 class="sm">A rusted switch <span class="accent">needs the right tool</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Try it</h4>
+      <div class="row wrap"><button class="btn xr-act" data-a="step">Step on it</button><button class="btn xr-act" data-a="hammer">Hammer (Y)</button></div>
+      <div class="row wrap"><button class="btn xr-tour on">▶ Walk-through</button><button class="btn xr-reset">Reset</button></div>
+      <div class="mt-stats xr-stats"></div>
+      <p class="mt-out xr-out"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 4: slides 99-100 -->
+<section class="slide" data-title="Flammable" data-demo="flame">
+  <div class="kicker">accidental discovery</div>
+  <h2 class="sm">“Flammable”, <span class="accent">X-rayed</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Try it</h4>
+      <div class="row wrap"><button class="btn xr-act" data-a="arrow">🏹 Fire arrow</button></div>
+      <label class="chk"><input type="checkbox" class="xr-dry" checked> Grass B is Flammable</label>
+      <div class="row wrap"><button class="btn xr-tour on">▶ Walk-through</button><button class="btn xr-reset">Reset</button></div>
+      <div class="mt-stats xr-stats"></div>
+      <p class="mt-out xr-out"></p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="../shared/topdown.js"></script>
+<script src="../shared/xray.js"></script>
+<script src="xray.js"></script>
+</body>
+</html>
