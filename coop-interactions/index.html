@@ -51,7 +51,7 @@
 </header></div>
 
 <section>
-  <h2>Interactive pages</h2>
+  <h2>Interactive Pages</h2>
   <p>Grouped by the part of the deck each one comes from, in deck order. Open one and use ← → to move through it.</p>
   <div id="cards"></div>
 </section>
@@ -65,30 +65,30 @@
 <script>
   // [folder, icon, title, blurb, deck slides, gif file, gif title, gif caption]
   const PAGES = [
-    ['timing', 'Protect_Friendly', 'Before, during, after the hit', 'Shield before the hit, intervene during it, heal after it: try each on the same enemy swing, then see how shields invite risk', '147 to 160', 'timing-before-during-after', 'Before, during, after', 'One enemy swing, three answers: a shield before the hit, an intervention during it, a heal after it.'],
-    ['chains', 'Chain', 'Co-op chain builder', 'Three players, six keywords and one enemy: put setups, exploits and payoffs in order, or let everyone play their own loop', '186 to 229, 288 to 291', 'chains-setup-exploit-payoff', 'Setup, exploit, payoff', 'Everyone on their own loop, then the same three players chaining slow → bind → charged shot and wet → freeze → shatter.'],
-    ['camera', 'Target_Reticule', 'Shared-screen camera lab', 'Two players and an enemy on one screen: follow one player, frame both, lock the scroll, split the screen or weight what matters', '68 to 78', 'camera-shared-screen', 'Who gets the camera?', 'The same couch co-op moment under five camera rules, with what each one costs.'],
-    ['targeting', 'Grid', 'Teamplay targeting matrix', 'Walk one mechanic through source × target, cell by cell, and watch each cell become a drawn ability: fire becomes a fireball, a pool of flames, Hellfire, cauterize and twelve more. Plus trap, hazard and insight', '116 to 133, 161 to 171', 'targeting-matrix', 'One mechanic, sixteen ideas', 'Fire walked cell by cell through who acts upon whom, each cell drawn as an ability.'],
-    ['keywords', 'Text', 'Keywords need situations', 'Class keyword sheets with role, class and spec layers, and encounter sliders that show which keywords ever matter', '270 to 285', 'keywords-need-situations', 'Keywords only matter if situations demand them', 'Four classes through four encounters: each keyword lights up only when the content asks for it.'],
-    ['team-roles', 'Sword', 'Cross-class structure', 'Football with fantasy classes, the holy trinity as an HP tug-of-war, and League lanes turning into a frontline, backline and flank: take a role out and watch the team fail', '246 to 255', 'roles-football-fantasy', 'American football, but fantasy', 'Fighters hold the line, the wizard throws, a rogue scores; then the same play with no fighters, and the wizard gets sacked.'],
-    ['interactions', 'Token_Player3', 'Interaction count', 'Add players and monsters and count what you have to design: one player and three monsters is 3 things, three players is 15', '9', 'interaction-count', 'From 3 things to 15', 'Mario alone, then Luigi and Peach join against three enemies, then six different ones: every line is something to design.'],
-    ['free-gear', 'Mana_Crystal', 'Free gear plateau', 'A tier-9 gift at hour one versus earning gear by questing: the spike, then the hours with nothing new to equip, and what soulbound changes', '316 and 317', 'free-gear-plateau', 'The gift that flattens the curve', 'Gifted quest gear outclasses every reward for 22 hours; with soulbound rewards both players climb the same steps.'],
+    ['timing', 'Protect_Friendly', 'Before, During, After the Hit', 'Shield before the hit, intervene during it, heal after it: try each on the same enemy swing, then see how shields invite risk', '147 to 160', 'timing-before-during-after', 'Before, During, After', 'One enemy swing, three answers: a shield before the hit, an intervention during it, a heal after it.'],
+    ['chains', 'Chain', 'Co-op Chain Builder', 'Three players, six keywords and one enemy: put setups, exploits and payoffs in order, or let everyone play their own loop', '186 to 229, 288 to 291', 'chains-setup-exploit-payoff', 'Setup, Exploit, Payoff', 'Everyone on their own loop, then the same three players chaining slow → bind → charged shot and wet → freeze → shatter.'],
+    ['camera', 'Target_Reticule', 'Shared-Screen Camera Lab', 'Two players and an enemy on one screen: follow one player, frame both, lock the scroll, split the screen or weight what matters', '68 to 78', 'camera-shared-screen', 'Who gets the camera?', 'The same couch co-op moment under five camera rules, with what each one costs.'],
+    ['targeting', 'Grid', 'Teamplay Targeting Matrix', 'Walk one mechanic through source × target, cell by cell, and watch each cell become a drawn ability: fire becomes a fireball, a pool of flames, Hellfire, cauterize and twelve more. Plus trap, hazard and insight', '116 to 133, 161 to 171', 'targeting-matrix', 'One Mechanic, Sixteen Ideas', 'Fire walked cell by cell through who acts upon whom, each cell drawn as an ability.'],
+    ['keywords', 'Text', 'Keywords Need Situations', 'Class keyword sheets with role, class and spec layers, and encounter sliders that show which keywords ever matter', '270 to 285', 'keywords-need-situations', 'Keywords Only Matter If Situations Demand Them', 'Four classes through four encounters: each keyword lights up only when the content asks for it.'],
+    ['team-roles', 'Sword', 'Cross-Class Structure', 'Football with fantasy classes, the holy trinity as an HP tug-of-war, and League lanes turning into a frontline, backline and flank: take a role out and watch the team fail', '246 to 255', 'roles-football-fantasy', 'American Football, but Fantasy', 'Fighters hold the line, the wizard throws, a rogue scores; then the same play with no fighters, and the wizard gets sacked.'],
+    ['interactions', 'Token_Player3', 'Interaction Count', 'Add players and monsters and count what you have to design: one player and three monsters is 3 things, three players is 15', '9', 'interaction-count', 'From 3 Things to 15', 'Mario alone, then Luigi and Peach join against three enemies, then six different ones: every line is something to design.'],
+    ['free-gear', 'Mana_Crystal', 'Free Gear Plateau', 'A tier-9 gift at hour one versus earning gear by questing: the spike, then the hours with nothing new to equip, and what soulbound changes', '316 and 317', 'free-gear-plateau', 'The Gift That Flattens the Curve', 'Gifted quest gear outclasses every reward for 22 hours; with soulbound rewards both players climb the same steps.'],
   ];
   // pages that are built so far
   const READY = ['timing', 'chains', 'camera', 'targeting', 'keywords', 'team-roles', 'interactions', 'free-gear'];
   const LIVE = PAGES.filter(p => READY.includes(p[0]));
   // deck parts in deck order: [title, first slide, last slide]. Each page sits under the part its first slide is in.
   const PARTS = [
-    ['Part 1: What is co-op and why it matters', 2, 17],
-    ['Part 2: Symmetrical vs asymmetrical', 19, 45],
-    ['Part 3: 3 types of teamplay', 47, 62],
-    ['Part 4: 3 dev cost sinks: camera, control, continuity', 64, 103],
-    ['Part 5-6: Teamplay frameworks and the targeting matrix', 106, 143],
-    ['Part 7: Teamplay timing framework', 145, 171],
-    ['Part 8: Teamplay sequencing framework', 174, 232],
-    ['Part 9: Cross-class structures', 234, 258],
-    ['Part 10: Co-op cross-class design pyramid and keywords', 260, 304],
-    ['Part 11: Co-op economics', 306, 341]
+    ['Part 1: What Is Co-op and Why It Matters', 2, 17],
+    ['Part 2: Symmetrical vs Asymmetrical', 19, 45],
+    ['Part 3: 3 Types of Teamplay', 47, 62],
+    ['Part 4: 3 Dev Cost Sinks: Camera, Control, Continuity', 64, 103],
+    ['Part 5-6: Teamplay Frameworks and the Targeting Matrix', 106, 143],
+    ['Part 7: Teamplay Timing Framework', 145, 171],
+    ['Part 8: Teamplay Sequencing Framework', 174, 232],
+    ['Part 9: Cross-Class Structures', 234, 258],
+    ['Part 10: Co-op Cross-Class Design Pyramid and Keywords', 260, 304],
+    ['Part 11: Co-op Economics', 306, 341]
   ];
   const first = sl => parseInt(sl, 10);
   LIVE.sort((a, b) => first(a[4]) - first(b[4]));
@@ -100,11 +100,11 @@
   }).join('');
   // more GIFs per page: [folder, slides, gif file, title, caption]
   const EXTRA = [
-    ['timing', '150 and 151', 'timing-revive', 'Heal and revive', 'Reactive tools need the event first: a heal needs damage, a revive needs a death.'],
-    ['timing', '156 to 158', 'timing-souls', 'Iron Flesh, block, Estus', 'The same punch on yourself: halve it before, block it during, drink after.'],
-    ['timing', '159 and 160', 'timing-stack', 'Stack all three', 'A shield before, an intervention during and a heal after, all on one big hit.'],
-    ['team-roles', '249', 'roles-holy-trinity', 'The holy trinity tug-of-war', 'Tank soaks, healer refills, DPS chips the boss; then the same pull with no healer, and the party wipes.'],
-    ['team-roles', '250 to 253', 'roles-lanes-to-teamfight', 'From lanes to a teamfight', 'Laning duels and a jungle gank, then a frontline, a backline and an assassin flank take the tower.'],
+    ['timing', '150 and 151', 'timing-revive', 'Heal and Revive', 'Reactive tools need the event first: a heal needs damage, a revive needs a death.'],
+    ['timing', '156 to 158', 'timing-souls', 'Iron Flesh, Block, Estus', 'The same punch on yourself: halve it before, block it during, drink after.'],
+    ['timing', '159 and 160', 'timing-stack', 'Stack All Three', 'A shield before, an intervention during and a heal after, all on one big hit.'],
+    ['team-roles', '249', 'roles-holy-trinity', 'The Holy Trinity Tug-of-War', 'Tank soaks, healer refills, DPS chips the boss; then the same pull with no healer, and the party wipes.'],
+    ['team-roles', '250 to 253', 'roles-lanes-to-teamfight', 'From Lanes to a Teamfight', 'Laning duels and a jungle gank, then a frontline, a backline and an assassin flank take the tower.'],
   ];
   const fig = (sl, gif, gt, cap) => `<figure><a href="gifs/${gif}.gif"><img src="gifs/${gif}.gif" alt="${gt}" loading="lazy"></a><figcaption><b>${gt}</b>${cap} Deck slides ${sl}.</figcaption></figure>`;
   document.getElementById('gifs').innerHTML = LIVE.map(([f, , , , sl, gif, gt, cap]) => fig(sl, gif, gt, cap) + EXTRA.filter(e => e[0] === f).map(e => fig(e[1], e[2], e[3], e[4])).join('')).join('');
