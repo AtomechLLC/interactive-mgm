@@ -51,7 +51,7 @@
 </header></div>
 
 <section>
-  <h2>Interactive pages</h2>
+  <h2>Interactive Pages</h2>
   <p>Grouped by the part of the deck each one comes from, in deck order. Open one and use ← → to move through it.</p>
   <div id="cards"></div>
 </section>
@@ -65,23 +65,23 @@
 <script>
   // [folder, icon, title, blurb, deck slides, gif file, gif title, gif caption]
   const PAGES = [
-    ['doors', 'Target_Cursor', 'Switch, plate, pulley', 'Three doors that all end in “open?”: flip a lever, drag a crate onto a plate, pull a rope, and watch what each one checks and when. Plus binary, discrete and continuous', '79 to 94', 'doors-switch-plate-pulley', 'Same door, different checks', 'A player flips the switch, stands on the plate, pulls the rope 3.5 of 5 yards, then walks away: the switch remembers, the plate forgets, the pulley keeps 70%.'],
-    ['contrapositive', 'Arrow', 'Contrapositive arena', 'A monster shooting down four lanes: colour every spot where melee and ranged can hit it safely, then tune reach and lanes to even it out', '132 to 134', 'contrapositive-arena', 'Where can you stand and still hit?', 'Four lanes: ranged has 79% of the arena to work from, melee 4%. Eight lanes, shorter range, then a melee lunge.'],
-    ['inversion', 'Zone_Hostile', 'Danger zone or safe rune', 'Ten raiders, one boss: a danger zone scatters them, the inverted safe rune stacks them, a shrinking ring pulls the whole match to one spot', '110 to 113', 'inversion-danger-safe-ring', 'Invert the floor', 'Lava near the boss spreads the raid out; a safe rune in an erupting floor stacks it up; shrink the safe circle and it becomes a battle royale ring.'],
-    ['reverse-map', 'Mark_1', 'Reverse sequencing map', 'The map example for slide 116: walk forward into a locked door and go key-hunting, then plan backward from the goal and find two routes', '115 to 119', 'reverse-sequencing-map', 'Plan it forward, then backward', 'Forward: hit the locked door, hunt for the key, walk back. Backward: what stops me, what opens it, and the lever route appears.'],
-    ['diminishing', 'Mana_Crystal', 'Diminishing returns', 'Stun per rank as linear, diminishing or capped (the deck’s Xerath curve), beside Elden Ring’s real Vigor curve with its soft caps at 40 and 60', '183 to 186', 'diminishing-returns', 'Each rank buys a little less', 'Linear, diminishing and capped stun by rank, while a marker climbs Elden Ring’s Vigor from 1 to 99.'],
-    ['life-per-hit', 'Hit_Friendly', 'Lifesteal vs life per hit', 'The Diablo III beta Barbarian: raise damage and watch 6% lifesteal outheal a whole pack while a flat 12 life per hit stays put', '177 to 180', 'life-per-hit', 'Lifesteal snowballs, life per hit doesn’t', 'Gear raises damage from 40 to 400 per hit; past 250, lifesteal heals more than the pack deals.'],
+    ['doors', 'Target_Cursor', 'Switch, Plate, Pulley', 'Three doors that all end in “open?”: flip a lever, drag a crate onto a plate, pull a rope, and watch what each one checks and when. Plus binary, discrete and continuous', '79 to 94', 'doors-switch-plate-pulley', 'Same Door, Different Checks', 'A player flips the switch, stands on the plate, pulls the rope 3.5 of 5 yards, then walks away: the switch remembers, the plate forgets, the pulley keeps 70%.'],
+    ['contrapositive', 'Arrow', 'Contrapositive Arena', 'A monster shooting down four lanes: colour every spot where melee and ranged can hit it safely, then tune reach and lanes to even it out', '132 to 134', 'contrapositive-arena', 'Where can you stand and still hit?', 'Four lanes: ranged has 79% of the arena to work from, melee 4%. Eight lanes, shorter range, then a melee lunge.'],
+    ['inversion', 'Zone_Hostile', 'Danger Zone or Safe Rune', 'Ten raiders, one boss: a danger zone scatters them, the inverted safe rune stacks them, a shrinking ring pulls the whole match to one spot', '110 to 113', 'inversion-danger-safe-ring', 'Invert the Floor', 'Lava near the boss spreads the raid out; a safe rune in an erupting floor stacks it up; shrink the safe circle and it becomes a battle royale ring.'],
+    ['reverse-map', 'Mark_1', 'Reverse Sequencing Map', 'The map example for slide 116: walk forward into a locked door and go key-hunting, then plan backward from the goal and find two routes', '115 to 119', 'reverse-sequencing-map', 'Plan It Forward, Then Backward', 'Forward: hit the locked door, hunt for the key, walk back. Backward: what stops me, what opens it, and the lever route appears.'],
+    ['diminishing', 'Mana_Crystal', 'Diminishing Returns', 'Stun per rank as linear, diminishing or capped (the deck’s Xerath curve), beside Elden Ring’s real Vigor curve with its soft caps at 40 and 60', '183 to 186', 'diminishing-returns', 'Each Rank Buys a Little Less', 'Linear, diminishing and capped stun by rank, while a marker climbs Elden Ring’s Vigor from 1 to 99.'],
+    ['life-per-hit', 'Hit_Friendly', 'Lifesteal vs Life per Hit', 'The Diablo III beta Barbarian: raise damage and watch 6% lifesteal outheal a whole pack while a flat 12 life per hit stays put', '177 to 180', 'life-per-hit', 'Lifesteal Snowballs, Life per Hit Doesn’t', 'Gear raises damage from 40 to 400 per hit; past 250, lifesteal heals more than the pack deals.'],
   ];
   // pages that are built so far
   const READY = ['doors', 'contrapositive', 'inversion', 'reverse-map', 'diminishing', 'life-per-hit'];
   const LIVE = PAGES.filter(p => READY.includes(p[0]));
   // deck parts in deck order: [title, first slide, last slide]. Each page sits under the part its first slide is in.
   const PARTS = [
-    ['Part 1: 4 ways to optimize a mechanic’s relevant depth', 4, 16],
-    ['Part 2: Player choice optimization framework', 18, 68],
-    ['Part 3: Mechanics design tools 1-2', 71, 101],
-    ['Part 4: Mechanics design tools 3-5', 103, 137],
-    ['Part 5: Mechanics design tools 6-8', 140, 193]
+    ['Part 1: 4 Ways to Optimize a Mechanic’s Relevant Depth', 4, 16],
+    ['Part 2: Player Choice Optimization Framework', 18, 68],
+    ['Part 3: Mechanics Design Tools 1-2', 71, 101],
+    ['Part 4: Mechanics Design Tools 3-5', 103, 137],
+    ['Part 5: Mechanics Design Tools 6-8', 140, 193]
   ];
   const first = sl => parseInt(sl, 10);
   LIVE.sort((a, b) => first(a[4]) - first(b[4]));
@@ -93,7 +93,7 @@
   }).join('');
   // more GIFs per page: [folder, slides, gif file, title, caption]
   const EXTRA = [
-    ['doors', '89 to 91', 'doors-binary-discrete-continuous', 'Binary, discrete, continuous', 'A switch, a blender with six speeds and a rope, each drawn as its value over time.'],
+    ['doors', '89 to 91', 'doors-binary-discrete-continuous', 'Binary, Discrete, Continuous', 'A switch, a blender with six speeds and a rope, each drawn as its value over time.'],
   ];
   const fig = (sl, gif, gt, cap) => `<figure><a href="gifs/${gif}.gif"><img src="gifs/${gif}.gif" alt="${gt}" loading="lazy"></a><figcaption><b>${gt}</b>${cap} Deck slides ${sl}.</figcaption></figure>`;
   document.getElementById('gifs').innerHTML = LIVE.map(([f, , , , sl, gif, gt, cap]) => fig(sl, gif, gt, cap) + EXTRA.filter(e => e[0] === f).map(e => fig(e[1], e[2], e[3], e[4])).join('')).join('');
