@@ -319,7 +319,7 @@
     ICON.draw(g, 'chaoticenergy', x0 + 12, my + 11, 18);
     // dark text over the yellow-green fill, light text over the empty bar
     const halo = (str, x, align, onFill, col) => { g.font = '700 12px Jost, sans-serif'; g.textAlign = align; g.textBaseline = 'middle'; g.lineWidth = 3; g.strokeStyle = onFill ? 'rgba(245,255,210,.85)' : 'rgba(20,26,8,.85)'; g.strokeText(str, x, my + 11); g.fillStyle = col || (onFill ? '#1f2a06' : '#eef7c8'); g.fillText(str, x, my + 11); };
-    halo(`Chaotic Energy (mana): +${k$(F.regen)} per second`, x0 + 28, 'left', w * mf > 300);
+    halo(`Chaotic Energy: +${k$(F.regen)} per second`, x0 + 28, 'left', w * mf > 300);
     halo(`${k$(F.manaAt(t))} / ${k$(R.mana.max)}`, x0 + w - 8, 'right', mf > .97);
     s.casts.forEach(c => {
       const a = t - c.end; if (!c.done || !c.cost || a < 0 || a > .7) return;
@@ -358,7 +358,7 @@
   // the scrolling timeline: casts, ember level, damage per hit
   const WIN = 20, LEAD = 14;
   function timeline(g, F, t, x0, y0, w, h, opt = {}) {
-    const s = F.s, o = F.o, lx = x0 + 78, pw = w - 88;
+    const s = F.s, o = F.o, lx = x0 + 100, pw = w - 110;
     const t0 = Math.max(0, t - LEAD), sx = v => lx + (v - t0) / WIN * pw;
     const L = { cast: [y0 + 8, 40], emb: [y0 + 60, 62], mana: [y0 + 130, 22], dmg: [y0 + 160, 56] };
     g.save(); g.beginPath(); g.rect(lx, y0, pw, h); g.clip();
@@ -421,7 +421,7 @@
     head(g, 'Casts', x0, cy + ch / 2, C.ink, 13); head(g, 'Embers', x0, ey + eh / 2, C.ink, 13); head(g, 'Damage', x0, dy + 14, C.ink, 13);
     txt(g, 'per hit', x0, dy + 30, C.muted, 11);
     [1, 2, 3, 4].forEach(e => txt(g, String(e), lx - 6, yv(e * 10), C.muted, 11, 'right', 600));
-    head(g, 'Mana', x0, L.mana[0] + L.mana[1] / 2, '#5f8a10', 13);
+    head(g, 'Chaotic Energy', x0, L.mana[0] + L.mana[1] / 2, '#5f8a10', 12);
     if (o.pool) T.label('pool to 3.5', lx + pw - 40, yv(R.pool), 'center', C.redDk, 10);
     // playhead and time axis
     const ph = sx(t); g.strokeStyle = C.navy; g.lineWidth = 2; g.beginPath(); g.moveTo(ph, y0); g.lineTo(ph, y0 + h); g.stroke();
@@ -473,7 +473,7 @@
       seg.forEach(b => b.classList.toggle('on', (b.dataset.v === 'pool') === st.o.pool));
       $(sl, '.de-crit-v').textContent = `${Math.round(st.o.crit * 100)}%`;
       rg.value = Math.round((st.o.regen ?? 1) * 100);
-      $(sl, '.de-regen-v').textContent = `${rg.value}%${+rg.value === 100 ? ' (5.4)' : ''}: ${Math.round(R.mana.mp5 / 5 * (1 + R.mana.ce) * (1 + st.o.haste) * (st.o.regen ?? 1) / 1000)}k mana per second`;
+      $(sl, '.de-regen-v').textContent = `${rg.value}%${+rg.value === 100 ? ' (5.4)' : ''}: ${Math.round(R.mana.mp5 / 5 * (1 + R.mana.ce) * (1 + st.o.haste) * (st.o.regen ?? 1) / 1000)}k Chaotic Energy per second`;
       $(sl, '.de-mast-v').textContent = `${st.o.mastery} pts: Chaos Bolt +${Math.round(R.mast.spender * st.o.mastery * 100)}%, fillers +${Math.round(R.mast.filler * st.o.mastery * 100)}%`;
     }
     const free = () => { if (st.tour) { st.tour = false; tourBtn.classList.remove('on'); st.o.breaks = []; st.t = 0; } };
