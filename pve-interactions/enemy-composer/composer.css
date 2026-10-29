@@ -13,21 +13,30 @@
 /* rule chips, coloured like the slide: movement blue, a result that helps the player green, one that hurts them red, a neutral one gold */
 .mv, .st, .fi { display: inline-block; border-radius: 8px; padding: 2px 10px; font-weight: 600; border: 2px solid; }
 .mv { background: #dfe6fb; border-color: #8ea2e6; color: #23306e; }
-.s-kill, .f-kill { background: #f9d9d6; border-color: #d9695f; color: #8f1d18; }
-.s-kick, .s-wings, .f-ignore { background: #fde9b8; border-color: #e0a92d; color: #7a4a00; }
+/* results, from the player's side: green defeats it, gold changes it, red hurts Mario, grey does nothing */
+.s-kill, .f-kill { background: #d9f0df; border-color: #4caf6a; color: #14592c; }
+.s-kick, .s-wings { background: #fde9b8; border-color: #e0a92d; color: #7a4a00; }
 .s-hurt { background: #f9d9d6; border-color: #d9695f; color: #8f1d18; }
+.f-ignore { background: #ebe8e1; border-color: #a9a495; color: #4d4a42; }
 
 /* slide 2: the twelve cards */
-.cd-wrap { display: grid; grid-template-columns: 600px 1fr; gap: 24px; align-items: start; }
-.cd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-button.cd { display: grid; grid-template-columns: 52px repeat(3, auto) 1fr; grid-template-rows: auto auto; column-gap: 4px; row-gap: 4px; align-items: center; text-align: left;
+.cd-wrap { display: grid; grid-template-columns: 744px 1fr; gap: 18px; align-items: start; }
+.cd-grid, .cd-heads { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+/* the three chips sit in fixed columns so the header row above names them */
+button.cd, .cd-head { display: grid; grid-template-columns: 48px 82px 108px 82px; column-gap: 6px; }
+.cd-head { padding: 0 10px; margin-bottom: 4px; border-left: 2px solid transparent; }
+.cd-head span { font: 700 12px var(--display); text-transform: uppercase; letter-spacing: .04em; color: var(--muted); text-align: center; }
+button.cd { grid-template-rows: auto auto; row-gap: 4px; align-items: center; text-align: left;
   background: #fffaf0; border: 2px solid #cdbf9f; border-radius: 10px; padding: 6px 8px; cursor: pointer; font: inherit; color: var(--ink); }
 button.cd:hover { border-color: var(--navy); }
 button.cd.on { border-color: var(--navy); box-shadow: 0 0 0 3px #ffb951; }
 button.cd canvas { grid-row: span 2; width: 52px; height: 45px; image-rendering: pixelated; }
 button.cd .nm { font-family: var(--display); font-weight: 800; font-size: 15px; grid-column: 2 / -1; }
-button.cd .mv, button.cd .st, button.cd .fi { font-size: 11.5px; padding: 0 5px; border-width: 1.5px; border-radius: 5px; white-space: nowrap; }
-.cd-canvas { width: 760px; height: 338px; }
+button.cd .mv, button.cd .st, button.cd .fi { font-size: 12.5px; padding: 1px 5px; border-width: 1.5px; border-radius: 5px; white-space: nowrap; text-align: center; }
+.cd-key { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 10px; font-size: 14px; }
+.cd-key::before { content: "Key"; font: 700 13px var(--display); text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin-right: 2px; }
+.cd-key span { border: 2px solid; border-radius: 6px; padding: 1px 8px; font-weight: 600; }
+.cd-canvas { width: 656px; height: 292px; }
 
 /* slide 3: the composer */
 .cp-wrap { display: grid; grid-template-columns: 980px 1fr; gap: 26px; }
@@ -52,7 +61,8 @@ table.sp-grid { border-collapse: separate; border-spacing: 3px; font-size: 13px;
 .sp-grid th.mvh { text-align: left; color: var(--ink); font-size: 15px; white-space: nowrap; padding-right: 6px; }
 .sp-grid td { width: 88px; height: 62px; background: #fffaf0; border: 2px solid #ddd0b0; border-radius: 8px; text-align: center; cursor: pointer; vertical-align: middle; padding: 0; }
 .sp-grid td.used { border-color: #8ea2e6; background: #eef1fc; }
-.sp-grid td.wall { background: repeating-linear-gradient(45deg, #f9e3e0 0 6px, #fffaf0 6px 12px); border-color: #e3aaa4; }
+.sp-grid td.avoid { background: repeating-linear-gradient(45deg, #f3ece0 0 6px, #fffaf0 6px 12px); border-color: #d9c9a8; }
+.sp-grid td.avoid.used { background: repeating-linear-gradient(45deg, #e4e8f8 0 6px, #eef1fc 6px 12px); border-color: #8ea2e6; }
 .sp-grid td:hover { border-color: var(--navy); }
 .sp-grid td.on { box-shadow: 0 0 0 3px #ffb951; border-color: var(--navy); }
 .sp-grid td canvas { width: 36px; height: 31px; image-rendering: pixelated; }

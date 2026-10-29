@@ -70,13 +70,15 @@
     g.restore();
   }
 
-  /* ---------- the slide's table: twelve enemies, three columns ---------- */
+  /* ---------- the twelve enemies from the slide's table, three columns each ---------- */
+  // Rows follow the slide, corrected to Super Mario Bros. (NES) behaviour: Lakitu flies, Bullet Bill and the
+  // Lava Bubble shrug off fireballs, and a leaping Cheep Cheep can be stomped.
   const MOVES = {
     walk: ['Walk', 'forward'], fly: ['Fly', 'forward'], flypatrol: ['Fly patrol', 'left / right'],
     patrol: ['Patrol', 'up / down'], jump: ['Jump', 'forward'], hold: ['Hold & shoot', 'in place'],
   };
-  const STOMPS = { kill: 'Kills me', kick: 'Make kickable', wings: 'Remove wings', hurt: 'Hurt Mario' };
-  const FIRES = { kill: 'Kills me', ignore: 'Ignored' };
+  const STOMPS = { kill: 'Defeats it', kick: 'Leaves a shell', wings: 'Removes wings', hurt: 'Hurts Mario' };
+  const FIRES = { kill: 'Defeats it', ignore: 'No effect' };
   // look: frames, shell (what a kick leaves), pit (what a patrol rises out of)
   const LOOKS = {
     goomba: { name: 'Goomba', f: [GOOMBA, GOOMBA_STEP] },
@@ -97,8 +99,8 @@
   const CARDS = [
     ['goomba', 'walk', 'kill', 'kill'], ['koopa', 'walk', 'kick', 'kill'], ['buzzy', 'walk', 'kick', 'ignore'],
     ['para', 'flypatrol', 'wings', 'kill'], ['spiny', 'walk', 'hurt', 'kill'], ['piranha', 'patrol', 'hurt', 'kill'],
-    ['bloop', 'fly', 'hurt', 'kill'], ['lakitu', 'walk', 'kill', 'kill'], ['bowser', 'hold', 'hurt', 'kill'],
-    ['bullet', 'fly', 'kill', 'kill'], ['cheep', 'jump', 'hurt', 'kill'], ['podo', 'patrol', 'hurt', 'kill'],
+    ['bloop', 'fly', 'hurt', 'kill'], ['lakitu', 'fly', 'kill', 'kill'], ['bowser', 'hold', 'hurt', 'kill'],
+    ['bullet', 'fly', 'kill', 'ignore'], ['cheep', 'jump', 'kill', 'kill'], ['podo', 'patrol', 'hurt', 'ignore'],
   ].map(([look, move, stomp, fire]) => ({ look, move, stomp, fire }));
   const CARD = Object.fromEntries(CARDS.map(c => [c.look, c]));
   const key = c => `${c.move}.${c.stomp}.${c.fire}`;
@@ -109,13 +111,13 @@
     buzzy: 'A Koopa that ignores fireballs. The answer that beats the Spiny is the wrong one here.',
     para: 'It flies a patrol, and a stomp only takes its wings: it drops down as a walking Koopa you have to deal with again.',
     spiny: 'Stomping it hurts you, so it pushes you off your favourite verb and onto fire.',
-    piranha: 'A jump-timing hazard rising out of a pipe. Its card is identical to the Lava Bubble’s.',
-    bloop: 'It swims at you and can’t be stomped, so you burn it or get out of its way.',
-    lakitu: 'The table gives it the Goomba’s card. What sets it apart, riding a cloud and dropping Spinies, is a column this table leaves out.',
-    bowser: 'He holds the bridge and breathes fire. Stomping him hurts; fire is the answer.',
-    bullet: 'It flies straight at you, and a stomp kills it, so it rewards a well-timed jump.',
-    cheep: 'It leaps out of the water in arcs, and stomping hurts, so you dodge its jumps or burn it.',
-    podo: 'A jump-timing hazard leaping out of lava. Same card as the Piranha Plant, and it still feels different.',
+    piranha: 'A jump-timing hazard rising out of a pipe. Stomping it hurts, but a fireball clears it.',
+    bloop: 'It swims at you underwater, where you can’t stomp, so you burn it or get out of its way.',
+    lakitu: 'It flies overhead on its cloud and throws Spinies down at you. One stomp or one fireball ends it, if you can reach it.',
+    bowser: 'He holds the bridge and breathes fire. Stomping him hurts; five fireballs, or the axe behind him, are the answer.',
+    bullet: 'It flies straight at you and fireballs pass right through it, so the answer is a well-timed stomp or a jump over it.',
+    cheep: 'It leaps out of the water in arcs across the bridge. Stomp it mid-leap or burn it.',
+    podo: 'A jump-timing hazard leaping out of lava. Nothing defeats it, so you only time your way past: a hazard, not a fight.',
   };
   const names = ls => ls.map(l => LOOKS[l].name);
   const list = a => a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' and ' + a.at(-1);
@@ -125,10 +127,10 @@
   // what the composer says about a card worn by a look
   function readout(c) {
     const m = matches(c), own = CARD[c.look];
-    const wall = c.stomp === 'hurt' && c.fire === 'ignore' ? ' <b class="bad">Nothing beats it:</b> stomping hurts and fire bounces off, so it is a wall, not a decision. Give it a weak spot or a way around.' : '';
+    const wall = c.stomp === 'hurt' && c.fire === 'ignore' ? ' <b class="bad">Nothing defeats it:</b> stomping hurts and fire has no effect, so the player can only avoid it. That works for a hazard you time, like the Lava Bubble; on a walking enemy in your path it is a wall, not a decision.' : '';
     if (own && key(own) === key(c)) {
       const twin = m.filter(l => l !== c.look);
-      return `<b class="good">This is the ${LOOKS[c.look].name}.</b> ${WHY[c.look]}${twin.length && c.look !== 'piranha' && c.look !== 'podo' && c.look !== 'lakitu' ? ` Same card as the ${list(names(twin))}.` : ''}`;
+      return `<b class="good">This is the ${LOOKS[c.look].name}.</b> ${WHY[c.look]}${twin.length ? ` Same card as the ${list(names(twin))}.` : ''}`;
     }
     if (m.length) return `<b class="bad">Reskin.</b> It looks like ${c.look === 'myst' ? 'a new enemy' : `the ${LOOKS[c.look].name}`}, but it plays exactly like the ${list(names(m))}. Players learn nothing new from it.`;
     const diff = own ? ['move', 'stomp', 'fire'].filter(k => own[k] !== c[k]) : [];
@@ -343,18 +345,24 @@
   });
 
   /* ---------- slide 2: the slide's twelve cards ---------- */
+  let cardsApi = null;
   canvasDemo('cards', (s, c, g) => {
     const grid = $(s, '.cd-grid'), out = $(s, '.cd-out'), st = { i: 0, t: 0 };
     grid.innerHTML = CARDS.map((cd, i) => `<button class="cd" data-i="${i}"><canvas width="64" height="56"></canvas><span class="nm">${LOOKS[cd.look].name}</span>` +
       `<span class="mv">${MOVES[cd.move][0]}</span><span class="st s-${cd.stomp}">${STOMPS[cd.stomp]}</span><span class="fi f-${cd.fire}">${FIRES[cd.fire]}</span></button>`).join('');
+    // one header row per card column, lined up with the chips
+    $(s, '.cd-heads').innerHTML = '<div class="cd-head"><span></span><span>Movement</span><span>Stomp</span><span>Fireball</span></div>'.repeat(2);
     $$(grid, '.cd').forEach(b => { icon($(b, 'canvas'), CARDS[b.dataset.i].look, 3.2); b.onclick = () => { st.i = +b.dataset.i; st.t = 0; sync(); }; });
     function sync() {
       $$(grid, '.cd').forEach(b => b.classList.toggle('on', +b.dataset.i === st.i));
       const cd = CARDS[st.i], twin = matches(cd).filter(l => l !== cd.look);
-      say(out, `<b>${LOOKS[cd.look].name}:</b> ${WHY[cd.look]}${twin.length ? ` <span class="muted">Identical card: ${list(names(twin))}.</span>` : ''}`);
+      say(out, `<b>${LOOKS[cd.look].name}:</b> ${WHY[cd.look]}${twin.length ? ` <span class="muted">Same card: ${list(names(twin))}.</span>` : ''}`);
     }
     sync();
-    return dt => { st.t = (st.t + dt) % DUR; scene(g, c.width, c.height, CARDS[st.i], st.t); };
+    // the GIF walks through all twelve cards at 1.5x speed
+    const FAST = 1.5;
+    cardsApi = { seek(t) { st.held = true; const i = Math.min(11, Math.floor(t * FAST / DUR)); if (i !== st.i) { st.i = i; sync(); } scene(g, c.width, c.height, CARDS[i], t * FAST - i * DUR); }, dur: () => 12 * DUR / FAST };
+    return dt => { if (st.held) return; st.t = (st.t + Math.max(0, dt)) % DUR; scene(g, c.width, c.height, CARDS[st.i], st.t); };
   });
 
   /* ---------- slide 3: the composer, with a tour that changes one rule at a time ---------- */
@@ -362,7 +370,7 @@
     { look: 'goomba', move: 'walk', stomp: 'kill', fire: 'kill', say: 'Start from the Goomba: walk forward, a stomp kills it, a fireball kills it.' },
     { look: 'koopa', move: 'walk', stomp: 'kick', fire: 'kill', say: 'Change one rule, the stomp now leaves a kickable shell, and you have the Koopa Troopa.' },
     { look: 'buzzy', move: 'walk', stomp: 'kick', fire: 'ignore', say: 'Change one more, fireballs are ignored, and you have the Buzzy Beetle.' },
-    { look: 'myst', move: 'walk', stomp: 'hurt', fire: 'ignore', say: 'Make the stomp hurt too and nothing beats it. That card is a wall, not a decision, and Super Mario Bros. never uses it.' },
+    { look: 'myst', move: 'walk', stomp: 'hurt', fire: 'ignore', say: 'Make the stomp hurt too and nothing defeats it. On a walking enemy that is a wall, not a decision; Super Mario Bros. saves this pairing for hazards you time, like the Lava Bubble.' },
     { look: 'spiny', move: 'walk', stomp: 'hurt', fire: 'kill', say: 'Let fire work again and you have the Spiny: it pushes you off jumping and onto fireballs.' },
     { look: 'piranha', move: 'patrol', stomp: 'hurt', fire: 'kill', say: 'Keep the Spiny’s two results and change only the movement to an up and down patrol: the Piranha Plant.' },
     { look: 'para', move: 'flypatrol', stomp: 'wings', fire: 'kill', say: 'A flying patrol where a stomp only takes the wings: the Koopa Paratroopa.' },
@@ -411,21 +419,21 @@
     const cols = [];
     Object.keys(STOMPS).forEach(sk => Object.keys(FIRES).forEach(fk => cols.push([sk, fk])));
     tbl.innerHTML = '<tr><th></th>' + Object.keys(STOMPS).map(sk => `<th colspan="2" class="sk">Stomp: ${STOMPS[sk]}</th>`).join('') + '</tr>'
-      + '<tr><th></th>' + cols.map(([, fk]) => `<th class="fk">Fire: ${FIRES[fk].replace('Kills me', 'kills')}</th>`).join('') + '</tr>'
+      + '<tr><th></th>' + cols.map(([, fk]) => `<th class="fk">Fire: ${FIRES[fk].toLowerCase()}</th>`).join('') + '</tr>'
       + Object.keys(MOVES).map(mv => `<tr><th class="mvh">${MOVES[mv][0]}</th>` + cols.map(([sk, fk]) => {
         const k = `${mv}.${sk}.${fk}`, ls = CARDS.filter(x => key(x) === k).map(x => x.look);
-        return `<td data-c="${k}" class="${ls.length ? 'used' : ''} ${sk === 'hurt' && fk === 'ignore' ? 'wall' : ''}">${ls.map(l => `<canvas width="40" height="34" data-l="${l}"></canvas>`).join('')}</td>`;
+        return `<td data-c="${k}" class="${ls.length ? 'used' : ''} ${sk === 'hurt' && fk === 'ignore' ? 'avoid' : ''}">${ls.map(l => `<canvas width="40" height="34" data-l="${l}"></canvas>`).join('')}</td>`;
       }).join('') + '</tr>').join('');
     $$(tbl, 'canvas').forEach(cv => icon(cv, cv.dataset.l, 2.2));
     $$(tbl, 'td').forEach(td => td.onclick = () => { st.cell = td.dataset.c; st.t = 0; sync(); });
     const used = new Set(CARDS.map(key)).size;
-    $(s, '.sp-stats').innerHTML = `<div><b>48</b><span>possible cards</span></div><div><b>${used}</b><span>used by the slide’s 12 enemies</span></div><div><b>${48 - used}</b><span>left to design</span></div>`;
+    $(s, '.sp-stats').innerHTML = `<div><b>48</b><span>possible cards</span></div><div><b>${used}</b><span>used by these 12 enemies</span></div><div><b>${48 - used}</b><span>left to design</span></div>`;
     function card() { const [move, stomp, fire] = st.cell.split('.'), ls = CARDS.filter(x => key(x) === st.cell); return { look: ls[0]?.look || 'myst', move, stomp, fire }; }
     function sync() {
       $$(tbl, 'td').forEach(td => td.classList.toggle('on', td.dataset.c === st.cell));
       const cd = card(), ls = matches(cd);
       say(out, ls.length ? `<b>${list(names(ls))}.</b> ${cardText(cd).replace(/^./, m => m.toUpperCase())}.${ls.length > 1 ? ' Two enemies share this card; the next slide shows why they still feel different.' : ''}`
-        : `<b class="good">Unused.</b> ${cardText(cd).replace(/^./, m => m.toUpperCase())}.${cd.stomp === 'hurt' && cd.fire === 'ignore' ? ' <b class="bad">Nothing beats this one,</b> so the whole column is a wall.' : ' A real enemy nobody has built yet: the same three columns, recombined.'}`);
+        : `<b class="good">Unused.</b> ${cardText(cd).replace(/^./, m => m.toUpperCase())}.${cd.stomp === 'hurt' && cd.fire === 'ignore' ? ' <b class="bad">Nothing defeats it,</b> so the player can only avoid it: fine for a hazard like the Lava Bubble, a wall on anything that walks into your path.' : ' A real enemy nobody has built yet: the same three columns, recombined.'}`);
     }
     sync();
     return dt => { st.t = (st.t + dt) % DUR; scene(g, c.width, c.height, card(), st.t, { badges: true }); };
@@ -485,7 +493,7 @@
       label(g, `Piranha Plant${st.swap ? ', with the Lava Bubble’s timing' : ''}`, LW / 2, 26, { size: 19 });
       label(g, `Lava Bubble${st.swap ? ', with the Piranha Plant’s timing' : ''}`, LW + LW / 2, 26, { size: 19 });
       const d = (w, tm) => `${w.len.toFixed(1)} s safe in every ${period(tm).toFixed(1)} s`;
-      const msg = `<b>Same card:</b> patrol up and down, a stomp hurts Mario, a fireball kills it. Only the timing differs. `
+      const msg = `<b>Same pattern:</b> both patrol up and down and hurt you if you land on them, so both are jump-timing hazards. (A fireball clears the plant but not the bubble.) `
         + `The plant rises slowly and lingers (${d(a, tp)}), so you wait it out; the bubble snaps up and drops straight back (${d(b, tb)}), so you jump on the beat.`
         + (st.swap ? ' <b class="good">Swap the timing and they swap feel.</b> The difference was never in the rules.' : '');
       if (msg !== st.msg) { st.msg = msg; say(out, msg); }
@@ -506,6 +514,7 @@
     return best;
   }
 
-  window.__seek = (t, which = 'composer') => (which === 'feel' ? feelApi : composerApi).seek(t);
-  window.__dur = (which = 'composer') => (which === 'feel' ? feelApi : composerApi).dur();
+  const api = which => ({ feel: feelApi, cards: cardsApi })[which] || composerApi;
+  window.__seek = (t, which = 'composer') => api(which).seek(t);
+  window.__dur = (which = 'composer') => api(which).dur();
 })();

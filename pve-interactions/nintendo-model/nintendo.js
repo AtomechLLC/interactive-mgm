@@ -200,7 +200,7 @@
   const NODES = [
     { id: 'goomba', name: 'Goomba', f: [M.GOOMBA, M.GOOMBA_STEP], x: 150, y: 300 },
     { id: 'koopa', name: 'Koopa Troopa', f: [M.KOOPA, M.KOOPA_STEP], x: 500, y: 300, from: 'goomba', rule: 'stomp leaves a shell' },
-    { id: 'bullet', name: 'Bullet Bill', f: [M.BULLET, M.BULLET], x: 500, y: 500, from: 'goomba', rule: 'flies instead of walking' },
+    { id: 'lakitu', name: 'Lakitu', f: [M.LAKITU, M.LAKITU_B], x: 500, y: 500, from: 'goomba', rule: 'flies instead of walking' },
     { id: 'red', name: 'Red Koopa Troopa', f: [M.RKOOPA, M.RKOOPA_STEP], x: 880, y: 110, from: 'koopa', rule: 'turns at ledges' },
     { id: 'para', name: 'Koopa Paratroopa', f: [M.RKOOPA, M.RKOOPA_STEP], wings: true, x: 880, y: 240, from: 'koopa', rule: 'flies; a stomp takes its wings' },
     { id: 'buzzy', name: 'Buzzy Beetle', f: [M.BUZZY, M.BUZZY_STEP], x: 880, y: 370, from: 'koopa', rule: 'ignores fireballs' },
