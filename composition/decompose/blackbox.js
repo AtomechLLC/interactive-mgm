@@ -86,7 +86,7 @@
   });
 
   // ---------- toolbox to composite ----------
-  const TX = j => 112 + j * 124, TY = (j, i) => 92 + i * 48;
+  const TX = j => 90 + j * 122, TY = (j, i) => 98 + i * 50;   // 20px inside the toolbox panel on both sides
   scene('toolbox', {
     dur: 18,
     state: () => ({ pick: ['Self', 'Enemy', 'Damage', 'Instant', 'Cast'] }),
@@ -97,18 +97,18 @@
     draw(g, t, st, tour) {
       const SEQ = [ALL[0][2], ALL[5][2], ['Self', 'Ally', 'Heal', 'Timed', 'Cast'], ALL[7][2], ['Self', 'Environment', 'Disable', 'Timed', 'Touch']];
       const pick = tour ? SEQ[Math.min(SEQ.length - 1, Math.floor(t / 3.4))] : st.pick, since = tour ? t % 3.4 : 9;
-      panel(g, 14, 14, 640, 380, { title: 'Toolbox' });
+      panel(g, 14, 14, 640, 332, { title: 'Toolbox' });
       TOOL.forEach((list, j) => {
-        text(g, SLOTS[j][0], TX(j), 56, { size: 14, w: 800, col: SLOTS[j][1].col });
+        text(g, SLOTS[j][0], TX(j), 60, { size: 14, w: 800, col: SLOTS[j][1].col });
         list.forEach((p, i) => { const on = pick[j] === p; chip(g, p, TX(j), TY(j, i), on ? { ...SLOTS[j][1], size: 14, width: 112, lw: 3 } : { fill: 'rgba(255,250,240,.8)', edge: '#cdbf9f', col: C.muted, size: 14, width: 112, w: 600 }); });
       });
       // the composite
-      panel(g, 14, 404, 640, 168, { title: 'Composite' });
-      pick.forEach((p, j) => { const a = ease(clamp((since - j * .12) / .3)); g.save(); g.globalAlpha = a; chip(g, p, 100 + j * 118, 452 + (1 - a) * -20, { ...SLOTS[j][1], size: 15, width: 104 }); g.restore(); if (j < 4) text(g, '+', 159 + j * 118, 452, { size: 18, w: 800, col: C.muted }); });
+      panel(g, 14, 358, 640, 214, { title: 'Composite' });
+      pick.forEach((p, j) => { const a = ease(clamp((since - j * .12) / .3)); g.save(); g.globalAlpha = a; chip(g, p, 86 + j * 124, 420 + (1 - a) * -20, { ...SLOTS[j][1], size: 15, width: 104 }); g.restore(); if (j < 4) text(g, '+', 148 + j * 124, 420, { size: 18, w: 800, col: C.muted }); });
       const match = ALL.filter(a => a[2].every((p, j) => p === pick[j]));
       const k = ease(clamp((since - .7) / .4));
-      text(g, match.length ? `= ${match.map(m => m[0]).join(' or ')}` : '= a new item', 334, 516, { size: match.length ? 22 : 24, w: 800, display: true, col: match.length ? C.navy : C.good, a: k });
-      text(g, match.length ? match.map(m => m[1]).join(' · ') : 'No item on file has this combination: a design prompt.', 334, 548, { size: 13, col: C.muted, a: k });
+      text(g, match.length ? `= ${match.map(m => m[0]).join(' or ')}` : '= a new item', 334, 494, { size: match.length ? 22 : 24, w: 800, display: true, col: match.length ? C.navy : C.good, a: k });
+      text(g, match.length ? match.map(m => m[1]).join(' · ') : 'No item on file has this combination: a design prompt.', 334, 530, { size: 13, col: C.muted, a: k });
       // how many composites the toolbox allows
       const total = TOOL.reduce((n, l) => n * l.length, 1);
       panel(g, 668, 14, 358, 558, { title: 'Combinations' });

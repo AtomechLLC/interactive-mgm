@@ -60,7 +60,7 @@ window.COURSE = [
 ],
 [
 "understand-mechanics/chaotic-energy/index.html",
-"Destruction Warlock &amp; Chaotic Energy"
+"Destruction Warlock & Chaotic Energy"
 ],
 [
 "understand-mechanics/cast-timeline/index.html",
