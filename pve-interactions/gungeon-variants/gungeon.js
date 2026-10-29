@@ -338,7 +338,7 @@
     ents.push([p[2], () => {
       shadow(g, p[1], p[2], 20);
       const moving = Math.hypot(...[1, 2].map(i => s.pilotAt(u + .03)[i] - s.pilotAt(u - .03)[i])) > .5;
-      spr(g, 'pilot', p[1], p[2] - (moving && !roll ? Math.abs(Math.sin(u * 14)) * 3 : 0), { k: 4 / 3, rot: roll ? (u - roll[0]) / (roll[1] - roll[0]) * Math.PI * 2 : 0 });
+      spr(g, 'pilot', p[1], p[2] - (moving && !roll ? Math.abs(Math.sin(u * 14)) * 3 : 0), { k: 4 / 3, flip: e[1] < p[1], rot: roll ? (u - roll[0]) / (roll[1] - roll[0]) * Math.PI * 2 : 0 });
     }]);
     ents.sort((a, b) => a[0] - b[0]).forEach(x => x[1]());
     // aim marks of leading shots
