@@ -10,6 +10,7 @@ Open `index.html` in a browser (no build step, works straight off disk). It list
 - `mechanics-tools/`: **Mechanics Design Tools** (`mechanics-tools/index.html`), from *MGM C4 M3 - Mechanics Design Optimizations and Tools*.
 - `understand-mechanics/`: **Understand Mechanics** (`understand-mechanics/index.html`), from *MGM C4 M2 - Understand, Analyze and Plan Mechanics*.
 - `depth/`: **The Goal: Depth** (`depth/index.html`), from *MGM C4 M1 - The Goal of Mechanics Design - Depth*.
+- `composition/`: **Composition** (`composition/index.html`), from *MGM C4 M7 - Techniques to Scale Engaging Gameplay Design*, the final module.
 
 Shared engine, theme and art stay in `assets/` at the root, so a deck one level down loads `../../assets/`. `404.html` redirects the old root deck URLs (for example `/core-actions/`) to their `pvp/` homes.
 
@@ -155,3 +156,16 @@ Home page `depth/index.html` (cards from `PAGES` + `READY`, extra GIFs in `EXTRA
 - `shared/`: `depth.css` layout and a copy of the top-down kit.
 - GIFs in `gifs/`: rebuild them all with `sh depth/tools/record-all.sh` while serving InteractiveMGM on 127.0.0.1:8171.
 - `PROPOSALS.md`: the rest of the deck's interactive and GIF ideas, by section.
+
+## Composition module (`composition/`)
+
+Home page `composition/index.html` (cards from `PAGES`, GIFs from `GIFS`), from *MGM C4 M7 - Techniques to Scale Engaging Gameplay Design* (275 slides). Slide numbers are the deck's `/edit#slide=N` numbers. `PROPOSALS.md` lists the fifty visuals planned for the deck.
+
+Every slide is a `CK.scene` (`shared/comp.js`): a canvas drawn as a pure function of time and the slide's state, a walk-through that loops, and controls in the side panel. `window.__seek(t, which)` / `__dur(which)` reach any scene, so the recorder replays it frame by frame.
+
+- `why-scale/`: two views of one bestiary (slides 6-7): twelve Super Mario Bros. enemies flip to their movement, stomp and fireball parts, with how often each part is reused.
+- `decompose/`: one element, four targets (slides 37, 40, 73): the Super Star as Self → Self, then fire, frost and heal across Self, Enemy, Ally and Environment with World of Warcraft spell icons; empty cells are design prompts.
+- `archetypes/`: `arch.js` holds the Souls archetypes as small top-down loops (Flailer, Fighter, Brute, Sweeper, Defender, Evader, Rampager, Zone Healer). The gallery (158-168) and paladin or turtle (170-173) run on it.
+- `counter-circle/`: strip the packaging (238-240): attack, throw and block become Offense, Prediction and Defense.
+- `shared/`: `comp.css` layout, `comp.js` scene engine and drawing helpers, a copy of the top-down kit, `icons.js` (game-icons.net, rebuilt by `tools/build-icons.py` from `tools/icon-names.txt`) and `img/`: Super Mario Bros. sprites cropped from the NES sheets on mariouniverse.com, and World of Warcraft spell icons from wow.zamimg.com.
+- GIFs in `gifs/`: rebuild with `sh composition/tools/record-all.sh [names]` while serving InteractiveMGM on 127.0.0.1:8181. They are 1920×1080 with the side panel hidden.
