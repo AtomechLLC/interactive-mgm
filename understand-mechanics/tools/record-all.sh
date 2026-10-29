@@ -28,4 +28,4 @@ rec 'guarded-door/index.html#1' door guarded-door
 rec 'guarded-door/index.html#2' matrix tool-matrix
 rec 'resource-pool/index.html#1' pool resource-pool
 rec 'resource-pool/index.html#2' spend discrete-vs-continuous
-rec 'resource-pool/index.html#3' burn resources-and-states
+GIF_CSS='.mt-side{display:none!important}.mt-wrap{grid-template-columns:1fr!important;justify-items:center}' rec 'resource-pool/index.html#3' burn resources-and-states
