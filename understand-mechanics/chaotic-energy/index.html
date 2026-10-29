@@ -20,6 +20,18 @@
   .de-cols { display: grid; grid-template-columns: 1fr 360px; gap: 26px; margin-top: 4px; }
   .de-cols p { font-size: 17px; line-height: 1.4; color: var(--ink, #262c6a); margin: 0 0 12px; }
   .de-cols a { color: #2f5bd8; }
+  /* slide 1: compact side panel so every row and the explanation fit */
+  .slide[data-demo="embers"] .mt-side h4 { margin: 4px 0 4px; }
+  .slide[data-demo="embers"] .mt-side .seg { margin: 2px 0 8px; }
+  .slide[data-demo="embers"] .mt-side label.chk { font-size: 16px; margin: 5px 0; }
+  .slide[data-demo="embers"] .mt-side label.rng { font-size: 15px; margin: 7px 0; gap: 0 10px; }
+  .slide[data-demo="embers"] .mt-side label.rng b { white-space: nowrap; }
+  .slide[data-demo="embers"] .mt-side .row.wrap { margin-top: 10px; }
+  .slide[data-demo="embers"] .mt-stats { gap: 6px; margin-top: 10px; }
+  .slide[data-demo="embers"] .mt-stats div { padding: 4px 10px; align-items: center; }
+  .slide[data-demo="embers"] .mt-stats b { font-size: 22px; min-width: 52px; }
+  .slide[data-demo="embers"] .mt-stats span { font-size: 13.5px; line-height: 1.25; }
+  .slide[data-demo="embers"] .mt-out { font-size: 15px; line-height: 1.35; margin-top: 10px; }
 </style>
 <script>
   window.DECK = { title: 'Mastering Game Mechanics · Understand Mechanics · Destruction Warlock & Chaotic Energy', home: '../index.html', audio: false, cues: null };
@@ -43,7 +55,7 @@
       <label class="chk"><input type="checkbox" class="de-hav"> Second target (Havoc)</label>
       <label class="chk"><input type="checkbox" class="de-exec"> Target under 20% (Shadowburn)</label>
       <label class="rng">Crit chance <b class="de-crit-v"></b><input type="range" class="de-crit" min="10" max="50" step="1" value="25"></label>
-      <label class="rng">Chaotic Energy regen <b class="de-regen-v"></b><input type="range" class="de-regen" min="25" max="100" step="5" value="100"></label>
+      <label class="rng">Regen <b class="de-regen-v"></b><input type="range" class="de-regen" min="25" max="100" step="5" value="100"></label>
       <label class="rng">Mastery <b class="de-mast-v"></b><input type="range" class="de-mast" min="8" max="24" step="1" value="16"></label>
       <div class="row wrap"><button class="btn de-break">Take a 4 s break</button><button class="btn de-tour on">▶ Walk-through</button></div>
       <div class="mt-stats de-stats"></div>

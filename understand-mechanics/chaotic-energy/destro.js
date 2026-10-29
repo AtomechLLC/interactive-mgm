@@ -473,8 +473,8 @@
       seg.forEach(b => b.classList.toggle('on', (b.dataset.v === 'pool') === st.o.pool));
       $(sl, '.de-crit-v').textContent = `${Math.round(st.o.crit * 100)}%`;
       rg.value = Math.round((st.o.regen ?? 1) * 100);
-      $(sl, '.de-regen-v').textContent = `${rg.value}%${+rg.value === 100 ? ' (5.4)' : ''}: ${Math.round(R.mana.mp5 / 5 * (1 + R.mana.ce) * (1 + st.o.haste) * (st.o.regen ?? 1) / 1000)}k Chaotic Energy per second`;
-      $(sl, '.de-mast-v').textContent = `${st.o.mastery} pts: Chaos Bolt +${Math.round(R.mast.spender * st.o.mastery * 100)}%, fillers +${Math.round(R.mast.filler * st.o.mastery * 100)}%`;
+      $(sl, '.de-regen-v').textContent = `${rg.value}%${+rg.value === 100 ? ' (5.4)' : ''} · ${Math.round(R.mana.mp5 / 5 * (1 + R.mana.ce) * (1 + st.o.haste) * (st.o.regen ?? 1) / 1000)}k per second`;
+      $(sl, '.de-mast-v').textContent = `${st.o.mastery}: Chaos Bolt +${Math.round(R.mast.spender * st.o.mastery * 100)}%, fillers +${Math.round(R.mast.filler * st.o.mastery * 100)}%`;
     }
     const free = () => { if (st.tour) { st.tour = false; tourBtn.classList.remove('on'); st.o.breaks = []; st.t = 0; } };
     const change = f => () => { free(); f(); rebuild(); sync(); };
@@ -509,10 +509,10 @@
       if (key === st.key) return; st.key = key;
       const cbShare = sh.tot ? ((sh.by.cb || 0) + (sh.by.sb || 0)) / sh.tot : 0, cbTime = sh.tt ? ((sh.tm.cb || 0) + (sh.tm.sb || 0)) / sh.tt : 0;
       say($(sl, '.de-stats'), `<div class="g"><b>${pct(cbShare)}</b><span>of damage from embers spent, in ${pct(cbTime)} of the casting time</span></div>`
-        + `<div class="y"><b>${k$(st.cmp.pool)}</b><span>DPS pooling for Dark Soul, against ${k$(st.cmp.spend)} spending at once (5-minute average)</span></div>`
+        + `<div class="y"><b>${k$(st.cmp.pool)}</b><span>DPS pooling for Dark Soul, vs ${k$(st.cmp.spend)} spending at once (5-min average)</span></div>`
         + (st.brk && t >= DUR ? `<div class="r"><b>${pct(st.brk.lost / (st.brk.lost + s.dmg))}</b><span>of damage lost to ${st.brk.time} s of breaks (${pct(st.brk.time / DUR)} of the fight)</span></div>` : ''));
       const OUT = {
-        build: 'Incinerate and Conflagrate add ember bits: 1 per hit, 2 on a crit, sometimes 1 bonus. Ten bits make an ember, and the bar holds four. Below it, mana: Chaotic Energy replaced Life Tap, so mana refills fast and the embers set the pace.',
+        build: 'Incinerate and Conflagrate add ember bits: 1 per hit, 2 on a crit, sometimes 1 bonus. Ten bits make an ember, and the bar holds four. Below it is Chaotic Energy, which replaced Life Tap: it refills fast, so the embers set the pace.',
         cb: st.o.pool ? 'Near the cap at 3.5 embers, one Chaos Bolt spends an ember so no bits are lost. It always crits, and your crit chance multiplies it again.' : 'Spending each ember the moment it fills: a Chaos Bolt every few casts, whatever else is happening.',
         ds: 'Dark Soul: +30% crit for 20 seconds. Fillers crit more, so embers come faster, and every Chaos Bolt hits harder. The banked embers are spent here.',
         break: 'A break: the warlock moves and casts nothing. Only the filler casts are lost. The banked embers wait, and the payoff happens after.',
