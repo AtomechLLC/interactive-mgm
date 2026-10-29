@@ -18,6 +18,36 @@
 <div class="viewport"><div class="stage">
 
 <!-- SLIDES -->
+<!-- slide 30 -->
+<section class="slide" data-title="Lego Bricks" data-demo="lego">
+  <div class="kicker">just like lego bricks</div>
+  <h2 class="sm">One Pile, <span class="accent">Many Enemies</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <div class="row wrap" style="margin-top:0"><button class="btn ck-tour on">▶ Replay</button></div>
+      <p class="mt-out out1"></p>
+      <p class="src">Bricks sampled from Super Mario Bros. sprites (Nintendo, 1985).</p>
+    </div>
+  </div>
+</section>
+
+<!-- slides 33-36 -->
+<section class="slide" data-title="Black Box Decomposer" data-demo="black-box">
+  <div class="kicker">decomposition</div>
+  <h2 class="sm">Open the Black Box, <span class="accent">Fill the Toolbox</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <p class="tip" style="margin-top:0">Click a box on the canvas to open it.</p>
+      <div class="row wrap"><button class="btn bb-all">Open all</button><button class="btn bb-reset">Close all</button><button class="btn ck-tour on">▶ Walk-through</button></div>
+      <div class="mt-stats st"></div>
+      <p class="mt-out out1"></p>
+      <p class="src">Items from Super Mario Bros., World of Warcraft, Pokémon, Dark Souls and League of Legends. Art: Nintendo, Blizzard, The Pokémon Company, Riot Games; the flask is a game-icons.net stand-in. Part tags are this page’s reading.</p>
+    </div>
+  </div>
+</section>
+
 <!-- 4: slides 37, 40, 73 -->
 <section class="slide" data-title="One Element, Four Targets" data-demo="fire-grid">
   <div class="kicker">framework in use: source and target</div>
@@ -36,12 +66,45 @@
   </div>
 </section>
 
+<!-- slides 38-42 -->
+<section class="slide" data-title="Toolbox to Composite" data-demo="toolbox">
+  <div class="kicker">composition</div>
+  <h2 class="sm">Pick the Parts, <span class="accent">Name the Item</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <p class="tip" style="margin-top:0">Click a part in each column on the canvas.</p>
+      <div class="row wrap"><button class="btn tb-rand">🎲 Random item</button><button class="btn ck-tour on">▶ Walk-through</button></div>
+      <p class="mt-out out1"></p>
+      <p class="src">Parts from the black box slide. Item tags are this page’s reading.</p>
+    </div>
+  </div>
+</section>
+
+<!-- slide 74 -->
+<section class="slide" data-title="WoW Classic Spell Reels" data-demo="spell-reels">
+  <div class="kicker">world of warcraft: classic</div>
+  <h2 class="sm">Spin the Spell <span class="accent">Creation Framework</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <p class="tip" style="margin-top:0">Click a reel on the canvas to step it.</p>
+      <div class="row wrap"><button class="btn pick sr-spin">🎰 Spin</button><button class="btn sr-known">A Classic spell</button><button class="btn ck-tour on">▶ Walk-through</button></div>
+      <p class="mt-out out1"></p>
+      <p class="src">Reel columns from slide 74. Spell icons: World of Warcraft (Blizzard). Spell tags are this page’s reading of each Classic spell.</p>
+    </div>
+  </div>
+</section>
+
 </div></div>
 <script src="../../assets/deck.js"></script>
 <script src="../../assets/kit.js"></script>
 <script src="../shared/topdown.js"></script>
 <script src="../shared/icons.js"></script>
 <script src="../shared/comp.js"></script>
+<script src="lego.js"></script>
+<script src="blackbox.js"></script>
 <script src="fire-grid.js"></script>
+<script src="reels.js"></script>
 </body>
 </html>

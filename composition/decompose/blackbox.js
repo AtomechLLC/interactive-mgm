@@ -49,9 +49,9 @@
       });
       // what each opened box breaks into
       panel(g, 14, 200, 640, 372, { title: 'Composite parts' });
-      SLOTS.forEach(([n, tone], j) => text(g, n, 120 + j * 120, 236, { size: 13, w: 800, col: tone.col }));
+      SLOTS.forEach(([n, tone], j) => text(g, n, 120 + j * 120, 252, { size: 13, w: 800, col: tone.col }));
       opened.forEach(([i, at], r) => {
-        const b = BOXES[i], y = 272 + r * 58, k = clamp((t - at - .3) / .5);
+        const b = BOXES[i], y = 292 + r * 54, k = clamp((t - at - .3) / .5);
         art(g, b, 46, y, 34);
         b[4].forEach((p, j) => { const a = clamp(k * 3 - j * .35); g.save(); g.globalAlpha = a; chip(g, p, 120 + j * 120, y, { ...SLOTS[j][1], size: 13, width: 104 }); g.restore(); });
       });
@@ -60,7 +60,7 @@
       const seen = {}, firstAt = {};
       opened.forEach(([i, at]) => BOXES[i][4].forEach((p, j) => { const key = j + p; if (!seen[key]) { seen[key] = [j, p]; firstAt[key] = at + .3 + j * .12; } }));
       const groups = SLOTS.map((s, j) => Object.values(seen).filter(v => v[0] === j));
-      let y = 244;
+      let y = 272;
       groups.forEach((list, j) => {
         let x = 688;
         list.forEach(([, p]) => {
@@ -73,7 +73,7 @@
           g.restore(); x += w + 8;
           if (reused.length > 1) text(g, `×${reused.length}`, x - 8, y - 15, { size: 10.5, w: 800, col: C.goldInk, align: 'right', a });
         });
-        if (list.length) y += 62;
+        if (list.length) y += 58;
       });
     },
     side(t, st, tour) {

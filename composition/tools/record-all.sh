@@ -8,7 +8,7 @@ NOSIDE='.mt-side{display:none!important} .mt-wrap{grid-template-columns:auto!imp
 ONLY="$*"
 rec() { case " $ONLY " in *" $3 "*|"  ") node record-slide-gif.js "$U/$1" "$2" "../gifs/$3.gif" 15 "" "$NOSIDE" & ;; esac; }
 rec 'why-scale/index.html#2' bestiary two-views-one-bestiary
-rec 'decompose/index.html#1' fire-grid one-element-four-targets
+rec 'decompose/index.html#3' fire-grid one-element-four-targets
 rec 'archetypes/index.html#2' arch-gallery souls-archetype-gallery
 rec 'archetypes/index.html#3' paladin-turtle paladin-or-turtle
 rec 'counter-circle/index.html#1' strip-circle strip-the-packaging-counter-circle
@@ -18,4 +18,14 @@ rec 'ability-forge/index.html#2' keyword-reach keyword-reach
 rec 'archetypes/index.html#1' arch-composer souls-archetype-composer
 rec 'counter-circle/index.html#2' nine-grid nine-fundamentals-audit
 rec 'systems/index.html#1' doom-swap doom-encounter-swapper
+rec 'why-scale/index.html#1' open-secret industry-open-secret
+rec 'why-scale/index.html#3' depth-scale depth-or-scale
+rec 'decompose/index.html#1' lego lego-bricks
+rec 'decompose/index.html#2' black-box black-box-decomposer
+rec 'decompose/index.html#4' toolbox toolbox-to-composite
+rec 'decompose/index.html#5' spell-reels wow-classic-spell-reels
+rec 'three-dials/index.html#2' strip-ability strip-the-packaging-abilities
+rec 'three-dials/index.html#3' reflect-window reflect-window-test
+rec 'three-dials/index.html#4' same-purpose same-purpose-five-payloads
+rec 'three-dials/index.html#5' coverage keyword-coverage-map
 wait

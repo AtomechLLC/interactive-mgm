@@ -45,7 +45,7 @@
       if (!model) { text(g, 'Loading…', 520, 290, { size: 18, col: C.muted }); return; }
       // which shape is being built, and how far
       const phase = (si, t0) => { const up = ease(clamp((t - t0) / 1.6)), down = ease(clamp((t - t0 - 3.4) / 1.2)); return [up, down]; };
-      text(g, 'One pile of bricks', 520, 520 - 62, { size: 14, w: 700, col: C.muted });
+      text(g, 'One pile of bricks', 520, 576, { size: 14, w: 700, col: C.muted });
       model.pile.forEach((p, i) => {
         let x = p.px, y = p.py, s = .62;
         SHAPES.forEach(([, , t0], si) => {

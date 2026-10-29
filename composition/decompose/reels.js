@@ -73,10 +73,10 @@
       // coverage: shape x payload
       panel(g, 702, 14, 324, 558, { title: 'Coverage: shape × payload' });
       const pays = REELS[2][1], shapes = REELS[0][1];
-      shapes.forEach((sh, r) => text(g, sh.replace('Circular ', 'Circ. '), 800, 116 + r * 106, { size: 11.5, w: 700, align: 'right' }));
-      pays.forEach((p, c) => { g.save(); g.translate(818 + c * 25, 92); g.rotate(-Math.PI / 2.4); text(g, p.replace('Spell Cast ', '').replace('Apply Status Effect', 'Status'), 0, 0, { size: 10.5, align: 'left', col: C.muted }); g.restore(); });
+      shapes.forEach((sh, r) => text(g, sh.replace('Circular ', 'Circ. '), 800, 160 + r * 104, { size: 11.5, w: 700, align: 'right' }));
+      pays.forEach((p, c) => { g.save(); g.translate(818 + c * 25, 104); g.rotate(-Math.PI / 2.4); text(g, p.replace('Spell Cast ', '').replace('Apply Status Effect', 'Status'), 0, 0, { size: 10.5, align: 'left', col: C.muted }); g.restore(); });
       shapes.forEach((sh, r) => pays.forEach((p, c) => {
-        const n = SPELLS.filter(s => s[3][0] === r && s[3][2] === c).length, here = v[0] === r && v[2] === c, x = 818 + c * 25, y = 116 + r * 106;
+        const n = SPELLS.filter(s => s[3][0] === r && s[3][2] === c).length, here = v[0] === r && v[2] === c, x = 818 + c * 25, y = 160 + r * 104;
         g.fillStyle = n ? `rgba(47,174,99,${.25 + .2 * n})` : 'rgba(150,140,115,.15)'; g.fillRect(x - 11, y - 46, 22, 92);
         if (n) text(g, String(n), x, y, { size: 12, w: 800, col: '#145c33' });
         if (here) { g.strokeStyle = C.gold; g.lineWidth = 3; g.strokeRect(x - 12, y - 47, 24, 94); }
