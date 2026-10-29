@@ -976,10 +976,13 @@
 
   // ---------- frame ----------
   const cv = document.getElementById('c'); X = cv.getContext('2d');
+  const qs = new URLSearchParams(location.search);
+  // backing store scale: ?k=1.5 renders 1920x1080 for the GIFs; on screen it follows the display's pixel ratio
+  const K = +qs.get('k') || Math.min(2, Math.max(1, devicePixelRatio || 1));
+  cv.width = W * K; cv.height = H * K;
   // the course deck's parchment texture (same file the deck theme uses)
   const paper = new Image(); paper.src = '../../assets/img/theme/paper.jpg';
   const paperReady = paper.decode().catch(() => {});
-  const qs = new URLSearchParams(location.search);
   let idx = clamp((+qs.get('p') || 1) - 1, 0, P.length - 1);
   if (qs.has('rec')) document.body.classList.add('rec');
 
@@ -991,7 +994,7 @@
   function frame(t, v = null) {
     const p = P[idx], th = v == null ? null : p.themes[v];
     E = ENV[th ? th.env : 'dungeon'];
-    X.setTransform(1, 0, 0, 1, 0, 0);
+    X.setTransform(K, 0, 0, K, 0, 0);
     X.fillStyle = C.paper; X.fillRect(0, 0, W, H);
     if (paper.naturalWidth) { const k = Math.max(W / paper.naturalWidth, H / paper.naturalHeight), w = paper.naturalWidth * k, h = paper.naturalHeight * k; X.drawImage(paper, (W - w) / 2, (H - h) / 2, w, h); }
     // header block flush in the top-left corner, angled edge, blue stripe underneath

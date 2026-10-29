@@ -1,18 +1,19 @@
 // Records a counter-cycles slide (2, 3 or 4) as timestamped PNG frames for the course GIFs.
-// Usage: serve InteractiveMGM on :8137, then  node tools/record-cc-gif.js <slide> <frameDir>
-// Encode: ffmpeg -f concat -i <frameDir>/list.txt -vf "fps=12,scale=1280:720:flags=lanczos,split[a][b];[a]palettegen[p];[b][p]paletteuse=dither=bayer:bayer_scale=4:diff_mode=rectangle" -loop 0 out.gif
-const { chromium } = require('C:/Projects/game-agent/node_modules/playwright-core');
+// Usage: serve InteractiveMGM on :${PORT:-8137}, then  node tools/record-cc-gif.js <slide> <frameDir>   (frames are 1920x1080: the 1600x900 slide at 1.2 scale)
+// Encode: ffmpeg -f concat -i <frameDir>/list.txt -vf "fps=12,scale=1920:1080:flags=lanczos,split[a][b];[a]palettegen[p];[b][p]paletteuse=dither=bayer:bayer_scale=4:diff_mode=rectangle" -loop 0 out.gif
 const fs = require('fs'), path = require('path');
+const WIN_PW = 'C:/Projects/game-agent/node_modules/playwright-core', EDGE = 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
+const { chromium } = require(fs.existsSync(WIN_PW) ? WIN_PW : 'playwright');
 const [,, slide, outDir] = process.argv;
-const BASE = 'http://127.0.0.1:8137/pvp/counter-cycles/index.html';
+const BASE = `http://127.0.0.1:${process.env.PORT || 8137}/pvp/counter-cycles/index.html`;
 const CSS = `.viewport{inset:0!important}
 .stage{transform:none!important;left:0!important;top:0!important;border-radius:0!important;box-shadow:none!important}
 .stage::after,.bar,.edge-nav,.touch-pad,.rotate-hint{display:none!important}
 #cur{position:fixed;left:0;top:0;width:34px;height:34px;pointer-events:none;z-index:99999;transform:translate(-200px,-200px);filter:drop-shadow(0 2px 3px rgba(0,0,0,.45))}
 #cur.down{transform-origin:4px 4px}`;
 (async () => {
-  const b = await chromium.launch({ executablePath: 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe' });
-  const p = await b.newPage({ viewport: { width: 1600, height: 900 } });
+  const b = await chromium.launch(fs.existsSync(EDGE) ? { executablePath: EDGE } : {});
+  const p = await b.newPage({ viewport: { width: 1600, height: 900 }, deviceScaleFactor: 1.2 });
   await p.goto(BASE + '#' + slide); await p.reload();
   await p.addStyleTag({ content: CSS });
   await p.evaluate(() => {
@@ -36,7 +37,7 @@ const CSS = `.viewport{inset:0!important}
     frames.push({ fn, t: metadata.timestamp });
     cdp.send('Page.screencastFrameAck', { sessionId }).catch(() => {});
   });
-  await cdp.send('Page.startScreencast', { format: 'png', maxWidth: 1600, maxHeight: 900, everyNthFrame: 1 });
+  await cdp.send('Page.startScreencast', { format: 'png', maxWidth: 1920, maxHeight: 1080, everyNthFrame: 1 });
 
   const S = '.slide.active ';
   const wait = ms => p.waitForTimeout(ms);

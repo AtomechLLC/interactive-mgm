@@ -1,21 +1,23 @@
-// Renders the hazard pattern scenes (../hazards) to looping 1280x720 GIFs in ../gifs.
+// Renders the hazard pattern scenes (../hazards) to looping 1920x1080 GIFs in ../gifs (the 1280x720 scene drawn at k=1.5).
 // Usage: node record.js [patternNumbers...] [--fps 20] [--sheet] [--themes]
 //   --sheet writes a few still frames per pattern to ./frames-sheet instead of GIFs (for checking).
 //   --themes renders the themed cycle (every theme, one loop each) to <file>-themes.gif at 15 fps unless --fps is given.
-// Needs playwright-core and Edge (the bundled chromium does not start on this machine) and ffmpeg on PATH.
-const { chromium } = require('C:/Projects/game-agent/node_modules/playwright-core');
+// Needs playwright-core and Edge (the bundled chromium does not start on this machine) and ffmpeg on PATH;
+// elsewhere it falls back to require('playwright') and its own chromium.
 const fs = require('fs'), path = require('path'), { execFileSync } = require('child_process');
+const WIN_PW = 'C:/Projects/game-agent/node_modules/playwright-core', EDGE = 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
+const { chromium } = require(fs.existsSync(WIN_PW) ? WIN_PW : 'playwright');
 const args = process.argv.slice(2);
 const themes = args.includes('--themes');
 const fps = args.includes('--fps') ? +args[args.indexOf('--fps') + 1] : themes ? 15 : 20;
 const sheet = args.includes('--sheet');
 const only = args.filter((a, i) => /^\d+$/.test(a) && args[i - 1] !== '--fps').map(Number);
 const root = path.resolve(__dirname, '..');
-const page = 'file:///' + path.join(root, 'hazards/index.html').replace(/\\/g, '/') + '?rec=1';
+const page = 'file:///' + path.join(root, 'hazards/index.html').replace(/\\/g, '/') + '?rec=1&k=1.5';
 
 (async () => {
-  const b = await chromium.launch({ executablePath: 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe', args: ['--allow-file-access-from-files'] });
-  const p = await b.newPage({ viewport: { width: 1280, height: 720 } });
+  const b = await chromium.launch({ ...(fs.existsSync(EDGE) ? { executablePath: EDGE } : {}), args: ['--allow-file-access-from-files'] });
+  const p = await b.newPage({ viewport: { width: 1920, height: 1080 } });
   await p.goto(page); await p.evaluate(() => document.fonts.ready);
   await p.evaluate(() => Promise.all(['800 44px Montserrat', '600 20px Jost', '500 20px Jost'].map(f => document.fonts.load(f))));
   await p.evaluate(() => HAZARDS.ready);
