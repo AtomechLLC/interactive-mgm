@@ -1,0 +1,75 @@
+/* Gungeon enemy variants: per-slide layout. Shared look comes from ../../assets/deck.css and kit.css. */
+.slide { padding: 46px 90px 60px; justify-content: flex-start; }
+.slide.center { justify-content: center; }
+.slide h2.sm { font-size: 44px; margin-bottom: 12px; }
+.out { font-size: 20px !important; line-height: 1.38 !important; min-height: 2.8em; margin: 6px 0 0; }
+.row.wrap { flex-wrap: wrap; gap: 8px; align-items: center; }
+.slide.center canvas.ti-canvas { display: block; margin: 0 auto; width: 1100px; height: 260px; background: none; border: 0; }
+.slide.slide:not(.center):not(.dk) canvas.demo { background: none; border: 0; }
+img { image-rendering: pixelated; }
+
+/* the tour */
+.gv-wrap { display: grid; grid-template-columns: 860px 1fr; gap: 24px; margin-top: 2px; }
+.gv-canvas { width: 860px; height: 480px; display: block; border-radius: 12px; box-shadow: 0 0 0 3px #152044, 0 6px 18px rgba(21,32,68,.25); }
+.gv-card { background: #fffaf0; border: 2px solid #cdbf9f; border-radius: 14px; padding: 16px 20px; display: flex; flex-direction: column; }
+.gv-head { display: grid; grid-template-columns: 230px 1fr; gap: 16px; align-items: center; }
+.gv-art { width: 230px; height: 142px; border-radius: 6px; }
+.gv-fam { font: 600 14px var(--display); text-transform: uppercase; letter-spacing: .08em; color: #9a5a06; }
+.gv-name { font: 800 27px/1.1 var(--display); color: #262c6a; margin: 4px 0 8px; }
+.gv-tag { display: inline-block; font: 700 14px var(--display); border-radius: 99px; padding: 3px 11px; border: 2px solid; }
+.gv-tag.k-base { color: #3a3f63; border-color: #9aa0c4; background: #eef0fa; }
+.gv-tag.k-num { color: #23306e; border-color: #8ea2e6; background: #dfe6fb; }
+.gv-tag.k-rule { color: #7a4a00; border-color: #e0a92d; background: #fde9b8; }
+.gv-hp { display: grid; grid-template-columns: 64px 1fr 120px; gap: 10px; align-items: center; margin: 16px 0 4px; font-size: 16px; color: #5d618c; }
+.gv-hp em { font: 700 16px var(--display); font-style: normal; color: #262c6a; }
+.gv-bar { position: relative; height: 16px; background: #ece3cf; border-radius: 8px; overflow: visible; }
+.gv-bar b { position: absolute; inset: 0 auto 0 0; background: linear-gradient(#ff7a6a, #cf2f3b); border-radius: 8px; transition: width .3s; }
+.gv-base { position: absolute; top: -5px; bottom: -5px; width: 3px; background: #152044; transition: left .3s; z-index: 1; }
+.gv-card h4 { font: 700 14px var(--display); text-transform: uppercase; letter-spacing: .07em; color: #5d618c; margin: 14px 0 4px; }
+.gv-card p { font-size: 22px; line-height: 1.32; margin: 0; color: #262c6a; }
+.gv-resp { font-weight: 600; }
+.gv-roster { display: flex; gap: 22px; align-items: flex-end; margin-top: 14px; }
+.gv-grp h5 { font: 700 13px var(--display); text-transform: uppercase; letter-spacing: .07em; color: #5d618c; margin: 0 0 4px; }
+.gv-grp > div { display: flex; gap: 5px; }
+.gv-chip { width: 60px; height: 74px; display: grid; place-items: end center; padding: 0 0 6px; background: #fffaf0; border: 2px solid #cdbf9f; border-radius: 10px; cursor: pointer; transition: transform .15s; }
+.gv-chip img { height: 58px; max-width: 54px; object-fit: contain; object-position: bottom; }
+.gv-chip.k-num { border-color: #8ea2e6; }
+.gv-chip.k-rule { border-color: #e0a92d; }
+.gv-chip.k-base { border-color: #9aa0c4; }
+.gv-chip.on { background: #152044; transform: translateY(-6px); box-shadow: 0 0 0 3px #ffb951; }
+.gv-key { display: grid; gap: 4px; margin-left: auto; font-size: 15px; color: #5d618c; }
+.gv-key span::before { content: ''; display: inline-block; width: 14px; height: 14px; border-radius: 4px; border: 2px solid; margin-right: 7px; vertical-align: -2px; }
+.gv-key .k-base::before { border-color: #9aa0c4; background: #eef0fa; }
+.gv-key .k-num::before { border-color: #8ea2e6; background: #dfe6fb; }
+.gv-key .k-rule::before { border-color: #e0a92d; background: #fde9b8; }
+
+/* the sort */
+.so-tray { display: flex; flex-wrap: wrap; gap: 8px; min-height: 96px; margin-top: 0; }
+.so-chip { display: flex; flex-direction: column; align-items: center; width: 108px; padding: 6px 4px; background: #fffaf0; border: 2px solid #cdbf9f; border-radius: 10px; cursor: grab; user-select: none; }
+.so-chip img { height: 52px; }
+.so-chip span { font: 700 13px var(--display); color: var(--ink); text-align: center; line-height: 1.1; margin-top: 4px; }
+.so-chip.sel { border-color: var(--navy); box-shadow: 0 0 0 3px #ffb951; }
+.so-chip.ok { border-color: #1a8a4c; box-shadow: 0 0 0 2px rgba(26,138,76,.35); }
+.so-chip.no { border-color: #e0a92d; box-shadow: 0 0 0 2px rgba(224,169,45,.45); }
+.so-cols { display: grid; grid-template-columns: 1fr 2fr; gap: 14px; margin-top: 12px; }
+.so-col { background: rgba(255,250,240,.6); border: 2px dashed #b9a578; border-radius: 12px; padding: 8px; min-height: 250px; cursor: pointer; }
+.so-col h4 { font: 800 22px var(--display); color: var(--ink); margin: 0 0 8px; text-align: center; }
+.so-col h4 small { display: block; font: 500 16px Jost, sans-serif; color: #5d618c; }
+.so-drop { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.so-row { flex-wrap: nowrap; align-items: flex-start; margin-top: 8px; }
+.so-row .so-out { flex: 1; }
+.so-row .btn { font-size: 16px; padding: 6px 14px; margin-top: 6px; }
+
+/* the matrix */
+.mx { display: grid; grid-template-columns: 150px repeat(5, 1fr) 2.1fr; gap: 8px; margin-top: 4px; }
+.mx-h { text-align: center; padding: 6px 4px; border-radius: 10px; }
+.mx-h b { display: block; font: 800 20px var(--display); color: #262c6a; }
+.mx-h small { font-size: 15px; color: #5d618c; }
+.mx-h.hot { background: #fde9b8; border: 2px solid #e0a92d; }
+.mx-r { display: grid; place-items: center start; font: 800 19px var(--display); color: #262c6a; }
+.mx-c { min-height: 150px; background: rgba(255,250,240,.7); border: 2px solid #cdbf9f; border-radius: 12px; display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; align-items: flex-end; padding: 8px 4px; }
+.mx-c:empty { background: rgba(255,250,240,.25); border-style: dashed; }
+.mx-g { display: flex; flex-direction: column; align-items: center; width: 92px; cursor: default; border-radius: 8px; padding: 4px 0; }
+.mx-g:hover { background: #fde9b8; }
+.mx-g img { height: 84px; }
+.mx-g span { font: 700 13px/1.1 var(--display); color: #262c6a; text-align: center; margin-top: 4px; }
