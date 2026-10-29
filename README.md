@@ -130,7 +130,7 @@ Home page `understand-mechanics/index.html` (cards from `PAGES` + `READY`, extra
 
 - `xray/`: the Universal Mechanics Description Framework as a stepper: a candle (deck slides 20-25), Mario 3 (27-33), a rusted one-time switch (49-54) and flammable grass (99-100). Each scene is `nodes` + `rules` + `tour` in `xray.js`; buttons become actions and `XR.script` turns them into signal hops.
 - `guarded-door/`: key, lockpick and hammer on a door, a chest and an enemy, plus the notes' security guard (58-63); the narrow/broad x shallow/versatile tool matrix with a cost meter and the 80/20 split (73-74, 83-90). Rules in `WORKS`, `GUARD`, `KIT`.
-- `cast-timeline/`: time as a resource, Fireball vs Shadow Bolt + Life Tap and the Burning Crusade +30% (225-245), the token redesign (246-254) and the boss weakness window (255-256). Token cast time (1.5 s) and window length (5 s) are chosen so the notes' "3 casts instead of 2" always holds.
+- `cast-timeline/`: time as a resource, Fireball vs Shadow Bolt + Life Tap and the Burning Crusade +30% (225-245), the rotation repeating forever (246), the token redesign (246-254) and the boss weakness window (255-256). Token cast time (1.5 s) and window length (5 s) are chosen so the notes' "3 casts instead of 2" always holds.
 - `resource-pool/`: generators, spenders and capacity over 30 seconds with slide 257's x2 / x½ extremes (198-213, 257), discrete vs continuous spending (215-216), and resources & states: a full energy bar sets Mario on fire (219). Numbers are illustrative: `R` in `pool.js`.
 - `grass/`: mechanic or aesthetic, cutting grass that hides things or doesn't (18).
 - `type-weakness/`: the slide 107 X-ray, 5 damage with a type context, x2 or x1 (104-107).

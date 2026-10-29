@@ -19,8 +19,9 @@ rec 'cast-timeline/index.html#1' imbalance.0 cast-time-fireball-spam
 rec 'cast-timeline/index.html#1' imbalance.1 cast-time-mage-breaks
 rec 'cast-timeline/index.html#1' imbalance.2 cast-time-life-tap-balance
 rec 'cast-timeline/index.html#1' imbalance.3 cast-time-burning-crusade
-rec 'cast-timeline/index.html#2' tokens cast-tokens
-rec 'cast-timeline/index.html#3' window cast-weakness-window
+rec 'cast-timeline/index.html#2' forever cast-repeats-forever
+rec 'cast-timeline/index.html#3' tokens cast-tokens
+rec 'cast-timeline/index.html#4' window cast-weakness-window
 rec 'guarded-door/index.html#1' door guarded-door
 rec 'guarded-door/index.html#2' matrix tool-matrix
 rec 'resource-pool/index.html#1' pool resource-pool

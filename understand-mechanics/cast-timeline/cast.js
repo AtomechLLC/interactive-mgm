@@ -1,9 +1,10 @@
 /* Time as a resource (MGM C4 M2, deck slides 225-256): the WoW caster case study on one 10-second window.
    1. Imbalance: Fireball 4 x 10 vs Shadow Bolt 3 x 13 plus a Life Tap (40 vs 39, "close enough"), then ally mana
       restoration removes the Life Tap and the warlock does 52 (30% more).
-   2. Tokens: 4 tokens per window, 25 damage each = 100 whatever you do; shorter casts and back to back casting keep 100
+   2. Repeats forever: the warlock's 3 Shadow Bolts and a Life Tap, window after window, never a second off the button.
+   3. Tokens: 4 tokens per window, 25 damage each = 100 whatever you do; shorter casts and back to back casting keep 100
       but free up time.
-   3. Weakness windows: three short "2x damage taken" windows, each shorter than a cast. The locked rotation's casts end
+   4. Weakness windows: three short "2x damage taken" windows, each shorter than a cast. The locked rotation's casts end
       wherever the cast bar puts them; with tokens the player holds each cast so it ends inside a window.
    Slide numbers are the slides'; the token cast time (1.5 s) and window length (0.8 s) are illustrative. Every scene is a pure function of time, so the GIFs can seek. */
 (function () {
@@ -51,11 +52,11 @@
   }
   // a stage plays the 10-second window in SWEEP real seconds, then holds
   const SWEEP = 5, HOLD = 2.4, STAGE = .3 + SWEEP + HOLD;
-  const playOf = lt => clamp((lt - .3) / SWEEP) * WIN;
 
-  // shared walk-through / free-play plumbing for the three slides
+  // shared walk-through / free-play plumbing for the slides; cfg.span game seconds play in cfg.sweep real seconds
   function stageDemo(name, cfg) {
     let api;
+    const SW = cfg.sweep || SWEEP, ST = .3 + SW + (cfg.hold || HOLD), play = lt => clamp((lt - .3) / SW) * (cfg.span || WIN);
     canvasDemo(name, (s, cv, g) => {
       const st = { tour: true, t: 0, held: false, o: { ...cfg.stages[0] }, key: '' };
       const tourBtn = $(s, '.ct-tour');
@@ -63,16 +64,16 @@
       cfg.wire(s, st, free, () => cfg.sync(s, st.o));
       tourBtn.onclick = () => { st.tour = true; st.t = 0; tourBtn.classList.add('on'); };
       function render() {
-        const i = st.tour ? Math.floor(st.t / STAGE) % cfg.stages.length : -1, lt = st.tour ? st.t % STAGE : Math.min(st.t, STAGE);
+        const i = st.tour ? Math.floor(st.t / ST) % cfg.stages.length : -1, lt = st.tour ? st.t % ST : Math.min(st.t, ST);
         if (st.tour && JSON.stringify(st.o) !== JSON.stringify(cfg.stages[i])) { st.o = { ...cfg.stages[i] }; cfg.sync(s, st.o); }
         T.use(g); g.clearRect(0, 0, W, H);
-        const r = cfg.draw(g, st.o, playOf(lt));
+        const r = cfg.draw(g, st.o, play(lt));
         const key = r.stats + r.out; if (key === st.key) return; st.key = key;
         say($(s, '.ct-stats'), r.stats); say($(s, '.ct-out'), r.out);
       }
       cfg.sync(s, st.o);
-      api = { seek(t) { st.held = st.tour = true; st.t = t; render(); }, dur: () => STAGE * cfg.stages.length };
-      return dt => { if (!st.held) st.t += Math.max(0, dt); if (st.tour && st.t > STAGE * cfg.stages.length) st.t = 0; if (!st.tour && st.t > STAGE) st.t = 0; render(); };
+      api = { seek(t) { st.held = st.tour = true; st.t = t; render(); }, dur: () => ST * cfg.stages.length };
+      return dt => { if (!st.held) st.t += Math.max(0, dt); if (st.tour && st.t > ST * cfg.stages.length) st.t = 0; if (!st.tour && st.t > ST) st.t = 0; render(); };
     });
     return { seek: t => api.seek(t), dur: () => api.dur() };
   }
@@ -120,7 +121,45 @@
     },
   });
 
-  /* ---------- 2. tokens ---------- */
+  /* ---------- 2. repeats forever ---------- */
+  // the warlock's locked rotation over three windows in a row, then a ghost row for every window after
+  const ROWS = 3, ROW_H = 78, rowY = r => 58 + r * (ROW_H + 10);
+  const forever = stageDemo('forever', {
+    stages: [{}], span: ROWS * WIN, sweep: 12, hold: 3.2,
+    wire() {}, sync() {},
+    draw(g, o, play) {
+      axis(g, 34); grid(g, 50, rowY(ROWS) + 46);
+      const casts = warlockCasts(false);
+      let dmg = 0;
+      for (let r = 0; r < ROWS; r++) {
+        const y = rowY(r), local = play - r * WIN;
+        dmg += lane(g, y, ROW_H, `Window ${r + 1}`, COL.sb, casts, local, 'warlock');
+        playhead(g, local, y - 4, y + ROW_H);
+      }
+      // ghost row: the same four slots, outlined, for every window after
+      const gy = rowY(ROWS), on = play >= ROWS * WIN;
+      g.globalAlpha = on ? 1 : .45;
+      g.fillStyle = 'rgba(255,252,244,.6)'; g.beginPath(); g.roundRect(10, gy, W - 20, 40, 10); g.fill();
+      g.fillStyle = C.navy; g.font = '700 14px Jost, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('Window 4, 5, 6…', 74, gy + 20);
+      casts.forEach(c => { const x = sx(c.s), w = sx(c.e) - x, cc = COL[c.kind]; g.strokeStyle = cc; g.lineWidth = 2; g.setLineDash([6, 5]); g.beginPath(); g.roundRect(x + 2, gy + 5, w - 4, 30, 6); g.stroke(); g.setLineDash([]); g.fillStyle = cc; g.font = '700 13px Jost, sans-serif'; g.fillText(`${NAME[c.kind]}…`, x + w / 2, gy + 20); });
+      g.globalAlpha = 1;
+      // running totals across every window so far
+      const all = [0, 1, 2].flatMap(r => casts.map(c => ({ ...c, s: c.s + r * WIN, e: c.e + r * WIN })));
+      const presses = all.filter(c => play > c.s).length, taps = all.filter(c => c.kind === 'lt' && play >= c.e).length, done = play >= ROWS * WIN;
+      const ty = 400;
+      tile(g, 20, ty, 236, done ? dmg : dmg + '…', 'damage, 39 every window', COL.sb);
+      tile(g, 272, ty, 236, `${presses}`, 'button presses');
+      tile(g, 524, ty, 236, `${taps}`, 'Life Taps: a cast slot each', COL.lt);
+      tile(g, 776, ty, 244, '0.0 s', 'time not casting', C.redDk);
+      if (done) T.label('Delete Life Tap and it’s 4 Shadow Bolts back to back: still no break', W / 2, 540, 'center', '#fff', 15, C.navy);
+      const out = done
+        ? 'Every window is the same four slots: 3 Shadow Bolts and a Life Tap, 39 damage, and not one second off the button, forever. Delete Life Tap and you get 4 bolts a window and still no break. Tuning the numbers can’t make room for a pause.'
+        : 'The rotation that made 39 against 40 never stops: Shadow Bolt, Shadow Bolt, Shadow Bolt, Life Tap, and again.';
+      return { done, stats: stat('', done ? dmg : '…', 'warlock damage') + stat('y', presses, 'button presses') + stat('r', '0.0 s', 'free to move'), out };
+    },
+  });
+
+  /* ---------- 3. tokens ---------- */
   const TOK_CAST = 1.5, TOK_DMG = 25;
   const STEP = [
     { name: 'Locked casts', casts: [0, 1, 2, 3].map(i => ({ s: i * 2.5, e: i * 2.5 + 2.5, kind: 'sb', dmg: TOK_DMG })), tokens: false },
@@ -163,7 +202,7 @@
     },
   });
 
-  /* ---------- 3. the weakness windows ---------- */
+  /* ---------- 4. the weakness windows ---------- */
   // three short 2x windows, each shorter than one cast: the skill is making a cast END inside one
   const WLEN = .8, WINS = off => [0, 1, 2].map(i => off + 1 + i * 3);
   const inAny = (e, off) => WINS(off).some(ws => e >= ws - 1e-6 && e <= ws + WLEN + 1e-6);
@@ -209,7 +248,7 @@
   });
 
   // which = 'imbalance' records the whole walk-through; 'imbalance.2' records only its 3rd stage, for one GIF per section
-  const pick = w => { const [n, i] = w.split('.'); return [{ imbalance, tokens, window: win }[n], i == null ? 0 : +i * STAGE, i != null]; };
+  const pick = w => { const [n, i] = w.split('.'); return [{ imbalance, forever, tokens, window: win }[n], i == null ? 0 : +i * STAGE, i != null]; };
   window.__seek = (t, w) => { const [d, t0] = pick(w); d.seek(t0 + t + (t0 ? 1e-6 : 0)); };
   window.__dur = w => { const [d, , one] = pick(w); return one ? STAGE : d.dur(); };
 })();
