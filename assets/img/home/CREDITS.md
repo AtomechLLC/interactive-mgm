@@ -46,6 +46,7 @@ From [game-icons.net](https://game-icons.net), licensed [CC BY 3.0](https://crea
 | `pve-interactions--escalation.svg` | [stairs-goal](https://game-icons.net/1x1/delapouite/stairs-goal.html) | Delapouite |
 | `pve-interactions--mutators.svg` | [dna2](https://game-icons.net/1x1/lorc/dna2.html) | Lorc |
 | `pve-interactions--gungeon-variants.svg` | [bullets](https://game-icons.net/1x1/lorc/bullets.html) | Lorc |
+| `pve-interactions--lessons.svg` | [graduate-cap](https://game-icons.net/1x1/delapouite/graduate-cap.html) | Delapouite |
 | `pve-interactions--hazards.svg` | [falling-rocks](https://game-icons.net/1x1/delapouite/falling-rocks.html) | Delapouite |
 | `coop-interactions.svg` | [three-friends](https://game-icons.net/1x1/delapouite/three-friends.html) | Delapouite |
 | `coop-interactions--interactions.svg` | [mesh-network](https://game-icons.net/1x1/delapouite/mesh-network.html) | Delapouite |
