@@ -11,6 +11,9 @@ rec 'doors/index.html#3' kinds doors-binary-discrete-continuous "$NOSIDE"
 rec 'contrapositive/index.html#2' arena contrapositive-arena
 rec 'inversion/index.html#2' raid inversion-danger-safe-ring "$NOSIDE"
 rec 'reverse-map/index.html#1' map reverse-sequencing-map
+rec 'reverse-map/index.html#2' rv-pokemon reverse-sequencing-pokemon-gym "$NOSIDE"
+rec 'reverse-map/index.html#3' rv-cards reverse-sequencing-card-turn "$NOSIDE"
+rec 'reverse-map/index.html#4' rv-mario reverse-sequencing-mario-climb "$NOSIDE"
 rec 'diminishing/index.html#1' dim diminishing-returns
 rec 'life-per-hit/index.html#1' lph life-per-hit
 wait

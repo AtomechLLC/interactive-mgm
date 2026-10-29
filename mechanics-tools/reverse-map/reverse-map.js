@@ -101,10 +101,11 @@
       say($(s, '.st'), mode === 'fwd' ? `<div><b>1</b><span>route, found by trial and error</span></div>` : `<div class="g"><b>2</b><span>routes, found by asking what the goal needs</span></div>`);
       say($(s, '.out1'), CAPS[mode]);
     }
-    api = { seek(t) { st.held = st.tour = true; st.tt = t; render(); }, dur: () => DUR };
+    api = (window.RV = window.RV || {}).map = { seek(t) { st.held = st.tour = true; st.tt = t; render(); }, dur: () => DUR };
     return dt => { if (!st.held) { if (st.tour) { st.tt += dt; if (st.tt > DUR) st.tt = 0; } else st.t = Math.min(st.t + dt, st.mode === 'fwd' ? FDUR : BDUR); } render(); };
   });
 
-  window.__seek = t => api.seek(t);
-  window.__dur = () => api.dur();
+  // the alternate takes (rv-*.js) register in RV too; which picks the slide, and the map is the default
+  window.__seek = (t, w) => (RV[w] || api).seek(t);
+  window.__dur = w => (RV[w] || api).dur();
 })();

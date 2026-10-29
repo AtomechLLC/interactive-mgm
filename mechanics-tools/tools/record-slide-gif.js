@@ -1,5 +1,5 @@
 // Records one slide of a mechanics tools page to a looping 1920x1080 GIF (slide resolution), frame by frame through the page's
-// window.__seek(t, which) / window.__dur(which) hooks (doors, contrapositive, inversion, diminishing, reverse-map, life-per-hit).
+// window.__seek(t, which) / window.__dur(which) hooks (doors, contrapositive, inversion, diminishing, reverse-map and its rv-* takes, life-per-hit).
 // Usage: serve InteractiveMGM on a port, then
 //   node record-slide-gif.js <url with #slide> <which> <out.gif> [fps=15] [hide selectors, comma separated] [extra css]
 // e.g. node record-slide-gif.js http://127.0.0.1:8151/mechanics-tools/doors/index.html#2 tour ../gifs/doors-switch-plate-pulley.gif
