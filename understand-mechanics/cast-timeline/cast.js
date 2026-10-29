@@ -208,6 +208,8 @@
     },
   });
 
-  window.__seek = (t, w) => ({ imbalance, tokens, window: win })[w].seek(t);
-  window.__dur = w => ({ imbalance, tokens, window: win })[w].dur();
+  // which = 'imbalance' records the whole walk-through; 'imbalance.2' records only its 3rd stage, for one GIF per section
+  const pick = w => { const [n, i] = w.split('.'); return [{ imbalance, tokens, window: win }[n], i == null ? 0 : +i * STAGE, i != null]; };
+  window.__seek = (t, w) => { const [d, t0] = pick(w); d.seek(t0 + t + (t0 ? 1e-6 : 0)); };
+  window.__dur = w => { const [d, , one] = pick(w); return one ? STAGE : d.dur(); };
 })();
