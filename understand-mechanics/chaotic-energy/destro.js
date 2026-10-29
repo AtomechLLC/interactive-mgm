@@ -63,7 +63,7 @@
     const castTime = k => k === 'inc' ? R.inc.cast / haste * (s.bd >= 1 ? 1 - R.bd.cut : 1)
       : k === 'cb' ? R.cb.cast / haste * (s.bd >= R.bd.cb ? 1 - R.bd.cut : 1)
       : k === 'imm' ? R.imm.cast / haste : 0;
-    const regen = R.mana.mp5 / 5 * (1 + R.mana.ce) * haste;   // mana per second
+    const regen = R.mana.mp5 / 5 * (1 + R.mana.ce) * haste * (o.regen ?? 1);   // mana per second; o.regen scales it for what-ifs
     const cost = k => (R.mana.cost[k] || 0) * R.mana.max * (k === 'inc' && s.bd >= 1 ? 1 - R.bd.cut : 1);
     const inBreak = () => (o.breaks || []).some(([b, l]) => s.t >= b - 1e-9 && s.t < b + l - 1e-9);
 
@@ -95,7 +95,7 @@
 
     function finish(c) {
       const k = c.k, fm = 1 + R.mast.filler * o.mastery, spm = 1 + R.mast.spender * o.mastery;
-      s.mana -= c.cost;
+      s.mana = Math.max(0, s.mana - c.cost);
       // Havoc: the next 3 single-target spells, or one Chaos Bolt, also hit the second target
       const hv = s.havSt > 0 && s.t < s.havEnd && (k !== 'cb' || s.havSt >= R.hav.cb) && k !== 'hav' && k !== 'ds';
       const tg = hv ? [0, 1] : [0];
@@ -196,6 +196,8 @@
     if (ok('sb') && (!o.pool || em > R.pool || ds || ending || s.havSt >= 1)) return 'sb';
     if (s.immEnd - s.t < R.imm.dur * .3 / (1 + o.haste) + R.imm.cast) return 'imm';
     if (s.conCh === R.con.charges && s.havSt === 0) return 'con';
+    // low on mana: Chaos Bolt costs none, so spend an ember while mana comes back (SimC uses mana.pct<=20 for Shadowburn)
+    if (!F.exec() && ok('cb') && s.mana < R.mana.max * R.mana.cost.inc) return 'cb';
     if (!F.exec() && ok('cb') && s.bd < 3 && (!o.pool || em > R.pool || ds || ending)) return 'cb';
     if (!F.exec() && ok('cb') && s.havSt >= R.hav.cb && s.havEnd - s.t > F.castTime('cb')) return 'cb';
     if (ok('con')) return 'con';
@@ -315,12 +317,13 @@
     const mg = g.createLinearGradient(0, my, 0, my + 22); mg.addColorStop(0, '#e2f25a'); mg.addColorStop(1, '#8cc21e');
     g.save(); g.beginPath(); g.roundRect(x0, my, w, 22, 6); g.clip(); g.fillStyle = mg; g.fillRect(x0, my, w * mf, 22); g.restore();
     ICON.draw(g, 'chaoticenergy', x0 + 12, my + 11, 18);
-    const halo = (str, x, align, col = '#1f2a06') => { g.font = '700 12px Jost, sans-serif'; g.textAlign = align; g.textBaseline = 'middle'; g.lineWidth = 3; g.strokeStyle = 'rgba(245,255,210,.85)'; g.strokeText(str, x, my + 11); g.fillStyle = col; g.fillText(str, x, my + 11); };
-    halo(`Chaotic Energy (mana): +${k$(F.regen)} per second`, x0 + 28, 'left');
-    halo(`${k$(F.manaAt(t))} / ${k$(R.mana.max)}`, x0 + w - 8, 'right');
+    // dark text over the yellow-green fill, light text over the empty bar
+    const halo = (str, x, align, onFill, col) => { g.font = '700 12px Jost, sans-serif'; g.textAlign = align; g.textBaseline = 'middle'; g.lineWidth = 3; g.strokeStyle = onFill ? 'rgba(245,255,210,.85)' : 'rgba(20,26,8,.85)'; g.strokeText(str, x, my + 11); g.fillStyle = col || (onFill ? '#1f2a06' : '#eef7c8'); g.fillText(str, x, my + 11); };
+    halo(`Chaotic Energy (mana): +${k$(F.regen)} per second`, x0 + 28, 'left', w * mf > 300);
+    halo(`${k$(F.manaAt(t))} / ${k$(R.mana.max)}`, x0 + w - 8, 'right', mf > .97);
     s.casts.forEach(c => {
       const a = t - c.end; if (!c.done || !c.cost || a < 0 || a > .7) return;
-      g.save(); g.globalAlpha = clamp(1 - a * 1.4); halo(`−${k$(c.cost)} ${SP[c.k].name}`, x0 + 310, 'left', '#a8201c'); g.restore();
+      g.save(); g.globalAlpha = clamp(1 - a * 1.4); halo(`−${k$(c.cost)} ${SP[c.k].name}`, x0 + 310, 'left', w * mf > 420, w * mf > 420 ? '#a8201c' : '#ffb4a8'); g.restore();
     });
     const by = my + 46, items = [];
     const bdOn = s.casts.length && t < bdEndAt(s, t);
@@ -455,7 +458,7 @@
   let emberApi;
   canvasDemo('embers', (sl, cv, g) => {
     const st = { tour: true, t: 0, held: false, o: { ...TOUR }, F: null, cmp: null, key: '' };
-    const tourBtn = $(sl, '.de-tour'), crit = $(sl, '.de-crit'), mast = $(sl, '.de-mast'), ds = $(sl, '.de-ds'), hav = $(sl, '.de-hav'), ex = $(sl, '.de-exec'), brk = $(sl, '.de-break');
+    const tourBtn = $(sl, '.de-tour'), crit = $(sl, '.de-crit'), mast = $(sl, '.de-mast'), rg = $(sl, '.de-regen'), ds = $(sl, '.de-ds'), hav = $(sl, '.de-hav'), ex = $(sl, '.de-exec'), brk = $(sl, '.de-break');
     const seg = $$(sl, '.de-pool .btn');
     // the two spending styles compared as DPS over 12 seeded 5-minute fights each, so crit luck and the fight's last
     // few seconds don't decide it
@@ -469,12 +472,15 @@
       crit.value = Math.round(st.o.crit * 100); mast.value = st.o.mastery; ds.checked = st.o.ds; hav.checked = st.o.havoc; ex.checked = st.o.exec;
       seg.forEach(b => b.classList.toggle('on', (b.dataset.v === 'pool') === st.o.pool));
       $(sl, '.de-crit-v').textContent = `${Math.round(st.o.crit * 100)}%`;
+      rg.value = Math.round((st.o.regen ?? 1) * 100);
+      $(sl, '.de-regen-v').textContent = `${rg.value}%${+rg.value === 100 ? ' (5.4)' : ''}: ${Math.round(R.mana.mp5 / 5 * (1 + R.mana.ce) * (1 + st.o.haste) * (st.o.regen ?? 1) / 1000)}k mana per second`;
       $(sl, '.de-mast-v').textContent = `${st.o.mastery} pts: Chaos Bolt +${Math.round(R.mast.spender * st.o.mastery * 100)}%, fillers +${Math.round(R.mast.filler * st.o.mastery * 100)}%`;
     }
     const free = () => { if (st.tour) { st.tour = false; tourBtn.classList.remove('on'); st.o.breaks = []; st.t = 0; } };
     const change = f => () => { free(); f(); rebuild(); sync(); };
     crit.oninput = change(() => st.o.crit = crit.value / 100);
     mast.oninput = change(() => st.o.mastery = +mast.value);
+    rg.oninput = change(() => st.o.regen = rg.value / 100);
     ds.onchange = change(() => st.o.ds = ds.checked);
     hav.onchange = change(() => st.o.havoc = hav.checked);
     ex.onchange = change(() => st.o.exec = ex.checked);

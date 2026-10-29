@@ -59,3 +59,4 @@ The "Spend at once" option drops the 3.5-ember and Dark Soul conditions. Trinket
 - No travel time, misses or pets. Haste shortens casts and Immolate's tick interval but not the 1.0 s global cooldown.
 - Immolate refreshes carry over up to half the duration.
 - The comparison of "Pool for Dark Soul" and "Spend at once" averages 12 seeded 5-minute fights each. It comes out within about 1%: pooling gains a little, which matches 5.x, where pooling mattered mostly for trinket procs and Havoc.
+- The Chaotic Energy regen slider is a what-if: 100% is the 5.4 value. Below about 75% mana runs dry in a minute and the warlock stands idle or spends embers early, since Chaos Bolt costs no mana.
