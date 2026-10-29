@@ -310,15 +310,17 @@
     // buffs
     // the mana bar: Chaotic Energy's fast regen against the fillers' raised costs; Chaos Bolt costs no mana
     const my = ey + eh + 10, mf = F.manaAt(t) / R.mana.max;
-    g.fillStyle = '#1b2142'; g.beginPath(); g.roundRect(x0, my, w, 22, 6); g.fill();
-    const mg = g.createLinearGradient(0, my, 0, my + 22); mg.addColorStop(0, '#6fa0ff'); mg.addColorStop(1, '#2f5bd8');
+    // Chaotic Energy's fel yellow-green, as on the in-game bar
+    g.fillStyle = '#26301a'; g.beginPath(); g.roundRect(x0, my, w, 22, 6); g.fill();
+    const mg = g.createLinearGradient(0, my, 0, my + 22); mg.addColorStop(0, '#e2f25a'); mg.addColorStop(1, '#8cc21e');
     g.save(); g.beginPath(); g.roundRect(x0, my, w, 22, 6); g.clip(); g.fillStyle = mg; g.fillRect(x0, my, w * mf, 22); g.restore();
     ICON.draw(g, 'chaoticenergy', x0 + 12, my + 11, 18);
-    txt(g, `Mana · Chaotic Energy: +${k$(F.regen)} per second`, x0 + 28, my + 11, '#fff', 12, 'left', 700);
-    txt(g, `${k$(F.manaAt(t))} / ${k$(R.mana.max)}`, x0 + w - 8, my + 11, '#fff', 12, 'right', 700);
+    const halo = (str, x, align, col = '#1f2a06') => { g.font = '700 12px Jost, sans-serif'; g.textAlign = align; g.textBaseline = 'middle'; g.lineWidth = 3; g.strokeStyle = 'rgba(245,255,210,.85)'; g.strokeText(str, x, my + 11); g.fillStyle = col; g.fillText(str, x, my + 11); };
+    halo(`Chaotic Energy (mana): +${k$(F.regen)} per second`, x0 + 28, 'left');
+    halo(`${k$(F.manaAt(t))} / ${k$(R.mana.max)}`, x0 + w - 8, 'right');
     s.casts.forEach(c => {
       const a = t - c.end; if (!c.done || !c.cost || a < 0 || a > .7) return;
-      g.save(); g.globalAlpha = clamp(1 - a * 1.4); txt(g, `−${k$(c.cost)} ${SP[c.k].name}`, x0 + 300, my + 11, '#ffe08a', 12, 'left', 800); g.restore();
+      g.save(); g.globalAlpha = clamp(1 - a * 1.4); halo(`−${k$(c.cost)} ${SP[c.k].name}`, x0 + 310, 'left', '#a8201c'); g.restore();
     });
     const by = my + 46, items = [];
     const bdOn = s.casts.length && t < bdEndAt(s, t);
@@ -400,10 +402,10 @@
     g.beginPath(); pts.forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y)); g.strokeStyle = '#d4651a'; g.lineWidth = 3; g.stroke();
     // mana on the same lane, 0 to full
     const [my, mh] = L.mana, k0 = Math.floor(t0 * 10), k1 = Math.floor(t * 10);
-    g.fillStyle = '#1b2142'; g.fillRect(lx, my, pw, mh);
+    g.fillStyle = '#26301a'; g.fillRect(lx, my, pw, mh);
     g.beginPath(); g.moveTo(sx(k0 / 10), my + mh);
     for (let k = k0; k <= k1; k++) g.lineTo(sx(k / 10), my + mh - F.manaAt(k / 10) / R.mana.max * mh);
-    g.lineTo(sx(k1 / 10), my + mh); g.closePath(); g.fillStyle = '#4a7ff0'; g.fill();
+    g.lineTo(sx(k1 / 10), my + mh); g.closePath(); g.fillStyle = '#b5dc2e'; g.fill();
     s.gains.forEach(gn => { if (gn.at <= t && gn.kept < gn.n) { g.fillStyle = C.red; g.beginPath(); g.arc(sx(gn.at), yv(40) - 4, 4, 0, Math.PI * 2); g.fill(); } });
     // damage per hit
     const [dy, dh] = L.dmg, top = opt.scale || 320000;
@@ -416,7 +418,7 @@
     head(g, 'Casts', x0, cy + ch / 2, C.ink, 13); head(g, 'Embers', x0, ey + eh / 2, C.ink, 13); head(g, 'Damage', x0, dy + 14, C.ink, 13);
     txt(g, 'per hit', x0, dy + 30, C.muted, 11);
     [1, 2, 3, 4].forEach(e => txt(g, String(e), lx - 6, yv(e * 10), C.muted, 11, 'right', 600));
-    head(g, 'Mana', x0, L.mana[0] + L.mana[1] / 2, '#2f5bd8', 13);
+    head(g, 'Mana', x0, L.mana[0] + L.mana[1] / 2, '#5f8a10', 13);
     if (o.pool) T.label('pool to 3.5', lx + pw - 40, yv(R.pool), 'center', C.redDk, 10);
     // playhead and time axis
     const ph = sx(t); g.strokeStyle = C.navy; g.lineWidth = 2; g.beginPath(); g.moveTo(ph, y0); g.lineTo(ph, y0 + h); g.stroke();
