@@ -1,4 +1,4 @@
-/* Reverse sequencing, take 4: a Super Mario World climb, seen from the level designer's chair (real SMW sprites).
+/* Reverse sequencing, take 4: a Super Mario World climb, seen from the level designer's chair (real SMW sprites, with the walk and run cycles).
    Forward: Mario runs at the wall, jumps twice, wanders back and happens to hit the ? block with the feather, then flies
    up. Backward: start at the Dragon Coin six tiles up and ask what lifts Mario that high (a cape, a trampoline, a vine),
    then where each one has to be placed: three routes, every one a block the designer put down working back from the coin. */
@@ -9,6 +9,16 @@
   const QF = [312, GY - 4 * TL], QV = [696, GY - 4 * TL], SPRING = 168;   // block top-left x centre / top y
   const px = { px: true, bottom: true };
 
+  // which sprite a move shows at time tt: jumps use the jump pose, ground moves cycle SMW's walk frames (small Mario has
+  // two), and the caped run switches to the arms-out run cycle once Mario is fast enough to take off
+  function frame(s, tt) {
+    const speed = Math.abs(s.x1 - s.x0) / (s.t1 - s.t0);
+    if (s.h) return s.spr === 'smw-mario.png' ? 'smw-mario-jump.png' : s.spr;
+    if (speed < 1 || s.y1 !== s.y0) return s.spr;
+    if (s.spr === 'smw-mario.png') return `smw-mario-walk${1 + Math.floor(tt * 10) % 2}.png`;
+    if (s.spr === 'smw-cape-mario.png') return speed > 330 ? `smw-cape-run${1 + Math.floor(tt * 16) % 4}.png` : `smw-cape-walk${1 + Math.floor(tt * 10) % 4}.png`;
+    return s.spr;
+  }
   // Mario's moves: [dur, x1, y1 (feet), jump height, sprite]; each starts where the last ended
   function Seq(x, y) {
     const segs = []; let t = 0;
@@ -17,7 +27,7 @@
       get t() { return t; },
       at(tt) {
         const s = segs.find(s => tt < s.t1) || segs.at(-1), k = clamp((tt - s.t0) / (s.t1 - s.t0));
-        return { x: lerp(s.x0, s.x1, k), y: lerp(s.y0, s.y1, k) - s.h * 4 * k * (1 - k), spr: s.h && s.spr === 'smw-mario.png' ? 'smw-mario-jump.png' : s.spr, left: s.x1 < s.x0 - 1 || (s.x1 === s.x0 && s.left), k, s };
+        return { x: lerp(s.x0, s.x1, k), y: lerp(s.y0, s.y1, k) - s.h * 4 * k * (1 - k), spr: frame(s, tt), left: s.x1 < s.x0 - 1 || (s.x1 === s.x0 && s.left), k, s };
       },
       trail(tt) { const o = []; for (let q = 0; q <= Math.min(tt, t); q += .04) { const p = api.at(q); o.push([p.x, p.y - 30]); } return o; },
     };
@@ -30,6 +40,8 @@
   F.add(.7, 140, GY, 0, 'smw-cape-mario.png').add(1.2, 560, GY, 0, 'smw-cape-mario.png'); M.fly = F.t;
   F.add(1.3, COIN[0] - 20, TOP, 120, 'smw-cape-fly.png'); M.got = F.t; F.add(1.8, COIN[0] - 20, TOP, 0, 'smw-cape-mario.png');
   const FDUR = F.t;
+  // load every animation frame up front so the first loop does not skip any
+  ['smw-mario-walk1', 'smw-mario-walk2', 'smw-cape-walk1', 'smw-cape-walk2', 'smw-cape-walk3', 'smw-cape-walk4', 'smw-cape-run1', 'smw-cape-run2', 'smw-cape-run3', 'smw-cape-run4', 'smw-mario-jump', 'smw-cape-fly'].forEach(n => RVK.img(n + '.png'));
 
   const BWD = [[.4, 'goal'], [1.8, 'ask'], [3.3, 'cape'], [4.5, 'spring'], [5.7, 'vine'], [7.1, 'rCape'], [8.1, 'rSpring'], [9.1, 'rVine'], [10.3, 'done']];
   const BDUR = 14;
@@ -65,8 +77,8 @@
       scene(g, { t, featherUsed: t >= M.hit, coinGone: t >= M.got, extra: g => {
         T.trail(F.trail(t), '#fff', .9, 4);
         if (t >= M.hit && t < M.cape) { const k = (t - M.hit) / (M.cape - M.hit); pic(g, 'smw-feather.png', QF[0] + Math.sin(k * 9) * 26, lerp(QF[1] - 10, GY - 50, k) + 21, 42, px); }
-        const w = { 'smw-mario.png': 42, 'smw-mario-jump.png': 48, 'smw-cape-mario.png': 51, 'smw-cape-fly.png': 87 }[p.spr];
-        pic(g, p.spr, p.x, p.y, w, { ...px, flip: p.left });
+        const im = RVK.img(p.spr);   // every sprite at 3x its pixel size
+        pic(g, p.spr, p.x, p.y, (im.naturalWidth || 14) * 3, { ...px, flip: p.left });
       } });
       if (t >= M.jump1 + .3 && t < M.tooHigh + 1.6) T.popText('Too high!', 600, 250, C.redDk, 1);
       if (t >= M.hit && t < M.hit + 1.2) T.popText('A feather!', QF[0], QF[1] - 30, C.purple, 1.2 - (t - M.hit));
