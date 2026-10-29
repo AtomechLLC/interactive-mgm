@@ -26,6 +26,10 @@
     ds: { crit: .30, dur: 20, cd: 120 },                            // Dark Soul: Instability 113858
     mast: { filler: .01, spender: .03 },                            // Mastery: Emberstorm 77220, per point
     pool: 35,                                                       // the APL's burning_ember>3.5 (single target)
+    // Chaotic Energy and mana: 300,000 base mana and 15,000 mp5 at level 90 (SimC gt_octbase_mpby_class, gt_base_mp5);
+    // regen +625% (111546 effect 1) and divided by spell speed (warlock_t::mana_regen_per_second); filler costs +300%
+    // (effect 2). Costs as % of base mana: Incinerate 5, Conflagrate 1, Immolate 3 (all x4), Havoc 4, Dark Soul 5.
+    mana: { max: 300000, mp5: 15000, ce: 6.25, cost: { inc: .20, con: .04, imm: .12, hav: .04, ds: .05 } },
   };
   const SP = {
     inc: { name: 'Incinerate', icon: 'incinerate', col: '#f08a24' },
@@ -51,7 +55,7 @@
       n: 0, t: 0, bits: R.bits.start, wasted: 0, cast: null, gcd: 0, queue: null,
       conCh: R.con.charges, conAt: 0, bd: 0, bdEnd: 0, immEnd: -1, immNext: 0,
       havSt: 0, havEnd: 0, havReady: o.havoc ? 1 : Infinity, dsReady: o.ds ? o.dsAt : Infinity, dsEnd: -1,
-      casts: [], hits: [], gains: [], emb: [[0, R.bits.start]], dmg: 0, main: 0, by: {}, time: {}, kill: null,
+      mana: R.mana.max, mlog: [R.mana.max], dry: 0, casts: [], hits: [], gains: [], emb: [[0, R.bits.start]], dmg: 0, main: 0, by: {}, time: {}, kill: null,
     };
     const dsUp = () => s.t < s.dsEnd;
     const critNow = () => Math.min(1, o.crit + (dsUp() ? R.ds.crit : 0));
@@ -59,6 +63,8 @@
     const castTime = k => k === 'inc' ? R.inc.cast / haste * (s.bd >= 1 ? 1 - R.bd.cut : 1)
       : k === 'cb' ? R.cb.cast / haste * (s.bd >= R.bd.cb ? 1 - R.bd.cut : 1)
       : k === 'imm' ? R.imm.cast / haste : 0;
+    const regen = R.mana.mp5 / 5 * (1 + R.mana.ce) * haste;   // mana per second
+    const cost = k => (R.mana.cost[k] || 0) * R.mana.max * (k === 'inc' && s.bd >= 1 ? 1 - R.bd.cut : 1);
     const inBreak = () => (o.breaks || []).some(([b, l]) => s.t >= b - 1e-9 && s.t < b + l - 1e-9);
 
     function gain(n, why, tgt) {
@@ -82,12 +88,14 @@
       if (k === 'hav') return !o.havoc ? 'No second target' : s.t < s.havReady ? `Havoc is on cooldown (${Math.ceil(s.havReady - s.t)} s)` : '';
       if (k === 'con' && s.conCh < 1) return `Conflagrate is recharging (${Math.ceil(s.conAt - s.t)} s)`;
       if ((k === 'cb' || k === 'sb') && s.bits < 10) return 'Not enough Burning Embers';
+      if (s.mana < cost(k)) return 'Not enough mana';
       if (k === 'sb' && !exec()) return 'Shadowburn needs the target under 20% health';
       return '';
     }
 
     function finish(c) {
       const k = c.k, fm = 1 + R.mast.filler * o.mastery, spm = 1 + R.mast.spender * o.mastery;
+      s.mana -= c.cost;
       // Havoc: the next 3 single-target spells, or one Chaos Bolt, also hit the second target
       const hv = s.havSt > 0 && s.t < s.havEnd && (k !== 'cb' || s.havSt >= R.hav.cb) && k !== 'hav' && k !== 'ds';
       const tg = hv ? [0, 1] : [0];
@@ -126,7 +134,7 @@
     }
 
     function start(k) {
-      const ct = castTime(k), c = { k, at: s.t, end: s.t + ct, dmg: 0, crit: false, done: false,
+      const ct = castTime(k), c = { k, at: s.t, end: s.t + ct, dmg: 0, crit: false, done: false, cost: cost(k),
         bd: (k === 'inc' && s.bd >= 1) || (k === 'cb' && s.bd >= R.bd.cb) };
       s.casts.push(c);
       if (k !== 'ds') s.gcd = s.t + R.gcd;
@@ -135,6 +143,9 @@
 
     function tick(decide) {
       s.n++; s.t = s.n / 100;
+      s.mana = Math.min(R.mana.max, s.mana + regen / 100);
+      if (s.n % 10 === 0) s.mlog.push(s.mana);
+      if (!s.cast && s.t >= s.gcd && s.mana < R.mana.max * R.mana.cost.inc) s.dry += .01;
       if (s.conCh < R.con.charges && s.t >= s.conAt - 1e-9) { s.conCh++; if (s.conCh < R.con.charges) s.conAt += R.con.recharge; }
       if (s.t >= s.bdEnd) s.bd = 0;
       if (s.t >= s.havEnd) s.havSt = 0;
@@ -166,6 +177,8 @@
       s, o, why, castTime, exec, dsUp, critNow,
       advance(to, decide) { while (s.t + .005 < to) tick(decide); return s; },
       // ember bits at time t, from the step log
+      regen,
+      manaAt(t) { return s.mlog[Math.min(s.mlog.length - 1, Math.max(0, Math.round(t * 10)))]; },
       bitsAt(t) { let v = R.bits.start; for (const [at, b] of s.emb) { if (at > t + 1e-9) break; v = b; } return v; },
     };
     return api;
@@ -262,7 +275,7 @@
     ICON.draw(g, 'embers', x0 + 14, y0 + 14, 24);
     head(g, 'Burning Embers', x0 + 34, y0 + 14, C.ink, 15);
     txt(g, `${(bits / 10).toFixed(1)} / 4 embers  (${bits} / 40 bits)`, x0 + w - 4, y0 + 14, C.ink, 14, 'right', 700);
-    const ew = (w - 3 * 12) / 4, eh = 50, ey = y0 + 36;
+    const ew = (w - 3 * 12) / 4, eh = 38, ey = y0 + 30;
     for (let i = 0; i < 4; i++) {
       const ex = x0 + i * (ew + 12), f = clamp((bits - i * 10) / 10), full = f >= 1;
       g.fillStyle = '#241a2e'; g.beginPath(); g.roundRect(ex, ey, ew, eh, 9); g.fill();
@@ -295,7 +308,19 @@
       g.save(); g.globalAlpha = clamp(1.1 - a * 1.2); T.label(`−1 ember: ${SP[c.k].name}`, ex + ew / 2, ey + eh / 2, 'center', '#fff', 12, SP[c.k].col); g.restore();
     });
     // buffs
-    const by = ey + eh + 34, items = [];
+    // the mana bar: Chaotic Energy's fast regen against the fillers' raised costs; Chaos Bolt costs no mana
+    const my = ey + eh + 10, mf = F.manaAt(t) / R.mana.max;
+    g.fillStyle = '#1b2142'; g.beginPath(); g.roundRect(x0, my, w, 22, 6); g.fill();
+    const mg = g.createLinearGradient(0, my, 0, my + 22); mg.addColorStop(0, '#6fa0ff'); mg.addColorStop(1, '#2f5bd8');
+    g.save(); g.beginPath(); g.roundRect(x0, my, w, 22, 6); g.clip(); g.fillStyle = mg; g.fillRect(x0, my, w * mf, 22); g.restore();
+    ICON.draw(g, 'chaoticenergy', x0 + 12, my + 11, 18);
+    txt(g, `Mana · Chaotic Energy: +${k$(F.regen)} per second`, x0 + 28, my + 11, '#fff', 12, 'left', 700);
+    txt(g, `${k$(F.manaAt(t))} / ${k$(R.mana.max)}`, x0 + w - 8, my + 11, '#fff', 12, 'right', 700);
+    s.casts.forEach(c => {
+      const a = t - c.end; if (!c.done || !c.cost || a < 0 || a > .7) return;
+      g.save(); g.globalAlpha = clamp(1 - a * 1.4); txt(g, `−${k$(c.cost)} ${SP[c.k].name}`, x0 + 300, my + 11, '#ffe08a', 12, 'left', 800); g.restore();
+    });
+    const by = my + 46, items = [];
     const bdOn = s.casts.length && t < bdEndAt(s, t);
     items.push(['backdraft', 'Backdraft', bdOn ? `×${bdAt(s, t)}` : '', bdOn]);
     items.push(['conflagrate', 'Conflagrate', `${conAt(s, t)} / 2`, conAt(s, t) > 0]);
@@ -330,7 +355,7 @@
   function timeline(g, F, t, x0, y0, w, h, opt = {}) {
     const s = F.s, o = F.o, lx = x0 + 78, pw = w - 88;
     const t0 = Math.max(0, t - LEAD), sx = v => lx + (v - t0) / WIN * pw;
-    const L = { cast: [y0 + 8, 40], emb: [y0 + 58, 84], dmg: [y0 + 152, 64] };
+    const L = { cast: [y0 + 8, 40], emb: [y0 + 60, 62], mana: [y0 + 130, 22], dmg: [y0 + 160, 56] };
     g.save(); g.beginPath(); g.rect(lx, y0, pw, h); g.clip();
     // Dark Soul windows and breaks behind everything
     s.casts.filter(c => c.k === 'ds' && c.at <= t).forEach(c => {
@@ -373,6 +398,12 @@
     g.beginPath(); pts.forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y)); g.lineTo(sx(t), yv(0)); g.lineTo(sx(0), yv(0)); g.closePath();
     g.fillStyle = 'rgba(240,138,36,.22)'; g.fill();
     g.beginPath(); pts.forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y)); g.strokeStyle = '#d4651a'; g.lineWidth = 3; g.stroke();
+    // mana on the same lane, 0 to full
+    const [my, mh] = L.mana, k0 = Math.floor(t0 * 10), k1 = Math.floor(t * 10);
+    g.fillStyle = '#1b2142'; g.fillRect(lx, my, pw, mh);
+    g.beginPath(); g.moveTo(sx(k0 / 10), my + mh);
+    for (let k = k0; k <= k1; k++) g.lineTo(sx(k / 10), my + mh - F.manaAt(k / 10) / R.mana.max * mh);
+    g.lineTo(sx(k1 / 10), my + mh); g.closePath(); g.fillStyle = '#4a7ff0'; g.fill();
     s.gains.forEach(gn => { if (gn.at <= t && gn.kept < gn.n) { g.fillStyle = C.red; g.beginPath(); g.arc(sx(gn.at), yv(40) - 4, 4, 0, Math.PI * 2); g.fill(); } });
     // damage per hit
     const [dy, dh] = L.dmg, top = opt.scale || 320000;
@@ -385,6 +416,7 @@
     head(g, 'Casts', x0, cy + ch / 2, C.ink, 13); head(g, 'Embers', x0, ey + eh / 2, C.ink, 13); head(g, 'Damage', x0, dy + 14, C.ink, 13);
     txt(g, 'per hit', x0, dy + 30, C.muted, 11);
     [1, 2, 3, 4].forEach(e => txt(g, String(e), lx - 6, yv(e * 10), C.muted, 11, 'right', 600));
+    head(g, 'Mana', x0, L.mana[0] + L.mana[1] / 2, '#2f5bd8', 13);
     if (o.pool) T.label('pool to 3.5', lx + pw - 40, yv(R.pool), 'center', C.redDk, 10);
     // playhead and time axis
     const ph = sx(t); g.strokeStyle = C.navy; g.lineWidth = 2; g.beginPath(); g.moveTo(ph, y0); g.lineTo(ph, y0 + h); g.stroke();
@@ -472,7 +504,7 @@
         + `<div class="y"><b>${k$(st.cmp.pool)}</b><span>DPS pooling for Dark Soul, against ${k$(st.cmp.spend)} spending at once (5-minute average)</span></div>`
         + (st.brk && t >= DUR ? `<div class="r"><b>${pct(st.brk.lost / (st.brk.lost + s.dmg))}</b><span>of damage lost to ${st.brk.time} s of breaks (${pct(st.brk.time / DUR)} of the fight)</span></div>` : ''));
       const OUT = {
-        build: 'Incinerate and Conflagrate add ember bits: 1 per hit, 2 on a crit, sometimes 1 bonus. Ten bits make an ember, and the bar holds four. Mana barely matters: Chaotic Energy replaced Life Tap.',
+        build: 'Incinerate and Conflagrate add ember bits: 1 per hit, 2 on a crit, sometimes 1 bonus. Ten bits make an ember, and the bar holds four. Below it, mana: Chaotic Energy replaced Life Tap, so mana refills fast and the embers set the pace.',
         cb: st.o.pool ? 'Near the cap at 3.5 embers, one Chaos Bolt spends an ember so no bits are lost. It always crits, and your crit chance multiplies it again.' : 'Spending each ember the moment it fills: a Chaos Bolt every few casts, whatever else is happening.',
         ds: 'Dark Soul: +30% crit for 20 seconds. Fillers crit more, so embers come faster, and every Chaos Bolt hits harder. The banked embers are spent here.',
         break: 'A break: the warlock moves and casts nothing. Only the filler casts are lost. The banked embers wait, and the payoff happens after.',

@@ -13,6 +13,7 @@ Data behind `chaotic-energy/` (deck slides 224 and 256, "Limiting Player Actions
 | What | Number | Source |
 | --- | --- | --- |
 | Chaotic Energy (111546) | Replaces Life Tap. Mana regen +625% (effect 1), haste also raises regen; Incinerate, Conflagrate, Immolate mana cost +300% (effect 2); global cooldown −0.5 s, so 1.5 s → 1.0 s (effect 3, SimC `trigger_gcd += effectN(3)`) | Wowhead tooltip, SimC spell data |
+| Mana at level 90 | 300,000 base mana, 15,000 mp5 base regen (SimC `gt_octbase_mpby_class`, `gt_base_mp5`); warlock regen is divided by spell speed, so haste raises it. With Chaotic Energy: 3,000/s × 7.25 × 1.10 haste ≈ 23,900/s. Costs (% of base mana, after ×4): Incinerate 20 (14 with Backdraft), Immolate 12, Conflagrate 4, Havoc 4, Dark Soul 5; Chaos Bolt and Shadowburn 0 | SimC `sc_extra_data.inc`, `sc_scale_data.inc`, `warlock_t::mana_regen_per_second` |
 | Burning Embers (108647) | 4 embers, 10 bits each (SimC stores 0.1 per bit, max 4.0). Fights start with 1 ember (`initial_burning_embers( 1 )`) | Warcraft Wiki, SimC |
 | Ember spenders | Chaos Bolt, Shadowburn, Ember Tap: 10 bits (power type 14, cost 10). Fire and Brimstone versions of Incinerate, Conflagrate, Immolate: 10 bits each | SimC spellpower data |
 

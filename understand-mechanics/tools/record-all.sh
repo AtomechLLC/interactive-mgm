@@ -9,7 +9,9 @@ rec 'type-weakness/index.html#1' weak type-weakness-xray
 rec 'life-tap/index.html#1' tap life-tap-solo-vs-raid
 node record-slide-gif.js "$U/life-tap-trade/index.html#1" solo ../gifs/life-tap-solo-risky.gif 15 .lt-ctl
 node record-slide-gif.js "$U/life-tap-trade/index.html#2" raid ../gifs/life-tap-raid-free.gif 15 .lt-ctl
-rec 'chaotic-energy/index.html#1' embers chaotic-energy-embers
+# canvas only, no side panel
+GIF_CSS='.mt-side{display:none!important}.mt-wrap{grid-template-columns:1fr!important;justify-items:center}.mt-wrap canvas.demo{width:1140px!important;height:641px!important}' GIF_DITHER=none \
+  node record-slide-gif.js "$U/chaotic-energy/index.html#1" embers ../gifs/chaotic-energy-embers.gif 12
 rec 'xray/index.html#1' candle xray-candle
 rec 'xray/index.html#2' mario xray-mario-3
 rec 'xray/index.html#3' switch xray-rusted-switch

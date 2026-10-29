@@ -3,7 +3,7 @@
 // Usage: serve InteractiveMGM on a port, then
 //   node record-slide-gif.js <url with #slide> <which> <out.gif> [fps=15] [hide selectors, comma separated]
 // e.g. node record-slide-gif.js http://127.0.0.1:8151/understand-mechanics/grass/index.html#1 grass ../gifs/grass-mechanic-or-aesthetic.gif
-// Env GIF_COLORS (default 128), GIF_DITHER (default bayer) and GIF_STATS (default diff) trade quality for size on scrolling scenes.
+// Env GIF_CSS adds CSS to the page (e.g. drop the side panel). Env GIF_COLORS (default 128), GIF_DITHER (default bayer) and GIF_STATS (default diff) trade quality for size on scrolling scenes.
 // Needs playwright-core and Edge (the bundled chromium does not start on this machine) and ffmpeg on PATH.
 const { chromium } = require('C:/Projects/game-agent/node_modules/playwright-core');
 const fs = require('fs'), path = require('path'), os = require('os'), { execFileSync } = require('child_process');
@@ -12,7 +12,8 @@ const fps = +fpsArg;
 const CSS = `.viewport{inset:0!important}
 .stage{transform:none!important;left:0!important;top:0!important;border-radius:0!important;box-shadow:none!important}
 .stage::after,.bar,.edge-nav,.touch-pad,.rotate-hint{display:none!important}
-${hide ? hide + '{visibility:hidden!important}' : ''}`;
+${hide ? hide + '{visibility:hidden!important}' : ''}
+${process.env.GIF_CSS || ''}`;
 (async () => {
   const b = await chromium.launch({ executablePath: 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe' });
   const p = await b.newPage({ viewport: { width: 1600, height: 900 } });
