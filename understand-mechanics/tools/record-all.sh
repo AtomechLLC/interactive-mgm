@@ -9,6 +9,7 @@ rec 'type-weakness/index.html#1' weak type-weakness-xray
 rec 'life-tap/index.html#1' tap life-tap-solo-vs-raid
 node record-slide-gif.js "$U/life-tap-trade/index.html#1" solo ../gifs/life-tap-solo-risky.gif 15 .lt-ctl
 node record-slide-gif.js "$U/life-tap-trade/index.html#2" raid ../gifs/life-tap-raid-free.gif 15 .lt-ctl
+rec 'chaotic-energy/index.html#1' embers chaotic-energy-embers
 rec 'xray/index.html#1' candle xray-candle
 rec 'xray/index.html#2' mario xray-mario-3
 rec 'xray/index.html#3' switch xray-rusted-switch

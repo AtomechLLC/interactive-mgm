@@ -136,6 +136,7 @@ Home page `understand-mechanics/index.html` (cards from `PAGES` + `READY`, extra
 - `type-weakness/`: the slide 107 X-ray, 5 damage with a type context, x2 or x1 (104-107).
 - `life-tap/`: the same warlock rotation solo and in a raid (226-228).
 - `life-tap-trade/`: the two Life Tap slides as drawn, before | the trade | after, animated (230 solo, 231 raid). Solo adds a boss hit (slider) to show what the lost 40 HP costs; raid adds the priest's Flash Heal, THX, BRO~ and LOL!. Scenes are `solo(t)` and `raid(t)` in `trade.js`; GIFs `life-tap-solo-risky` and `life-tap-raid-free` (`__seek(t, 'solo' | 'raid')`).
+- `chaotic-energy/`: Destruction Warlock & Chaotic Energy (224, 256), Mists of Pandaria patch 5.4.8. The auto rotation (SimulationCraft's priority list) on a cast timeline with the Burning Ember bar, damage per hit and damage vs casting-time shares, with pooling for Dark Soul, breaks, Havoc and Shadowburn; a play-it-yourself slide (keys 1-6) against a training dummy; and the numbers. `R` at the top of `destro.js` holds every number; `chaotic-energy/SOURCES.md` lists where each comes from (SimC release-548-8 spell data and Wowhead MoP tooltips).
 - `shared/`: `um.css` layout, a copy of the top-down kit, and `xray.js`, the X-ray diagram renderer (boxes coloured by framework part, timed signal hops, bounces for refused signals).
 - GIFs in `gifs/`: rebuild them all with `sh understand-mechanics/tools/record-all.sh` while serving InteractiveMGM on 127.0.0.1:8171.
 - `PROPOSALS.md`: the rest of the deck's interactive and GIF ideas, by section.

@@ -7,6 +7,9 @@
     fireball: 'spell_fire_flamebolt.jpg', shadowbolt: 'spell_shadow_shadowbolt.jpg', lifetap: 'spell_shadow_burningspirit.jpg',
     mage: 'classicon_mage.jpg', warlock: 'classicon_warlock.jpg', priest: 'classicon_priest.jpg', warrior: 'classicon_warrior.jpg',
     heal: 'spell_holy_flashheal.jpg', potion: 'inv_potion_76.jpg', chaosbolt: 'ability_warlock_chaosbolt.jpg', lightning: 'spell_nature_lightning.jpg',
+    incinerate: 'spell_fire_burnout.jpg', conflagrate: 'spell_fire_fireball.jpg', immolate: 'spell_fire_immolation.jpg', shadowburn: 'spell_shadow_scourgebuild.jpg',
+    havoc: 'ability_warlock_baneofhavoc.jpg', darksoul: 'spell_warlock_demonsoul.jpg', backdraft: 'ability_warlock_backdraft.jpg', embers: 'ability_warlock_burningembers.jpg',
+    fnb: 'ability_warlock_fireandbrimstone.jpg', embertap: 'inv_ember.jpg', chaoticenergy: 'spell_fire_felflamering.jpg', rainoffire: 'spell_shadow_rainoffire.jpg', emberstorm: 'spell_fire_moltenblood.jpg',
     key: 'gi-key.svg', lockpick: 'gi-lockpicks.svg', hammer: 'gi-claw-hammer.svg',
   };
   function img(name) {
