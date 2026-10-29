@@ -1,0 +1,506 @@
+{
+ "sn-knife": [
+  "File:Survival Knife.png",
+  "https://static.wikia.nocookie.net/subnautica/images/6/6e/Survival_Knife.png/revision/latest?cb=20190425040709"
+ ],
+ "sn-stasis": [
+  "File:Stasis Rifle.png",
+  "https://static.wikia.nocookie.net/subnautica/images/c/c1/Stasis_Rifle.png/revision/latest?cb=20190425040618"
+ ],
+ "sn-repulsion": [
+  "File:Repulsion Cannon.png",
+  "https://static.wikia.nocookie.net/subnautica/images/7/7a/Repulsion_Cannon.png/revision/latest?cb=20190425040504"
+ ],
+ "sn-seaglide": [
+  "File:Seaglide.png",
+  "https://static.wikia.nocookie.net/subnautica/images/6/6a/Seaglide.png/revision/latest?cb=20260501104143"
+ ],
+ "sn-decoy": [
+  "File:Creature Decoy.png",
+  "https://static.wikia.nocookie.net/subnautica/images/0/08/Creature_Decoy.png/revision/latest?cb=20190425010239"
+ ],
+ "sn-firstaid": [
+  "File:First Aid Kit.png",
+  "https://static.wikia.nocookie.net/subnautica/images/5/50/First_Aid_Kit.png/revision/latest?cb=20200521204944"
+ ],
+ "sn-perimeter": [
+  "File:Seamoth Perimeter Defense System.png",
+  "https://static.wikia.nocookie.net/subnautica/images/e/e1/Seamoth_Perimeter_Defense_System.png/revision/latest?cb=20190425042521"
+ ],
+ "sn-shield": [
+  "File:Cyclops Shield Generator.png",
+  "https://static.wikia.nocookie.net/subnautica/images/0/05/Cyclops_Shield_Generator.png/revision/latest?cb=20190425041221"
+ ],
+ "sn-silent": [
+  "File:Silentrunning.png",
+  "https://static.wikia.nocookie.net/subnautica/images/2/23/Silentrunning.png/revision/latest?cb=20170428060841"
+ ],
+ "sn-prawn": [
+  "File:Prawn Suit.png",
+  "https://static.wikia.nocookie.net/subnautica/images/4/42/Prawn_Suit.png/revision/latest?cb=20190425045054"
+ ],
+ "sn-seamoth": [
+  "File:Seamoth.png",
+  "https://static.wikia.nocookie.net/subnautica/images/d/d6/Seamoth.png/revision/latest?cb=20260501110814"
+ ],
+ "sn-reaper": [
+  "File:Reaper Leviathan Fauna.png",
+  "https://static.wikia.nocookie.net/subnautica/images/e/eb/Reaper_Leviathan_Fauna.png/revision/latest?cb=20191026175551"
+ ],
+ "sn-cyclops": [
+  "File:Cyclops Depth Module MK3 Icon.png",
+  "https://static.wikia.nocookie.net/subnautica/images/1/12/Cyclops_Depth_Module_MK3_Icon.png/revision/latest?cb=20220627013640"
+ ],
+ "gow-kratos": [
+  "File:GOW-RuneweaverSet.png",
+  "https://static.wikia.nocookie.net/godofwar/images/a/ae/GOW-RuneweaverSet.png/revision/latest?cb=20221213023727"
+ ],
+ "gow-kratos-greek": [
+  "File:SistesroffateGOW3.jpg",
+  "https://static.wikia.nocookie.net/godofwar/images/3/39/SistesroffateGOW3.jpg/revision/latest?cb=20221122031153"
+ ],
+ "gow-atreus": [
+  "File:Atreus Promo Render GoWR.jpeg",
+  "https://static.wikia.nocookie.net/godofwar/images/b/bb/Atreus_Promo_Render_GoWR.jpeg/revision/latest?cb=20251202184602"
+ ],
+ "gow-axe": [
+  "File:Gow-leviathan-axe-basic-concept.jpeg",
+  "https://static.wikia.nocookie.net/godofwar/images/5/55/Gow-leviathan-axe-basic-concept.jpeg/revision/latest?cb=20221116234206"
+ ],
+ "gow-blades": [
+  "File:Blades of Chaos Ragnarok Level Max.jpg",
+  "https://static.wikia.nocookie.net/godofwar/images/0/09/Blades_of_Chaos_Ragnarok_Level_Max.jpg/revision/latest?cb=20230909224640"
+ ],
+ "gow-blades-greek": [
+  "File:Blades of Chaos.png",
+  "https://static.wikia.nocookie.net/godofwar/images/b/bf/Blades_of_Chaos.png/revision/latest?cb=20240515181330"
+ ],
+ "gow-shield": [
+  "File:Guardian Shield 1.png",
+  "https://static.wikia.nocookie.net/godofwar/images/d/de/Guardian_Shield_1.png/revision/latest?cb=20230131100332"
+ ],
+ "gow-runic": [
+  "File:Ragnarok Grip-RunicHailstone.png",
+  "https://static.wikia.nocookie.net/godofwar/images/9/97/Ragnarok_Grip-RunicHailstone.png/revision/latest?cb=20230620111637"
+ ],
+ "gow-poseidon": [
+  "File:Poseidon's Rage 2.jpg",
+  "https://static.wikia.nocookie.net/godofwar/images/7/7d/Poseidon%27s_Rage_2.jpg/revision/latest?cb=20080715012335"
+ ],
+ "gow-hermes": [
+  "File:Boots of Hermes.jpg",
+  "https://static.wikia.nocookie.net/godofwar/images/3/38/Boots_of_Hermes.jpg/revision/latest?cb=20101031044829"
+ ],
+ "gow-fleece": [
+  "File:Golden Fleece model.jpg",
+  "https://static.wikia.nocookie.net/godofwar/images/5/5e/Golden_Fleece_model.jpg/revision/latest?cb=20251021225713"
+ ],
+ "gow-olympus": [
+  "File:Blade of olympus god of war by rubenvoorhees1.jpg",
+  "https://static.wikia.nocookie.net/godofwar/images/1/12/Blade_of_olympus_god_of_war_by_rubenvoorhees1.jpg/revision/latest?cb=20110219071138"
+ ],
+ "gow-rage": [
+  "File:Rage of the gods.png",
+  "https://static.wikia.nocookie.net/godofwar/images/7/7f/Rage_of_the_gods.png/revision/latest?cb=20130609191008"
+ ],
+ "cp-v": [
+  "File:2077 male v full front.png",
+  "https://static.wikia.nocookie.net/cyberpunk/images/b/bf/2077_male_v_full_front.png/revision/latest?cb=20190710042229"
+ ],
+ "cp-mantis": [
+  "File:MantisBlades.png",
+  "https://static.wikia.nocookie.net/cyberpunk/images/8/89/MantisBlades.png/revision/latest?cb=20230928074951"
+ ],
+ "cp-sandevistan": [
+  "File:Icon EnemyAbility Sandevistan.png",
+  "https://static.wikia.nocookie.net/cyberpunk/images/3/34/Icon_EnemyAbility_Sandevistan.png/revision/latest?cb=20231114110502"
+ ],
+ "cp-katana": [
+  "File:Katana Colors CP2077WB.png",
+  "https://static.wikia.nocookie.net/cyberpunk/images/b/b7/Katana_Colors_CP2077WB.png/revision/latest?cb=20250223102502"
+ ],
+ "cp-bounceback": [
+  "File:BonesMcCoy70.png",
+  "https://static.wikia.nocookie.net/cyberpunk/images/a/a9/BonesMcCoy70.png/revision/latest?cb=20240502123051"
+ ],
+ "cp-camo": [
+  "File:Icon EnemyAbility Optical Camo.png",
+  "https://static.wikia.nocookie.net/cyberpunk/images/3/3b/Icon_EnemyAbility_Optical_Camo.png/revision/latest?cb=20231114110120"
+ ],
+ "cp-selfice": [
+  "File:SelfIce.png",
+  "https://static.wikia.nocookie.net/cyberpunk/images/9/99/SelfIce.png/revision/latest?cb=20230928104725"
+ ],
+ "cp-maxdoc": [
+  "File:FirstAidWhiff.png",
+  "https://static.wikia.nocookie.net/cyberpunk/images/9/9b/FirstAidWhiff.png/revision/latest?cb=20240502123053"
+ ],
+ "cp-kerenzikov": [
+  "File:Kerenzikov.png",
+  "https://static.wikia.nocookie.net/cyberpunk/images/1/1d/Kerenzikov.png/revision/latest?cb=20230929133137"
+ ],
+ "p2-gun": [
+  "File:Portal Gun Cards.png",
+  "https://i1.theportalwiki.net/img/e/e4/Portal_Gun_Cards.png"
+ ],
+ "p2-cube": [
+  "File:Weighted Storage Cube Receptacle.png",
+  "https://i1.theportalwiki.net/img/d/d6/Weighted_Storage_Cube_Receptacle.png"
+ ],
+ "p2-gel-blue": [
+  "File:Repulsion Gel Cube.png",
+  "https://i1.theportalwiki.net/img/3/38/Repulsion_Gel_Cube.png"
+ ],
+ "p2-gel-orange": [
+  "File:Propulsion Gel Cube.png",
+  "https://i1.theportalwiki.net/img/1/1b/Propulsion_Gel_Cube.png"
+ ],
+ "p2-faith": [
+  "File:Aerial Faith Plate E3 Promo.png",
+  "https://i1.theportalwiki.net/img/1/1b/Aerial_Faith_Plate_E3_Promo.png"
+ ],
+ "e33-gustave": [
+  "File:Character Trailer - Gustave.png",
+  "https://static.wikia.nocookie.net/clair-obscur/images/c/cc/Character_Trailer_-_Gustave.png/revision/latest?cb=20260926113359"
+ ],
+ "e33-maelle": [
+  "File:Character Trailer - Maelle.png",
+  "https://static.wikia.nocookie.net/clair-obscur/images/6/60/Character_Trailer_-_Maelle.png/revision/latest?cb=20260920120425"
+ ],
+ "e33-lune": [
+  "File:Cast Reveal EN - Lune.png",
+  "https://static.wikia.nocookie.net/clair-obscur/images/a/a5/Cast_Reveal_EN_-_Lune.png/revision/latest?cb=20260927094530"
+ ],
+ "e33-sciel": [
+  "File:Character Trailer - Sciel.png",
+  "https://static.wikia.nocookie.net/clair-obscur/images/9/96/Character_Trailer_-_Sciel.png/revision/latest?cb=20260927134407"
+ ],
+ "e33-logo": [
+  "File:Alexandre-breton-layer-portfolio-exp33-1.jpg",
+  "https://static.wikia.nocookie.net/clair-obscur/images/e/eb/Alexandre-breton-layer-portfolio-exp33-1.jpg/revision/latest?cb=20250519002729"
+ ],
+ "sc-marine": [
+  "File:Marine SC1 Head1.jpg",
+  "https://static.wikia.nocookie.net/starcraft/images/5/54/Marine_SC1_Head1.jpg/revision/latest?cb=20071105081222"
+ ],
+ "sc-medic": [
+  "File:Medic SC1 Art1.jpg",
+  "https://static.wikia.nocookie.net/starcraft/images/c/cc/Medic_SC1_Art1.jpg/revision/latest?cb=20080310025303"
+ ],
+ "sc-vessel": [
+  "File:Science Vessel SC1 Art1.jpg",
+  "https://static.wikia.nocookie.net/starcraft/images/4/4a/Science_Vessel_SC1_Art1.jpg/revision/latest?cb=20080716085758"
+ ],
+ "sc-tank": [
+  "File:SC1 Siege Tank.jpg",
+  "https://static.wikia.nocookie.net/starcraft/images/3/36/SC1_Siege_Tank.jpg/revision/latest?cb=20071024121206"
+ ],
+ "sc-vulture": [
+  "File:Vulture SC1 Game1.png",
+  "https://static.wikia.nocookie.net/starcraft/images/c/c3/Vulture_SC1_Game1.png/revision/latest?cb=20080526070521"
+ ],
+ "sc-bunker": [
+  "File:Bunker SC1 CineAscension1.jpg",
+  "https://static.wikia.nocookie.net/starcraft/images/1/17/Bunker_SC1_CineAscension1.jpg/revision/latest?cb=20100814173321"
+ ],
+ "sc-comsat": [
+  "File:Comsat Station SC1 icon.png",
+  "https://static.wikia.nocookie.net/starcraft/images/1/18/Comsat_Station_SC1_icon.png/revision/latest?cb=20150730013132"
+ ],
+ "sc-goliath": [
+  "File:Goliath SC1 Game1.png",
+  "https://static.wikia.nocookie.net/starcraft/images/6/6c/Goliath_SC1_Game1.png/revision/latest?cb=20170612233851"
+ ],
+ "sc-lurker": [
+  "File:Lurker SC1 Art1.jpg",
+  "https://static.wikia.nocookie.net/starcraft/images/0/0e/Lurker_SC1_Art1.jpg/revision/latest?cb=20100307215811"
+ ],
+ "sc-terran": [
+  "File:Terran logo Class.jpg",
+  "https://static.wikia.nocookie.net/starcraft/images/e/e9/Terran_logo_Class.jpg/revision/latest?cb=20210618140237"
+ ],
+ "mk-green": [
+  "File:GreenShellMK8.png",
+  "https://mario.wiki.gallery/images/b/b2/GreenShellMK8.png"
+ ],
+ "mk-red": [
+  "File:RedShellMK8.png",
+  "https://mario.wiki.gallery/images/9/95/RedShellMK8.png"
+ ],
+ "mk-spiny": [
+  "File:SpinyShellMK8.png",
+  "https://mario.wiki.gallery/images/1/10/SpinyShellMK8.png"
+ ],
+ "mk-banana": [
+  "File:BananaMK8.png",
+  "https://mario.wiki.gallery/images/3/39/BananaMK8.png"
+ ],
+ "mk-bobomb": [
+  "File:Bob-ombMK8.png",
+  "https://mario.wiki.gallery/images/1/16/Bob-ombMK8.png"
+ ],
+ "mk-mushroom": [
+  "File:MK8 Mushroom Model.png",
+  "https://mario.wiki.gallery/images/6/6c/MK8_Mushroom_Model.png"
+ ],
+ "mk-bill": [
+  "File:BulletBillMK8.png",
+  "https://mario.wiki.gallery/images/c/cd/BulletBillMK8.png"
+ ],
+ "mk-lightning": [
+  "File:LightningBoltMK8.png",
+  "https://mario.wiki.gallery/images/a/ad/LightningBoltMK8.png"
+ ],
+ "mk-star": [
+  "File:StarMK8.png",
+  "https://mario.wiki.gallery/images/f/f5/StarMK8.png"
+ ],
+ "mk-horn": [
+  "File:SuperHornMK8.png",
+  "https://mario.wiki.gallery/images/9/95/SuperHornMK8.png"
+ ],
+ "mk-boo": [
+  "File:BooMK8.png",
+  "https://mario.wiki.gallery/images/1/16/BooMK8.png"
+ ],
+ "mk-coin": [
+  "File:CoinMK8.png",
+  "https://mario.wiki.gallery/images/1/17/CoinMK8.png"
+ ],
+ "mk-mario": [
+  "File:MK8 Baby Mario Artwork.png",
+  "https://mario.wiki.gallery/images/6/64/MK8_Baby_Mario_Artwork.png"
+ ],
+ "cel-madeline": [
+  "File:Madeline.png",
+  "https://static.wikia.nocookie.net/celestegame/images/4/4a/Madeline.png/revision/latest?cb=20180516071349"
+ ],
+ "cel-badeline": [
+  "File:Badeline.png",
+  "https://static.wikia.nocookie.net/celestegame/images/d/dc/Badeline.png/revision/latest?cb=20180516071457"
+ ],
+ "cel-strawberry": [
+  "File:Strawberry.png",
+  "https://static.wikia.nocookie.net/celestegame/images/6/6d/Strawberry.png/revision/latest?cb=20200216224654"
+ ],
+ "dl-abrams": [
+  "File:Abrams.png",
+  "https://cdn.deadlock.wiki/Abrams.png"
+ ],
+ "dl-siphon": [
+  "File:Siphon Life.png",
+  "https://cdn.deadlock.wiki/Siphon_Life.png"
+ ],
+ "dl-charge": [
+  "File:Shoulder Charge.png",
+  "https://cdn.deadlock.wiki/Shoulder_Charge.png"
+ ],
+ "dl-resilience": [
+  "File:Infernal Resilience.png",
+  "https://cdn.deadlock.wiki/Infernal_Resilience.png"
+ ],
+ "dl-seismic": [
+  "File:Seismic Impact.png",
+  "https://cdn.deadlock.wiki/Seismic_Impact.png"
+ ],
+ "dl-souls": [
+  "File:Souls icon.png",
+  "https://cdn.deadlock.wiki/Souls_icon.png"
+ ],
+ "dl-zipline": [
+  "File:Riding zipline.png",
+  "https://cdn.deadlock.wiki/Riding_zipline.png"
+ ],
+ "dl-melee": [
+  "File:Melee damage.png",
+  "https://cdn.deadlock.wiki/Melee_damage.png"
+ ],
+ "dl-shop": [
+  "File:ShopIcon.png",
+  "https://cdn.deadlock.wiki/ShopIcon.png"
+ ],
+ "fac-artillery": [
+  "File:Artillery turret.png",
+  "https://wiki.factorio.com/images/Artillery_turret.png"
+ ],
+ "fac-gunturret": [
+  "File:Gun turret.png",
+  "https://wiki.factorio.com/images/Gun_turret.png"
+ ],
+ "fac-laser": [
+  "File:Laser turret.png",
+  "https://wiki.factorio.com/images/Laser_turret.png"
+ ],
+ "fac-poison": [
+  "File:Poison capsule.png",
+  "https://wiki.factorio.com/images/Poison_capsule.png"
+ ],
+ "fac-wall": [
+  "File:Stone wall.png",
+  "https://wiki.factorio.com/images/Wall.png"
+ ],
+ "fac-exo": [
+  "File:Exoskeleton.png",
+  "https://wiki.factorio.com/images/Exoskeleton.png"
+ ],
+ "fac-fish": [
+  "File:Raw fish.png",
+  "https://wiki.factorio.com/images/Raw_fish.png"
+ ],
+ "fac-mine": [
+  "File:Land mine.png",
+  "https://wiki.factorio.com/images/Land_mine.png"
+ ],
+ "fac-radar": [
+  "File:Radar.png",
+  "https://wiki.factorio.com/images/Radar.png"
+ ],
+ "fac-piercing": [
+  "File:Piercing rounds magazine.png",
+  "https://wiki.factorio.com/images/Piercing_rounds_magazine.png"
+ ],
+ "fac-biter": [
+  "File:Big biter.png",
+  "https://wiki.factorio.com/images/Big_biter.png"
+ ],
+ "sts-ironclad": [
+  "File:Ironclad.png",
+  "https://static.wikia.nocookie.net/slay-the-spire/images/7/70/Ironclad.png/revision/latest?cb=20181020082717"
+ ],
+ "sts-strike": [
+  "File:Strike R.png",
+  "https://static.wikia.nocookie.net/slay-the-spire/images/0/06/Strike_R.png/revision/latest?cb=20181016211045"
+ ],
+ "sts-defend": [
+  "File:Defend R.png",
+  "https://static.wikia.nocookie.net/slay-the-spire/images/7/7d/Defend_R.png/revision/latest?cb=20181016205732"
+ ],
+ "sts-bash": [
+  "File:Bash.png",
+  "https://static.wikia.nocookie.net/slay-the-spire/images/d/d8/Bash.png/revision/latest?cb=20181016205628"
+ ],
+ "sts-intimidate": [
+  "File:Intimidate.png",
+  "https://static.wikia.nocookie.net/slay-the-spire/images/7/72/Intimidate.png/revision/latest?cb=20181016210817"
+ ],
+ "sts-bludgeon": [
+  "File:Bludgeon.png",
+  "https://static.wikia.nocookie.net/slay-the-spire/images/9/96/Bludgeon.png/revision/latest?cb=20181016205629"
+ ],
+ "sts-reaper": [
+  "File:Reaper.png",
+  "https://static.wikia.nocookie.net/slay-the-spire/images/6/6a/Reaper.png/revision/latest?cb=20181016210951"
+ ],
+ "sts-inflame": [
+  "File:Inflame.png",
+  "https://static.wikia.nocookie.net/slay-the-spire/images/0/02/Inflame.png/revision/latest?cb=20181016210817"
+ ],
+ "sts-nob": [
+  "File:Gremlin-nob-pretty.png",
+  "https://static.wikia.nocookie.net/slay-the-spire/images/3/3b/Gremlin-nob-pretty.png/revision/latest?cb=20180110071016"
+ ],
+ "mc-sword": [
+  "File:Diamond Sword JE2 BE2.png",
+  "https://static.wikia.nocookie.net/minecraft_gamepedia/images/6/6a/Diamond_Sword_JE2_BE2.png/revision/latest?cb=20200217235945"
+ ],
+ "mc-bow": [
+  "File:Bow JE2 BE1.png",
+  "https://static.wikia.nocookie.net/minecraft_gamepedia/images/9/99/Bow_JE2_BE1.png/revision/latest?cb=20200128015144"
+ ],
+ "mc-shield": [
+  "File:Shield JE2 BE1.png",
+  "https://static.wikia.nocookie.net/minecraft_gamepedia/images/c/c6/Shield_JE2_BE1.png/revision/latest?cb=20190725172341"
+ ],
+ "mc-gapple": [
+  "File:Golden Apple JE2 BE2.png",
+  "https://static.wikia.nocookie.net/minecraft_gamepedia/images/5/54/Golden_Apple_JE2_BE2.png/revision/latest?cb=20200521041809"
+ ],
+ "mc-water": [
+  "File:Water Bucket JE2 BE2.png",
+  "https://static.wikia.nocookie.net/minecraft_gamepedia/images/d/dc/Water_Bucket_JE2_BE2.png/revision/latest?cb=20190430112051"
+ ],
+ "mc-potion": [
+  "File:Dungeons StrengthPotion.png",
+  "https://static.wikia.nocookie.net/minecraft_gamepedia/images/3/38/Dungeons_StrengthPotion.png/revision/latest?cb=20200531034904"
+ ],
+ "mc-axe": [
+  "File:Diamond Axe JE3 BE3.png",
+  "https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/40/Diamond_Axe_JE3_BE3.png/revision/latest?cb=20200226193844"
+ ],
+ "mc-bed": [
+  "File:Red Bed (N) JE5.png",
+  "https://static.wikia.nocookie.net/minecraft_gamepedia/images/b/b5/Red_Bed_%28N%29_JE5.png/revision/latest?cb=20200317202921"
+ ],
+ "mc-cobble": [
+  "File:Cobblestone JE4.png",
+  "https://static.wikia.nocookie.net/minecraft_gamepedia/images/a/ad/Cobblestone_JE4.png/revision/latest?cb=20200904085134"
+ ],
+ "lor-draven": [
+  "File:01NX020-full.png",
+  "https://static.wikia.nocookie.net/leagueoflegends/images/3/33/01NX020-full.png/revision/latest?cb=20200407024424"
+ ],
+ "lor-draven2": [
+  "File:01NX020T3-full.png",
+  "https://static.wikia.nocookie.net/leagueoflegends/images/8/8c/01NX020T3-full.png/revision/latest?cb=20200407024504"
+ ],
+ "lor-axe": [
+  "File:01NX020T1-full.png",
+  "https://static.wikia.nocookie.net/leagueoflegends/images/9/9a/01NX020T1-full.png/revision/latest?cb=20200407024439"
+ ],
+ "lor-whirling": [
+  "File:01NX020T2-full.png",
+  "https://static.wikia.nocookie.net/leagueoflegends/images/9/94/01NX011-full.png/revision/latest?cb=20200407024149"
+ ],
+ "lor-teemo": [
+  "File:01PZ008-full.png",
+  "https://static.wikia.nocookie.net/leagueoflegends/images/5/5c/01PZ008-full.png/revision/latest?cb=20210826021203"
+ ],
+ "lor-teemo2": [
+  "File:01PZ008T2-full.png",
+  "https://static.wikia.nocookie.net/leagueoflegends/images/1/19/01PZ008T2-full.png/revision/latest?cb=20210826021243"
+ ],
+ "lor-cloud": [
+  "File:01PZ008T1-full.png",
+  "https://static.wikia.nocookie.net/leagueoflegends/images/5/5f/01PZ008T1-full.png/revision/latest?cb=20200407030219"
+ ],
+ "lor-puffcap": [
+  "File:Singed Poison Trail.png",
+  "https://static.wikia.nocookie.net/leagueoflegends/images/3/39/Singed_Poison_Trail.png/revision/latest?cb=20240813161823"
+ ],
+ "cp-ping": [
+  "File:PingProgram.png",
+  "https://static.wikia.nocookie.net/cyberpunk/images/c/c7/PingProgram.png/revision/latest?cb=20231005133912"
+ ],
+ "cp-malfunction": [
+  "File:Icon Quickhack Malfunction.png",
+  "https://static.wikia.nocookie.net/cyberpunk/images/b/b6/Icon_Quickhack_Malfunction.png/revision/latest?cb=20231115151757"
+ ],
+ "p2-chell": [
+  "File:Chell.png",
+  "https://i1.theportalwiki.net/img/4/40/Chell.png"
+ ],
+ "p2-wheatley": [
+  "File:Wheatley.png",
+  "https://i1.theportalwiki.net/img/9/94/Wheatley.png"
+ ],
+ "mc-torch": [
+  "File:Torch JE3 BE1.png",
+  "https://static.wikia.nocookie.net/minecraft_gamepedia/images/e/ec/Torch_JE3_BE1.png/revision/latest?cb=20260209224238"
+ ],
+ "mc-tnt": [
+  "File:TNT JE3 BE2.png",
+  "https://static.wikia.nocookie.net/minecraft_gamepedia/images/a/a2/TNT_JE3_BE2.png/revision/latest?cb=20210110120939"
+ ],
+ "mc-steve": [
+  "File:Steve.png",
+  "https://static.wikia.nocookie.net/minecraft_gamepedia/images/f/f3/Steve.png/revision/latest?cb=20210104203953"
+ ],
+ "sts-burning": [
+  "File:BurningBlood.png",
+  "https://static.wikia.nocookie.net/slay-the-spire/images/1/1a/BurningBlood.png/revision/latest?cb=20200203145554"
+ ],
+ "cp-overload": [
+  "File:Icon Quickhack Overload.png",
+  "https://static.wikia.nocookie.net/cyberpunk/images/c/c5/Icon_Quickhack_Overload.png/revision/latest?cb=20231115152749"
+ ]
+}

@@ -57,4 +57,17 @@ rec 'whats-next/index.html#1' challenge-loop challenges-first-then-tools
 rec 'whats-next/index.html#2' course-map where-to-go-next
 rec 'whats-next/index.html#3' framework-kit framework-kit
 rec 'whats-next/index.html#4' boss-fight build-the-boss-audit-the-kit
+rec 'audits/index.html#1' audit-subnautica audit-subnautica
+rec 'audits/index.html#2' audit-god-of-war audit-god-of-war
+rec 'audits/index.html#3' audit-cyberpunk audit-cyberpunk
+rec 'audits/index.html#4' audit-portal-2 audit-portal-2
+rec 'audits/index.html#5' audit-expedition-33 audit-expedition-33
+rec 'audits/index.html#6' audit-brood-war audit-brood-war
+rec 'audits/index.html#7' audit-mario-kart-8 audit-mario-kart-8
+rec 'audits/index.html#8' audit-minecraft audit-minecraft
+rec 'audits/index.html#9' audit-celeste audit-celeste
+rec 'audits/index.html#10' audit-deadlock audit-deadlock
+rec 'audits/index.html#11' audit-factorio audit-factorio
+rec 'audits/index.html#12' audit-slay-the-spire audit-slay-the-spire
+rec 'audits/index.html#13' audit-runeterra audit-runeterra
 wait
