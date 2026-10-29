@@ -8,8 +8,8 @@
   // [key, name, the slide's text, the answer it asks for, permutation (true) or closer to escalation (false)]
   const MUTATORS = [
     ['none', 'No mutator', 'The base co-op mission: the same wave, no modifiers.', 'Let them come, focus the nearest', null],
-    ['aggressive-deployment', 'Aggressive Deployment', 'Additional enemy units are periodically deployed onto the battlefield.', 'Same plan, more guns', false],
-    ['alien-incubation', 'Alien Incubation', 'All enemy units spawn Broodlings upon death.', 'Kill them far out', true],
+    ['aggressive-deployment', 'Aggressive Deployment', 'Additional enemy units are periodically deployed onto the battlefield.', 'Watch your back: turn on the drops', true],
+    ['alien-incubation', 'Alien Incubation', 'All enemy units spawn Broodlings upon death.', 'Splash the Broodlings', true],
     ['avenger', 'Avenger', 'Enemy units gain increased attack speed, movement speed, armor, life, and life-regeneration when nearby enemy units die.', 'Kill the pack together', true],
     ['barrier', 'Barrier', 'Enemy units and structures gain a temporary shield upon the first time they take damage.', 'Tag them all, then wait it out', true],
     ['black-death', 'Black Death', 'Some enemy units carry a plague that deals damage over time and spreads to other nearby units. The plague spreads to your units when the enemy unit is killed.', 'Kill the carriers at range', true],
@@ -20,9 +20,9 @@
   const STAT = {
     marine: { hp: 45, range: 150, dmg: 7, rate: .45, r: 15 },
     tank: { hp: 150, range: 300, dmg: 45, rate: 1.8, r: 19, splash: 56 },
-    zergling: { hp: 35, speed: 56, dmg: 5, rate: .6, r: 13 },
-    roach: { hp: 110, speed: 44, dmg: 10, rate: 1, r: 17 },
-    broodling: { hp: 14, speed: 78, dmg: 4, rate: .5, r: 9, life: 2.6 },
+    zergling: { hp: 35, speed: 56, dmg: 5, rate: .6, r: 13, brood: 2 },
+    roach: { hp: 110, speed: 44, dmg: 10, rate: 1, r: 17, brood: 4 },
+    broodling: { hp: 18, speed: 70, dmg: 5, rate: .5, r: 9, life: Infinity, brood: 0 },   // Alien Incubation's Broodlings have no timed life (StarCraft Wiki)
   };
   const ENGAGE_HABIT = 135;   // the habit: hold fire until they are this close to the shooter
   const BOMB = { x0: 330, y: 272, speed: 40, seq: ['↑', '←', '↓', '→'] };
@@ -51,10 +51,11 @@
 
   // what each side does under each mutator
   function config(key, side) {
-    const c = { key, engage: ENGAGE_HABIT, tankEngage: ENGAGE_HABIT, pick: 'nearest', tankPick: 'nearest' };
+    const c = { key, engage: ENGAGE_HABIT, tankEngage: ENGAGE_HABIT, pick: 'nearest', tankPick: 'nearest', front: true };   // the habit faces the wave
     if (side === 'habit') return c;
     switch (key) {
-      case 'alien-incubation': c.tankEngage = 300; c.tankPick = 'farthest'; c.engage = 150; c.pick = 'broodFirst'; break;
+      case 'alien-incubation': c.tankEngage = 300; c.tankPick = 'swarm'; c.engage = 150; c.pick = 'broodFirst'; break;
+      case 'aggressive-deployment': c.front = false; c.pick = 'dropFirst'; c.tankPick = 'dropFirst'; break;
       case 'avenger': c.tankEngage = 300; c.tankPick = 'densest'; c.volley = 5; c.engage = 150; c.pick = 'healthiest'; break;
       case 'barrier': c.tankEngage = 300; c.tankPick = 'bare'; c.engage = 150; c.pick = 'untaggedFirst'; c.scout = true; break;
       case 'black-death': c.tankEngage = 300; c.tankPick = 'carrierFirst'; c.engage = 150; c.pick = 'carrierFirst'; break;
@@ -88,12 +89,14 @@
     return null;
   }
 
-  function pickTarget(u, foes, mode, range, w) {
-    const inR = foes.filter(e => e.alive && dist(u, e) <= range && e.x < W + 8);
+  function pickTarget(u, foes, mode, range, front) {
+    const inR = foes.filter(e => e.alive && dist(u, e) <= range && e.x < W + 8 && (!front || e.x > u.x - 12));
     if (!inR.length) return null;
     const near = (a, b) => dist(u, a) - dist(u, b);
     switch (mode) {
       case 'farthest': return inR.sort((a, b) => b.x - a.x)[0];
+      case 'dropFirst': return inR.sort((a, b) => !!b.dropped - !!a.dropped || near(a, b))[0];
+      case 'swarm': return inR.sort((a, b) => foes.filter(e => e.alive && e.kind === 'broodling' && dist(e, b) < 50).length - foes.filter(e => e.alive && e.kind === 'broodling' && dist(e, a) < 50).length || near(a, b))[0];
       case 'broodFirst': return inR.sort((a, b) => (a.kind !== 'broodling') - (b.kind !== 'broodling') || near(a, b))[0];
       case 'weakest': return inR.sort((a, b) => (a.hp + a.shield) - (b.hp + b.shield) || near(a, b))[0];
       case 'healthiest': return inR.sort((a, b) => (b.hp + b.shield) - (a.hp + a.shield) || near(a, b))[0];
@@ -122,7 +125,7 @@
       e.alive = false; e.diedAt = t;
       fx.push({ k: 'poof', x: e.x, y: e.y, ttl: .45, col: e.carrier && key === 'black-death' ? '#5fd35f' : '#a8201c' });
       plague(e);
-      if (key === 'alien-incubation' && e.kind !== 'broodling') for (let k = 0; k < 3; k++) foes.push(enemy('broodling', e.x - 6 + (k === 1) * 10, e.y + (k - 1) * 13, { born: t }));
+      if (key === 'alien-incubation') for (let k = 0, n = STAT[e.kind].brood; k < n; k++) foes.push(enemy('broodling', e.x - 6 + (k % 2) * 10, e.y + (k - (n - 1) / 2) * 12, { born: t }));   // more Broodlings from bigger units
       if (key === 'avenger') (w.batch ? w.batch.push(e) : avenge(e));
     };
     // Avenger: survivors near a death power up; a whole splash resolves first, so units that die together empower nobody
@@ -138,7 +141,7 @@
     for (let step = 0; step <= DUR / DT; step++) {
       const t = step * DT; w.t = t;
       // mutator clocks
-      if (key === 'aggressive-deployment' && Math.abs(t - 2.4) < DT / 2) [[360, 70], [380, 230], [420, 110], [430, 200]].forEach(([x, y]) => { foes.push(enemy('zergling', x, y, { born: t, dropped: true })); fx.push({ k: 'drop', x, y, ttl: .6 }); });
+      if (key === 'aggressive-deployment' && [1.6, 4.6].some(d => Math.abs(t - d) < DT / 2)) (t < 3 ? [[40, 96], [44, 206], [76, 64]] : [[40, 120], [74, 252], [42, 214]]).forEach(([x, y]) => { foes.push(enemy('zergling', x, y, { born: t, dropped: true })); fx.push({ k: 'drop', x, y, ttl: .6 }); });
       if (key === 'blizzard' && t >= STORM.t0) w.storm = { x: STORM.x, y: STORM.y0 + (t - STORM.t0) * STORM.speed, r: STORM.r };
       if (w.bomb && !w.bomb.done) {
         const b = w.bomb; b.x -= BOMB.speed * DT;
@@ -159,7 +162,7 @@
         const S = STAT[u.kind], tank = u.kind === 'tank';
         let range = Math.min(S.range, tank ? c.tankEngage : c.engage), how = tank ? c.tankPick : c.pick;
         if (mode === 'tagging') { range = 150; how = 'untaggedFirst'; }
-        const e = pickTarget(u, foes, how, range, w);
+        const e = pickTarget(u, foes, how, range, c.front);
         // Avenger's answer: the tank waits until one shell would finish most of the pack at once
         if (tank && c.volley && e && foes.filter(o => o.alive && dist(o, e) < S.splash && o.hp + o.shield <= (dist(o, e) < 22 ? S.dmg : S.dmg * .8)).length < Math.min(c.volley, foes.filter(o => o.alive).length)) return;
         if (!e || (mode === 'tagging' && e.tagged)) return;

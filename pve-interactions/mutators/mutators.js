@@ -162,7 +162,7 @@
       text(g, 'Base-mission habit', 18, 148, { align: 'left', size: 17, w: 800, display: true, col: C.ink });
       g.font = '700 14px Jost, sans-serif'; const hw = g.measureText('Let them come, focus the nearest').width + 18;
       chip(g, 'Let them come, focus the nearest', 514 - hw, 148, { align: 'left', size: 14, ...TONE.grey });
-      const same = v.m === 'none' || v.m === 'aggressive-deployment';
+      const same = v.m === 'none';
       text(g, same ? 'Same habit' : 'What the mutator asks for', 530, 148, { align: 'left', size: 17, w: 800, display: true, col: same ? C.ink : C.good });
       const ans = v.m === 'none' ? 'Let them come, focus the nearest' : mu.answer; g.font = '700 14px Jost, sans-serif'; const aw = g.measureText(ans).width + 18;
       chip(g, ans, 1026 - aw, 148, { align: 'left', size: 14, ...(v.m === 'none' ? TONE.grey : same ? TONE.gold : TONE.green) });
@@ -208,17 +208,17 @@
   };
   const A = { ad: 'aggressive-deployment', ai: 'alien-incubation', av: 'avenger', ba: 'barrier', bd: 'black-death', bl: 'blizzard', bb: 'boom-bots' };
   const PAIRS = {
-    'ad ai': ['stack', 'More units dying means more Broodlings: the same long-range answer, scaled up.'],
+    'ad ai': ['stack', 'Drops die into more Broodlings, front and back: splash covers both.'],
     'ad av': ['stack', 'More bodies around every death: kill the bigger pack together.'],
     'ad ba': ['stack', 'More shields to tag first: same answer, more of it.'],
-    'ad bd': ['stack', 'More plague carriers: keep killing them at range.'],
-    'ad bl': ['apart', 'Dodge the storm and add guns: two answers that do not touch.'],
+    'ad bd': ['clash', 'Black Death wants carriers killed at range; drops land them inside your army.'],
+    'ad bl': ['apart', 'Turn on the drops, then step out of the storm: two jobs, one at a time.'],
     'ad bb': ['overload', 'One player leaves to disarm while extra units land on the other.'],
     'ai av': ['overload', 'Every death spawns Broodlings next to the pack, and every Broodling death powers it up.'],
-    'ai ba': ['clash', 'Incubation wants kills far out; Barrier wants you to wait until the shields drop.'],
-    'ai bd': ['stack', 'Both ask you to kill at range: one answer, pushed harder.'],
-    'ai bl': ['apart', 'Kill them far out and stay out of the storm: two jobs, one at a time.'],
-    'ai bb': ['apart', 'Broodlings chase the fighter, not the bomb reader.'],
+    'ai ba': ['clash', 'Barrier wants you to wait; Broodlings never expire, so waiting lets them pile up.'],
+    'ai bd': ['apart', 'Pick the carriers off at range, then splash the swarm.'],
+    'ai bl': ['apart', 'Splash the swarm and stay out of the storm.'],
+    'ai bb': ['clash', 'Broodlings never expire and walk toward your base, right where the bomb reader works.'],
     'av ba': ['clash', 'Avenger wants one burst; Barrier eats the opening burst. New plan: tag, wait, then burst.'],
     'av bd': ['clash', 'Avenger wants the pack dead together; Black Death wants carriers picked off first.'],
     'av bl': ['apart', 'Burst the pack, then step out of the storm.'],
@@ -232,7 +232,7 @@
   };
   const ABBR = Object.fromEntries(Object.entries(A).map(([a, k]) => [k, a]));
   const pair = (a, b) => { const x = ABBR[a], y = ABBR[b], k = Object.keys(A); const [p, q] = k.indexOf(x) < k.indexOf(y) ? [x, y] : [y, x]; return PAIRS[p + ' ' + q]; };
-  const ROLLS = [[A.ai, A.bd, A.ad], [A.av, A.ba, A.bl], [A.ai, A.av, A.ba], [A.bb, A.bl, A.ad]];
+  const ROLLS = [[A.ad, A.ai, A.bl], [A.av, A.ba, A.bl], [A.ai, A.av, A.ba], [A.bb, A.bl, A.ad]];
   const ROLL = 7.5, POOL = KEYS.slice(1);
   function summary(ms) {
     const vs = [[0, 1], [0, 2], [1, 2]].map(([a, b]) => pair(ms[a], ms[b])[0]);
