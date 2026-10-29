@@ -14,10 +14,10 @@ rec 'archetypes/index.html#3' paladin-turtle paladin-or-turtle
 rec 'counter-circle/index.html#1' strip-circle strip-the-packaging-counter-circle
 rec 'three-dials/index.html#1' three-dials three-dials
 rec 'ability-forge/index.html#1' forge ability-forge
-rec 'ability-forge/index.html#2' keyword-reach keyword-reach
+rec 'ability-forge/index.html#4' keyword-reach keyword-reach
 rec 'archetypes/index.html#1' arch-composer souls-archetype-composer
 rec 'counter-circle/index.html#2' nine-grid nine-fundamentals-audit
-rec 'systems/index.html#1' doom-swap doom-encounter-swapper
+rec 'systems/index.html#5' doom-swap doom-encounter-swapper
 rec 'why-scale/index.html#1' open-secret industry-open-secret
 rec 'why-scale/index.html#3' depth-scale depth-or-scale
 rec 'decompose/index.html#1' lego lego-bricks
@@ -28,4 +28,14 @@ rec 'three-dials/index.html#2' strip-ability strip-the-packaging-abilities
 rec 'three-dials/index.html#3' reflect-window reflect-window-test
 rec 'three-dials/index.html#4' same-purpose same-purpose-five-payloads
 rec 'three-dials/index.html#5' coverage keyword-coverage-map
+rec 'ability-forge/index.html#2' three-cards three-cards-three-steps
+rec 'ability-forge/index.html#3' rain-dance pokemon-rain-dance
+rec 'refine/index.html#1' polish-pipeline polish-pipeline
+rec 'refine/index.html#2' skill-radar skill-test-radar
+rec 'refine/index.html#3' siphon-whip siphoning-strike-recast
+rec 'refine/index.html#4' three-cs three-cs
+rec 'refine/index.html#5' game-feel plain-then-felt
+rec 'refine/index.html#6' solution-scale solution-vulnerability-scale
+rec 'refine/index.html#7' rain-exploit restoring-rain-exploit
+rec 'refine/index.html#8' three-ways-teach three-ways-to-teach
 wait
