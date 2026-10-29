@@ -104,20 +104,21 @@
 
   /* ---------- slide 1: Mario's stomp ---------- */
   const SKY = '#5c94fc', SX = 20, SY = 362, SW = 1000, SH = 210, P = 4, GROUND = SY + SH - 52;
-  const GOOMBA = 330, KOOPA = 590, SPINY = 850;
+  const GOOMBA = 300, KOOPA = 580, SPINY = 860;
   const E = { goomba: 2.1, koopa: 4.8, spiny: 7.4 };
   const S_DUR = 13;
-  // Mario's motion: walks and arcs, each [t0, t1, kind, x0, x1, y0, y1, height]
+  // Mario's motion: runs and arcs, each [t0, t1, kind, x0, x1, y0, y1, height]
   const top = (h) => GROUND - h * P;
   const MOVES = [
-    [0, 1.4, 'walk', 70, 220], [1.4, 2.1, 'arc', 220, GOOMBA, GROUND, top(16), 80], [2.1, 2.7, 'arc', GOOMBA, 420, top(16), GROUND, 70],
-    [2.7, 4.0, 'walk', 420, 480], [4.0, 4.8, 'arc', 480, KOOPA, GROUND, top(24), 70], [4.8, 5.4, 'arc', KOOPA, 690, top(24), GROUND, 60],
-    [5.4, 6.6, 'walk', 690, 740], [6.6, 7.4, 'arc', 740, SPINY, GROUND, top(15), 80], [7.4, 8.2, 'hurt', SPINY, 770, top(15), GROUND, 60],
-    [8.2, 99, 'stand', 770, 770]];
+    [0, 1.4, 'run', 40, 230], [1.4, 2.1, 'arc', 230, GOOMBA, GROUND, top(16), 80], [2.1, 2.7, 'arc', GOOMBA, 390, top(16), GROUND, 70],
+    [2.7, 4.0, 'run', 390, 520], [4.0, 4.8, 'arc', 520, KOOPA, GROUND, top(24), 70], [4.8, 5.4, 'arc', KOOPA, 680, top(24), GROUND, 60],
+    [5.4, 6.6, 'run', 680, 800], [6.6, 7.4, 'arc', 800, SPINY, GROUND, top(15), 80], [7.4, 8.2, 'hurt', SPINY, 760, top(15), GROUND, 60],
+    [8.2, 99, 'stand', 760, 760]];
   function marioAt(t) {
     const m = MOVES.find(m => t < m[1]) || MOVES.at(-1), k = clamp((t - m[0]) / (m[1] - m[0]));
     const [, , kind, x0, x1, y0, y1, h] = m;
-    if (kind === 'walk') return { x: lerp(x0, x1, k), y: GROUND, spr: 'smb-mario-walk' + (1 + Math.floor(t * 10) % 3) };
+    // the SMB run cycle, one frame per 10 px covered so the feet keep pace with the ground
+    if (kind === 'run') { const x = lerp(x0, x1, k); return { x, y: GROUND, spr: 'smb-mario-walk' + (1 + Math.floor(x / 10) % 3) }; }
     if (kind === 'stand') return { x: x0, y: GROUND, spr: 'smb-mario', blink: t < 9.6 };
     const y = lerp(y0, y1, k) - h * 4 * k * (1 - k);
     return { x: lerp(x0, x1, k), y, spr: 'smb-mario-jump', flip: kind === 'hurt', blink: kind === 'hurt' };
