@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evaluating Enemy Permutations · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="../shared/comp.css">
+<style>
+  .pm-q { display: grid; gap: 6px; }
+  .pm-q .btn { text-align: left; font-size: 15px; padding: 6px 10px; }
+  .pm-pick { display: none; }
+  .pm-pick.on { display: block; }
+</style>
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · PvE Interactions · Evaluating Enemy Permutations', home: '../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- Evaluating Enemy Permutations (deck slide 141) -->
+<section class="slide" data-title="Evaluating Enemy Permutations" data-demo="evaluate">
+  <div class="kicker">growing: permutations · World of Warcraft Classic, Westfall</div>
+  <h2 class="sm">Evaluating Enemy <span class="accent">Permutations</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4 style="margin-top:0">Question</h4>
+      <div class="pm-q">
+        <button class="btn" data-q="1">1 · Does the rule change the reaction?</button>
+        <button class="btn" data-q="2">2 · Do two changes mix?</button>
+        <button class="btn" data-q="3">3 · Does the mix hold up across variants?</button>
+      </div>
+      <h4>Player</h4>
+      <div class="seg pm-cls"><button class="btn" data-c="warrior">Warrior (melee)</button><button class="btn" data-c="mage">Mage (ranged)</button></div>
+      <div class="pm-pick" data-for="2">
+        <h4>Pull</h4>
+        <select class="pm-a"></select><select class="pm-b"></select>
+      </div>
+      <div class="pm-pick" data-for="3">
+        <h4>Mixed with</h4>
+        <select class="pm-partner"></select>
+        <p class="tip">Click a row of the table to watch it.</p>
+      </div>
+      <div class="row wrap" style="margin-top:8px"><button class="btn ck-tour on">▶ Walk-through</button></div>
+      <div class="mt-stats st"></div>
+      <p class="mt-out out1"></p>
+      <p class="src">Defias Thug, Pillager (Fireball) and Trapper (Net) are Classic Westfall enemies; the Tough, Swift and Runaway Thugs are this page’s variants. Icons: World of Warcraft (Blizzard Entertainment) via wow.zamimg.com. Every fight is a small simulation (<code>sim.js</code>); numbers are illustrative.</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="../shared/topdown.js"></script>
+<script src="../shared/comp.js"></script>
+<script src="sim.js"></script>
+<script src="permutations.js"></script>
+</body>
+</html>

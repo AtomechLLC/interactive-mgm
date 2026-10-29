@@ -1,0 +1,5 @@
+{
+  "note": "World of Warcraft icons (Blizzard Entertainment), downloaded from https://wow.zamimg.com/images/wow/icons/large/<name>.jpg for educational use in this course.",
+  "icons": ["inv_misc_bandana_03", "inv_sword_04", "spell_nature_stoneskintotem", "spell_nature_bloodlust", "ability_rogue_sprint", "spell_fire_flamebolt", "ability_ensnare", "classicon_warrior", "classicon_mage", "ability_warrior_charge", "inv_gauntlets_04", "ability_shockwave", "spell_frost_frostbolt02", "spell_frost_frostnova", "spell_arcane_blink", "spell_fire_fireball"],
+  "home_icon": "assets/img/home/pve-interactions--permutations.svg is lorc's fishing-net from game-icons.net (CC BY 3.0)"
+}
