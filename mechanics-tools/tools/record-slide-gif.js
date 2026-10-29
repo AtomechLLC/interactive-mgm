@@ -1,7 +1,7 @@
 // Records one slide of a mechanics tools page to a looping 1920x1080 GIF (slide resolution), frame by frame through the page's
 // window.__seek(t, which) / window.__dur(which) hooks (doors, contrapositive, inversion, diminishing, reverse-map, life-per-hit).
 // Usage: serve InteractiveMGM on a port, then
-//   node record-slide-gif.js <url with #slide> <which> <out.gif> [fps=15] [hide selectors, comma separated]
+//   node record-slide-gif.js <url with #slide> <which> <out.gif> [fps=15] [hide selectors, comma separated] [extra css]
 // e.g. node record-slide-gif.js http://127.0.0.1:8151/mechanics-tools/doors/index.html#2 tour ../gifs/doors-switch-plate-pulley.gif
 // Env GIF_COLORS (default 128), GIF_DITHER (default bayer) and GIF_STATS (default diff) trade quality for size on scrolling scenes.
 // The page renders at its 1600x900 stage size with a 1.2 device scale, so text and CSS are drawn at 1920x1080,
@@ -30,12 +30,13 @@ const HIDPI = k => {
     return g;
   };
 };
-const [,, url, which, out, fpsArg = '15', hide = ''] = process.argv;
+const [,, url, which, out, fpsArg = '15', hide = '', extra = ''] = process.argv;
 const fps = +fpsArg;
 const CSS = `.viewport{inset:0!important}
 .stage{transform:none!important;left:0!important;top:0!important;border-radius:0!important;box-shadow:none!important}
 .stage::after,.bar,.edge-nav,.touch-pad,.rotate-hint{display:none!important}
-${hide ? hide + '{visibility:hidden!important}' : ''}`;
+${hide ? hide + '{visibility:hidden!important}' : ''}
+${extra}`;
 (async () => {
   const b = await chromium.launch(fs.existsSync(EDGE) ? { executablePath: EDGE } : {});
   const p = await b.newPage({ viewport: { width: 1600, height: 900 }, deviceScaleFactor: SCALE });
