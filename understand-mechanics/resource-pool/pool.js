@@ -7,7 +7,7 @@
    2. Discrete vs continuous: Jhin-style four-shot clip (every 4th shot hits harder, then reload) next to a battery that
       drains while a boost is held (the Subnautica Seaglide).
    3. Resources & states (slide 219): hold to charge a two-segment energy bar; at the threshold it bursts into flame and
-      Mario is On Fire, spend a segment and it goes out. The walk-through is replayed from its inputs, so seeking is exact. */
+      Link is On Fire, spend a segment and it goes out. The walk-through is replayed from its inputs, so seeking is exact. */
 (function () {
   const { $, $$, canvasDemo, say } = FPF.kit;
   const T = TD, C = TD.C, { clamp, lerp, ease } = TD;
@@ -210,13 +210,13 @@
   });
 
   /* ---------- 3. resources & states: a full energy bar sets you on fire ---------- */
-  // Super Mario Bros. sprite (Super Mario Wiki), drawn pixel-sharp; educational use, per Xelnath
-  const MARIO = new Image(); MARIO.src = new URL('../img/smb-fire-mario.png', location.href).href;
+  // The Legend of Zelda sprites (Zelda Wiki): green tunic normally, red ring tunic while On Fire; drawn pixel-sharp, educational use, per Xelnath
+  const LINK = {}; ['link', 'link-red'].forEach(n => { const i = new Image(); i.src = new URL(`../img/tloz-${n}.png`, location.href).href; LINK[n] = i; });
   const SEG = 50, FULL = 100, RATE = 34, HIST = 12, BDT = 1 / 60;
   // the walk-through as inputs: charge held over [a, b], one segment spent at each time
   const BHOLDS = [[.5, 3.6], [7, 8], [9, 9.6]], BSPENDS = [6, 12, 12.8], BDUR = 14.5;
   const BCAP = [[0, 'Hold to charge: the energy bar fills one segment at a time. Below the threshold, nothing changes.'],
-    [3.44, 'Full: energy crosses the threshold and triggers a state. Mario is on fire for as long as the bar stays full.'],
+    [3.44, 'Full: energy crosses the threshold and triggers a state. Link is on fire for as long as the bar stays full.'],
     [6, 'Spend a segment and the bar drops below the threshold: the state ends at once.'],
     [7, '84 of 100 is close, but a threshold is all or nothing: still no fire.'],
     [9.47, 'Full again, on fire again. The state follows the resource, not a timer.'],
@@ -282,7 +282,7 @@
       g.fillStyle = '#fff'; g.strokeStyle = '#111'; g.lineWidth = 3; g.beginPath(); g.roundRect(bx, by, bw, bh, 14); g.fill(); g.stroke();
       g.fillStyle = '#fff6b8'; g.beginPath(); g.roundRect(bx + 4, by + 4, bw - 8, bh - 8, 11); g.fill();
       [0, 1].forEach(i => {
-        const x = bx + 10, w = bw - 20, y = i ? by + 8 : by + 8 + sh + 12, f = clamp((b.e - (1 - i) * SEG) / SEG);
+        const x = bx + 10, w = bw - 20, y = i ? by + 8 : by + 8 + sh + 12, f = clamp((b.e - i * SEG) / SEG);
         g.fillStyle = '#fffdf2'; g.beginPath(); g.roundRect(x, y, w, sh, 10); g.fill();
         g.save(); g.clip(); g.fillStyle = '#ffc477'; g.fillRect(x, y + sh * (1 - f), w, sh * f); g.restore();
         g.strokeStyle = f > 0 ? '#b9a98a' : '#d8ccb0'; g.lineWidth = 1.5; g.setLineDash(f > 0 ? [] : [6, 5]); g.beginPath(); g.roundRect(x, y, w, sh, 10); g.stroke(); g.setLineDash([]);
@@ -298,11 +298,11 @@
       g.fillStyle = C.muted; g.font = '600 14px Jost, sans-serif'; g.fillText('energy', bx + bw / 2, 558);
       if (t - b.spent < .7) T.popText(`-${SEG} energy`, bx + bw / 2, by + bh / 2 - 40 * (t - b.spent), C.redDk, 1 - (t - b.spent) / .7);
       if (t - b.fail < .7) T.popText('not a full segment!', bx + bw / 2, by + bh / 2, C.redDk, 1 - (t - b.fail) / .7);
-      // the character: Mario with the On fire state drawn over him
-      const mx = 470, my = 300, ms = 5;
+      // the character: Link, in the red ring tunic with flames around him while On Fire
+      const mx = 470, my = 290, ms = 8, spr = LINK[b.fire ? 'link-red' : 'link'];
       T.shadow(mx, my, 46, 12, .25);
-      flame(g, mx - 34, my - 150, 68, 150, t + 3, k, 3);
-      if (MARIO.complete && MARIO.naturalWidth) { g.save(); g.imageSmoothingEnabled = false; g.drawImage(MARIO, mx - 8 * ms, my - 32 * ms, 16 * ms, 32 * ms); g.restore(); }
+      flame(g, mx - 50, my - 120, 100, 120, t + 3, k, 3);
+      if (spr.complete && spr.naturalWidth) { g.save(); g.imageSmoothingEnabled = false; g.drawImage(spr, mx - 7.5 * ms, my - 16 * ms, 15 * ms, 16 * ms); g.restore(); }
       if (t - b.ign < .9) T.popText('ignite!', mx, my - 190 - 40 * (t - b.ign), '#d2470a', 1 - (t - b.ign) / .9);
       if (t - b.out < .8) T.poof(mx, my - 80, t - b.out, 50);
       // the state and the rule that sets it
