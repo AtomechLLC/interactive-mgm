@@ -87,7 +87,7 @@
   const first = sl => parseInt(sl, 10);
   LIVE.sort((a, b) => first(a[4]) - first(b[4]));
   const card = ([f, ic, t, b, sl, gif]) =>
-    `<a class="mod" href="${f}/index.html"><img src="../assets/img/forsaken/${ic}.png" alt=""><span><b>${t}</b><small>${b} (deck slides ${sl}). GIF: gifs/${gif}.gif</small><br><span class="tag">ready</span></span></a>`;
+    `<a class="mod" href="${f}/index.html"><img src="../assets/img/home/depth--${f}.svg" alt=""><span><b>${t}</b><small>${b} (deck slides ${sl}). GIF: gifs/${gif}.gif</small><br><span class="tag">ready</span></span></a>`;
   document.getElementById('cards').innerHTML = PARTS.map(([pt, from, to]) => {
     const here = LIVE.filter(p => first(p[4]) >= from && first(p[4]) <= to);
     return here.length ? `<div class="part" style="--n:${here.length}"><h3>${pt}<span>slides ${from} to ${to}</span></h3><div class="row">${here.map(card).join('')}</div></div>` : '';

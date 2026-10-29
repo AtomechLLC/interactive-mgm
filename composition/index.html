@@ -137,7 +137,7 @@
   const first = sl => parseInt(sl, 10);
   const nGif = f => GIFS.filter(g => g[0] === f).length;
   const card = ([f, ic, t, b, sl]) =>
-    `<a class="mod" href="${f}/index.html"><img src="../assets/img/forsaken/${ic}.png" alt=""><span><b>${t}</b><small>${b} (deck slides ${sl}).</small><br><span class="tag">${nGif(f)} GIF${nGif(f) === 1 ? '' : 's'}</span></span></a>`;
+    `<a class="mod" href="${f}/index.html"><img src="../assets/img/home/composition--${f}.svg" alt=""><span><b>${t}</b><small>${b} (deck slides ${sl}).</small><br><span class="tag">${nGif(f)} GIF${nGif(f) === 1 ? '' : 's'}</span></span></a>`;
   document.getElementById('cards').innerHTML = PARTS.map(([pt, from, to]) => {
     const here = PAGES.filter(p => first(p[4]) >= from && first(p[4]) <= to);
     return here.length ? `<div class="part" style="--n:${here.length}"><h3>${pt}<span>slides ${from} to ${to}</span></h3><div class="row">${here.map(card).join('')}</div></div>` : '';

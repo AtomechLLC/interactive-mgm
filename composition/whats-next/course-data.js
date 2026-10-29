@@ -2,7 +2,7 @@
 window.COURSE = [
 {
 "href": "depth/index.html",
-"img": "assets/img/forsaken/Circle_Friendly.png",
+"img": "assets/img/home/disc/depth.svg",
 "code": "MGM C4 M1",
 "name": "The Goal: Depth",
 "pages": [
@@ -34,7 +34,7 @@ window.COURSE = [
 },
 {
 "href": "understand-mechanics/index.html",
-"img": "assets/img/forsaken/Zap_Friendly.png",
+"img": "assets/img/home/disc/understand-mechanics.svg",
 "code": "MGM C4 M2",
 "name": "Understand Mechanics",
 "pages": [
@@ -78,7 +78,7 @@ window.COURSE = [
 },
 {
 "href": "mechanics-tools/index.html",
-"img": "assets/img/forsaken/Target_Cursor.png",
+"img": "assets/img/home/disc/mechanics-tools.svg",
 "code": "MGM C4 M3",
 "name": "Mechanics Design Tools",
 "pages": [
@@ -110,7 +110,7 @@ window.COURSE = [
 },
 {
 "href": "pvp/index.html",
-"img": "assets/img/forsaken/Swoosh_Friendly.png",
+"img": "assets/img/home/disc/pvp.svg",
 "code": "MGM C4 M4",
 "name": "PvP Interactions",
 "pages": [
@@ -142,7 +142,7 @@ window.COURSE = [
 },
 {
 "href": "pve-interactions/index.html",
-"img": "assets/img/forsaken/Rock.png",
+"img": "assets/img/home/disc/pve-interactions.svg",
 "code": "MGM C4 M5",
 "name": "PvE Interactions",
 "pages": [
@@ -178,7 +178,7 @@ window.COURSE = [
 },
 {
 "href": "coop-interactions/index.html",
-"img": "assets/img/forsaken/Token_Player2.png",
+"img": "assets/img/home/disc/coop-interactions.svg",
 "code": "MGM C3 M6",
 "name": "Co-op Interactions",
 "pages": [
@@ -218,7 +218,7 @@ window.COURSE = [
 },
 {
 "href": "composition/index.html",
-"img": "assets/img/forsaken/Grid.png",
+"img": "assets/img/home/disc/composition.svg",
 "code": "MGM C4 M7",
 "name": "Composition",
 "pages": [

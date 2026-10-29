@@ -1,9 +1,8 @@
 # Home page icons
 
-From [game-icons.net](https://game-icons.net), licensed [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/). Recolored (fill only). Module icons are `<module>.svg`; page icons are `<module>--<page>.svg`.
+From [game-icons.net](https://game-icons.net), licensed [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/). Recolored (fill only). Module icons are `<module>.svg`; page icons are `<module>--<page>.svg`. Used on the site home page, the module home pages and the course map in `composition/whats-next` (`disc/` holds the module icons on a navy disc for that map).
 
 | File | Icon | Artist |
-| --- | --- | --- |
 | `depth.svg` | [diving-helmet](https://game-icons.net/1x1/delapouite/diving-helmet.html) | Delapouite |
 | `depth--three-tiers.svg` | [podium](https://game-icons.net/1x1/delapouite/podium.html) | Delapouite |
 | `depth--ghost-runs.svg` | [ghost](https://game-icons.net/1x1/lorc/ghost.html) | Lorc |
@@ -11,6 +10,7 @@ From [game-icons.net](https://game-icons.net), licensed [CC BY 3.0](https://crea
 | `depth--additive.svg` | [abacus](https://game-icons.net/1x1/delapouite/abacus.html) | Delapouite |
 | `depth--sword-forge.svg` | [anvil-impact](https://game-icons.net/1x1/lorc/anvil-impact.html) | Lorc |
 | `depth--mtg-keywords.svg` | [card-play](https://game-icons.net/1x1/quoting/card-play.html) | Quoting |
+| `depth--seabed.svg` | [submarine](https://game-icons.net/1x1/delapouite/submarine.html) | Delapouite |
 | `understand-mechanics.svg` | [magnifying-glass](https://game-icons.net/1x1/lorc/magnifying-glass.html) | Lorc |
 | `understand-mechanics--grass.svg` | [grass](https://game-icons.net/1x1/delapouite/grass.html) | Delapouite |
 | `understand-mechanics--xray.svg` | [ribcage](https://game-icons.net/1x1/lorc/ribcage.html) | Lorc |
@@ -21,6 +21,7 @@ From [game-icons.net](https://game-icons.net), licensed [CC BY 3.0](https://crea
 | `understand-mechanics--cast-timeline.svg` | [hourglass](https://game-icons.net/1x1/lorc/hourglass.html) | Lorc |
 | `understand-mechanics--life-tap.svg` | [heart-drop](https://game-icons.net/1x1/lorc/heart-drop.html) | Lorc |
 | `understand-mechanics--life-tap-trade.svg` | [trade](https://game-icons.net/1x1/lorc/trade.html) | Lorc |
+| `understand-mechanics--resource-variety.svg` | [chalice-drops](https://game-icons.net/1x1/lorc/chalice-drops.html) | Lorc |
 | `mechanics-tools.svg` | [toolbox](https://game-icons.net/1x1/delapouite/toolbox.html) | Delapouite |
 | `mechanics-tools--doors.svg` | [lever](https://game-icons.net/1x1/lorc/lever.html) | Lorc |
 | `mechanics-tools--inversion.svg` | [rune-stone](https://game-icons.net/1x1/lorc/rune-stone.html) | Lorc |
@@ -28,6 +29,7 @@ From [game-icons.net](https://game-icons.net), licensed [CC BY 3.0](https://crea
 | `mechanics-tools--contrapositive.svg` | [arena](https://game-icons.net/1x1/sbed/arena.html) | Sbed |
 | `mechanics-tools--life-per-hit.svg` | [vampire-dracula](https://game-icons.net/1x1/delapouite/vampire-dracula.html) | Delapouite |
 | `mechanics-tools--diminishing.svg` | [chart](https://game-icons.net/1x1/delapouite/chart.html) | Delapouite |
+| `mechanics-tools--contrapositive-rules.svg` | [rule-book](https://game-icons.net/1x1/delapouite/rule-book.html) | Delapouite |
 | `pvp.svg` | [crossed-swords](https://game-icons.net/1x1/lorc/crossed-swords.html) | Lorc |
 | `pvp--strike-trades.svg` | [sword-clash](https://game-icons.net/1x1/lorc/sword-clash.html) | Lorc |
 | `pvp--payoffs.svg` | [position-marker](https://game-icons.net/1x1/delapouite/position-marker.html) | Delapouite |
