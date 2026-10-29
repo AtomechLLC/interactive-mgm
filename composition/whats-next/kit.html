@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Framework Kit · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root { --ink: #1d2340; --muted: #6b6552; --line: #cdbf9f; --navy: #152044; --paper: #fffaf0; --bg: #f4efe3; --gold: #e0a92d; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.4 Jost, sans-serif; }
+  header { max-width: 1100px; margin: 0 auto; padding: 28px 16px 8px; display: flex; flex-wrap: wrap; gap: 12px; align-items: end; justify-content: space-between; }
+  h1 { font: 800 28px Montserrat, sans-serif; margin: 0; color: var(--navy); }
+  header p { margin: 4px 0 0; color: var(--muted); }
+  button, a.back { font: 700 14px Jost, sans-serif; padding: 8px 14px; border-radius: 8px; border: 2px solid var(--navy); background: var(--navy); color: #fff; cursor: pointer; text-decoration: none; }
+  a.back { background: transparent; color: var(--navy); }
+  main { max-width: 1100px; margin: 0 auto; padding: 8px 16px 40px; display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 16px; }
+  .sheet { background: var(--paper); border: 3px solid var(--navy); border-radius: 12px; padding: 16px 18px; break-inside: avoid; }
+  .sheet h2 { font: 800 18px Montserrat, sans-serif; margin: 0; color: var(--navy); }
+  .sheet .from { margin: 2px 0 12px; color: var(--muted); font-size: 12.5px; }
+  .field { border-bottom: 1.5px solid var(--line); min-height: 30px; padding-top: 10px; font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+  .field.tall { min-height: 58px; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  td, th { border: 1.5px solid var(--line); padding: 4px 6px; height: 54px; vertical-align: top; text-align: left; }
+  th { height: auto; font-weight: 700; color: var(--muted); background: #f6efdc; }
+  .nine td { width: 30%; }
+  .nine th:first-child { width: 10%; }
+  .skel td { height: 30px; }
+  svg { width: 100%; height: auto; display: block; }
+  svg text { font: 700 12px Jost, sans-serif; fill: var(--muted); }
+  .creature { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 4px; }
+  .creature div { border: 2px dashed var(--line); border-radius: 8px; height: 70px; padding: 4px 6px; font-size: 11px; font-weight: 700; color: var(--muted); }
+  footer { max-width: 1100px; margin: 0 auto; padding: 0 16px 30px; color: var(--muted); font-size: 12.5px; }
+  @media print {
+    @page { size: letter; margin: 12mm; }
+    body { background: #fff; }
+    header .acts, footer { display: none; }
+    main { display: block; padding: 0; }
+    .sheet { margin: 0 0 10mm; border-width: 2px; page-break-inside: avoid; }
+    .sheet:nth-child(2n) { page-break-after: always; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Framework Kit</h1>
+    <p>Six blank frameworks from Mastering Game Mechanics, Composition. Print them, or save them as a PDF, and fill them in for your own game or mod.</p>
+  </div>
+  <div class="acts"><a class="back" href="index.html#3">← Back</a> <button onclick="print()">Print or save PDF</button></div>
+</header>
+<main>
+  <section class="sheet">
+    <h2>Ability card</h2>
+    <p class="from">Purpose, Payload, Packaging (slides 56-105)</p>
+    <div class="field">Name</div>
+    <div class="field tall">Purpose · the problem it solves</div>
+    <div class="field tall">Payload · keywords, what it does</div>
+    <div class="field tall">Packaging · theme, delivery, look and sound</div>
+    <div class="row"><div class="field">Skill it tests</div><div class="field">Vulnerability it opens</div></div>
+  </section>
+
+  <section class="sheet">
+    <h2>Creature card</h2>
+    <p class="from">Archetypes on one body (slides 155-173)</p>
+    <div class="field">Creature</div>
+    <div class="creature" style="margin-top:12px"><div>Archetype 1</div><div>Archetype 2</div><div>Archetype 3</div></div>
+    <div class="field tall">What the player must do to answer it</div>
+    <div class="row"><div class="field">Packaging</div><div class="field">Where it appears</div></div>
+  </section>
+
+  <section class="sheet">
+    <h2>Nine fundamentals</h2>
+    <p class="from">Counter circle × timing (slides 242-255). One move per cell; an empty cell is a gap.</p>
+    <table class="nine">
+      <tr><th></th><th>Before</th><th>During</th><th>Post</th></tr>
+      <tr><th>Offensive</th><td>Initiate</td><td>Zone</td><td>Punish</td></tr>
+      <tr><th>Defensive</th><td>Mitigate</td><td>Reflex</td><td>React</td></tr>
+      <tr><th>Predictive</th><td>Setup</td><td>Counterplay</td><td>Response</td></tr>
+    </table>
+  </section>
+
+  <section class="sheet">
+    <h2>Counter circle</h2>
+    <p class="from">Each beats the next (slides 238-241)</p>
+    <svg viewBox="0 0 320 230" aria-hidden="true">
+      <defs><marker id="h" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#152044"/></marker></defs>
+      <circle cx="160" cy="46" r="38" fill="none" stroke="#cdbf9f" stroke-width="2.5"/>
+      <circle cx="260" cy="180" r="38" fill="none" stroke="#cdbf9f" stroke-width="2.5"/>
+      <circle cx="60" cy="180" r="38" fill="none" stroke="#cdbf9f" stroke-width="2.5"/>
+      <path d="M200 60Q250 90 258 136" fill="none" stroke="#152044" stroke-width="2.5" marker-end="url(#h)"/>
+      <path d="M218 192Q160 214 102 192" fill="none" stroke="#152044" stroke-width="2.5" marker-end="url(#h)"/>
+      <path d="M62 136Q70 90 120 60" fill="none" stroke="#152044" stroke-width="2.5" marker-end="url(#h)"/>
+    </svg>
+    <div class="row"><div class="field">Top</div><div class="field">Right</div></div>
+    <div class="field">Left</div>
+  </section>
+
+  <section class="sheet">
+    <h2>Elemental diamond</h2>
+    <p class="from">Four corners, two axes (slides 256-257)</p>
+    <svg viewBox="0 0 320 230" aria-hidden="true">
+      <path d="M160 12L300 115L160 218L20 115Z" fill="none" stroke="#152044" stroke-width="2.5"/>
+      <path d="M160 12V218M20 115H300" stroke="#cdbf9f" stroke-width="2" stroke-dasharray="6 5"/>
+    </svg>
+    <div class="row"><div class="field">Top corner</div><div class="field">Bottom corner</div></div>
+    <div class="row"><div class="field">Left corner</div><div class="field">Right corner</div></div>
+    <div class="row"><div class="field">Vertical axis means</div><div class="field">Horizontal axis means</div></div>
+  </section>
+
+  <section class="sheet">
+    <h2>Design skeleton</h2>
+    <p class="from">Slots before content (slides 216-222)</p>
+    <table class="skel">
+      <tr><th style="width:34%">Slot</th><th>What fills it</th></tr>
+      <tr><td></td><td></td></tr><tr><td></td><td></td></tr><tr><td></td><td></td></tr>
+      <tr><td></td><td></td></tr><tr><td></td><td></td></tr><tr><td></td><td></td></tr>
+    </table>
+  </section>
+</main>
+<footer>From the Mastering Game Mechanics deck, Composition module. Fill in a copy for every game, mod or feature you plan.</footer>
+</body>
+</html>

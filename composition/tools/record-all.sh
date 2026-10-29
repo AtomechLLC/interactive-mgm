@@ -38,4 +38,23 @@ rec 'refine/index.html#5' game-feel plain-then-felt
 rec 'refine/index.html#6' solution-scale solution-vulnerability-scale
 rec 'refine/index.html#7' rain-exploit restoring-rain-exploit
 rec 'refine/index.html#8' three-ways-teach three-ways-to-teach
+rec 'archetypes/index.html#4' archetype-context archetypes-depend-on-your-game
+rec 'archetypes/index.html#5' zoom-encounter zoom-to-the-encounter
+rec 'archetypes/index.html#6' paladin-variants paladin-variants
+rec 'archetypes/index.html#7' structured-unstructured structured-vs-unstructured
+rec 'systems/index.html#1' alchemy-grid alchemy-engine-grid
+rec 'systems/index.html#2' loot-roll loot-generator-roll
+rec 'systems/index.html#3' bespoke-procedural bespoke-vs-procedural
+rec 'systems/index.html#4' systems-reel systems-tour-reel
+rec 'systems/index.html#6' owl draw-the-rest-of-the-owl
+rec 'systems/index.html#7' mtg-skeleton mtg-set-skeleton
+rec 'systems/index.html#8' sf2-skeleton street-fighter-ii-skeleton
+rec 'counter-circle/index.html#3' circle-reskin counter-circle-reskinner
+rec 'counter-circle/index.html#4' two-make-nine two-frameworks-make-nine
+rec 'counter-circle/index.html#5' duel-timeline duel-timeline
+rec 'counter-circle/index.html#6' elemental-diamond elemental-diamond
+rec 'whats-next/index.html#1' challenge-loop challenges-first-then-tools
+rec 'whats-next/index.html#2' course-map where-to-go-next
+rec 'whats-next/index.html#3' framework-kit framework-kit
+rec 'whats-next/index.html#4' boss-fight build-the-boss-audit-the-kit
 wait
