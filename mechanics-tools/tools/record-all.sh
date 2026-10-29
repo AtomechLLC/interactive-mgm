@@ -9,6 +9,8 @@ rec() { node record-slide-gif.js "$U/$1" "$2" "../gifs/$3.gif" 15 "$HIDE" "$4" &
 rec 'doors/index.html#2' doors doors-switch-plate-pulley "$NOSIDE"
 rec 'doors/index.html#3' kinds doors-binary-discrete-continuous "$NOSIDE"
 rec 'contrapositive/index.html#2' arena contrapositive-arena
+rec 'contrapositive-rules/index.html#1' stomp contrapositive-stomp-rule "$NOSIDE"
+rec 'contrapositive-rules/index.html#2' brush contrapositive-brush-break "$NOSIDE"
 rec 'inversion/index.html#2' raid inversion-danger-safe-ring "$NOSIDE"
 rec 'reverse-map/index.html#1' map reverse-sequencing-map
 rec 'reverse-map/index.html#2' rv-pokemon reverse-sequencing-pokemon-gym "$NOSIDE"

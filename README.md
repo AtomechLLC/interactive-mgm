@@ -116,6 +116,7 @@ Home page `mechanics-tools/index.html` (cards from `PAGES` + `READY`, extra GIFs
 
 - `doors/`: switch, pressure plate and pulley (deck slides 79-94), plus binary, discrete and continuous (89-91). Model in `step()` at the top of `doors.js`.
 - `contrapositive/`: melee vs ranged safe room against a monster with shot lanes (132-134). `room()` counts the area.
+- `contrapositive-rules/`: replaces the burning / chillable pair (135-136, 139-140 in the editor). Mario's stomp with real Super Mario Bros. sprites, where a rule and its contrapositive both hold, and League of Legends brush (Ashe and Pyke), where both break together, on purpose. Timings in `E` and the `BREAK` constants in `rules.js`.
 - `inversion/`: danger zone, safe rune and shrinking ring with ten raiders (110-113). `MODES` and `targetOf()`.
 - `reverse-map/`: the slide 116 map example, forward vs backward, with the WoW grind/level/raid strip (115-119). Slides 2-4 are alternate takes on the same idea: a Pokémon gym planned from Misty back (`rv-pokemon.js`), a card turn built from the finisher with WoW spell icons (`rv-cards.js`) and a Super Mario World climb placed from the Dragon Coin down (`rv-mario.js`). Sprites and art are in `reverse-map/img/`.
 - `diminishing/`: stun per rank as linear, diminishing or capped (the deck's illustrative Xerath curve; live Xerath scales by distance, up to 2.25 s) beside Elden Ring's real Vigor HP (183-186).

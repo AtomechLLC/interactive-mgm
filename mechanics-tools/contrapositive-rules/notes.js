@@ -1,0 +1,6 @@
+// Speaker notes per slide. Source: "MGM C4 M3 - Mechanics Design Optimizations and Tools", slides 135-136 (139-140 in the editor),
+// which used "if you are burning, you can be chilled". These replace that pair with a rule players already know and a deliberate break.
+window.NOTES = [
+  { script: 'Here is a rule every Mario player already obeys: if Mario can stomp an enemy, its top is safe to touch. The contrapositive: if its top is not safe to touch, Mario can not stomp it. Goomba and Koopa Troopa are stompable and safe on top. Spiny has spikes on top, so Mario can not stomp it. The rule holds, and so does its contrapositive. Every stompable enemy sits inside the safe-on-top circle.' },
+  { script: 'Now a rule that breaks on purpose. In League of Legends you would expect vision to be mutual: if an enemy can see you, you can see them. The contrapositive: if you can not see them, they can not see you. Step Pyke into a brush and that fails. Ashe can not see him, but he still sees her. A rule and its contrapositive are the same statement, so they always break together. The contrapositive is just where you notice it: ask “I can not see them, so can they see me?” Here the answer is yes, and that is the point of brush. It exists to create ambushes. When you break a rule, break it on purpose and give the player a way to read it.' },
+];
