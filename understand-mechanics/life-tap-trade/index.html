@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Life Tap Trade · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=Montserrat:ital,wght@0,600;0,700;0,800;1,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="../shared/um.css">
+<style>
+  /* the canvas is the whole slide under the corner title block, drawn on the parchment like the deck slide */
+  .slide.lt-full canvas.demo { position: absolute !important; inset: 0; margin: 0; width: 1600px; height: 900px; background: none !important; border: 0 !important; border-radius: 0 !important; z-index: 1; }
+  .lt-ctl { position: absolute !important; right: 28px; top: 292px; z-index: 4; display: flex; gap: 10px; align-items: center; background: rgba(255, 252, 244, .9); border: 1px solid #cdbf9f; border-radius: 10px; padding: 6px 12px; font-size: 15px; }
+  .lt-ctl .btn { font-size: 15px; padding: 4px 10px; }
+  .lt-ctl .btn.on { background: var(--navy); color: #fff; }
+  .lt-ctl label { display: flex; gap: 8px; align-items: center; color: var(--ink); font-weight: 600; }
+  .lt-ctl input[type=range] { width: 120px; }
+</style>
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · Understand Mechanics · The Life Tap Trade', home: '../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1: slide 230 -->
+<section class="slide lt-full" data-title="In Solo Play It’s Risky" data-demo="ltsolo">
+  <h2>In Solo Play It’s Risky</h2>
+  <canvas class="demo" width="1600" height="900"></canvas>
+  <div class="lt-ctl">
+    <label>Boss hit <b class="lt-hitv"></b><input type="range" class="lt-hit" min="30" max="100" step="10" value="70"></label>
+    <button class="btn lt-play on">▶ Replay</button>
+  </div>
+</section>
+
+<!-- 2: slide 231 -->
+<section class="slide lt-full" data-title="In Raids It Was Free" data-demo="ltraid">
+  <h2>In Raids It Was Free<br><span class="accent">*At the Cost of Healing</span></h2>
+  <canvas class="demo" width="1600" height="900"></canvas>
+  <div class="lt-ctl">
+    <label><input type="checkbox" class="lt-priest" checked> Priest in the party</label>
+    <button class="btn lt-play on">▶ Replay</button>
+  </div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="../shared/icons.js"></script>
+<script src="trade.js"></script>
+</body>
+</html>

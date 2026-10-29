@@ -135,6 +135,7 @@ Home page `understand-mechanics/index.html` (cards from `PAGES` + `READY`, extra
 - `grass/`: mechanic or aesthetic, cutting grass that hides things or doesn't (18).
 - `type-weakness/`: the slide 107 X-ray, 5 damage with a type context, x2 or x1 (104-107).
 - `life-tap/`: the same warlock rotation solo and in a raid (226-228).
+- `life-tap-trade/`: the two Life Tap slides as drawn, before | the trade | after, animated (230 solo, 231 raid). Solo adds a boss hit (slider) to show what the lost 40 HP costs; raid adds the priest's Flash Heal, THX, BRO~ and LOL!. Scenes are `solo(t)` and `raid(t)` in `trade.js`; GIFs `life-tap-solo-risky` and `life-tap-raid-free` (`__seek(t, 'solo' | 'raid')`).
 - `shared/`: `um.css` layout, a copy of the top-down kit, and `xray.js`, the X-ray diagram renderer (boxes coloured by framework part, timed signal hops, bounces for refused signals).
 - GIFs in `gifs/`: rebuild them all with `sh understand-mechanics/tools/record-all.sh` while serving InteractiveMGM on 127.0.0.1:8171.
 - `PROPOSALS.md`: the rest of the deck's interactive and GIF ideas, by section.
