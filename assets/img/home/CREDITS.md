@@ -1,0 +1,64 @@
+# Home page icons
+
+From [game-icons.net](https://game-icons.net), licensed [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/). Recolored (fill only). Module icons are `<module>.svg`; page icons are `<module>--<page>.svg`.
+
+| File | Icon | Artist |
+| --- | --- | --- |
+| `depth.svg` | [diving-helmet](https://game-icons.net/1x1/delapouite/diving-helmet.html) | Delapouite |
+| `depth--three-tiers.svg` | [podium](https://game-icons.net/1x1/delapouite/podium.html) | Delapouite |
+| `depth--ghost-runs.svg` | [ghost](https://game-icons.net/1x1/lorc/ghost.html) | Lorc |
+| `depth--go-board.svg` | [empty-chessboard](https://game-icons.net/1x1/delapouite/empty-chessboard.html) | Delapouite |
+| `depth--additive.svg` | [abacus](https://game-icons.net/1x1/delapouite/abacus.html) | Delapouite |
+| `depth--sword-forge.svg` | [anvil-impact](https://game-icons.net/1x1/lorc/anvil-impact.html) | Lorc |
+| `depth--mtg-keywords.svg` | [card-play](https://game-icons.net/1x1/quoting/card-play.html) | Quoting |
+| `understand-mechanics.svg` | [magnifying-glass](https://game-icons.net/1x1/lorc/magnifying-glass.html) | Lorc |
+| `understand-mechanics--grass.svg` | [grass](https://game-icons.net/1x1/delapouite/grass.html) | Delapouite |
+| `understand-mechanics--xray.svg` | [ribcage](https://game-icons.net/1x1/lorc/ribcage.html) | Lorc |
+| `understand-mechanics--guarded-door.svg` | [door-watcher](https://game-icons.net/1x1/delapouite/door-watcher.html) | Delapouite |
+| `understand-mechanics--type-weakness.svg` | [lightning-trio](https://game-icons.net/1x1/lorc/lightning-trio.html) | Lorc |
+| `understand-mechanics--resource-pool.svg` | [round-potion](https://game-icons.net/1x1/caro-asercion/round-potion.html) | Caro Asercion |
+| `understand-mechanics--chaotic-energy.svg` | [burning-embers](https://game-icons.net/1x1/lorc/burning-embers.html) | Lorc |
+| `understand-mechanics--cast-timeline.svg` | [hourglass](https://game-icons.net/1x1/lorc/hourglass.html) | Lorc |
+| `understand-mechanics--life-tap.svg` | [heart-drop](https://game-icons.net/1x1/lorc/heart-drop.html) | Lorc |
+| `understand-mechanics--life-tap-trade.svg` | [trade](https://game-icons.net/1x1/lorc/trade.html) | Lorc |
+| `mechanics-tools.svg` | [toolbox](https://game-icons.net/1x1/delapouite/toolbox.html) | Delapouite |
+| `mechanics-tools--doors.svg` | [lever](https://game-icons.net/1x1/lorc/lever.html) | Lorc |
+| `mechanics-tools--inversion.svg` | [rune-stone](https://game-icons.net/1x1/lorc/rune-stone.html) | Lorc |
+| `mechanics-tools--reverse-map.svg` | [treasure-map](https://game-icons.net/1x1/lorc/treasure-map.html) | Lorc |
+| `mechanics-tools--contrapositive.svg` | [arena](https://game-icons.net/1x1/sbed/arena.html) | Sbed |
+| `mechanics-tools--life-per-hit.svg` | [vampire-dracula](https://game-icons.net/1x1/delapouite/vampire-dracula.html) | Delapouite |
+| `mechanics-tools--diminishing.svg` | [chart](https://game-icons.net/1x1/delapouite/chart.html) | Delapouite |
+| `pvp.svg` | [crossed-swords](https://game-icons.net/1x1/lorc/crossed-swords.html) | Lorc |
+| `pvp--strike-trades.svg` | [sword-clash](https://game-icons.net/1x1/lorc/sword-clash.html) | Lorc |
+| `pvp--payoffs.svg` | [position-marker](https://game-icons.net/1x1/delapouite/position-marker.html) | Delapouite |
+| `pvp--core-actions.svg` | [fencer](https://game-icons.net/1x1/delapouite/fencer.html) | Delapouite |
+| `pvp--bruiser-meta.svg` | [muscle-up](https://game-icons.net/1x1/lorc/muscle-up.html) | Lorc |
+| `pvp--elusives.svg` | [invisible](https://game-icons.net/1x1/delapouite/invisible.html) | Delapouite |
+| `pvp--counter-cycles.svg` | [cycle](https://game-icons.net/1x1/lorc/cycle.html) | Lorc |
+| `pve-interactions.svg` | [dragon-head](https://game-icons.net/1x1/lorc/dragon-head.html) | Lorc |
+| `pve-interactions--nintendo-model.svg` | [super-mushroom](https://game-icons.net/1x1/lorc/super-mushroom.html) | Lorc |
+| `pve-interactions--enemy-composer.svg` | [goblin-head](https://game-icons.net/1x1/delapouite/goblin-head.html) | Delapouite |
+| `pve-interactions--resistance.svg` | [shield-reflect](https://game-icons.net/1x1/lorc/shield-reflect.html) | Lorc |
+| `pve-interactions--enemy-counters.svg` | [turtle-shell](https://game-icons.net/1x1/lorc/turtle-shell.html) | Lorc |
+| `pve-interactions--counters-wow.svg` | [shield-disabled](https://game-icons.net/1x1/skoll/shield-disabled.html) | Skoll |
+| `pve-interactions--escalation.svg` | [stairs-goal](https://game-icons.net/1x1/delapouite/stairs-goal.html) | Delapouite |
+| `pve-interactions--hazards.svg` | [falling-rocks](https://game-icons.net/1x1/delapouite/falling-rocks.html) | Delapouite |
+| `coop-interactions.svg` | [three-friends](https://game-icons.net/1x1/delapouite/three-friends.html) | Delapouite |
+| `coop-interactions--interactions.svg` | [mesh-network](https://game-icons.net/1x1/delapouite/mesh-network.html) | Delapouite |
+| `coop-interactions--camera.svg` | [video-camera](https://game-icons.net/1x1/delapouite/video-camera.html) | Delapouite |
+| `coop-interactions--targeting.svg` | [multiple-targets](https://game-icons.net/1x1/delapouite/multiple-targets.html) | Delapouite |
+| `coop-interactions--timing.svg` | [stopwatch](https://game-icons.net/1x1/lorc/stopwatch.html) | Lorc |
+| `coop-interactions--chains.svg` | [andromeda-chain](https://game-icons.net/1x1/lorc/andromeda-chain.html) | Lorc |
+| `coop-interactions--team-roles.svg` | [meeple-group](https://game-icons.net/1x1/delapouite/meeple-group.html) | Delapouite |
+| `coop-interactions--keywords.svg` | [spell-book](https://game-icons.net/1x1/delapouite/spell-book.html) | Delapouite |
+| `coop-interactions--free-gear.svg` | [chest-armor](https://game-icons.net/1x1/delapouite/chest-armor.html) | Delapouite |
+| `composition.svg` | [puzzle](https://game-icons.net/1x1/delapouite/puzzle.html) | Delapouite |
+| `composition--why-scale.svg` | [growth](https://game-icons.net/1x1/delapouite/growth.html) | Delapouite |
+| `composition--decompose.svg` | [jigsaw-box](https://game-icons.net/1x1/lorc/jigsaw-box.html) | Lorc |
+| `composition--three-dials.svg` | [cardboard-box](https://game-icons.net/1x1/delapouite/cardboard-box.html) | Delapouite |
+| `composition--ability-forge.svg` | [anvil](https://game-icons.net/1x1/lorc/anvil.html) | Lorc |
+| `composition--refine.svg` | [cut-diamond](https://game-icons.net/1x1/lorc/cut-diamond.html) | Lorc |
+| `composition--archetypes.svg` | [imp-laugh](https://game-icons.net/1x1/lorc/imp-laugh.html) | Lorc |
+| `composition--systems.svg` | [gears](https://game-icons.net/1x1/lorc/gears.html) | Lorc |
+| `composition--counter-circle.svg` | [linked-rings](https://game-icons.net/1x1/lorc/linked-rings.html) | Lorc |
+| `composition--whats-next.svg` | [direction-signs](https://game-icons.net/1x1/delapouite/direction-signs.html) | Delapouite |
