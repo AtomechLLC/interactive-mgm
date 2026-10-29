@@ -165,7 +165,10 @@ Every slide is a `CK.scene` (`shared/comp.js`): a canvas drawn as a pure functio
 
 - `why-scale/`: two views of one bestiary (slides 6-7): twelve Super Mario Bros. enemies flip to their movement, stomp and fireball parts, with how often each part is reused.
 - `decompose/`: one element, four targets (slides 37, 40, 73): the Super Star as Self → Self, then fire, frost and heal across Self, Enemy, Ally and Environment with World of Warcraft spell icons; empty cells are design prompts.
-- `archetypes/`: `arch.js` holds the Souls archetypes as small top-down loops (Flailer, Fighter, Brute, Sweeper, Defender, Evader, Rampager, Zone Healer). The gallery (158-168) and paladin or turtle (170-173) run on it.
-- `counter-circle/`: strip the packaging (238-240): attack, throw and block become Offense, Prediction and Defense.
+- `three-dials/`: three dials (56-65): `abilities.js` files twelve real abilities by purpose, payload and packaging; turning one dial keeps the other two.
+- `ability-forge/`: `forge-data.js` holds the deck's problems, keywords, themes and the world's keyword rules. The forge (77-104) builds and tests an ability against the Flame Demon and Lightning Mage; keyword reach (104-105) counts the interactions a new ability gets for free.
+- `archetypes/`: `arch.js` holds the Souls archetypes as small top-down loops (Flailer, Fighter, Brute, Sweeper, Defender, Evader, Rampager, Zone Healer). The composer (155-173) runs up to three on one body; the gallery (158-168) and paladin or turtle (170-173) run on it too.
+- `systems/`: the Doom Eternal encounter swapper (202-214): map slots by role, rerolled rosters.
+- `counter-circle/`: strip the packaging (238-240): attack, throw and block become Offense, Prediction and Defense. The nine fundamentals (242-255): explore each cell, audit a moveset for gaps, or place a move.
 - `shared/`: `comp.css` layout, `comp.js` scene engine and drawing helpers, a copy of the top-down kit, `icons.js` (game-icons.net, rebuilt by `tools/build-icons.py` from `tools/icon-names.txt`) and `img/`: Super Mario Bros. sprites cropped from the NES sheets on mariouniverse.com, and World of Warcraft spell icons from wow.zamimg.com.
 - GIFs in `gifs/`: rebuild with `sh composition/tools/record-all.sh [names]` while serving InteractiveMGM on 127.0.0.1:8181. They are 1920×1080 with the side panel hidden.
