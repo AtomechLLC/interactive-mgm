@@ -57,6 +57,12 @@
 </section>
 
 <section>
+  <h2>Slide Images</h2>
+  <p>1920×1080 stills that replace a slide outright. Right-click one to save it, or open it full size.</p>
+  <div id="stills" class="grid"></div>
+</section>
+
+<section>
   <h2>Slide GIFs</h2>
   <p>1280×720, looping, one per deck section. Right-click a GIF to save it, or open it full size.</p>
   <div id="gifs" class="grid"></div>
@@ -73,10 +79,11 @@
     ['type-weakness', 'Zap_Friendly', 'Type Weakness X-Ray', 'The slide’s 10 HP creature takes a 5 damage hit: the damage type rides along as context and picks the transform, x2 or x1', '104 to 107', 'type-weakness-xray', 'Same Hit, Different Transform', 'Electric on an electric-vulnerable target is (-5) x2: Dying. Fire, or a target that isn’t vulnerable, is (-5) x1: Wounded.'],
     ['chaotic-energy', 'Missile_Friendly', 'Destruction Warlock & Chaotic Energy', 'MoP Destruction from the 5.4 game data: fillers build Burning Embers bit by bit, Chaos Bolt spends a whole ember. Watch the rotation on a cast timeline, then play it yourself', '224, 256', 'chaotic-energy-embers', 'Embers In, Chaos Bolts Out', 'Fillers add 1 bit per hit and 2 per crit; ten bits are an ember. The warlock pools to 3.5 embers, dumps them into Chaos Bolts during Dark Soul, and a break costs only filler casts: the embers wait.'],
     ['life-tap-trade', 'Mana_Crystal', 'The Life Tap Trade', 'The two slides as drawn, animated: solo, the warlock trades 40 HP for 40 mana and the same boss hit that it survived at full health now defeats it; in a raid the priest heals the 40 HP straight back', '230 to 231', 'life-tap-solo-risky', 'In Solo Play It’s Risky', 'Life Tap takes the warlock from 100/100 HP and 40/100 mana to 60/100 and 80/100, and no one heals it back: a 70 HP boss hit leaves 30 HP without the tap and defeats the warlock after it.'],
+    ['resource-variety', 'Mana_Crystal', 'Resource Variety', 'Health, mana and gold as themed vessels that fill, cap and get spent, then six more resources drawn as the meters their genres use: super meters, cooldowns, real currency, cards, potions and durability', '220 to 221', '', '', ''],
     ['life-tap', 'Plague', 'Life Tap Solo vs Raid', 'The same warlock rotation twice: solo, a monster is always hitting you and the taps get you killed; in a raid the priest heals them straight back', '226 to 228', 'life-tap-solo-vs-raid', 'Risky Alone, Free in a Raid', 'Cast until out of mana, then trade 40 HP for 40 mana. Solo the warlock goes down; in the raid the priest heals every tap back.'],
   ];
   // pages that are built so far
-  const READY = ['xray', 'guarded-door', 'cast-timeline', 'resource-pool', 'grass', 'type-weakness', 'life-tap', 'life-tap-trade', 'chaotic-energy'];
+  const READY = ['xray', 'guarded-door', 'cast-timeline', 'resource-pool', 'grass', 'type-weakness', 'life-tap', 'life-tap-trade', 'chaotic-energy', 'resource-variety'];
   const LIVE = PAGES.filter(p => READY.includes(p[0]));
   // deck parts in deck order: [title, first slide, last slide]. Each page sits under the part its first slide is in.
   const PARTS = [
@@ -90,7 +97,7 @@
   const first = sl => parseInt(sl, 10);
   LIVE.sort((a, b) => first(a[4]) - first(b[4]));
   const card = ([f, ic, t, b, sl, gif]) =>
-    `<a class="mod" href="${f}/index.html"><img src="../assets/img/forsaken/${ic}.png" alt=""><span><b>${t}</b><small>${b} (deck slides ${sl}). GIF: gifs/${gif}.gif</small><br><span class="tag">ready</span></span></a>`;
+    `<a class="mod" href="${f}/index.html"><img src="../assets/img/forsaken/${ic}.png" alt=""><span><b>${t}</b><small>${b} (deck slides ${sl}). ${gif ? `GIF: gifs/${gif}.gif` : `Stills: stills/${f}-*.png`}</small><br><span class="tag">ready</span></span></a>`;
   document.getElementById('cards').innerHTML = PARTS.map(([pt, from, to]) => {
     const here = LIVE.filter(p => first(p[4]) >= from && first(p[4]) <= to);
     return here.length ? `<div class="part" style="--n:${here.length}"><h3>${pt}<span>slides ${from} to ${to}</span></h3><div class="row">${here.map(card).join('')}</div></div>` : '';
@@ -113,7 +120,14 @@
     ['resource-pool', '215 to 216', 'discrete-vs-continuous', 'Spent in Chunks, or Drained Like a Battery', 'A four-round clip whose 4th shot hits harder, then a reload, next to a battery that drains while a boost is held.'],
   ];
   const fig = (sl, gif, gt, cap) => `<figure><a href="gifs/${gif}.gif"><img src="gifs/${gif}.gif" alt="${gt}" loading="lazy"></a><figcaption><b>${gt}</b>${cap} Deck slides ${sl}.</figcaption></figure>`;
-  document.getElementById('gifs').innerHTML = LIVE.map(([f, , , , sl, gif, gt, cap]) => fig(sl, gif, gt, cap) + EXTRA.filter(e => e[0] === f).map(e => fig(e[1], e[2], e[3], e[4])).join('')).join('');
+  document.getElementById('gifs').innerHTML = LIVE.map(([f, , , , sl, gif, gt, cap]) => (gif ? fig(sl, gif, gt, cap) : '') + EXTRA.filter(e => e[0] === f).map(e => fig(e[1], e[2], e[3], e[4])).join('')).join('');
+  // still images: [slides, png file, title, caption]
+  const STILLS = [
+    ['220', 'resource-variety-health-mana-gold', 'Resources Can Represent a Lot of Things', 'Health, mana and gold as three glass vessels at the same level, each with its icon, its value and what spends it.'],
+    ['221', 'resource-variety-many-more', 'And Many More…', 'Super meters, cooldowns, real currency, cards, potions and equipment durability, each drawn as the meter its genre uses, beside the health, mana and gold vessels.'],
+    ['220 to 221', 'resource-variety-bars-panel', 'The Three Vessels, Panel Only', 'Just the health, mana and gold card, to drop in where the old bar image sits.'],
+  ];
+  document.getElementById('stills').innerHTML = STILLS.map(([sl, png, t, cap]) => `<figure><a href="stills/${png}.png"><img src="stills/${png}.png" alt="${t}" loading="lazy" style="object-fit:contain"></a><figcaption><b>${t}</b>${cap} Deck slide${sl.includes(' ') ? 's' : ''} ${sl}.</figcaption></figure>`).join('');
 </script>
 </body>
 </html>

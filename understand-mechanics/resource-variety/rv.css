@@ -1,0 +1,53 @@
+/* Resource Variety: a cream card on the left, a short caption on the right, like the module's other slides */
+.rv-wrap { display: grid; grid-template-columns: 1040px 1fr; gap: 34px; margin-top: 4px; align-items: center; }
+.rv-card { background: #fdf8f0; border-radius: 14px; height: 600px; box-shadow: 0 2px 0 rgba(120, 96, 50, .12); }
+.rv-side p { font-size: 24px !important; line-height: 1.4 !important; color: var(--ink); margin: 0 0 18px; }
+.rv-side .rv-q { font-family: Montserrat, sans-serif; font-weight: 700; font-size: 26px !important; color: #1b2148; }
+
+/* the three vessels */
+.rv-trio { display: flex; justify-content: center; align-items: flex-end; gap: 80px; padding: 0 40px 34px; }
+.rv-pool { display: flex; flex-direction: column; align-items: center; position: relative; }
+.rv-pool .rv-ic { width: 84px; height: 84px; border-radius: 14px; border: 5px solid #1b2148; box-shadow: 0 0 0 4px #fdf8f0, 0 6px 14px rgba(27, 33, 72, .3); margin-bottom: -40px; z-index: 1; }
+.rv-pool b { font-family: Montserrat, sans-serif; font-weight: 800; font-size: 30px; color: #1b2148; margin-top: 12px; }
+.rv-pool .rv-val { background: #1b2148; color: #fff; font-weight: 600; font-size: 19px; border-radius: 99px; padding: 3px 14px; margin-top: 6px; }
+.rv-pool small { font-size: 17px; color: #5d618c; margin-top: 8px; }
+.rv-pool.hp b { color: #c9271c; }
+.rv-pool.mp b { color: #2346c9; }
+.rv-pool.gold b { color: #a86a00; }
+
+.rv-trio.mini { gap: 22px; padding: 0 0 24px; justify-content: flex-start; }
+.rv-trio.mini .rv-ic { width: 44px; height: 44px; border-width: 3px; border-radius: 9px; margin-bottom: -20px; box-shadow: 0 0 0 3px #f1ece2; }
+.rv-trio.mini b { font-size: 17px; margin-top: 6px; }
+
+/* six more resource types */
+.rv-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 18px; padding: 22px; }
+.rv-tile { background: #fff; border: 2px solid #e4dccb; border-radius: 12px; padding: 16px 18px 14px; display: flex; flex-direction: column; }
+.rv-th { display: flex; align-items: center; gap: 12px; min-height: 52px; }
+.rv-th img { width: 52px; height: 52px; border-radius: 9px; border: 3px solid #1b2148; }
+.rv-th b { font-family: Montserrat, sans-serif; font-weight: 800; font-size: 22px; color: #1b2148; line-height: 1.1; }
+.rv-meter { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; }
+.rv-tile small { font-size: 16px; color: #5d618c; text-align: center; line-height: 1.3; }
+.m-num { font-family: Montserrat, sans-serif; font-weight: 800; font-size: 26px; color: #1b2148; }
+.m-num em { font-family: Jost, sans-serif; font-style: normal; font-weight: 500; font-size: 17px; color: #5d618c; }
+.m-big { font-family: Montserrat, sans-serif; font-weight: 800; font-size: 56px; color: #1b2148; line-height: 1; }
+
+.m-seg { display: flex; gap: 6px; width: 100%; }
+.m-seg i { flex: 1; height: 30px; border: 3px solid #1b2148; border-radius: 6px; background: linear-gradient(90deg, #ffb951 calc(var(--f) * 100%), #ece6da 0); box-shadow: inset 0 -6px 0 rgba(0, 0, 0, .08); }
+.m-seg i[style="--f:1"] { background: linear-gradient(180deg, #ffd27f, #f08a1c); box-shadow: 0 0 12px rgba(255, 160, 40, .75), inset 0 -6px 0 rgba(0, 0, 0, .1); }
+
+.m-cd { position: relative; width: 92px; height: 92px; }
+.m-cd img, .m-cd svg { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 12px; }
+.m-cd img { border: 4px solid #1b2148; box-sizing: border-box; }
+.m-cd svg { clip-path: inset(4px round 9px); }
+.m-cd span { position: absolute; inset: 0; display: grid; place-items: center; font-family: Montserrat, sans-serif; font-weight: 800; font-size: 40px; color: #fff; text-shadow: 0 2px 4px #000; }
+
+.m-hand { position: relative; width: 220px; height: 96px; }
+.m-hand img { position: absolute; left: 50%; bottom: 0; width: 58px; height: 80px; object-fit: cover; border: 3px solid #1b2148; border-radius: 7px; transform-origin: 50% 160%; transform: translateX(-50%) rotate(calc(var(--i) * 11deg)); box-shadow: 0 3px 6px rgba(0, 0, 0, .25); }
+
+.m-pots { display: flex; gap: 12px; }
+.m-pots img { width: 62px; height: 62px; border-radius: 10px; border: 3px solid #1b2148; }
+.m-pots img.used { filter: grayscale(1) brightness(.55); opacity: .7; border-style: dashed; }
+
+.m-bar { width: 100%; height: 30px; border: 3px solid #1b2148; border-radius: 99px; background: #ece6da; overflow: hidden; }
+.m-bar i { display: block; height: 100%; width: calc(var(--f) * 100%); background: linear-gradient(180deg, #ffcf6b, #e0821c); }
+.rv-tile:last-child .rv-meter { padding: 0 6px; }
