@@ -176,3 +176,13 @@ Every slide is a `CK.scene` (`shared/comp.js`): a canvas drawn as a pure functio
 - `counter-circle/`: strip the packaging (238-240): attack, throw and block become Offense, Prediction and Defense. The nine fundamentals (242-255): explore each cell, audit a moveset for gaps, or place a move.
 - `shared/`: `comp.css` layout, `comp.js` scene engine and drawing helpers, a copy of the top-down kit, `icons.js` (game-icons.net, rebuilt by `tools/build-icons.py` from `tools/icon-names.txt`) and `img/`: Super Mario Bros. sprites cropped from the NES sheets on mariouniverse.com, and World of Warcraft spell icons from wow.zamimg.com.
 - GIFs in `gifs/`: rebuild with `sh composition/tools/record-all.sh [names]` while serving InteractiveMGM on 127.0.0.1:8181. They are 1920×1080 with the side panel hidden.
+
+## Blog post interactives (`blog-posts/`)
+
+Home page `blog-posts/index.html`: one card per blog post, plus its GIFs. Uses `shared/blog.css` (a copy of the depth layout), a copy of the top-down kit and `shared/icons.js` (the depth icons plus potion, bomb, chest, heart and dice icons from game-icons.net).
+
+- `too-weak-to-waste/`: Dan Felder, *Too Weak to Waste: The True Consumable Problem* (danfelder.net, 28 August 2026). Three spikes, all in `consumables.js`:
+  1. Will It Flip the Fight?: 100 seeded attempts at a boss, sorted by the boss HP left when the player died. A Firebomb saves an attempt when its damage covers that gap; the player throws it only when it saves enough of the losses to clear the certainty they need (the post's action trigger). Sliders for bomb damage, performance swing (Soulslike variance) and that certainty. Toy model in `FLIP`.
+  2. Bypass the Dice: Ultra Ball against Master Ball on Mewtwo (Gen III-IV catch formula, catch rate 3, in `catchOdds()`), and a longsword swing against a caster level 5 wand of Magic Missile on a nearly dead foe (Pathfinder; the swing's hit chance is illustrative, `SWORD` / `WAND`). Twenty seeded tries per option. Pokémon art in `img/` is from PokeAPI's sprites.
+  3. Make Items Keys: a roguelike run with three bombs and an optional vault whose guardian guards a Heart Container. Weak bombs, or a reward the player cannot see, and the bombs stay in the bag; strong bombs and a visible reward turn them into a permanent heart. Timeline in `posAt()`, numbers in `RUN`.
+- GIFs in `gifs/`: rebuild them all with `sh blog-posts/tools/record-all.sh` while serving InteractiveMGM on 127.0.0.1:8191. They are 1920×1080 with the side panel hidden.

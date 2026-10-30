@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blog Post Interactives · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* same theme as the other module homes (../understand-mechanics/index.html): navy band over parchment, gold accents */
+  :root { --navy: #152044; --ink: #262c6a; --muted: #5d618c; --gold: #ffb951; --gold-ink: #9a5a06; --line: #cdbf9f; }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; background: #ede7e7 url("../assets/img/theme/paper.jpg") center / cover fixed; color: var(--ink); font-family: Jost, system-ui, sans-serif; border: 4px solid var(--gold); }
+  .band { background: var(--navy); color: #fff; clip-path: polygon(0 0, 100% 0, 100% 78%, 0 100%); padding: 0 0 70px; }
+  header { position: relative; padding: 60px 24px 0; max-width: 1180px; margin: 0 auto; }
+  .up { position: absolute; top: 18px; left: 24px; color: #d6dbef; font-size: 15px; text-decoration: none; }
+  .up:hover { color: var(--gold); }
+  .kicker { color: var(--gold); font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; }
+  h1 { font-family: Montserrat, sans-serif; font-weight: 800; font-size: clamp(34px, 6vw, 68px); margin: 8px 0 10px; }
+  h1 span { color: var(--gold); }
+  header p { color: #d6dbef; font-size: 19px; max-width: 760px; margin-bottom: 0; }
+  section { max-width: 1180px; margin: 0 auto; padding: 24px 24px 0; }
+  h2 { font-family: Montserrat, sans-serif; font-weight: 800; font-size: 26px; margin: 10px 0 4px; }
+  h2 + p { color: var(--muted); margin: 0 0 16px; font-size: 17px; }
+  /* cards: one per blog post */
+  /* parts flow side by side when they have few pages: each .part is as wide as its --n cards */
+  #cards { display: flex; flex-wrap: wrap; gap: 26px 18px; }
+  #cards .part { flex: var(--n) 1 calc(var(--n) * 318px - 18px); min-width: 0; }
+  #cards h3 { font-family: Montserrat, sans-serif; font-weight: 700; font-size: 18px; margin: 0 0 10px; }
+  #cards h3 span { color: var(--gold-ink); font-weight: 600; font-size: 14px; margin-left: 6px; white-space: nowrap; }
+  #cards .row { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
+  a.mod { display: grid; grid-template-columns: 72px 1fr; gap: 16px; align-items: center; padding: 18px; border-radius: 12px; background: rgba(255, 252, 244, .82); border: 1px solid var(--line); color: inherit; text-decoration: none; box-shadow: 0 2px 0 rgba(120, 96, 50, .12); transition: transform .15s, border-color .2s; }
+  a.mod:hover { transform: translateY(-4px); border-color: var(--navy); }
+  .mod img { width: 72px; height: 72px; border-radius: 50%; background: var(--navy); padding: 9px; object-fit: contain; }
+  .mod b { font-family: Montserrat, sans-serif; font-weight: 800; font-size: 19px; display: block; }
+  .mod small { color: var(--muted); font-size: 15px; }
+  .tag { display: inline-block; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; font-weight: 600; color: var(--gold-ink); border: 1px solid var(--line); border-radius: 99px; padding: 1px 8px; margin-top: 6px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 18px; padding-bottom: 40px; }
+  figure { margin: 0; background: rgba(255, 252, 244, .82); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  figure img { display: block; width: 100%; aspect-ratio: 16 / 9; background: #e9e1d2; }
+  figcaption { padding: 10px 14px 12px; font-size: 15px; color: var(--muted); }
+  figcaption b { color: var(--ink); font-family: Montserrat, sans-serif; display: block; font-size: 16px; }
+</style>
+</head>
+<body>
+<div class="band"><header>
+  <a class="up" href="../index.html">← All modules</a>
+  <div class="kicker">Blog posts</div>
+  <h1>Blog Post <span>Interactives</span></h1>
+  <p>Interactive companions to game design blog posts. Each page takes one post’s key ideas and lets you pull the levers.</p>
+</header></div>
+
+<section>
+  <h2>Interactive Pages</h2>
+  <p>One page per post. Open one and use ← → to move through it.</p>
+  <div class="grid">
+    <a class="mod" href="too-weak-to-waste/index.html"><img src="../assets/img/home/depth--sword-forge.svg" alt=""><span><b>Too Weak to Waste</b><small>Dan Felder, “Too Weak to Waste: The True Consumable Problem”: the action trigger, guaranteed outcomes and items as keys.</small></span></a>
+  </div>
+</section>
+
+<section>
+  <h2>GIFs</h2>
+  <p>1920×1080, looping. Right-click a GIF to save it, or open it full size.</p>
+  <div class="grid">
+    <figure><a href="gifs/too-weak-to-waste-flip-the-fight.gif"><img src="gifs/too-weak-to-waste-flip-the-fight.gif" alt="Will it flip the fight" loading="lazy"></a><figcaption><b>Will It Flip the Fight?</b>100 boss attempts: a bomb gets thrown only when it saves enough of the losses, and swingy play needs a stronger bomb.</figcaption></figure>
+    <figure><a href="gifs/too-weak-to-waste-bypass-the-dice.gif"><img src="gifs/too-weak-to-waste-bypass-the-dice.gif" alt="Bypass the dice" loading="lazy"></a><figcaption><b>Bypass the Dice</b>Ultra Ball against Master Ball on Mewtwo, and a longsword swing against a wand of Magic Missile.</figcaption></figure>
+    <figure><a href="gifs/too-weak-to-waste-items-as-keys.gif"><img src="gifs/too-weak-to-waste-items-as-keys.gif" alt="Make items keys" loading="lazy"></a><figcaption><b>Make Items Keys</b>Three bombs and an optional vault: weak bombs or a hidden reward keep them in the bag; strong bombs and a visible reward buy a permanent heart.</figcaption></figure>
+  </div>
+</section>
+</body>
+</html>
