@@ -11,7 +11,7 @@ Open `index.html` in a browser (no build step, works straight off disk). It list
 - `understand-mechanics/`: **Understand Mechanics** (`understand-mechanics/index.html`), from *MGM C4 M2 - Understand, Analyze and Plan Mechanics*.
 - `depth/`: **The Goal: Depth** (`depth/index.html`), from *MGM C4 M1 - The Goal of Mechanics Design - Depth*.
 - `composition/`: **Composition** (`composition/index.html`), from *MGM C4 M7 - Techniques to Scale Engaging Gameplay Design*, the final module.
-- `blog-posts/`: **Blog Posts** (`blog-posts/index.html`), interactives for the posts in funsmith.world's *Analyze real games* path. Five spikes so far (the top five); `blog-posts/PROPOSALS.md` lists a proposal per post.
+- `blog-posts/`: **Blog Posts** (`blog-posts/index.html`), interactives for the posts in funsmith.world's *Analyze real games* path. Ten spikes so far (the top five and the five quick wins); `blog-posts/PROPOSALS.md` lists a proposal per post.
 
 Shared engine, theme and art stay in `assets/` at the root, so a deck one level down loads `../../assets/`. `404.html` redirects the old root deck URLs (for example `/core-actions/`) to their `pvp/` homes.
 
@@ -180,11 +180,16 @@ Every slide is a `CK.scene` (`shared/comp.js`): a canvas drawn as a pure functio
 
 ## Blog Posts module (`blog-posts/`)
 
-Home page `blog-posts/index.html` (cards from `PAGES`), for the posts in funsmith.world's *Analyze real games* path. `PROPOSALS.md` lists a proposal for every post; the pages below are spikes of its top five. Each page is a `canvasDemo` with a looping walk-through, and `window.__seek(t, which)` / `__dur(which)` for GIF recording (none recorded yet). Numbers that are not from the post are marked illustrative in each file's header comment.
+Home page `blog-posts/index.html` (cards from `PAGES`), for the posts in funsmith.world's *Analyze real games* path. `PROPOSALS.md` lists a proposal for every post; the pages below are spikes of its top five and its five quick wins. Each page is a `canvasDemo` with a looping walk-through, and `window.__seek(t, which)` / `__dur(which)` for GIF recording (none recorded yet). Numbers that are not from the post are marked illustrative in each file's header comment.
 
 - `aran/`: Shade of Aran. A fixed-step fight in a round room: Arcane Explosion (leave), Blizzard (follow) and Flame Wreath (hold still); W A S D takes over the blue raider, and a toggle restores the shipped Flame Wreath bug (anyone moving detonates). Slide 2 compares three ways to say "hold still".
 - `best-button/`: TBC Warlock spells as spell power coefficient per second of casting, from the post's coefficients, with the 21/40 build's six talents as toggles and a 30 s best rotation strip. Assumes 20% crit and full Improved Shadow Bolt uptime; base damage is left out. Slide 2: thirty 2% talents added versus multiplied.
 - `netherspite/`: beams that hit whoever stands nearest the portal, the 20 s hold limit, and version 3's layers (void zones, banish with knockbacks, moving portals) as toggles, with meters for exact steps and room for mistakes; "let players use their own tools" applies the retrospective.
 - `keep-five/`: pick five spells per spec from the pre-Mists Warlock spellbook, reveal the post's five and their minigame. Slide 2: the post's physical games inside WoW as loops.
 - `pac-man/`: our own maze, the four ghost target rules (as documented in The Pac-Man Dossier), scatter/chase timers, a pause that shows the distance check, and "everyone uses Blinky's rule".
+- `ring-of-blood/`: the six Ring of Blood fights as health x damage against the intended 30% staircase; Skra'gath's class swap and the Champion's nerf are toggles. Heights after Rokdar are illustrative.
+- `nightbane-tools/`: fifteen hand-dragged spline points (releases over the castle snap onto it) against three bunnies A, B, C; a scripted cursor in the walk-through, dragging in play mode.
+- `dnd-advantage/`: one die, Advantage and Disadvantage as face chances and hit chances, what Advantage is worth as a flat bonus ((T-1)(21-T)/20), and seeded rolls.
+- `counter-strafe/`: speed against spread, three scripted runs (shoot moving, let go, counter-strafe) and a play mode (A, D, click or J to shoot). Numbers illustrative.
+- `gacha-pity/`: Genshin Impact's published 0.6% base, 90 hard pity and 1.6% consolidated rate, with the community-measured soft pity from 74; exact curves and 1,000 seeded players.
 - `shared/`: `blog.css` layout and a copy of the top-down kit. `img/`: World of Warcraft spell icons from wow.zamimg.com (sources in `img/sources.json`).

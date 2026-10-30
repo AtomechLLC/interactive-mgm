@@ -47,7 +47,7 @@
   <a class="up" href="../index.html">← All modules</a>
   <div class="kicker">funsmith.world · Analyze real games</div>
   <h1>Blog <span>Posts</span></h1>
-  <p>Interactives for the posts in funsmith.world's <i>Analyze real games</i> path: Alexander Brazie's post-mortems from World of Warcraft and the genre breakdowns. These five are spikes of the top five in <a href="PROPOSALS.md" style="color:var(--gold)">PROPOSALS.md</a>, which lists one proposal per post.</p>
+  <p>Interactives for the posts in funsmith.world's <i>Analyze real games</i> path: Alexander Brazie's post-mortems from World of Warcraft and the genre breakdowns. These pages are spikes of the top five and the quick wins in <a href="PROPOSALS.md" style="color:var(--gold)">PROPOSALS.md</a>, which lists one proposal per post.</p>
 </header></div>
 
 <section>
@@ -63,9 +63,14 @@
     ['best-button', 'Best Button', 'The TBC Warlock\u2019s spells as coefficient per second of casting. Add the 21/40 build\u2019s talents one at a time and watch the rotation collapse to Shadow Bolt; then watch 2% talents compound', 'Warlock\u2019s Overhaul: Streamlining and Gameplay Balance', 'pm'],
     ['netherspite', 'Netherspite Beams', 'Swap or die, then version 3\u2019s layers one at a time, with meters for steps that must be exact and mistakes the raid can recover from. Hold the blue beam yourself', 'Netherspite: The Clash of Novelty and Game Difficulty', 'pm'],
     ['keep-five', 'Keep Only Five', 'Pick five spells per spec from the pre-Mists Warlock spellbook, then reveal the post\u2019s five and the minigame they make; plus the physical games inside WoW', 'Redefining the Warlock Class', 'pm'],
+    ['ring-of-blood', 'Ring of Blood', 'Six fights meant to climb about 30% a step, drawn as a staircase: Skra\u2019gath\u2019s class swap drops below the line and the Warmaul Champion spikes above it', 'The Ring of Blood: Balancing Fantasy and Gameplay', 'pm'],
+    ['nightbane-tools', 'Nightbane\u2019s Flight', 'Drag fifteen spline points one at a time (and watch the castle eat them) against three invisible bunnies, with clicks and ideas per hour', 'Nightbane: Overcoming Unforeseen Technical Challenges', 'pm'],
+    ['dnd-advantage', 'D&D Advantage', 'Roll two d20, keep one: the chance of each face, the chance to hit a target, and what Advantage is worth as a flat bonus (+5 in the middle, under +1 at the ends)', 'Dungeons & Dragons Combat System', 'st'],
+    ['counter-strafe', 'Counter-Strafe', 'Shoot while moving, let go and shoot, or tap the other key and shoot: speed against spread, with shots on a target. Try it with A and D', 'How to Make a Game Like Valorant?', 'gb'],
+    ['gacha-pity', 'Gacha Pity', 'Genshin Impact\u2019s 0.6% rate with and without pity, and 1,000 simulated players: about 62 pulls on average with pity, 167 without, and no worst case', 'Gacha Game', 'gb'],
     ['pac-man', 'Pac-Man Ghost Targeting', 'Four target tiles, one straight-line step rule. Pause to see the distance check; give everyone Blinky\u2019s rule and get a conga line', 'Pathfinding in Pac-Man', 'gb'],
   ];
-  const PARTS = [['pm', 'Post-mortems from the trenches'], ['gb', 'Genre breakdowns']];
+  const PARTS = [['pm', 'Post-mortems from the trenches'], ['st', 'System teardowns'], ['gb', 'Genre breakdowns']];
   const card = ([f, t, b, post]) =>
     `<a class="mod" href="${f}/index.html"><img src="../assets/img/home/blog-posts--${f}.svg" alt=""><span><b>${t}</b><small>${b}. Post: <i>${post}</i>.</small><br><span class="tag">spike</span></span></a>`;
   document.getElementById('cards').innerHTML = PARTS.map(([k, pt]) => {

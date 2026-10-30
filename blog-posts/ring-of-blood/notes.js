@@ -1,0 +1,4 @@
+// Speaker notes. Source: funsmith.world post-mortem, "The Ring of Blood: Balancing Fantasy and Gameplay".
+window.NOTES = [
+  { script: 'The Ring of Blood is six fights in a row, each meant to be harder and more interesting than the last. The first steps follow the plan: the Blue Brothers have about thirty percent more health and damage than Brokentoe, and Rokdar adds thirty percent health and fifty percent damage again. Then two steps break. Swapping Skra’gath from Paladin to Mage cut his armor by eighty percent, so the fight built to teach magic schools was shredded before anyone noticed them. And the Warmaul Champion was tuned like a dungeon boss for outdoor groups that were rarely a proper five; he was the first fight nerfed. All your great design means nothing if you tune it below the level where players have to pay attention, and overdoing it is the opposite problem.' },
+];
