@@ -11,6 +11,7 @@ Open `index.html` in a browser (no build step, works straight off disk). It list
 - `understand-mechanics/`: **Understand Mechanics** (`understand-mechanics/index.html`), from *MGM C4 M2 - Understand, Analyze and Plan Mechanics*.
 - `depth/`: **The Goal: Depth** (`depth/index.html`), from *MGM C4 M1 - The Goal of Mechanics Design - Depth*.
 - `composition/`: **Composition** (`composition/index.html`), from *MGM C4 M7 - Techniques to Scale Engaging Gameplay Design*, the final module.
+- `blog-posts/`: **Blog Posts**, interactives for the posts in funsmith.world's *Analyze real games* path. Nothing built yet; `blog-posts/PROPOSALS.md` lists a proposal per post.
 
 Shared engine, theme and art stay in `assets/` at the root, so a deck one level down loads `../../assets/`. `404.html` redirects the old root deck URLs (for example `/core-actions/`) to their `pvp/` homes.
 
