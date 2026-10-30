@@ -11,7 +11,7 @@ Open `index.html` in a browser (no build step, works straight off disk). It list
 - `understand-mechanics/`: **Understand Mechanics** (`understand-mechanics/index.html`), from *MGM C4 M2 - Understand, Analyze and Plan Mechanics*.
 - `depth/`: **The Goal: Depth** (`depth/index.html`), from *MGM C4 M1 - The Goal of Mechanics Design - Depth*.
 - `composition/`: **Composition** (`composition/index.html`), from *MGM C4 M7 - Techniques to Scale Engaging Gameplay Design*, the final module.
-- `blog-posts/`: **Blog Posts**, interactives for the posts in funsmith.world's *Analyze real games* path. Nothing built yet; `blog-posts/PROPOSALS.md` lists a proposal per post.
+- `blog-posts/`: **Blog Posts** (`blog-posts/index.html`), interactives for the posts in funsmith.world's *Analyze real games* path. Five spikes so far (the top five); `blog-posts/PROPOSALS.md` lists a proposal per post.
 
 Shared engine, theme and art stay in `assets/` at the root, so a deck one level down loads `../../assets/`. `404.html` redirects the old root deck URLs (for example `/core-actions/`) to their `pvp/` homes.
 
@@ -177,3 +177,14 @@ Every slide is a `CK.scene` (`shared/comp.js`): a canvas drawn as a pure functio
 - `counter-circle/`: strip the packaging (238-240): attack, throw and block become Offense, Prediction and Defense. The nine fundamentals (242-255): explore each cell, audit a moveset for gaps, or place a move.
 - `shared/`: `comp.css` layout, `comp.js` scene engine and drawing helpers, a copy of the top-down kit, `icons.js` (game-icons.net, rebuilt by `tools/build-icons.py` from `tools/icon-names.txt`) and `img/`: Super Mario Bros. sprites cropped from the NES sheets on mariouniverse.com, and World of Warcraft spell icons from wow.zamimg.com.
 - GIFs in `gifs/`: rebuild with `sh composition/tools/record-all.sh [names]` while serving InteractiveMGM on 127.0.0.1:8181. They are 1920×1080 with the side panel hidden.
+
+## Blog Posts module (`blog-posts/`)
+
+Home page `blog-posts/index.html` (cards from `PAGES`), for the posts in funsmith.world's *Analyze real games* path. `PROPOSALS.md` lists a proposal for every post; the pages below are spikes of its top five. Each page is a `canvasDemo` with a looping walk-through, and `window.__seek(t, which)` / `__dur(which)` for GIF recording (none recorded yet). Numbers that are not from the post are marked illustrative in each file's header comment.
+
+- `aran/`: Shade of Aran. A fixed-step fight in a round room: Arcane Explosion (leave), Blizzard (follow) and Flame Wreath (hold still); W A S D takes over the blue raider, and a toggle restores the shipped Flame Wreath bug (anyone moving detonates). Slide 2 compares three ways to say "hold still".
+- `best-button/`: TBC Warlock spells as spell power coefficient per second of casting, from the post's coefficients, with the 21/40 build's six talents as toggles and a 30 s best rotation strip. Assumes 20% crit and full Improved Shadow Bolt uptime; base damage is left out. Slide 2: thirty 2% talents added versus multiplied.
+- `netherspite/`: beams that hit whoever stands nearest the portal, the 20 s hold limit, and version 3's layers (void zones, banish with knockbacks, moving portals) as toggles, with meters for exact steps and room for mistakes; "let players use their own tools" applies the retrospective.
+- `keep-five/`: pick five spells per spec from the pre-Mists Warlock spellbook, reveal the post's five and their minigame. Slide 2: the post's physical games inside WoW as loops.
+- `pac-man/`: our own maze, the four ghost target rules (as documented in The Pac-Man Dossier), scatter/chase timers, a pause that shows the distance check, and "everyone uses Blinky's rule".
+- `shared/`: `blog.css` layout and a copy of the top-down kit. `img/`: World of Warcraft spell icons from wow.zamimg.com (sources in `img/sources.json`).

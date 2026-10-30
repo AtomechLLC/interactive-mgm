@@ -1,0 +1,4 @@
+// Speaker notes. Source: funsmith.world genre breakdown, "Pathfinding in Pac-Man". Target rules: The Pac-Man Dossier (Jamey Pittman).
+window.NOTES = [
+  { script: 'Every ghost in Pac-Man runs the same rule. At each tile it looks at the open steps, never straight back, and takes the one closest in a straight line to its target tile. The only difference is the target. Blinky aims at Pac-Man. Pinky aims four tiles ahead of him. Inky takes the tile two ahead and doubles the line from Blinky to it. Clyde chases until he gets within eight tiles, then wanders off to his corner. Scatter and chase timers alternate. Give everyone Blinky’s target and the four collapse into a conga line: the personalities were only ever in the targets. Simple rules, learnable behaviour, and that is what lets players read and outplay them.' },
+];

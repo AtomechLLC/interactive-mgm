@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blog Posts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* same theme as the other module homes (../understand-mechanics/index.html): navy band over parchment, gold accents */
+  :root { --navy: #152044; --ink: #262c6a; --muted: #5d618c; --gold: #ffb951; --gold-ink: #9a5a06; --line: #cdbf9f; }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; background: #ede7e7 url("../assets/img/theme/paper.jpg") center / cover fixed; color: var(--ink); font-family: Jost, system-ui, sans-serif; border: 4px solid var(--gold); }
+  .band { background: var(--navy); color: #fff; clip-path: polygon(0 0, 100% 0, 100% 78%, 0 100%); padding: 0 0 70px; }
+  header { position: relative; padding: 60px 24px 0; max-width: 1180px; margin: 0 auto; }
+  .up { position: absolute; top: 18px; left: 24px; color: #d6dbef; font-size: 15px; text-decoration: none; }
+  .up:hover { color: var(--gold); }
+  .kicker { color: var(--gold); font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; }
+  h1 { font-family: Montserrat, sans-serif; font-weight: 800; font-size: clamp(34px, 6vw, 68px); margin: 8px 0 10px; }
+  h1 span { color: var(--gold); }
+  header p { color: #d6dbef; font-size: 19px; max-width: 760px; margin-bottom: 0; }
+  section { max-width: 1180px; margin: 0 auto; padding: 24px 24px 0; }
+  h2 { font-family: Montserrat, sans-serif; font-weight: 800; font-size: 26px; margin: 10px 0 4px; }
+  h2 + p { color: var(--muted); margin: 0 0 16px; font-size: 17px; }
+  /* cards: one per interactive page in this module, grouped under the deck part (PARTS) it comes from */
+  /* parts flow side by side when they have few pages: each .part is as wide as its --n cards */
+  #cards { display: flex; flex-wrap: wrap; gap: 26px 18px; }
+  #cards .part { flex: var(--n) 1 calc(var(--n) * 318px - 18px); min-width: 0; }
+  #cards h3 { font-family: Montserrat, sans-serif; font-weight: 700; font-size: 18px; margin: 0 0 10px; }
+  #cards h3 span { color: var(--gold-ink); font-weight: 600; font-size: 14px; margin-left: 6px; white-space: nowrap; }
+  #cards .row { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
+  a.mod { display: grid; grid-template-columns: 72px 1fr; gap: 16px; align-items: center; padding: 18px; border-radius: 12px; background: rgba(255, 252, 244, .82); border: 1px solid var(--line); color: inherit; text-decoration: none; box-shadow: 0 2px 0 rgba(120, 96, 50, .12); transition: transform .15s, border-color .2s; }
+  a.mod:hover { transform: translateY(-4px); border-color: var(--navy); }
+  .mod img { width: 72px; height: 72px; border-radius: 50%; background: var(--navy); padding: 9px; object-fit: contain; }
+  .mod b { font-family: Montserrat, sans-serif; font-weight: 800; font-size: 19px; display: block; }
+  .mod small { color: var(--muted); font-size: 15px; }
+  .tag { display: inline-block; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; font-weight: 600; color: var(--gold-ink); border: 1px solid var(--line); border-radius: 99px; padding: 1px 8px; margin-top: 6px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 18px; padding-bottom: 40px; }
+  figure { margin: 0; background: rgba(255, 252, 244, .82); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  figure img { display: block; width: 100%; aspect-ratio: 16 / 9; background: #e9e1d2; }
+  figcaption { padding: 10px 14px 12px; font-size: 15px; color: var(--muted); }
+  figcaption b { color: var(--ink); font-family: Montserrat, sans-serif; display: block; font-size: 16px; }
+</style>
+</head>
+<body>
+<div class="band"><header>
+  <a class="up" href="../index.html">← All modules</a>
+  <div class="kicker">funsmith.world · Analyze real games</div>
+  <h1>Blog <span>Posts</span></h1>
+  <p>Interactives for the posts in funsmith.world's <i>Analyze real games</i> path: Alexander Brazie's post-mortems from World of Warcraft and the genre breakdowns. These five are spikes of the top five in <a href="PROPOSALS.md" style="color:var(--gold)">PROPOSALS.md</a>, which lists one proposal per post.</p>
+</header></div>
+
+<section>
+  <h2>Interactive Pages</h2>
+  <p>Grouped by the kind of post each one comes from. Open one and use ← → to move through it. Every page has a walk-through; most let you play it yourself.</p>
+  <div id="cards"></div>
+</section>
+
+<script>
+  // [folder, title, blurb, post, part]
+  const PAGES = [
+    ['aran', 'Shade of Aran', 'One verb, three answers: Arcane Explosion says leave, Blizzard says follow, Flame Wreath says hold still. Play it with W A S D, and try the shipped Flame Wreath bug', 'Shade of Aran, parts 1 to 3', 'pm'],
+    ['best-button', 'Best Button', 'The TBC Warlock\u2019s spells as coefficient per second of casting. Add the 21/40 build\u2019s talents one at a time and watch the rotation collapse to Shadow Bolt; then watch 2% talents compound', 'Warlock\u2019s Overhaul: Streamlining and Gameplay Balance', 'pm'],
+    ['netherspite', 'Netherspite Beams', 'Swap or die, then version 3\u2019s layers one at a time, with meters for steps that must be exact and mistakes the raid can recover from. Hold the blue beam yourself', 'Netherspite: The Clash of Novelty and Game Difficulty', 'pm'],
+    ['keep-five', 'Keep Only Five', 'Pick five spells per spec from the pre-Mists Warlock spellbook, then reveal the post\u2019s five and the minigame they make; plus the physical games inside WoW', 'Redefining the Warlock Class', 'pm'],
+    ['pac-man', 'Pac-Man Ghost Targeting', 'Four target tiles, one straight-line step rule. Pause to see the distance check; give everyone Blinky\u2019s rule and get a conga line', 'Pathfinding in Pac-Man', 'gb'],
+  ];
+  const PARTS = [['pm', 'Post-mortems from the trenches'], ['gb', 'Genre breakdowns']];
+  const card = ([f, t, b, post]) =>
+    `<a class="mod" href="${f}/index.html"><img src="../assets/img/home/blog-posts--${f}.svg" alt=""><span><b>${t}</b><small>${b}. Post: <i>${post}</i>.</small><br><span class="tag">spike</span></span></a>`;
+  document.getElementById('cards').innerHTML = PARTS.map(([k, pt]) => {
+    const here = PAGES.filter(p => p[4] === k);
+    return `<div class="part" style="--n:${here.length}"><h3>${pt}</h3><div class="row">${here.map(card).join('')}</div></div>`;
+  }).join('');
+</script>
+</body>
+</html>
