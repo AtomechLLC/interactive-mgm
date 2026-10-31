@@ -1,0 +1,4 @@
+// Speaker notes. Source: funsmith.world post-mortem, "Attumen the Huntsman: The Dangers of Neglecting Research".
+window.NOTES = [
+  { script: 'Attumen was Alex Brazie’s first raid boss, built from his lead’s notes. Version one met every requirement and was miserable to fight, because almost nothing gave the players a response. The sweep chained to the two nearest fighters wherever they stood. The horse charged anyone, then stunned the tank. Ghost form made half of all attacks miss. Disarming him made him stronger. And at half health both enemies reset, throwing away the damage. Version two kept nearly the same names, but every ability gained an answer: stand behind him, choose who stands far away, remove the curse, disarm freely, keep your damage. Implement your lead’s idea, but you still own the outcome.' },
+];

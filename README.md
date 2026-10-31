@@ -188,6 +188,7 @@ Home page `blog-posts/index.html` (cards from `PAGES`), for the posts in funsmit
 - `keep-five/`: pick five spells per spec from the pre-Mists Warlock spellbook, reveal the post's five and their minigame. Slide 2: the post's physical games inside WoW as loops.
 - `pac-man/`: our own maze, the four ghost target rules (as documented in The Pac-Man Dossier), scatter/chase timers, a pause that shows the distance check, and "everyone uses Blinky's rule".
 - `ring-of-blood/`: the six Ring of Blood fights as health x damage against the intended 30% staircase; Skra'gath's class swap and the Champion's nerf are toggles. Heights after Rokdar are illustrative.
+- `attumen/`: Attumen and Midnight's five changed abilities as before/after scenes with a cast of named roles (tank, fighters, archer, mage, healer), a plain caption for each, and whether the players can respond. Written for readers who have not played WoW.
 - `nightbane-tools/`: fifteen hand-dragged spline points (releases over the castle snap onto it) against three bunnies A, B, C; a scripted cursor in the walk-through, dragging in play mode.
 - `dnd-advantage/`: one die, Advantage and Disadvantage as face chances and hit chances, what Advantage is worth as a flat bonus ((T-1)(21-T)/20), and seeded rolls.
 - `counter-strafe/`: speed against spread, three scripted runs (shoot moving, let go, counter-strafe) and a play mode (A, D, click or J to shoot). Numbers illustrative.
