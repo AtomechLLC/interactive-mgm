@@ -1,0 +1,5 @@
+// Speaker notes. Source: funsmith.world post-mortem, "The Core Fantasy: What Went Wrong in Warlock Talent Trees Along the Way".
+window.NOTES = [
+  { script: 'Classic talents were small steps, about one percent per point, with a few gold medal talents worth five times that. A talent that keeps you alive is worth a lot when you play alone, because no one else heals you and you stop to rest. In a group of forty with eight healers, it changes nothing, while one percent more damage moves you up the damage chart that everyone checks. That is why Demonology, the tree built around staying alive, was rarely seen in raids. Incentives count.' },
+  { script: 'The warlock had a rhythm no other caster had: spend mana, trade health for more mana with Life Tap, then win the health back. Alone, the trade has a price. In a raid, healers refill the health at once, so the recovery step disappears, and the class was balanced around that free version. The all-out pace that was meant to cost you became the normal pace.' },
+];
