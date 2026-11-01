@@ -1,4 +1,4 @@
-/* Top-down drawing kit, copied from depth/shared/topdown.js so this module stands alone (Blog Posts).
+/* Top-down drawing kit, copied from depth/shared/topdown.js so blog-posts/ stands alone.
    Same look as the hazard pattern GIFs: parchment floor tiles, navy brick walls, the blue player disc with a white arrow,
    red for anything hostile. Everything draws into whatever context TD.use(g) was given, in that context's units. */
 (function () {

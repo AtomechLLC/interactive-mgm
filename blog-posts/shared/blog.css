@@ -1,4 +1,4 @@
-/* Blog Posts. Layout shared by every page in this module (copied from ../../depth/shared/depth.css). The look comes from ../../assets/deck.css and kit.css. */
+/* Blog post interactives. Layout shared by every page in blog-posts/ (copied from ../../depth/shared/depth.css). The look comes from ../../assets/deck.css and kit.css. */
 .slide { padding: 46px 90px 60px; justify-content: flex-start; }
 .slide.center { justify-content: center; }
 .slide h2.sm { font-size: 44px; margin-bottom: 12px; }
