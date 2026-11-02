@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sketch to Level · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Orbitron:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="sketch.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · PvE Interactions · Sketch to Level', home: '../index.html', audio: null, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1 -->
+<section class="slide center" data-title="Sketch to Level" data-demo="none">
+  <div class="kicker rise">create an encounter with a combination of enemies and obstacles</div>
+  <h1 class="rise">From Graph Paper to <span class="accent">Play</span></h1>
+  <div class="rule rise" style="margin:18px auto"></div>
+  <div class="sk-frame rise"><img src="img/sketch.png" alt="A hand-drawn platformer level on graph paper: ledges, jump arcs, hanging lanterns with hearts, cracked blocks and two ceiling Spawns firing Homing shots"></div>
+  <p class="lede rise" style="margin:16px auto 0;text-align:center">A student’s encounter, drawn on graph paper, built one square for one square and played.</p>
+</section>
+
+<!-- 2: the sketch wipes into the level, then a scripted run plays it -->
+<section class="slide" data-title="One Square, One Square" data-demo="reveal">
+  <div class="kicker">the sketch, built</div>
+  <h2 class="sm">One Square, <span class="accent">One Square</span></h2>
+  <canvas class="demo rv-canvas" width="1420" height="542"></canvas>
+  <div class="row wrap rv-row">
+    <p class="out rv-out"></p>
+    <button class="btn rv-overlay">Sketch overlay</button>
+    <button class="btn rv-pause">❚❚ Pause</button>
+    <button class="btn rv-replay">↻ From the top</button>
+  </div>
+</section>
+
+<!-- 3: play it -->
+<section class="slide" data-title="Play the Encounter" data-demo="play" data-touch-keys="ArrowLeft:←,ArrowRight:→,ArrowUp:↑ aim,Space:Jump,KeyJ:Flail">
+  <div class="kicker">click the level, then A D or ← → move · Space jump · J flail · hold W or ↑ to aim up</div>
+  <h2 class="sm">Play the <span class="accent">Encounter</span></h2>
+  <canvas class="demo pl-canvas" width="1420" height="542"></canvas>
+  <div class="row wrap pl-row">
+    <p class="out pl-out">Break lanterns for hearts, find the purple sword, and reach the final ledge.</p>
+    <label class="pl-lab">Sketch <input type="range" class="pl-sketch" min="0" max="100" value="0"></label>
+    <button class="btn pl-demo">▶ Watch a run</button>
+    <button class="btn pl-restart">↻ Restart</button>
+  </div>
+</section>
+
+<!-- 4: what each piece asks -->
+<section class="slide" data-title="Reading the Sketch" data-demo="read">
+  <div class="kicker">what each piece asks of the player</div>
+  <h2 class="sm">Reading the <span class="accent">Sketch</span></h2>
+  <div class="rd-grid"></div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="level.js"></script>
+<script src="sketch.js"></script>
+</body>
+</html>

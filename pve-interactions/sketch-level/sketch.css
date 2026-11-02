@@ -1,0 +1,25 @@
+/* Sketch to Level: per-slide layout. Shared look comes from ../../assets/deck.css and kit.css. */
+.slide { padding: 40px 90px 50px; justify-content: flex-start; }
+.slide.center { justify-content: center; }
+.slide h2.sm { font-size: 44px; margin-bottom: 12px; }
+.out { font-size: 22px !important; line-height: 1.35 !important; min-height: 1.4em; margin: 0; flex: 1 1 600px; }
+.row.wrap { flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 12px; }
+
+/* 1: title */
+.sk-frame { width: 1100px; height: 420px; margin: 0 auto; overflow: hidden; border-radius: 10px; border: 3px solid var(--gold); box-shadow: 0 12px 34px rgba(0,0,0,.4); background: #f3f3f3; }
+.sk-frame img { display: block; width: 1139.5px; margin: -39.5px 0 0 -17.2px; max-width: none; }
+
+/* 2, 3: the level */
+canvas.rv-canvas, canvas.pl-canvas { width: 1420px; height: 542px; }
+canvas.pl-canvas { cursor: pointer; outline: none; }
+canvas.pl-canvas:focus { box-shadow: 0 0 0 4px var(--gold); }
+.pl-lab { display: flex; align-items: center; gap: 8px; font-size: 18px; color: var(--muted); }
+.pl-lab input { width: 140px; }
+
+/* 4: one card per piece */
+.rd-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px 22px; margin-top: 0; }
+.rd-card { margin: 0; display: grid; grid-template-columns: 310px 1fr; gap: 14px; align-items: center; background: var(--panel); border: 2px solid var(--line); border-radius: 12px; padding: 8px; }
+.rd-c { width: 310px; height: 175px; border-radius: 8px; background: #141a33; display: block; }
+.rd-card figcaption { display: grid; gap: 4px; }
+.rd-card b { font-family: var(--display); font-size: 20px; line-height: 1.15; color: var(--text); }
+.rd-card span { font-size: 17px; line-height: 1.32; color: var(--text); }
