@@ -174,6 +174,8 @@
     });
     return (run._ev = ev);
   }
+  // the timeline strip's place under the arena, shared by the drawing and the scrubbing
+  const TL = { tx0: 92, tx1: S.W - 14, ty: AH + 64, h: 42, span: run => Math.max(run.end.t, 10) };
   const TONES = { foe: '#ff6b5e', party: '#48d17a', heal: '#c27bff', call: '#ffd23f' };
   // the event being called out now: the latest one, held for a moment of real time
   const current = (ev, t, speed) => { let c = null; ev.forEach(e => { if (e.t <= t && t - e.t < 1.4 * (speed || 1)) c = e; }); return c; };
@@ -217,16 +219,19 @@
     text(g, `Pull ${S.PULLS[pk].label}`, xr, AH + 18, { align: 'left', size: 15, w: 800, display: true, col: '#ffb951' });
     text(g, `${Math.min(t, run.end.t).toFixed(1)} s${o.speed ? `  ×${o.speed}` : ''}`, xr, AH + 40, { align: 'left', size: 17, w: 700, col: '#fffaf0' });
     // the timeline: creature events on the top lane, the party's on the bottom
-    const tx0 = 92, tx1 = S.W - 14, ty = AH + 64, T = Math.max(run.end.t, 10), X = s => tx0 + (tx1 - tx0) * clamp(s / T);
+    const { tx0, tx1, ty } = TL, T = TL.span(run), X = s => tx0 + (tx1 - tx0) * clamp(s / T);
     text(g, 'creatures', tx0 - 8, ty + 10, { align: 'right', size: 11, col: '#ff9d94' });
     text(g, 'party', tx0 - 8, ty + 32, { align: 'right', size: 11, col: '#8fe5a8' });
     g.fillStyle = '#0c1230'; g.beginPath(); g.roundRect(tx0 - 4, ty, tx1 - tx0 + 8, 42, 6); g.fill();
     g.fillStyle = 'rgba(255,185,81,.25)'; g.fillRect(tx0, ty + 20, X(Math.min(t, run.end.t)) - tx0, 2);
     for (let s = 0; s <= T; s += 10) { g.fillStyle = '#3a4580'; g.fillRect(X(s), ty + 2, 1, 38); if (s) text(g, `${s}s`, X(s) + 3, ty + 7, { align: 'left', size: 9, col: '#6f79b0' }); }
     const ev = events(pk, run), cur = current(ev, t, o.speed);
+    // events up to the playhead, and dimmed ones further on that were already watched (after scrubbing back)
+    const seen = Math.max(t, o.seen || 0);
     ev.forEach(e => {
-      if (e.t > t) return;
-      const x = X(e.t), y = ty + 11 + e.lane * 20, on = e === cur;
+      if (e.t > seen) return;
+      const x = X(e.t), y = ty + 11 + e.lane * 20, on = e === cur, later = e.t > t;
+      if (later) { sq(g, e.icon, x, y, 12, { grey: true, edge: '#3a4580', lw: 1, a: .45 }); return; }
       g.fillStyle = TONES[e.tone]; g.fillRect(x - 1, y - 9, 2, 18);
       if (on) { g.fillStyle = TONES[e.tone]; g.beginPath(); g.roundRect(x - 11, y - 11, 22, 22, 4); g.fill(); }
       sq(g, e.icon, x, y, on ? 18 : 14, { grey: e.grey, edge: TONES[e.tone], lw: on ? 2 : 1.5, a: on ? 1 : .85 });
@@ -288,17 +293,38 @@
       state: () => ({ order: Object.keys(P.orders)[0], kick: 'none', move: 'stand', calls: [], speed: 2, hist: [], read: false, logged: null }),
       init(s, st, api) {
         const seg = (sel, key, cb) => $$(s, sel + ' .btn').forEach(b => b.onclick = () => { api.manual(); st[key] = b.dataset.v; cb?.(); restart(); });
-        const restart = () => { st.calls = []; st.t = 0; st.read = false; st.logged = null; sync(); };
+        const restart = () => { st.calls = []; st.t = 0; st.read = false; st.logged = null; pause(false); sync(); };
+        // pause: the scene's clock stops while held
+        const pause = on => { st.held = on; st.paused = on; const b = $(s, '.pl-pause'); if (b) { b.classList.toggle('on', on); b.textContent = on ? '▶ Resume' : '⏸ Pause'; } };
+        $(s, '.pl-pause').onclick = () => {
+          if (st.tour) { toManual(); pause(true); return; }
+          const run = S.run(pk, plan(), st.calls);
+          if (!st.paused && st.ft >= run.end.t) { st.t = 0; return; }   // at the end, the button replays
+          pause(!st.paused);
+        };
+        // leaving the walk-through at the fight it is showing, so the student can scrub that fight
+        const toManual = () => {
+          const tt = st.t, sg = T.segs.find(q => tt < q.t0 + q.len) || T.segs[T.segs.length - 1];
+          api.manual(); st.order = sg.o; st.kick = sg.kick; st.move = sg.move; st.calls = []; st.read = false; st.logged = null;
+          st.t = Math.min((tt - sg.t0) * TOUR_SPEED, sg.run.end.t) / st.speed; st.ft = st.t * st.speed; sync();
+        };
         seg('.pl-order', 'order'); seg('.pl-kick', 'kick'); seg('.pl-move', 'move');
         $$(s, '.pl-speed .btn').forEach(b => b.onclick = () => { st.speed = +b.dataset.v; if (!st.tour) st.t = st.ft / st.speed; sync(); });
         $(s, '.pl-go').onclick = () => { api.manual(); restart(); };
         $(s, '.pl-read').onclick = () => { if (st.tour) api.manual(); st.read = !st.read; sync(); };
-        $(s, '.ck-tour').addEventListener('click', () => setTimeout(sync));
+        $(s, '.ck-tour').addEventListener('click', () => { pause(false); setTimeout(sync); });
         const plan = () => ({ order: P.orders[st.order].order, kick: st.kick, move: st.move });
         st.plan = plan;
         // live calls: click a creature for focus, its cast bar to interrupt; D to step out
-        const call = c => { if (st.tour || st.read) return; const run = S.run(pk, plan(), st.calls); if (st.ft >= run.end.t) return; st.calls = [...st.calls, { ...c, t: +st.ft.toFixed(3) }]; };
+        // a call made after scrubbing back replaces whatever was called later in that fight
+        const call = c => { if (st.tour || st.read) return; const run = S.run(pk, plan(), st.calls); if (st.ft >= run.end.t) return; st.calls = [...st.calls.filter(q => q.t < st.ft), { ...c, t: +st.ft.toFixed(3) }]; st.logged = null; };
+        // scrub: press on the timeline and drag; the fight pauses where you let go
+        const onTimeline = (x, y) => y >= TL.ty - 8 && y <= TL.ty + TL.h + 4 && x >= TL.tx0 - 10 && x <= TL.tx1 + 10;
+        const scrubTo = x => { const run = S.run(pk, plan(), st.calls); st.ft = clamp((x - TL.tx0) / (TL.tx1 - TL.tx0), 0, 1) * TL.span(run); st.ft = Math.min(st.ft, run.end.t); st.t = st.ft / st.speed; };
         pointer(api.cv, (x, y, type) => {
+          if (type === 'down' && onTimeline(x, y) && !st.read) { if (st.tour) toManual(); pause(true); st.drag = true; scrubTo(x); return; }
+          if (type === 'move' && st.drag) { scrubTo(x); return; }
+          if (type === 'up') { st.drag = false; return; }
           if (type !== 'down' || st.tour || st.read) return;
           const run = S.run(pk, plan(), st.calls), fr = run.frames[Math.min(run.frames.length - 1, Math.floor(st.ft / S.DT))];
           for (const f of fr.foes) {
@@ -341,8 +367,11 @@
         if (st.ft >= run.end.t && st.logged !== run) {
           st.logged = run; st.histDirty = true; st.hist = [{ plan: run.plan, end: run.end, stats: run.stats, calls: st.calls.length }, ...st.hist].slice(0, 6);
         }
-        arena(g, pk, run, ft, { speed: st.speed });
+        if (st.seenRun !== run) { st.seenRun = run; st.seen = 0; }
+        st.seen = Math.max(st.seen, ft);
+        arena(g, pk, run, ft, { speed: st.speed, seen: st.seen });
         banner(g, pk, run.plan, { calls: st.calls.length });
+        if (st.paused) { chip(g, st.drag ? 'Scrubbing' : 'Paused', S.W - 108, 22, { ...TONE.gold, size: 14, align: 'left', width: 96 }) ; }
         if (st.ft > run.end.t + .3 && !st.read) resultCard(g, pk, run, ease(clamp((st.ft - run.end.t - .3) / (.5 * st.speed))));
         if (st.read) readCard(g, pk, 1, []);
       },
@@ -350,12 +379,12 @@
       side(t, st, tour) {
         if (tour) {
           const sg = t >= T.read ? null : T.segs.find(s => t < s.t0 + s.len);
-          return { out: sg ? `<b>Walk-through.</b> ${sg.note}` : '<b>The slide’s read.</b> The creature tags explain the synergy, and the solution names the one target and the one cast that break it. Pick a plan and press ▶ Pull to try your own.' };
+          return { out: sg ? `<b>Walk-through.</b> ${sg.note}` : '<b>The slide’s read.</b> The creature tags explain the synergy, and the solution names the one target and the one cast that break it. Pick a plan and press ▶ Pull to try your own. Drag along the timeline to pause and scrub any fight.' };
         }
         const run = S.run(pk, st.plan(), st.calls), done = st.ft >= run.end.t;
         const help = pk === 'd1'
-          ? 'Click a creature to call focus on it. Click a cast bar to interrupt that cast.'
-          : 'Click a creature to call focus on it. Click a cast bar to interrupt it. Press <kbd>D</kbd> (or Step out) when a red circle appears under someone.';
+          ? 'Click a creature to call focus on it. Click a cast bar to interrupt that cast. Drag along the timeline to pause and scrub.'
+          : 'Click a creature to call focus on it. Click a cast bar to interrupt it. Press <kbd>D</kbd> (or Step out) when a red circle appears under someone. Drag along the timeline to pause and scrub.';
         return { out: done ? `<b>${RESULT[run.end.result][0]}.</b> Change one choice and pull again, or open the slide’s read.` : help };
       },
     });
