@@ -11,4 +11,5 @@ node "$HERE/render.js"
 python3 "$HERE/compose.py" "$ROOT" "$WORK" "$OUT"
 mkdir -p "$OUT/contact-sheets"; python3 "$HERE/sheet.py" "$OUT" "$OUT/contact-sheet-all.png"
 for t in $(ls "$OUT/512px"); do python3 "$HERE/sheet.py" "$OUT" "$OUT/contact-sheets/$t.png" "$t"; done
+python3 "$HERE/vector_basics.py" "$ROOT/student-tokens/vector-basics" && node "$HERE/render_svgs.js" "$ROOT/student-tokens/vector-basics" && python3 "$HERE/vector_sheet.py" "$ROOT/student-tokens/vector-basics"
 rm -f "$HERE/td-noshadow.js"; echo "built $OUT; copy $OUT/256px, contact sheets and index.json into student-tokens/"
