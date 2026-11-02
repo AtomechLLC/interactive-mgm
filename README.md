@@ -12,6 +12,8 @@ Open `index.html` in a browser (no build step, works straight off disk). It list
 - `depth/`: **The Goal: Depth** (`depth/index.html`), from *MGM C4 M1 - The Goal of Mechanics Design - Depth*.
 - `composition/`: **Composition** (`composition/index.html`), from *MGM C4 M7 - Techniques to Scale Engaging Gameplay Design*, the final module.
 
+- `student-tokens/`: **Student tokens**, round battle-map tokens (enemy, player, ability, hazard and object rings) cut from the decks' art, for students laying out encounters in Miro. See `student-tokens/README.md`.
+
 Shared engine, theme and art stay in `assets/` at the root, so a deck one level down loads `../../assets/`. `404.html` redirects the old root deck URLs (for example `/core-actions/`) to their `pvp/` homes.
 
 | Key | Action |
