@@ -24,7 +24,7 @@
   const KINDS = {
     frog: { name: 'Void Corrupted Frog', short: 'Frog', tags: ['Non Elite', 'Single Target', 'Ranged/Melee', 'Tank', 'Disruptor'], hp: 1100, dps: 9, reach: 40, speed: 70, icon: 'inv_pet_toad_black', r: 30, lash: { cd: 7, stun: 1.2 } },
     murloc: { name: 'Corrupted Murloc Tidehunter', short: 'Murloc', tags: ['Non Elite', 'Single Target', 'Ranged', 'Caster', 'Disruptor'], hp: 150, icon: 'inv_misc_head_murloc_01', r: 22,
-      spells: [{ key: 'bolt', name: 'Void Water Bolt', cast: 2.2, gap: .5, dmg: 20, icon: 'spell_frost_frostbolt' }] },
+      spells: [{ key: 'bolt', name: 'Void Water Bolt', cast: 2.2, gap: .5, dmg: 22, icon: 'spell_frost_frostbolt' }] },
     dragonfly: { name: 'Void infested Dragonfly', short: 'Dragonfly', tags: ['Non Elite', 'Single Target', 'Ranged', 'Debuffer', 'Caster'], hp: 130, icon: 'ability_hunter_pet_wasp', r: 22,
       spells: [{ key: 'sting', name: 'Sapping Sting', cast: 2.4, gap: .9, dmg: 8, slow: 12, icon: 'spell_nature_slow' }] },
     rabbit: { name: 'Void Corrupted Rabbit', short: 'Rabbit', tags: ['Non Elite', 'Single Target', 'Melee', 'Nuker', 'Ambusher', 'Assassin'], hp: 240, dps: 5, reach: 34, speed: 150, icon: 'spell_magic_polymorphrabbit', r: 22,
@@ -80,6 +80,7 @@
       return { id: 'f' + i, kind: k, x, y, hx: x, hy: y, hp: K.hp, max: K.hp, alive: true, cast: null, lock: 0, next: .4 + i * .35, tgt: null, lashCd: K.lash ? 3 : 0,
         pounceAt: K.pounce ? K.pounce.first + i * 1.1 : 0, warn: null, spell: 0, hidden: k === 'rabbit' || k === 'fox' };
     });
+    const bolts = [], BOLT = 260;   // targeted spells fly to their target and land on arrival
     const fx = [], frames = [], stats = { dmg: 0, slowSec: 0, healed: 0, pounceHits: 0, pounces: 0, kicks: 0, wasted: 0, missedKey: 0, keyCasts: 0, lashes: 0, deaths: 0 };
     let t = 0, end = null, focusId = null, ci = 0, moveCall = -9;
     const calls_ = calls.slice().sort((a, b) => a.t - b.t);
@@ -235,8 +236,7 @@
           if (t - f.cast.t0 >= f.cast.dur) {
             const sp = f.cast, tg = party.find(m => m.id === sp.tgt);
             if (sp.key === P.key) stats.missedKey++;
-            if (sp.dmg && tg && tg.alive) hurt(tg, sp.dmg, f.id);
-            if (sp.slow && tg && tg.alive) { tg.slow = sp.slow; fx.push({ t, kind: 'slowed', id: tg.id }); }
+            if ((sp.dmg || sp.slow) && tg && tg.alive) bolts.push({ key: sp.key, x: f.x, y: f.y, tgt: tg.id, dmg: sp.dmg, slow: sp.slow, src: f.id });
             if (sp.heal) { let h = 0; live().forEach(o => { if (o.hidden) return; const a = Math.min(o.max - o.hp, o.max * (o === f ? sp.self : sp.heal)); o.hp += a; h += a; }); stats.healed += h; fx.push({ t, kind: 'mend', fid: f.id, h: Math.round(h) }); }
             if (sp.aoe) { alive().forEach(m => hurt(m, sp.aoe, f.id)); fx.push({ t, kind: 'wave', fid: f.id }); }
             fx.push({ t, kind: 'cast', fid: f.id, key: sp.key, tgt: sp.tgt });
@@ -255,12 +255,25 @@
         f.cast = { key: sp.key, name: sp.name, icon: sp.icon, t0: t, dur: sp.cast, tgt: tg.id, dmg: sp.dmg, slow: sp.slow, heal: sp.heal, self: sp.self, aoe: sp.aoe, gap: sp.gap };
       });
 
+      /* ---------- spells in flight ---------- */
+      for (let i = bolts.length - 1; i >= 0; i--) {
+        const b = bolts[i], tg = party.find(m => m.id === b.tgt);
+        if (!tg.alive) { bolts.splice(i, 1); continue; }
+        if (step(b, tg.x, tg.y, BOLT) <= BOLT * DT) {
+          bolts.splice(i, 1);
+          if (b.dmg) hurt(tg, b.dmg, b.src);
+          if (b.slow) { tg.slow = b.slow; fx.push({ t, kind: 'slowed', id: tg.id }); }
+          fx.push({ t, kind: 'splash', key: b.key, x: tg.x, y: tg.y });
+        }
+      }
+
       /* ---------- snapshot ---------- */
       frames.push({
         party: party.map(m => ({ id: m.id, x: m.x, y: m.y, hp: m.hp, alive: m.alive, slow: m.slow, stun: m.stun, kickCd: m.kickCd, mana: m.mana, tgt: m.tgt, healOn: m.healOn, moving: m.moving })),
         foes: foes.map(f => ({ id: f.id, x: f.x, y: f.y, hp: Math.max(0, f.hp), alive: f.alive, hidden: f.hidden, lock: f.lock, warn: f.warn ? { ...f.warn } : null, leap: !!f.leap,
           cast: f.cast ? { key: f.cast.key, name: f.cast.name, icon: f.cast.icon, k: (t - f.cast.t0) / f.cast.dur, tgt: f.cast.tgt } : null })),
         focus: F ? F.id : null,
+        bolts: bolts.map(b => ({ key: b.key, x: b.x, y: b.y })),
       });
       if (!live().length) end = { t, result: 'cleared' };
       else if (!priest.alive || party.filter(m => !m.alive).length >= 3) end = { t, result: 'wipe' };

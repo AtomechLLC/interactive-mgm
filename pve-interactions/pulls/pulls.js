@@ -83,16 +83,9 @@
       g.strokeStyle = '#fff3c0'; g.lineWidth = 4; g.beginPath(); g.arc(f.warn.x, f.warn.y, R.radius * k, 0, TAU); g.stroke();
       g.strokeStyle = 'rgba(255,90,78,.6)'; g.lineWidth = 2; g.setLineDash([5, 5]); g.beginPath(); g.moveTo(f.x, f.y); g.lineTo(f.warn.x, f.warn.y); g.stroke(); g.setLineDash([]);
     });
-    // the party's attacks and heals
+    // the healer's beam
     fr.party.forEach(m => {
-      if (!m.alive) return;
-      if (m.tgt && FO[m.tgt]) {
-        const f = FO[m.tgt], ranged = meta(m.id).role === 'ranged';
-        g.strokeStyle = ranged ? 'rgba(255,214,120,.55)' : 'rgba(255,255,255,.35)'; g.lineWidth = ranged ? 2 : 3;
-        if (ranged) { const u = (t * 1.6 + +m.id.slice(1) * .3) % 1, x = m.x + (f.x - m.x) * u, y = m.y + (f.y - m.y) * u; g.fillStyle = m.id === 'p2' ? '#9fd8ff' : '#ffd678'; g.beginPath(); g.arc(x, y, 4, 0, TAU); g.fill(); }
-        else { g.beginPath(); g.arc(f.x, f.y, kind(f.id).r + 6, (t * 9) % TAU, (t * 9) % TAU + 1); g.stroke(); }
-      }
-      if (m.healOn && P[m.healOn]) { const h = P[m.healOn]; g.strokeStyle = 'rgba(120,255,150,.75)'; g.lineWidth = 3; g.setLineDash([6, 6]); g.lineDashOffset = -t * 30; g.beginPath(); g.moveTo(m.x, m.y); g.lineTo(h.x, h.y); g.stroke(); g.setLineDash([]); }
+      if (m.alive && m.healOn && P[m.healOn]) { const h = P[m.healOn]; g.strokeStyle = 'rgba(120,255,150,.6)'; g.lineWidth = 2; g.setLineDash([6, 6]); g.lineDashOffset = -t * 30; g.beginPath(); g.moveTo(m.x, m.y); g.lineTo(h.x, h.y); g.stroke(); g.setLineDash([]); }
     });
     // creatures
     fr.foes.forEach(f => {
@@ -106,7 +99,6 @@
       if (fr.focus === f.id) {
         g.save(); g.translate(f.x, f.y); g.rotate(t * 1.4); g.strokeStyle = '#ffd23f'; g.lineWidth = 3; g.setLineDash([10, 7]);
         g.beginPath(); g.arc(0, 0, k.r + 10, 0, TAU); g.stroke(); g.restore();
-        chip(g, 'focus', f.x, f.y - k.r - 30, { ...TONE.gold, size: 11, h: 17 });
       }
       if (f.lock > 0) { g.strokeStyle = 'rgba(140,110,255,.9)'; g.lineWidth = 3; g.beginPath(); g.arc(f.x, f.y, k.r + 5, -Math.PI / 2, -Math.PI / 2 + TAU * f.lock / S.LOCK); g.stroke(); }
       token(g, k.icon, f.x, f.y, k.r, '#d8322a');
@@ -116,73 +108,132 @@
         const key = f.cast.key === S.PULLS[pk].key, y = f.y + k.r + 22;
         bar(g, f.x + 9, y, 66, f.cast.k, key ? '#ff9a2e' : '#8fb3ff', 9);
         sq(g, f.cast.icon, f.x - 33, y + 4, 16);
-        lbl(g, f.cast.name, f.x + 4, y + 20, { size: 12, col: key ? '#ffd9a0' : '#dfe8ff' });
-        if (f.cast.tgt && P[f.cast.tgt] && f.cast.key !== 'mend' && f.cast.key !== 'wave') { const m = P[f.cast.tgt]; g.strokeStyle = key ? 'rgba(255,154,46,.5)' : 'rgba(143,179,255,.4)'; g.lineWidth = 2; g.setLineDash([3, 6]); g.beginPath(); g.moveTo(f.x, f.y); g.lineTo(m.x, m.y); g.stroke(); g.setLineDash([]); }
+        if (key) lbl(g, f.cast.name, f.x + 4, y + 20, { size: 12, col: '#ffd9a0' });
       } else if (f.lock > 0) lbl(g, 'interrupted', f.x, f.y + k.r + 26, { size: 12, col: '#d9ccff' });
     });
     // the party
     fr.party.forEach(m => {
       const M = meta(m.id);
       if (!m.alive) { token(g, M.icon, m.x, m.y, 17, '#666', { grey: true, a: .55 }); lbl(g, 'dead', m.x, m.y + 26, { size: 11 }); return; }
-      if (m.slow > 0) { g.strokeStyle = '#6fd0ff'; g.lineWidth = 3; g.setLineDash([4, 4]); g.beginPath(); g.arc(m.x, m.y, 25, 0, TAU); g.stroke(); g.setLineDash([]); sq(g, 'spell_nature_slow', m.x + 17, m.y - 16, 15); }
+      if (m.slow > 0) { g.strokeStyle = '#6fd0ff'; g.lineWidth = 3; g.setLineDash([4, 4]); g.beginPath(); g.arc(m.x, m.y, 25, 0, TAU); g.stroke(); g.setLineDash([]); }
       token(g, M.icon, m.x, m.y, 19, M.role === 'tank' ? '#7fb2ff' : M.role === 'healer' ? '#7ef0a0' : '#4aa3f0');
       bar(g, m.x, m.y - 30, 40, m.hp / M.hp, '#36c46a', 5);
       if (m.stun > 0) for (let i = 0; i < 3; i++) { const a = t * 6 + i * TAU / 3; lbl(g, '★', m.x + Math.cos(a) * 13, m.y - 22 + Math.sin(a) * 4, { size: 11, col: '#ffd23f' }); }
     });
-    // effects
+    // spells in flight: Void Water Bolt as a blue orb, Sapping Sting as a violet dart, each with a short trail
+    fr.bolts.forEach(b => {
+      const water = b.key === 'bolt', col = water ? '#5ec8ff' : '#c27bff';
+      g.save(); g.shadowColor = col; g.shadowBlur = 14;
+      g.fillStyle = water ? 'rgba(94,200,255,.35)' : 'rgba(194,123,255,.35)';
+      g.beginPath(); g.arc(b.x, b.y, water ? 16 : 12, 0, TAU); g.fill();
+      g.fillStyle = water ? '#dff6ff' : '#f1dcff'; g.beginPath(); g.arc(b.x, b.y, water ? 8 : 6, 0, TAU); g.fill();
+      g.restore();
+    });
+    run.fx.forEach(e => {
+      const u = t - e.t; if (e.kind !== 'splash' || u < 0 || u > .45) return;
+      const water = e.key === 'bolt';
+      g.strokeStyle = water ? `rgba(94,200,255,${1 - u / .45})` : `rgba(194,123,255,${1 - u / .45})`; g.lineWidth = 4;
+      g.beginPath(); g.arc(e.x, e.y, 18 + u * 50, 0, TAU); g.stroke();
+    });
+    // effects on the map (the words go in the callout)
     run.fx.forEach(e => {
       const u = t - e.t; if (u < 0 || u > 1.6) return;
-      const a = 1 - ph(u, 1, 1.6);
-      if (e.kind === 'dmg' && u < .8 && P[e.id]) lbl(g, '-' + e.d, P[e.id].x + 20, P[e.id].y - 20 - u * 30, { size: 15, col: '#ff8a80', a: 1 - u / .8 });
-      if (e.kind === 'kick') {
-        const y = e.y - 64 - ease(clamp(u / .3)) * 8;
-        sq(g, S.KICK_ICON[e.name], e.x - 6 - 0, y, 26, { a });
-        lbl(g, `${e.name}!`, e.x, y + 22, { size: 16, col: '#c9b8ff', a });
-        lbl(g, `${e.spell} stopped`, e.x, y + 38, { size: 12, a });
-        if (P[e.id] && u < .35) { const m = P[e.id]; g.strokeStyle = `rgba(170,140,255,${1 - u / .35})`; g.lineWidth = 4; g.beginPath(); g.moveTo(m.x, m.y); g.lineTo(e.x, e.y); g.stroke(); }
-      }
-      if (e.kind === 'slowed' && P[e.id]) lbl(g, 'Slowed!', P[e.id].x, P[e.id].y - 44 - u * 10, { size: 15, col: '#8fe0ff', a });
-      if (e.kind === 'mend') { const f = FO[e.fid]; lbl(g, `Shadow Mend: +${e.h}`, f.x, f.y - 60 - u * 10, { size: 16, col: '#e0a8ff', a }); fr.foes.forEach(o => { if (!o.alive || o.hidden) return; g.strokeStyle = `rgba(200,120,255,${.8 * (1 - u / 1.6)})`; g.lineWidth = 3; g.beginPath(); g.arc(o.x, o.y, 26 + u * 14, 0, TAU); g.stroke(); }); }
+      if (e.kind === 'kick' && P[e.id] && u < .45) { const m = P[e.id]; g.strokeStyle = `rgba(170,140,255,${1 - u / .45})`; g.lineWidth = 4; g.beginPath(); g.moveTo(m.x, m.y); g.lineTo(e.x, e.y); g.stroke(); }
+      if (e.kind === 'mend') fr.foes.forEach(o => { if (!o.alive || o.hidden) return; g.strokeStyle = `rgba(200,120,255,${.8 * (1 - u / 1.6)})`; g.lineWidth = 3; g.beginPath(); g.arc(o.x, o.y, 26 + u * 14, 0, TAU); g.stroke(); });
       if (e.kind === 'wave' && u < .8) { const f = FO[e.fid]; g.strokeStyle = `rgba(160,90,255,${.7 * (1 - u / .8)})`; g.lineWidth = 6; g.beginPath(); g.arc(f.x, f.y, 40 + u * 900, 0, TAU); g.stroke(); }
       if (e.kind === 'lash' && u < .9 && P[e.id]) {
         const f = FO[e.fid], m = P[e.id]; g.strokeStyle = `rgba(214,90,150,${1 - u / .9})`; g.lineWidth = 6; g.lineCap = 'round';
         g.beginPath(); g.moveTo(f.x, f.y); g.lineTo(u < .2 ? e.x0 : m.x, u < .2 ? e.y0 : m.y); g.stroke();
-        lbl(g, 'Tongue Lash: pulled back', f.x, f.y - 66, { size: 15, col: '#ffb3d4', a });
       }
-      if (e.kind === 'pounce' && u < .9) { g.fillStyle = `rgba(255,120,80,${.5 * (1 - u / .9)})`; g.beginPath(); g.arc(e.x, e.y, K.rabbit.pounce.radius + u * 20, 0, TAU); g.fill(); lbl(g, e.hits ? `Void Pounce hits ${e.hits}` : 'Void Pounce misses', e.x, e.y - 58, { size: 15, col: e.hits ? '#ffb0a0' : '#c8ffd0', a }); }
-      if (e.kind === 'ambush' && u < 1.2) lbl(g, 'Ambush!', e.x, e.y - 42 - u * 10, { size: 16, col: '#ffb0a0', a });
-      if (e.kind === 'call') { const f = FO[e.fid]; lbl(g, 'Focus called', f.x, f.y - 70, { size: 15, col: '#ffe08a', a }); }
-      if (e.kind === 'movecall' && u < 1) lbl(g, 'Move!', S.W / 2, 40, { size: 22, col: '#ffe08a', a });
-      if (e.kind === 'say') lbl(g, e.s, e.x, e.y - u * 10, { size: 14, col: '#ffe08a', a });
+      if (e.kind === 'pounce' && u < .9) { g.fillStyle = `rgba(255,120,80,${.5 * (1 - u / .9)})`; g.beginPath(); g.arc(e.x, e.y, K.rabbit.pounce.radius + u * 20, 0, TAU); g.fill(); }
+      if (e.kind === 'say') lbl(g, e.s, e.x, e.y - u * 10, { size: 14, col: '#ffe08a', a: 1 - ph(u, 1, 1.6) });
     });
+    const cur = current(events(pk, run), t, o.speed);
+    if (cur && !o.noCallout) callout(g, cur, t);
     g.restore();
     hud(g, pk, run, fr, t, o);
   }
 
-  // the party frames under the arena
+  // the events worth calling out, built once per fight from its effect log: what happened, where, and whose
+  function events(pk, run) {
+    if (run._ev) return run._ev;
+    const P = S.PULLS[pk], who = id => S.PARTY[+id.slice(1)].name, foe = id => K[P.foes[+id.slice(1)][0]];
+    const ev = []; let lastAmbush = -9;
+    run.fx.forEach(e => {
+      const at = (x, y) => ({ t: e.t, x, y });
+      if (e.kind === 'kick') ev.push({ ...at(e.x, e.y), lane: 1, tone: 'party', icon: S.KICK_ICON[e.name], s: `${e.name} interrupts ${e.spell}` });
+      if (e.kind === 'slowed') { const m = run.frames[Math.min(run.frames.length - 1, Math.round(e.t / S.DT))].party.find(q => q.id === e.id); ev.push({ ...at(m.x, m.y), lane: 0, tone: 'foe', icon: 'spell_nature_slow', s: `Sapping Sting slows the ${who(e.id)}` }); }
+      if (e.kind === 'mend') { const f = run.frames[Math.min(run.frames.length - 1, Math.round(e.t / S.DT))].foes.find(q => q.id === e.fid); ev.push({ ...at(f.x, f.y), lane: 0, tone: 'heal', icon: 'spell_shadow_shadowmend', s: `Shadow Mend heals the pack for ${e.h}` }); }
+      if (e.kind === 'lash') ev.push({ ...at(e.x0, e.y0), lane: 0, tone: 'foe', icon: 'inv_pet_toad_black', s: `Tongue Lash pulls the ${who(e.id)} back to the frog` });
+      if (e.kind === 'pounce') ev.push({ ...at(e.x, e.y), lane: 0, tone: e.hits ? 'foe' : 'party', icon: 'ability_druid_supriseattack', s: e.hits ? `Void Pounce hits ${e.hits} player${e.hits > 1 ? 's' : ''}` : 'Void Pounce lands on empty ground' });
+      if (e.kind === 'ambush' && e.t - lastAmbush > 1) { lastAmbush = e.t; ev.push({ ...at(e.x, e.y), lane: 0, tone: 'foe', icon: 'spell_magic_polymorphrabbit', s: 'Ambush! The rabbits and foxes leap out' }); }
+      if (e.kind === 'kill') ev.push({ ...at(e.x, e.y), lane: 1, tone: 'party', icon: foe(e.fid).icon, grey: true, s: `The ${foe(e.fid).short} dies` });
+      if (e.kind === 'die') ev.push({ ...at(e.x, e.y), lane: 0, tone: 'foe', icon: S.PARTY[+e.id.slice(1)].icon, grey: true, s: `The ${who(e.id)} dies` });
+      if (e.kind === 'call') { const f = run.frames[Math.min(run.frames.length - 1, Math.round(e.t / S.DT))].foes.find(q => q.id === e.fid); ev.push({ ...at(f.x, f.y), lane: 1, tone: 'call', icon: foe(e.fid).icon, s: `You call focus on the ${foe(e.fid).short}` }); }
+      if (e.kind === 'movecall') ev.push({ ...at(S.W / 2, AH / 2), lane: 1, tone: 'call', icon: 'ability_rogue_sprint', s: 'You call: step out!' });
+    });
+    return (run._ev = ev);
+  }
+  const TONES = { foe: '#ff6b5e', party: '#48d17a', heal: '#c27bff', call: '#ffd23f' };
+  // the event being called out now: the latest one, held for a moment of real time
+  const current = (ev, t, speed) => { let c = null; ev.forEach(e => { if (e.t <= t && t - e.t < 1.4 * (speed || 1)) c = e; }); return c; };
+
+  // the callout in the arena: a banner along the bottom with a leader line to where it happened
+  function callout(g, e, t) {
+    const col = TONES[e.tone], u = t - e.t;
+    g.save();
+    g.strokeStyle = col; g.lineWidth = 3; g.globalAlpha = .9;
+    const r = 30 + 4 * Math.sin(t * 8);
+    g.beginPath(); g.arc(e.x, e.y, r, 0, TAU); g.stroke();
+    g.font = '700 18px Jost, sans-serif'; const w = g.measureText(e.s).width + 64, bx = S.W / 2, by = AH - 30;
+    g.setLineDash([6, 5]); g.beginPath(); g.moveTo(e.x, e.y + (e.y < by ? r : -r)); g.lineTo(clamp(e.x, bx - w / 2 + 20, bx + w / 2 - 20), by - 18); g.stroke(); g.setLineDash([]);
+    g.globalAlpha = 1;
+    g.fillStyle = 'rgba(15,20,45,.92)'; g.beginPath(); g.roundRect(bx - w / 2, by - 18, w, 36, 10); g.fill();
+    g.strokeStyle = col; g.lineWidth = 3; g.stroke();
+    sq(g, e.icon, bx - w / 2 + 22, by, 24, { grey: e.grey });
+    text(g, e.s, bx - w / 2 + 42, by + 1, { align: 'left', size: 18, w: 700, col: '#fffaf0' });
+    g.restore();
+  }
+
+  // under the arena: compact party frames, then the fight's timeline with every event so far
   function hud(g, pk, run, fr, t, o) {
     g.fillStyle = '#152044'; g.fillRect(0, AH, S.W, HUD);
-    const fw = 168, gap = 8, x0 = 12;
+    const fw = 168, gap = 8, x0 = 12, fh = 50;
     fr.party.forEach((m, i) => {
-      const M = S.PARTY[i], x = x0 + i * (fw + gap), y = AH + 12;
-      g.fillStyle = m.alive ? '#202c5a' : '#2a2a35'; g.beginPath(); g.roundRect(x, y, fw, HUD - 24, 8); g.fill();
-      sq(g, M.icon, x + 22, y + 22, 30, { grey: !m.alive });
-      text(g, M.name, x + 44, y + 13, { align: 'left', size: 14, w: 700, col: '#fffaf0' });
-      text(g, M.role === 'tank' ? 'tank' : M.role === 'healer' ? 'healer' : M.role, x + 44, y + 30, { align: 'left', size: 12, col: '#9aa3d6' });
-      bar(g, x + fw / 2 + 0, y + 46, fw - 18, m.hp / M.hp, m.hp / M.hp > .5 ? '#36c46a' : m.hp / M.hp > .25 ? '#e0a92d' : '#e5322d', 9, '#0c1230');
-      if (M.mana) bar(g, x + fw / 2, y + 60, fw - 18, m.mana / M.mana, '#4f8cff', 5, '#0c1230');
+      const M = S.PARTY[i], x = x0 + i * (fw + gap), y = AH + 6;
+      g.fillStyle = m.alive ? '#202c5a' : '#2a2a35'; g.beginPath(); g.roundRect(x, y, fw, fh, 7); g.fill();
+      sq(g, M.icon, x + 17, y + 17, 24, { grey: !m.alive });
+      text(g, M.name, x + 34, y + 11, { align: 'left', size: 13, w: 700, col: '#fffaf0' });
+      const st = !m.alive ? ['dead', '#ff8a80'] : m.slow > 0 ? [`slowed ${Math.ceil(m.slow)}s`, '#8fe0ff'] : m.stun > 0 ? ['stunned', '#ffd23f'] : [M.role, '#9aa3d6'];
+      text(g, st[0], x + 34, y + 25, { align: 'left', size: 11, col: st[1] });
+      bar(g, x + fw / 2, y + 36, fw - 14, m.hp / M.hp, m.hp / M.hp > .5 ? '#36c46a' : m.hp / M.hp > .25 ? '#e0a92d' : '#e5322d', 7, '#0c1230');
+      if (M.mana) bar(g, x + fw / 2, y + 45, fw - 14, m.mana / M.mana, '#4f8cff', 3, '#0c1230');
       if (M.kick) {
-        sq(g, S.KICK_ICON[M.kick.name], x + fw - 22, y + 22, 26, { grey: m.kickCd > 0 });
-        if (m.kickCd > 0) lbl(g, Math.ceil(m.kickCd), x + fw - 22, y + 22, { size: 13 });
+        sq(g, S.KICK_ICON[M.kick.name], x + fw - 17, y + 15, 20, { grey: m.kickCd > 0 });
+        if (m.kickCd > 0) lbl(g, Math.ceil(m.kickCd), x + fw - 17, y + 15, { size: 11 });
       }
-      if (m.slow > 0) { sq(g, 'spell_nature_slow', x + 15, y + 72, 18); text(g, `slowed ${Math.ceil(m.slow)}s`, x + 28, y + 72, { align: 'left', size: 12, col: '#8fe0ff' }); }
-      else if (m.stun > 0) text(g, 'stunned', x + 9, y + 72, { align: 'left', size: 12, col: '#ffd23f' });
-      else if (!m.alive) text(g, 'dead', x + 9, y + 72, { align: 'left', size: 12, col: '#ff8a80' });
     });
     const xr = x0 + 5 * (fw + gap) + 6;
-    text(g, `Pull ${S.PULLS[pk].label}`, xr, AH + 30, { align: 'left', size: 18, w: 800, display: true, col: '#ffb951' });
-    text(g, `${Math.min(t, run.end.t).toFixed(1)} s`, xr, AH + 58, { align: 'left', size: 24, w: 700, col: '#fffaf0' });
-    if (o.speed) text(g, `× ${o.speed} speed`, xr, AH + 84, { align: 'left', size: 12, col: '#9aa3d6' });
+    text(g, `Pull ${S.PULLS[pk].label}`, xr, AH + 18, { align: 'left', size: 15, w: 800, display: true, col: '#ffb951' });
+    text(g, `${Math.min(t, run.end.t).toFixed(1)} s${o.speed ? `  ×${o.speed}` : ''}`, xr, AH + 40, { align: 'left', size: 17, w: 700, col: '#fffaf0' });
+    // the timeline: creature events on the top lane, the party's on the bottom
+    const tx0 = 92, tx1 = S.W - 14, ty = AH + 64, T = Math.max(run.end.t, 10), X = s => tx0 + (tx1 - tx0) * clamp(s / T);
+    text(g, 'creatures', tx0 - 8, ty + 10, { align: 'right', size: 11, col: '#ff9d94' });
+    text(g, 'party', tx0 - 8, ty + 32, { align: 'right', size: 11, col: '#8fe5a8' });
+    g.fillStyle = '#0c1230'; g.beginPath(); g.roundRect(tx0 - 4, ty, tx1 - tx0 + 8, 42, 6); g.fill();
+    g.fillStyle = 'rgba(255,185,81,.25)'; g.fillRect(tx0, ty + 20, X(Math.min(t, run.end.t)) - tx0, 2);
+    for (let s = 0; s <= T; s += 10) { g.fillStyle = '#3a4580'; g.fillRect(X(s), ty + 2, 1, 38); if (s) text(g, `${s}s`, X(s) + 3, ty + 7, { align: 'left', size: 9, col: '#6f79b0' }); }
+    const ev = events(pk, run), cur = current(ev, t, o.speed);
+    ev.forEach(e => {
+      if (e.t > t) return;
+      const x = X(e.t), y = ty + 11 + e.lane * 20, on = e === cur;
+      g.fillStyle = TONES[e.tone]; g.fillRect(x - 1, y - 9, 2, 18);
+      if (on) { g.fillStyle = TONES[e.tone]; g.beginPath(); g.roundRect(x - 11, y - 11, 22, 22, 4); g.fill(); }
+      sq(g, e.icon, x, y, on ? 18 : 14, { grey: e.grey, edge: TONES[e.tone], lw: on ? 2 : 1.5, a: on ? 1 : .85 });
+    });
+    const px = X(Math.min(t, run.end.t));
+    g.fillStyle = '#ffb951'; g.fillRect(px - 1, ty - 3, 2, 48);
+    g.beginPath(); g.moveTo(px - 5, ty - 6); g.lineTo(px + 5, ty - 6); g.lineTo(px, ty); g.fill();
   }
 
   // the plan chips at the top left, and the result card once the fight is over
