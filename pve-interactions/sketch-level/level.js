@@ -1,12 +1,13 @@
 /* Sketch level: the level data and the whole game simulation, with no drawing and no DOM, so Node can run it too.
-   Every coordinate is a pixel of the student's graph-paper sketch (img/sketch.png, 1587×697), so the clean render
+   Every coordinate is a pixel of the student's graph-paper sketch (img/sketch.png, 1587×697), so the pencil render
    lies exactly over the drawing. One grid square is about 41 px wide and 44 px tall.
    The sketch gives the layout; the rules it leaves open are this page's reading and live in RULES:
    - a lantern breaks when the flail hits it and drops what the sketch draws beside it (a heart, or the purple sword);
    - a cracked brown block breaks when the flail hits it, cracks under your feet after RULES.crumble seconds of standing,
      and grows back after RULES.regrow seconds;
-   - a Spawn hangs from the ceiling and fires Homing shots that steer toward you; the flail knocks a shot out of the air;
-   - the purple sword makes the flail strike twice as hard, so a Spawn falls to one hit instead of two.
+   - a Spawn is a point in the ceiling that keeps releasing Medusa heads; a head flies toward you in a sine wave whose
+     middle line drifts to your height (the sketch's wavy Homing arrow), and it takes two flail hits;
+   - the purple sword makes the flail strike twice as hard, so a Medusa head falls to one hit instead of two.
    Fixed step (1/60 s) and no randomness, so a run is a pure function of its inputs: the GIF and the demo replay exactly. */
 (function (root) {
   const DT = 1 / 60;
@@ -16,8 +17,8 @@
     hearts: 3, maxHearts: 5, invuln: 1.2,
     reach: 150, throwT: 0.34, headR: 12,  // flail: out and back in throwT seconds
     crumble: 0.9, regrow: 5,
-    spawnHp: 2, fireEvery: 2.6, fireRange: 430, maxShots: 2,
-    shotSpeed: 165, shotTurn: 2.4, shotLife: 5.5, shotR: 9,
+    headHp: 2, spawnEvery: 2.4, spawnRange: 430, maxHeads: 2,
+    headSpeed: 120, waveAmp: 38, wavePeriod: 1.5, homing: 45, headLife: 10, medusaR: 14, stagger: 0.3,
     itemG: 1400,
   };
 
@@ -42,8 +43,8 @@
     .map(([x, y]) => ({ x0: x, y0: y, x1: x + B, y1: y + (y === 262 ? 46 : 47) }));
   const LANTERNS = [[250, 198, 'heart'], [455, 198, 'sword'], [575, 198, 'heart'], [740, 289, 'heart'],
     [1125, 312, 'heart'], [1293, 312, 'heart'], [1458, 312, 'heart']].map(([x, y, drop]) => ({ x, y, drop }));
-  // where each Spawn hangs and the mouth its shots leave from; the sketch's Homing arrows run down and to the left
-  const SPAWNS = [{ x: 765, y: 186, mx: 742, my: 206, r: 30 }, { x: 1480, y: 186, mx: 1456, my: 206, r: 30 }];
+  // where each Spawn point sits and where its Medusa heads come out; the sketch's wavy Homing arrows run down and to the left
+  const SPAWNS = [{ x: 765, y: 186, mx: 742, my: 214 }, { x: 1480, y: 186, mx: 1456, my: 214 }];
   const START = { x: 66, y: 437 };
   const GOAL = GROUND[GROUND.length - 1];
   const LEVEL = { PAPER, CEIL, GROUND, CRACKED, LANTERNS, SPAWNS, START, GOAL, B };
@@ -62,8 +63,8 @@
       cracked: CRACKED.map(() => ({ state: 'ok', stand: 0, gone: 0 })),
       lanterns: LANTERNS.map(() => ({ lit: true })),
       items: [],
-      spawns: SPAWNS.map(() => ({ hp: RULES.spawnHp, cd: 1.2, hit: 0 })),
-      shots: [], nextId: 1,
+      spawns: SPAWNS.map(() => ({ cd: 0.6, pulse: 0 })),
+      heads: [], nextId: 1,
       events: [],                               // [t, kind, text] for captions
     };
   }
@@ -152,48 +153,47 @@
           ev(s, 'lantern', L.drop === 'sword' ? 'The lantern shatters and drops the purple sword.' : 'The lantern shatters and drops a heart.');
         }
       });
-      SPAWNS.forEach((S, i) => {
-        const sp = s.spawns[i];
-        if (sp.hp <= 0 || f.done['s' + i]) return;
-        if (Math.hypot(hx - S.x, hy - S.y) < S.r + R.headR) {
-          f.done['s' + i] = 1; sp.hp -= p.sword ? 2 : 1; sp.hit = 0.25;
-          ev(s, sp.hp <= 0 ? 'kill' : 'wound', sp.hp <= 0 ? (p.sword ? 'One sword-weighted hit and the Spawn is gone.' : 'The second hit finishes the Spawn.') : 'The Spawn takes a hit. One more.');
-        }
-      });
-      s.shots.forEach(sh => {
-        if (!sh.dead && Math.hypot(hx - sh.x, hy - sh.y) < R.shotR + R.headR + 4) { sh.dead = true; ev(s, 'parry', 'The flail knocks the Homing shot out of the air.'); }
+      s.heads.forEach(h => {
+        if (h.dead || f.done['h' + h.id] || Math.hypot(hx - h.x, hy - h.y) >= R.medusaR + R.headR + 4) return;
+        f.done['h' + h.id] = 1; h.hp -= p.sword ? 2 : 1; h.hit = R.stagger;
+        if (h.hp <= 0) { h.dead = true; ev(s, 'kill', p.sword ? 'One sword-weighted hit and the Medusa head is gone.' : 'The second hit finishes the Medusa head.'); }
+        else ev(s, 'wound', 'The Medusa head takes a hit and staggers. One more.');
       });
       if (f.t >= R.throwT) s.fl = null;
     }
 
-    /* --- Spawns fire Homing shots --- */
+    /* --- Spawn points release Medusa heads that wave toward you --- */
     SPAWNS.forEach((S, i) => {
-      const sp = s.spawns[i]; sp.hit = Math.max(0, sp.hit - DT);
-      if (sp.hp <= 0) return;
+      const sp = s.spawns[i]; sp.pulse = Math.max(0, sp.pulse - DT);
       sp.cd -= DT;
-      const near = Math.abs(p.x - S.x) < R.fireRange && p.x < S.x + 160;
-      const mine = s.shots.filter(sh => !sh.dead && sh.from === i).length;
-      if (sp.cd <= 0 && near && mine < R.maxShots) {
-        sp.cd = R.fireEvery;
-        const c = chest(p), a = Math.atan2(c.y - S.my, c.x - S.mx);
-        s.shots.push({ x: S.mx, y: S.my, a, life: R.shotLife, from: i, dead: false, id: s.nextId++, trail: [] });
-        ev(s, 'fire', 'A Spawn fires a Homing shot.');
+      const near = Math.abs(p.x - S.x) < R.spawnRange && p.x < S.x + 160;
+      const mine = s.heads.filter(h => !h.dead && h.from === i).length;
+      if (sp.cd <= 0 && near && mine < R.maxHeads) {
+        sp.cd = R.spawnEvery; sp.pulse = 0.4;
+        s.heads.push({ x: S.mx, y: S.my, mid: S.my + R.waveAmp, ph: -Math.PI / 2, dir: p.x < S.mx ? -1 : 1, hp: R.headHp, hit: 0,
+          life: R.headLife, from: i, dead: false, id: s.nextId++, trail: [] });
+        ev(s, 'fire', 'A Medusa head comes out of the Spawn.');
       }
     });
-    s.shots.forEach(sh => {
-      if (sh.dead) return;
-      const c = chest(p), want = Math.atan2(c.y - 10 - sh.y, c.x - sh.x);
-      let d = want - sh.a; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI;
-      sh.a += Math.max(-R.shotTurn * DT, Math.min(R.shotTurn * DT, d));
-      sh.x += Math.cos(sh.a) * R.shotSpeed * DT; sh.y += Math.sin(sh.a) * R.shotSpeed * DT;
-      sh.trail.push([sh.x, sh.y]); if (sh.trail.length > 14) sh.trail.shift();
-      sh.life -= DT; if (sh.life <= 0) sh.dead = true;
-      const pb = box(p);
-      if (!sh.dead && p.inv <= 0 && sh.x > pb.x0 - R.shotR && sh.x < pb.x1 + R.shotR && sh.y > pb.y0 - R.shotR && sh.y < pb.y1 + R.shotR) {
-        sh.dead = true; p.hearts--; p.inv = R.invuln; ev(s, 'hurt', 'The Homing shot lands: one heart lost.');
+    s.heads.forEach(h => {
+      if (h.dead) return;
+      h.hit = Math.max(0, h.hit - DT);
+      if (h.hit <= 0) {
+        // forward at a steady speed, up and down on a sine wave, and the middle of the wave drifts toward your chest
+        const c = chest(p), w = 2 * Math.PI / R.wavePeriod;
+        h.mid += Math.max(-R.homing * DT, Math.min(R.homing * DT, c.y - h.mid));
+        h.ph += w * DT;
+        h.x += h.dir * R.headSpeed * DT;
+        h.y = h.mid + Math.sin(h.ph) * R.waveAmp;
+      }
+      h.trail.push([h.x, h.y]); if (h.trail.length > 18) h.trail.shift();
+      h.life -= DT; if (h.life <= 0 || h.x < PAPER.x0 - 30 || h.x > PAPER.x1 + 30) h.dead = true;
+      const pb = box(p), r = R.medusaR - 3;
+      if (!h.dead && p.inv <= 0 && h.x > pb.x0 - r && h.x < pb.x1 + r && h.y > pb.y0 - r && h.y < pb.y1 + r) {
+        p.hearts--; p.inv = R.invuln; ev(s, 'hurt', 'A Medusa head bites: one heart lost.');
       }
     });
-    s.shots = s.shots.filter(sh => !sh.dead || false);
+    s.heads = s.heads.filter(h => !h.dead);
 
     /* --- dropped items fall onto whatever is below, and you walk into them --- */
     s.items.forEach(it => {
@@ -226,7 +226,7 @@
   }
 
   /* ---------- a scripted player, for the demo and the GIF ----------
-     Each beat is a small goal; the bot also swings at any Homing shot that gets close. */
+     Each beat is a small goal; the bot also swings at any Medusa head that gets close. */
   const BEATS = [
     ['walk', 108], ['jumpto', 236], ['walk', 250], ['throw', 'up'], ['pause', 0.55],
     ['jumpto', 455], ['walk', 455], ['throw', 'up'], ['pause', 0.3], ['jthrow', 'up'], ['pause', 0.75],
@@ -258,9 +258,9 @@
       else if (bot.phase === 1) { inp.jump = true; if (p.vy > -140) { inp.up = arg === 'up'; inp.throw = !s.fl && !s.prevThrow; if (inp.throw) bot.phase = 2; } }
       else if (p.ground && !s.fl) next();
     }
-    // on top of the plan, swing at a Homing shot that comes close
+    // on top of the plan, swing at a Medusa head that comes close
     const c = chest(p);
-    const threat = s.shots.find(sh => !sh.dead && Math.hypot(sh.x - c.x, sh.y - c.y) < 130);
+    const threat = s.heads.find(h => !h.dead && Math.hypot(h.x - c.x, h.y - c.y) < 130);
     const busy = (kind === 'jthrow' && bot.phase === 1) || inp.throw;
     if (threat && !busy && !s.fl && !s.prevThrow) {
       const ax = threat.x - c.x, ay = threat.y - c.y, ahead = ax * p.face >= 0;

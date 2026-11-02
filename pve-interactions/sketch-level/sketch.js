@@ -1,6 +1,6 @@
 /* Sketch level: a student's graph-paper platformer encounter, built one square for one square and played.
    level.js holds the level and the simulation (SKETCH); this file only draws it and wires the four slides.
-   The clean render uses the sketch's own pixel coordinates, so it can be wiped over or laid under img/sketch.png.
+   The pencil render (graph paper, wobbly ink, coloured pencil, a little line boil) uses the sketch's own pixel coordinates, so it can be wiped over or laid under img/sketch.png.
    window.__seek(t, 'reveal') / window.__dur('reveal') render slide 2's sequence frame by frame for the GIF. */
 (function () {
   const { $, $$, demo, canvasDemo, say, raf } = FPF.kit;
@@ -9,20 +9,53 @@
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
   const ease = u => u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2;
 
+  try { ['700 24px Caveat', '600 22px Caveat'].forEach(f => document.fonts.load(f)); } catch (e) {}
   const IMG = new Image();
   IMG.src = 'img/sketch.png';
 
-  /* ---------- colours ---------- */
+  /* ---------- pencil on graph paper, in the sketch's own colours ---------- */
   const C = {
-    sky0: '#232b50', sky1: '#141a33', grid: 'rgba(255,255,255,.05)',
-    stone: '#4b5680', stoneDk: '#343d61', stoneTop: '#a2aed6', mortar: 'rgba(16,20,40,.35)', edge: '#1a2040',
-    crack: '#8b5a2b', crackDk: '#5e3a17', crackLine: '#3a220c', crackTop: '#c08a4f',
-    glass: '#8fd0ff', cage: '#2f6fd0', glow: 'rgba(120,190,255,', heart: '#e2343f', sword: '#9a55e6', swordDk: '#5d2a9c',
-    spawn: '#cf2d2d', spawnDk: '#7d1414', spawnLt: '#ff7a6a', shot: '#ff5a3a',
-    armor: '#c9d0e0', armorDk: '#7f88a3', hood: '#2b3358', visor: '#7fe0ff', chain: '#b9c0d4',
+    paper: '#eef0f2', grid: 'rgba(90,95,105,.32)', ink: '#2a2a2e', graphite: 'rgba(60,62,70,.16)',
+    brown: '#7a4f2a', blue: '#2f6fe0', blueWash: 'rgba(70,140,255,', red: '#c8252b', redWash: 'rgba(220,40,50,',
+    purple: '#7a3fd6', green: '#3d8a3d',
   };
-
-  /* ---------- shapes ---------- */
+  const HAND = '"Caveat", "Patrick Hand", "Comic Sans MS", cursive';
+  // a repeatable wobble: the same seed always draws the same stroke, a new seed redraws it (line boil)
+  const hash = n => { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+  const boil = t => Math.floor(t * 8);
+  function stroke(g, pts, seed, col = C.ink, w = 2.2, j = 1.1, passes = 2) {
+    g.save(); g.strokeStyle = col; g.lineCap = 'round'; g.lineJoin = 'round';
+    for (let pass = 0; pass < passes; pass++) {
+      g.lineWidth = pass ? w * 0.6 : w; g.globalAlpha *= pass ? 0.55 : 1;
+      g.beginPath();
+      let k = 0;
+      for (let i = 0; i < pts.length - 1; i++) {
+        const [ax, ay] = pts[i], [bx, by] = pts[i + 1], n = Math.max(1, Math.round(Math.hypot(bx - ax, by - ay) / 12));
+        for (let m = (i ? 1 : 0); m <= n; m++, k++) {
+          const u = m / n, x = ax + (bx - ax) * u + (hash(seed + k * 7.3 + pass * 91) - 0.5) * 2 * j, y = ay + (by - ay) * u + (hash(seed + k * 3.1 + pass * 57) - 0.5) * 2 * j;
+          if (!i && !m) g.moveTo(x, y); else g.lineTo(x, y);
+        }
+      }
+      g.stroke();
+    }
+    g.restore();
+  }
+  function box2(g, x0, y0, x1, y1, seed, col = C.ink, w = 2.4) {
+    const o = 2;   // corners overshoot a little, as a hand-drawn box does
+    stroke(g, [[x0 - o, y0], [x1 + o, y0]], seed + 1, col, w); stroke(g, [[x1, y0 - o], [x1, y1 + o]], seed + 2, col, w);
+    stroke(g, [[x1 + o, y1], [x0 - o, y1]], seed + 3, col, w); stroke(g, [[x0, y1 + o], [x0, y0 - o]], seed + 4, col, w);
+  }
+  function hatch(g, x0, y0, x1, y1, seed, col = C.graphite, gap = 9) {
+    g.save(); g.beginPath(); g.rect(x0, y0, x1 - x0, y1 - y0); g.clip();
+    g.strokeStyle = col; g.lineWidth = 1.4; g.beginPath();
+    for (let d = -(y1 - y0); d < x1 - x0; d += gap) { const j = (hash(seed + d) - 0.5) * 3; g.moveTo(x0 + d + j, y1); g.lineTo(x0 + d + (y1 - y0) + j, y0); }
+    g.stroke(); g.restore();
+  }
+  function circ(g, x, y, r, seed, col = C.ink, w = 2.2, n = 14) {
+    const pts = []; const a0 = hash(seed) * 6;
+    for (let k = 0; k <= n + 1; k++) { const a = a0 + k / n * Math.PI * 2, rr = r * (1 + (hash(seed + k) - 0.5) * 0.12); pts.push([x + Math.cos(a) * rr, y + Math.sin(a) * rr]); }
+    stroke(g, pts, seed + 5, col, w, 0.5, 1);
+  }
   function heartPath(g, x, y, r) {
     g.beginPath();
     g.moveTo(x, y + r * 0.9);
@@ -30,198 +63,192 @@
     g.bezierCurveTo(x + r * 0.7, y - r * 1.2, x + r * 1.5, y - r * 0.1, x, y + r * 0.9);
     g.closePath();
   }
-  function drawHeart(g, x, y, r, fill = C.heart, a = 1) {
-    g.save(); g.globalAlpha *= a; heartPath(g, x, y, r); g.fillStyle = fill; g.fill();
-    g.lineWidth = 2; g.strokeStyle = 'rgba(60,0,10,.6)'; g.stroke(); g.restore();
-  }
-  function drawSword(g, x, y, s = 1, rot = -Math.PI / 4) {
-    g.save(); g.translate(x, y); g.rotate(rot); g.scale(s, s);
-    g.fillStyle = C.sword; g.strokeStyle = C.swordDk; g.lineWidth = 2;
-    g.beginPath(); g.moveTo(-4, -8); g.lineTo(26, -4); g.lineTo(32, 0); g.lineTo(26, 4); g.lineTo(-4, 8); g.closePath(); g.fill(); g.stroke();
-    g.fillStyle = C.swordDk; g.fillRect(-8, -13, 5, 26); g.fillRect(-20, -3.5, 13, 7);
-    g.fillStyle = '#e7d4ff'; g.fillRect(0, -1.5, 22, 3);
+  // a coloured-pencil heart: scribbled in, then outlined
+  function drawHeart(g, x, y, r, col = C.red, seed = 1, empty = false) {
+    g.save();
+    if (!empty) { heartPath(g, x, y, r); g.save(); g.clip(); g.strokeStyle = col; g.lineWidth = 1.6; g.globalAlpha = 0.75; g.beginPath(); for (let d = -2 * r; d < 2 * r; d += 2.6) { g.moveTo(x + d - r, y + r); g.lineTo(x + d + r, y - r); } g.stroke(); g.restore(); }
+    heartPath(g, x + (hash(seed) - 0.5), y + (hash(seed + 2) - 0.5), r); g.strokeStyle = empty ? 'rgba(200,37,43,.4)' : col; g.lineWidth = 1.8; g.stroke();
     g.restore();
   }
-  function bricks(g, x0, y0, x1, y1, h = 22, w = 41) {
-    g.save(); g.beginPath(); g.rect(x0, y0, x1 - x0, y1 - y0); g.clip();
-    g.strokeStyle = C.mortar; g.lineWidth = 1.5; g.beginPath();
-    for (let y = y0 + h, r = 1; y < y1; y += h, r++) { g.moveTo(x0, y); g.lineTo(x1, y); }
-    for (let y = y0, r = 0; y < y1; y += h, r++) for (let x = x0 + (r % 2 ? w / 2 : 0) + w; x < x1 + w; x += w) { g.moveTo(x, y); g.lineTo(x, Math.min(y1, y + h)); }
-    g.stroke(); g.restore();
+  function drawSword(g, x, y, s = 1, rot = -Math.PI / 4, seed = 3) {
+    g.save(); g.translate(x, y); g.rotate(rot); g.scale(s, s);
+    g.fillStyle = 'rgba(122,63,214,.35)'; g.fillRect(-4, -6, 30, 12);
+    stroke(g, [[-4, -7], [26, -5], [33, 0], [26, 5], [-4, 7], [-4, -7]], seed, C.purple, 2.2, 0.6, 1);
+    stroke(g, [[-7, -13], [-7, 13]], seed + 9, C.purple, 4, 0.5, 1);
+    stroke(g, [[-20, 0], [-8, 0]], seed + 13, C.purple, 5, 0.4, 1);
+    g.restore();
   }
-  function stoneBlock(g, x0, y0, x1, y1, top = true) {
-    g.fillStyle = C.stone; g.fillRect(x0, y0, x1 - x0, y1 - y0);
-    bricks(g, x0, y0, x1, y1);
-    g.fillStyle = 'rgba(0,0,0,.18)'; g.fillRect(x0, y1 - 6, x1 - x0, 6);
-    if (top) { g.fillStyle = C.stoneTop; g.fillRect(x0, y0, x1 - x0, 4); }
-    g.strokeStyle = C.edge; g.lineWidth = 2; g.strokeRect(x0 + 1, y0 + 1, x1 - x0 - 2, y1 - y0 - 2);
+  // a little arrow from an item to the lantern holding it, as the sketch draws them
+  function arrow(g, x0, y0, x1, y1, seed, col) {
+    stroke(g, [[x0, y0], [(x0 + x1) / 2 + 3, (y0 + y1) / 2 - 3], [x1, y1]], seed, col, 1.6, 0.6, 1);
+    const a = Math.atan2(y1 - y0, x1 - x0);
+    stroke(g, [[x1 - Math.cos(a - 0.5) * 7, y1 - Math.sin(a - 0.5) * 7], [x1, y1], [x1 - Math.cos(a + 0.5) * 7, y1 - Math.sin(a + 0.5) * 7]], seed + 4, col, 1.6, 0.3, 1);
   }
-  // the crack pattern is fixed per block, like the scribbles in the sketch
-  const CRACKS = [[[0.2, 0.15], [0.35, 0.45], [0.22, 0.8]], [[0.55, 0.1], [0.48, 0.4], [0.65, 0.6], [0.58, 0.9]], [[0.8, 0.2], [0.72, 0.5], [0.85, 0.85]]];
+  // the brown squiggles drawn inside each cracked block
+  const SQUIG = [[0.15, 0.25, 0.3, 0.75], [0.4, 0.2, 0.52, 0.8], [0.66, 0.25, 0.8, 0.72]];
   function crackedBlock(g, b, st, t, i) {
     const shake = st.state === 'shaking' ? Math.sin(t * 70 + i) * Math.min(2.5, st.stand * 4) : 0;
-    const x0 = b.x0 + shake, y0 = b.y0, w = b.x1 - b.x0, h = b.y1 - b.y0;
+    const x0 = b.x0 + shake, y0 = b.y0, x1 = b.x1 + shake, y1 = b.y1, w = x1 - x0, h = y1 - y0, sd = 500 + i * 40;
     if (st.state === 'gone') {
       const u = st.gone / RULES.regrow;
-      g.save(); g.setLineDash([5, 5]); g.strokeStyle = `rgba(192,138,79,${0.25 + 0.35 * u})`; g.lineWidth = 2; g.strokeRect(b.x0 + 2, y0 + 2, w - 4, h - 4); g.restore();
-      g.fillStyle = `rgba(139,90,43,${0.25 * u})`; g.fillRect(b.x0 + 2, y0 + h * (1 - u) + 2, w - 4, h * u - 4 > 0 ? h * u - 4 : 0);
+      g.save(); g.setLineDash([4, 6]); g.globalAlpha = 0.25 + 0.4 * u; box2(g, b.x0 + 3, y0 + 3, b.x1 - 3, y1 - 3, sd, C.brown, 1.6); g.restore();
       return;
     }
-    g.fillStyle = C.crack; g.fillRect(x0, y0, w, h);
-    g.fillStyle = C.crackTop; g.fillRect(x0, y0, w, 4);
-    g.fillStyle = 'rgba(0,0,0,.18)'; g.fillRect(x0, y0 + h - 5, w, 5);
-    g.strokeStyle = C.crackLine; g.lineWidth = 2; g.lineJoin = 'round';
-    CRACKS.forEach((c, k) => { if ((i + k) % 4 === 3) return; g.beginPath(); c.forEach(([u, v], j) => (j ? g.lineTo : g.moveTo).call(g, x0 + u * w, y0 + v * h)); g.stroke(); });
-    if (st.state === 'shaking' && st.stand > 0) {
-      g.strokeStyle = `rgba(255,220,170,${clamp(st.stand / RULES.crumble, 0, 1)})`; g.lineWidth = 2;
-      g.beginPath(); g.moveTo(x0 + w * 0.1, y0 + h * 0.55); g.lineTo(x0 + w * 0.5, y0 + h * 0.35); g.lineTo(x0 + w * 0.9, y0 + h * 0.6); g.stroke();
-    }
-    g.strokeStyle = C.crackDk; g.lineWidth = 2; g.strokeRect(x0 + 1, y0 + 1, w - 2, h - 2);
+    g.fillStyle = 'rgba(122,79,42,.10)'; g.fillRect(x0, y0, w, h);
+    box2(g, x0, y0, x1, y1, sd, C.brown, 2.6);
+    SQUIG.forEach(([ax, ay, bx, by], k) => {
+      const pts = []; for (let m = 0; m <= 6; m++) { const u = m / 6; pts.push([x0 + (ax + (bx - ax) * u) * w + (m % 2 ? 4 : -4), y0 + (ay + (by - ay) * u) * h]); }
+      stroke(g, pts, sd + k * 9, C.brown, 1.7, 0.8, 1);
+    });
+    if (st.state === 'shaking' && st.stand > 0) stroke(g, [[x0 + w * 0.08, y0 + h * 0.5], [x0 + w * 0.5, y0 + h * 0.3], [x0 + w * 0.92, y0 + h * 0.55]], sd + 77 + boil(t), C.ink, 1.6 + 2 * clamp(st.stand / RULES.crumble, 0, 1), 1, 1);
   }
   function ceilingAbove(x) { const c = CEIL.find(([a, b]) => x >= a && x < b); return c ? c[3] : PAPER.y0; }
-  function lantern(g, L, lit, t) {
-    const top = ceilingAbove(L.x), cy = L.y;
-    g.strokeStyle = '#9aa3bf'; g.lineWidth = 2; g.setLineDash([3, 3]);
-    g.beginPath(); g.moveTo(L.x, top); g.lineTo(L.x, lit ? cy - 20 : top + 14); g.stroke(); g.setLineDash([]);
-    if (!lit) { g.strokeStyle = '#9aa3bf'; g.beginPath(); g.arc(L.x, top + 18, 4, 0, Math.PI); g.stroke(); return; }
-    const sw = Math.sin(t * 2 + L.x) * 0.04;
-    g.save(); g.translate(L.x, cy - 20); g.rotate(sw); g.translate(-L.x, -(cy - 20));
-    const glow = g.createRadialGradient(L.x, cy, 2, L.x, cy, 44);
-    glow.addColorStop(0, C.glow + '.45)'); glow.addColorStop(1, C.glow + '0)');
-    g.fillStyle = glow; g.fillRect(L.x - 46, cy - 46, 92, 92);
-    g.fillStyle = C.glass; g.fillRect(L.x - 9, cy - 13, 18, 26);
-    g.fillStyle = '#fff6c8'; g.beginPath(); g.ellipse(L.x, cy + 2, 4, 7 + Math.sin(t * 9 + L.x) * 1.2, 0, 0, 7); g.fill();
-    g.strokeStyle = C.cage; g.lineWidth = 2.5;
-    g.beginPath(); g.moveTo(L.x - 13, cy - 13); g.lineTo(L.x, cy - 22); g.lineTo(L.x + 13, cy - 13); g.closePath(); g.stroke();
-    g.strokeRect(L.x - 10, cy - 13, 20, 26);
-    g.beginPath(); g.moveTo(L.x - 3, cy - 13); g.lineTo(L.x - 3, cy + 13); g.moveTo(L.x + 3, cy - 13); g.lineTo(L.x + 3, cy + 13); g.stroke();
-    g.beginPath(); g.ellipse(L.x, cy + 16, 13, 4, 0, 0, 7); g.fillStyle = C.cage; g.fill();
-    g.restore();
-    // what it holds, drawn small beside it as the sketch does
-    g.save(); g.globalAlpha = 0.85;
-    if (L.drop === 'sword') drawSword(g, L.x + 30, cy - 34, 0.7, 0); else drawHeart(g, L.x + 22, cy - 30, 8);
-    g.restore();
-  }
-  function spawn(g, S, st, t) {
-    if (st.hp <= 0) {
-      g.fillStyle = 'rgba(80,20,20,.55)'; g.beginPath(); g.ellipse(S.x, ceilingAbove(S.x) + 3, 26, 7, 0, 0, 7); g.fill();
+  function lantern(g, L, lit, t, i) {
+    const top = ceilingAbove(L.x), cy = L.y, sd = 900 + i * 30;
+    if (!lit) {
+      // only the hook is left, and the pieces scribbled where it hung
+      stroke(g, [[L.x - 9, cy + 6], [L.x - 3, cy + 12]], sd, C.blue, 1.6, 0.5, 1); stroke(g, [[L.x + 4, cy + 4], [L.x + 10, cy + 13]], sd + 3, C.blue, 1.6, 0.5, 1);
       return;
     }
-    const fl = st.hit > 0, pulse = Math.sin(t * 4) * 2;
-    g.save(); g.translate(S.x, S.y);
-    // the spiky mane on the right, as sketched
-    g.fillStyle = fl ? '#fff' : C.spawnDk;
-    g.beginPath();
-    for (let k = 0; k <= 9; k++) { const a = -1.6 + k * 0.36, r = k % 2 ? 26 : 40 + pulse; g.lineTo(Math.cos(a) * r + 6, Math.sin(a) * r); }
-    g.lineTo(0, 0); g.closePath(); g.fill();
-    g.fillStyle = fl ? '#fff' : C.spawn;
-    g.beginPath(); g.ellipse(0, 0, 26, 30, 0, 0, 7); g.fill();
-    g.strokeStyle = C.spawnDk; g.lineWidth = 2.5; g.stroke();
-    // eye and mouth face down-left, toward where its Homing shots go
-    g.fillStyle = '#fff3d6'; g.beginPath(); g.ellipse(-9, -4, 9, 10, 0, 0, 7); g.fill();
-    g.fillStyle = '#220'; g.beginPath(); g.arc(-12, -1, 4, 0, 7); g.fill();
-    g.strokeStyle = '#3a0505'; g.lineWidth = 3; g.beginPath(); g.arc(-12, 14, 8, 0.2, 2.6); g.stroke();
-    if (st.hp < RULES.spawnHp) { g.strokeStyle = '#ffd0c0'; g.lineWidth = 2; g.beginPath(); g.moveTo(6, -18); g.lineTo(14, -6); g.lineTo(8, 4); g.stroke(); }
+    const sw = Math.sin(t * 2 + L.x) * 0.04;
+    g.save(); g.translate(L.x, cy - 20); g.rotate(sw); g.translate(-L.x, -(cy - 20));
+    const glow = g.createRadialGradient(L.x, cy, 2, L.x, cy, 34);
+    glow.addColorStop(0, C.blueWash + '.22)'); glow.addColorStop(1, C.blueWash + '0)');
+    g.fillStyle = glow; g.fillRect(L.x - 36, cy - 36, 72, 72);
+    stroke(g, [[L.x - 12, cy - 13], [L.x, cy - 22], [L.x + 12, cy - 13], [L.x - 12, cy - 13]], sd, C.blue, 2.2, 0.6, 1);
+    box2(g, L.x - 9, cy - 13, L.x + 9, cy + 12, sd + 10, C.blue, 2);
+    stroke(g, [[L.x - 3, cy - 12], [L.x - 3, cy + 11]], sd + 20, C.blue, 1.4, 0.5, 1); stroke(g, [[L.x + 3, cy - 12], [L.x + 3, cy + 11]], sd + 21, C.blue, 1.4, 0.5, 1);
+    circ(g, L.x, cy + 15, 11, sd + 30, C.blue, 2, 12);
+    g.restore();
+    // what it holds, drawn small beside it with an arrow, as the sketch does
+    if (L.drop === 'sword') { drawSword(g, L.x + 34, cy - 36, 0.65, 0, sd + 40); arrow(g, L.x + 18, cy - 32, L.x + 7, cy - 22, sd + 50, C.red); }
+    else { drawHeart(g, L.x + 26, cy - 34, 7, C.red, sd + 40); arrow(g, L.x + 20, cy - 28, L.x + 9, cy - 20, sd + 50, C.red); }
+  }
+  // a Spawn: the red scribble in the ceiling the heads come out of, with its handwritten label
+  function spawn(g, S, st, t, i) {
+    const y = ceilingAbove(S.x), sd = 1300 + i * 50 + (st.pulse > 0 ? boil(t) : 0);
+    if (st.pulse > 0) { g.fillStyle = C.redWash + (0.12 + st.pulse * 0.4) + ')'; g.beginPath(); g.ellipse(S.x, y + 6, 30, 16, 0, 0, 7); g.fill(); }
+    const pts = []; for (let k = 0; k <= 16; k++) { const a = Math.PI * k / 16; pts.push([S.x + Math.cos(a) * 24, y + Math.sin(a) * (10 + st.pulse * 14)]); }
+    stroke(g, pts, sd, C.red, 2.4, 1.2, 2);
+    for (let k = 0; k < 5; k++) stroke(g, [[S.x - 18 + k * 9, y + 2], [S.x - 15 + k * 9, y + 9]], sd + k * 5, C.red, 1.4, 0.8, 1);
+  }
+  // a Medusa head, drawn like the sketch's red creature: round face, one eye, a mane of snakes, and its wave as a dashed line
+  function medusa(g, h, t) {
+    if (h.trail.length > 2) { g.save(); g.setLineDash([5, 5]); stroke(g, h.trail.filter((_, k) => k % 3 === 0).concat([[h.x, h.y]]), 7, 'rgba(200,37,43,.55)', 1.6, 0.3, 1); g.restore(); }
+    const fl = h.hit > 0 && Math.floor(h.hit * 30) % 2, r = RULES.medusaR, sd = 2000 + (h.id || 0) * 17 + boil(t);
+    g.save(); g.translate(h.x, h.y); g.scale(-h.dir, 1);   // faces the way it flies
+    const col = fl ? '#ff9a3a' : C.red;
+    for (let k = 0; k < 6; k++) {
+      const a = -2.3 + k * 0.62, wig = Math.sin(t * 10 + k * 1.7) * 0.4, pts = [];
+      for (let m = 0; m <= 5; m++) { const rr = r - 2 + m * 3.4, aa = a + Math.sin(m * 1.3 + t * 9 + k) * 0.18 + wig * m / 5; pts.push([Math.cos(aa) * rr + 3, Math.sin(aa) * rr]); }
+      stroke(g, pts, sd + k * 11, col, 1.8, 0.4, 1);
+    }
+    g.fillStyle = 'rgba(238,240,242,.9)'; g.beginPath(); g.arc(0, 0, r, 0, 7); g.fill();
+    g.fillStyle = C.redWash + '.18)'; g.beginPath(); g.arc(0, 0, r, 0, 7); g.fill();
+    circ(g, 0, 0, r, sd, col, 2.2, 14);
+    circ(g, -5, -3, 4.5, sd + 3, col, 1.6, 9);
+    g.fillStyle = col; g.beginPath(); g.arc(-6, -2.5, 1.8, 0, 7); g.fill();
+    stroke(g, [[-10, 6], [-6, 9], [-2, 7]], sd + 8, col, 1.6, 0.4, 1);
+    if (h.hp < RULES.headHp) stroke(g, [[3, -10], [7, -3], [3, 4]], sd + 12, C.ink, 1.6, 0.4, 1);
     g.restore();
   }
-  function shot(g, sh) {
-    sh.trail.forEach(([x, y], k) => { g.fillStyle = `rgba(255,90,58,${(k / sh.trail.length) * 0.4})`; g.beginPath(); g.arc(x, y, 3 + k * 0.35, 0, 7); g.fill(); });
-    const gl = g.createRadialGradient(sh.x, sh.y, 1, sh.x, sh.y, 20);
-    gl.addColorStop(0, 'rgba(255,200,150,.9)'); gl.addColorStop(0.4, 'rgba(255,90,58,.7)'); gl.addColorStop(1, 'rgba(255,90,58,0)');
-    g.fillStyle = gl; g.beginPath(); g.arc(sh.x, sh.y, 20, 0, 7); g.fill();
-    g.fillStyle = '#fff1d0'; g.beginPath(); g.arc(sh.x, sh.y, 4, 0, 7); g.fill();
-  }
-  function gear(g, x, y, r, col) {
-    g.fillStyle = col; g.beginPath();
-    for (let k = 0; k < 16; k++) { const a = k * Math.PI / 8, rr = k % 2 ? r : r + 5; g.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); }
-    g.closePath(); g.fill(); g.strokeStyle = 'rgba(0,0,0,.45)'; g.lineWidth = 1.5; g.stroke();
-    g.fillStyle = '#2a2f45'; g.beginPath(); g.arc(x, y, r * 0.35, 0, 7); g.fill();
-  }
+  // the hooded figure from the sketch, in pencil
   function player(g, s, t) {
     const p = s.p;
     if (p.inv > 0 && Math.floor(p.inv * 14) % 2) return;
     const x = p.x, foot = p.y, f = p.face, moving = Math.abs(p.vx) > 1 && p.ground;
-    const ph = moving ? Math.sin(s.t * 16) : 0;
+    const ph = moving ? Math.sin(s.t * 16) : 0, sd = 3000 + (moving || !p.ground ? boil(t) : 0) * 3;
     g.save(); g.translate(x, foot); g.scale(f, 1);
-    g.lineCap = 'round';
+    const ink = C.ink;
     // legs
-    g.strokeStyle = C.armorDk; g.lineWidth = 8;
-    if (!p.ground) { g.beginPath(); g.moveTo(-4, -30); g.lineTo(-9, -12); g.lineTo(-4, -4); g.moveTo(5, -30); g.lineTo(10, -16); g.lineTo(14, -10); g.stroke(); }
-    else { g.beginPath(); g.moveTo(-4, -30); g.lineTo(-4 - ph * 8, -2); g.moveTo(5, -30); g.lineTo(5 + ph * 8, -2); g.stroke(); }
-    // body and pauldrons
-    g.fillStyle = C.armor; g.strokeStyle = C.edge; g.lineWidth = 2;
-    g.beginPath(); g.roundRect(-12, -62, 24, 34, 6); g.fill(); g.stroke();
-    g.fillStyle = C.armorDk; g.fillRect(-12, -36, 24, 5);
-    g.fillStyle = p.sword ? C.sword : '#5b6a9a'; g.beginPath(); g.ellipse(-9, -58, 7, 5, 0, 0, 7); g.ellipse(9, -58, 7, 5, 0, 0, 7); g.fill();
-    // hooded helm
-    g.fillStyle = C.hood; g.beginPath(); g.moveTo(-13, -62); g.quadraticCurveTo(-14, -88, 2, -86); g.quadraticCurveTo(15, -84, 13, -62); g.closePath(); g.fill(); g.stroke();
-    g.fillStyle = C.visor; g.fillRect(2, -76, 10, 3);
-    // arm: out when the flail is out
-    g.strokeStyle = C.armor; g.lineWidth = 7;
-    g.beginPath(); g.moveTo(4, -56);
-    if (s.fl) g.lineTo(14 + s.fl.dx * f * 0, -56 + 0); else g.lineTo(10, -42 + ph * 2);
-    g.stroke();
+    if (!p.ground) { stroke(g, [[-4, -30], [-10, -14], [-5, -4]], sd, ink, 2.6, 0.5, 1); stroke(g, [[5, -30], [11, -17], [15, -10]], sd + 1, ink, 2.6, 0.5, 1); }
+    else { stroke(g, [[-4, -30], [-4 - ph * 8, -1], [-9 - ph * 8, 0]], sd, ink, 2.6, 0.5, 1); stroke(g, [[5, -30], [5 + ph * 8, -1], [10 + ph * 8, 0]], sd + 1, ink, 2.6, 0.5, 1); }
+    // body, shaded with graphite
+    g.fillStyle = C.paper; g.beginPath(); g.roundRect(-12, -62, 24, 34, 7); g.fill();
+    hatch(g, -12, -62, 12, -28, sd + 4, 'rgba(60,62,70,.22)', 5);
+    stroke(g, [[-11, -30], [-13, -50], [-9, -62], [9, -62], [13, -50], [11, -30], [-11, -30]], sd + 5, ink, 2.4, 0.5, 1);
+    stroke(g, [[-11, -36], [11, -36]], sd + 6, ink, 1.6, 0.4, 1);
+    if (p.sword) { stroke(g, [[-14, -58], [-4, -60]], sd + 7, C.purple, 3, 0.4, 1); stroke(g, [[4, -60], [14, -58]], sd + 8, C.purple, 3, 0.4, 1); }
+    // the hood
+    g.fillStyle = C.paper; g.beginPath(); g.moveTo(-13, -62); g.quadraticCurveTo(-14, -88, 2, -86); g.quadraticCurveTo(15, -84, 13, -62); g.closePath(); g.fill();
+    stroke(g, [[-13, -62], [-14, -76], [-8, -85], [2, -87], [11, -82], [14, -72], [13, -62]], sd + 9, ink, 2.4, 0.5, 1);
+    stroke(g, [[1, -77], [12, -76], [12, -68], [3, -67], [1, -77]], sd + 10, ink, 1.6, 0.4, 1);
+    // the arm reaches out while the flail is out
+    if (s.fl) stroke(g, [[3, -56], [15, -54]], sd + 11, ink, 2.4, 0.4, 1);
+    else stroke(g, [[3, -56], [9, -44 + ph * 2], [12, -40 + ph * 2]], sd + 11, ink, 2.4, 0.4, 1);
     g.restore();
   }
-  function flail(g, s) {
+  // the chain is a row of little red loops and the head a red gear, as sketched
+  function flail(g, s, t) {
     const f = s.fl; if (!f || f.hx === undefined) return;
-    const c = chest(s.p), n = Math.max(2, Math.floor(f.len / 10));
-    g.fillStyle = C.chain;
-    for (let k = 1; k < n; k++) { const u = k / n; g.beginPath(); g.ellipse(c.x + (f.hx - c.x) * u, c.y + (f.hy - c.y) * u, 3.4, 2.2, Math.atan2(f.hy - c.y, f.hx - c.x), 0, 7); g.fill(); }
-    gear(g, f.hx, f.hy, RULES.headR - 2, s.p.sword ? '#b98af2' : '#d4d8e4');
+    const c = chest(s.p), n = Math.max(2, Math.floor(f.len / 9)), col = s.p.sword ? C.purple : C.red;
+    for (let k = 1; k < n; k++) { const u = k / n; circ(g, c.x + (f.hx - c.x) * u, c.y + (f.hy - c.y) * u, 3, 4000 + k, col, 1.4, 7); }
+    const pts = []; const r = RULES.headR - 2;
+    for (let k = 0; k <= 16; k++) { const a = k * Math.PI / 8 + t * 12, rr = k % 2 ? r : r + 5; pts.push([f.hx + Math.cos(a) * rr, f.hy + Math.sin(a) * rr]); }
+    g.fillStyle = s.p.sword ? 'rgba(122,63,214,.25)' : C.redWash + '.22)'; g.beginPath(); pts.forEach(([x, y], k) => (k ? g.lineTo : g.moveTo).call(g, x, y)); g.fill();
+    stroke(g, pts, 4100 + boil(t), col, 1.8, 0.3, 1);
+    circ(g, f.hx, f.hy, 4, 4200, col, 1.6, 8);
   }
   function item(g, it, t) {
     if (it.got) return;
     const bob = it.vy === 0 ? Math.sin(t * 4 + it.id) * 2 : 0;
-    if (it.kind === 'sword') { const gl = g.createRadialGradient(it.x, it.y - 14, 2, it.x, it.y - 14, 30); gl.addColorStop(0, 'rgba(180,120,255,.5)'); gl.addColorStop(1, 'rgba(180,120,255,0)'); g.fillStyle = gl; g.fillRect(it.x - 30, it.y - 44, 60, 60); drawSword(g, it.x, it.y - 14 + bob, 0.85); }
-    else drawHeart(g, it.x, it.y - 12 + bob, 9);
+    if (it.kind === 'sword') drawSword(g, it.x, it.y - 14 + bob, 0.85, -Math.PI / 4, 5000 + boil(t));
+    else drawHeart(g, it.x, it.y - 12 + bob, 9, C.red, 5000 + it.id + boil(t));
   }
   function hud(g, s) {
-    const x = PAPER.x0 + 14, y = PAPER.y0 + 22;
+    const x = PAPER.x0 + 16, y = PAPER.y0 + 26;
     g.save();
-    g.fillStyle = 'rgba(10,14,30,.6)'; g.beginPath(); g.roundRect(x - 8, y - 16, 238, 34, 10); g.fill();
-    for (let k = 0; k < RULES.maxHearts; k++) drawHeart(g, x + 12 + k * 26, y + 1, 8, k < s.p.hearts ? C.heart : 'rgba(255,255,255,.14)');
-    if (s.p.sword) drawSword(g, x + 152, y + 2, 0.55, 0);
-    g.fillStyle = '#cfd6ef'; g.font = '600 15px Jost, sans-serif'; g.textAlign = 'right';
-    g.fillText(`${Math.floor(s.t / 60)}:${String(Math.floor(s.t % 60)).padStart(2, '0')}`, x + 224, y + 6);
+    for (let k = 0; k < RULES.maxHearts; k++) drawHeart(g, x + 10 + k * 26, y, 9, C.red, 6000 + k, k >= s.p.hearts);
+    if (s.p.sword) drawSword(g, x + 152, y + 1, 0.6, 0, 6100);
+    g.fillStyle = C.ink; g.font = `700 24px ${HAND}`; g.textAlign = 'left';
+    g.fillText(`${Math.floor(s.t / 60)}:${String(Math.floor(s.t % 60)).padStart(2, '0')}`, x + 196, y + 8);
     g.restore();
   }
   function tags(g) {
-    g.save(); g.font = '600 italic 17px Jost, sans-serif'; g.fillStyle = '#ff8f80'; g.textAlign = 'center';
-    SPAWNS.forEach(S => g.fillText('Spawn', S.x - 2, S.y - 40 < PAPER.y0 + 50 ? S.y + 58 : S.y - 40));
+    g.save(); g.font = `700 26px ${HAND}`; g.fillStyle = C.red; g.textAlign = 'center';
+    SPAWNS.forEach(S => g.fillText('Spawn', S.x + 8, ceilingAbove(S.x) - 10 > PAPER.y0 + 60 ? ceilingAbove(S.x) - 10 : ceilingAbove(S.x) + 46));
     g.restore();
+  }
+  // the graph paper, with the grid exactly where the sketch's grid is
+  function paper(g) {
+    g.fillStyle = C.paper; g.fillRect(PAPER.x0, PAPER.y0, PAPER.x1 - PAPER.x0, PAPER.y1 - PAPER.y0);
+    g.save(); g.strokeStyle = C.grid; g.lineWidth = 1.2; g.setLineDash([6, 3]); g.beginPath();
+    for (let x = 64 - 41; x < PAPER.x1; x += 41.05) { g.moveTo(x, PAPER.y0); g.lineTo(x, PAPER.y1); }
+    for (let y = 88 - 44; y < PAPER.y1; y += 44) { g.moveTo(PAPER.x0, y); g.lineTo(PAPER.x1, y); }
+    g.stroke(); g.restore();
   }
 
   // draws the whole level for state s, in the sketch's coordinates
   function drawWorld(g, s, t, o = {}) {
     g.save();
     g.beginPath(); g.rect(PAPER.x0, PAPER.y0, PAPER.x1 - PAPER.x0, PAPER.y1 - PAPER.y0); g.clip();
-    const sky = g.createLinearGradient(0, PAPER.y0, 0, PAPER.y1);
-    sky.addColorStop(0, C.sky0); sky.addColorStop(1, C.sky1);
-    g.fillStyle = sky; g.fillRect(PAPER.x0, PAPER.y0, PAPER.x1 - PAPER.x0, PAPER.y1 - PAPER.y0);
-    // the graph paper is still there, faintly: one square is one square
-    g.strokeStyle = C.grid; g.lineWidth = 1; g.beginPath();
-    for (let x = 64 - 41; x < PAPER.x1; x += 41.05) { g.moveTo(x, PAPER.y0); g.lineTo(x, PAPER.y1); }
-    for (let y = 88 - 44; y < PAPER.y1; y += 44) { g.moveTo(PAPER.x0, y); g.lineTo(PAPER.x1, y); }
-    g.stroke();
-    // the pit glows faintly
-    const pit = g.createLinearGradient(0, PAPER.y1 - 70, 0, PAPER.y1);
-    pit.addColorStop(0, 'rgba(0,0,0,0)'); pit.addColorStop(1, 'rgba(0,0,0,.45)');
-    g.fillStyle = pit; g.fillRect(PAPER.x0, PAPER.y1 - 70, PAPER.x1 - PAPER.x0, 70);
-    // ceiling band
-    CEIL.forEach(([x0, x1, top, under]) => { g.fillStyle = C.stoneDk; g.fillRect(x0, PAPER.y0, x1 - x0, under - PAPER.y0); bricks(g, x0, PAPER.y0, x1, under); });
-    g.strokeStyle = C.stoneTop; g.lineWidth = 3; g.beginPath();
-    CEIL.forEach(([x0, x1, , under], i) => { g.moveTo(x0, under); g.lineTo(x1, under); const nx = CEIL[i + 1]; if (nx) { g.moveTo(x1, under); g.lineTo(x1, nx[3]); } });
-    g.stroke();
-    GROUND.forEach(([x0, y0, x1, y1]) => stoneBlock(g, x0, y0, x1, y1));
+    paper(g);
+    // the ceiling: its top line and its underside, with the steps between, shaded lightly so it reads as solid
+    CEIL.forEach(([x0, x1, top, under], i) => {
+      hatch(g, x0, top, x1, under, 700 + i * 13);
+      stroke(g, [[x0, top], [x1, top]], 710 + i, C.ink, 2.8, 1.2);
+      stroke(g, [[x0, under], [x1, under]], 720 + i, C.ink, 2.8, 1.2);
+      const nx = CEIL[i + 1];
+      if (nx) { stroke(g, [[x1, Math.min(under, nx[3])], [x1, Math.max(under, nx[3])]], 730 + i, C.ink, 2.8, 1); if (nx[2] !== top) stroke(g, [[x1, Math.min(top, nx[2])], [x1, Math.max(top, nx[2])]], 740 + i, C.ink, 2.8, 1); }
+    });
+    // ledges and blocks; the staircase is one zigzag line, as drawn
+    GROUND.forEach(([x0, y0, x1, y1], i) => {
+      if (x0 >= 928 && x0 < 1010) return;
+      hatch(g, x0, y0, x1, y1, 800 + i * 7);
+      box2(g, x0, y0, x1, y1, 810 + i * 9);
+    });
+    const steps = GROUND.filter(([x0]) => x0 >= 928 && x0 < 1010), zig = [[928, 437]];
+    steps.forEach(([x0, y0, x1]) => { zig.push([x0, y0]); zig.push([x1, y0]); });
+    zig.push([1010, 527]);
+    stroke(g, zig, 880, C.ink, 2.4, 0.8);
     s.cracked.forEach((st, i) => crackedBlock(g, CRACKED[i], st, t, i));
-    LANTERNS.forEach((L, i) => lantern(g, L, s.lanterns[i].lit, t));
-    SPAWNS.forEach((S, i) => spawn(g, S, s.spawns[i], t));
+    LANTERNS.forEach((L, i) => lantern(g, L, s.lanterns[i].lit, t, i));
+    SPAWNS.forEach((S, i) => spawn(g, S, s.spawns[i], t, i));
     if (o.tags !== false) tags(g);
     s.items.forEach(it => item(g, it, t));
     player(g, s, t);
-    flail(g, s);
-    s.shots.forEach(sh => shot(g, sh));
+    flail(g, s, t);
+    s.heads.forEach(h => medusa(g, h, t));
     if (o.hud !== false) hud(g, s);
     g.restore();
   }
@@ -240,12 +267,12 @@
   }
   function banner(g, text, sub, a) {
     if (a <= 0) return;
-    const cx = (PAPER.x0 + PAPER.x1) / 2, cy = 586;
+    const cx = (PAPER.x0 + PAPER.x1) / 2, cy = 586, w = 560, h = sub ? 84 : 58;
     g.save(); g.globalAlpha = a;
-    g.fillStyle = 'rgba(10,14,30,.82)'; g.beginPath(); g.roundRect(cx - 270, cy - 40, 540, sub ? 86 : 62, 14); g.fill();
-    g.strokeStyle = '#ffb951'; g.lineWidth = 2; g.stroke();
-    g.fillStyle = '#ffb951'; g.font = '800 30px Montserrat, Jost, sans-serif'; g.textAlign = 'center'; g.fillText(text, cx, cy + 2);
-    if (sub) { g.fillStyle = '#d6dbef'; g.font = '500 18px Jost, sans-serif'; g.fillText(sub, cx, cy + 32); }
+    g.fillStyle = 'rgba(250,250,247,.94)'; g.fillRect(cx - w / 2, cy - 38, w, h);
+    box2(g, cx - w / 2, cy - 38, cx + w / 2, cy - 38 + h, 7000, C.ink, 2.2);
+    g.fillStyle = C.red; g.font = `700 36px ${HAND}`; g.textAlign = 'center'; g.fillText(text, cx, cy);
+    if (sub) { g.fillStyle = C.ink; g.font = `600 22px ${HAND}`; g.fillText(sub, cx, cy + 30); }
     g.restore();
   }
 
@@ -269,17 +296,17 @@
       const u = ease((t - T_SK) / T_WIPE), wx = PAPER.x0 + (PAPER.x1 - PAPER.x0) * u;
       drawSketch(g, 1);
       g.save(); g.beginPath(); g.rect(PAPER.x0, PAPER.y0, wx - PAPER.x0, PAPER.y1 - PAPER.y0); g.clip();
-      drawWorld(g, frames[0], t, { hud: false }); drawSketch(g, 0.18); g.restore();
-      g.fillStyle = '#ffb951'; g.fillRect(wx - 2, PAPER.y0, 4, PAPER.y1 - PAPER.y0);
+      drawWorld(g, frames[0], t, { hud: false }); g.restore();
+      stroke(g, [[wx, PAPER.y0], [wx, PAPER.y1]], 7100 + boil(t), C.red, 3, 1.5);
     } else {
       drawWorld(g, s, t);
       drawSketch(g, overlay ? 0.32 : 0);
-      if (s.won) banner(g, 'Encounter cleared', `${s.p.hearts} hearts left · both Spawns down · the purple sword found`, clamp((t - (t0 + frames.findIndex(f => f.won) * DT)) / 0.4, 0, 1));
+      if (s.won) banner(g, 'Encounter cleared', `${s.p.hearts} hearts left · the purple sword found`, clamp((t - (t0 + frames.findIndex(f => f.won) * DT)) / 0.4, 0, 1));
       if (t > end) drawSketch(g, clamp((t - end) / 1.2, 0, 1));
     }
     g.restore();
     if (t < T_SK) return 'The student’s sketch: one ledge-to-ledge encounter on graph paper.';
-    if (t < T_SK + T_WIPE + T_HOLD) return 'The same level, built square for square: every ledge, lantern, cracked block and Spawn sits where it was drawn.';
+    if (t < T_SK + T_WIPE + T_HOLD) return 'The same level, redrawn square for square and brought to life: every ledge, lantern, cracked block and Spawn point sits where it was drawn.';
     if (t > end) return 'Back to the sketch.';
     return captionAt(s) || 'Played by a scripted run: jump, swing the flail, read what each piece asks.';
   }
@@ -359,11 +386,16 @@
       text: 'The sword’s lantern hangs over the cracked row. Break one block and the sword drops through the gap, or climb onto the row from the floating block.' },
     { name: 'Cracked floor', crop: [560, 240, 950, 462], setup: s => { s.p.x = 740; s.p.y = 437; s.cracked[4].state = 'shaking'; s.cracked[4].stand = 0.6; s.cracked[5].state = 'shaking'; s.cracked[5].stand = 0.6; },
       text: 'Stand still and it gives way. A heart that lands on a cracked block falls with it, so you catch the drop and move on.' },
-    { name: 'Spawn and Homing', crop: [460, 150, 1040, 480], setup: s => { s.p.x = 640; s.p.y = 438; s.p.face = 1; s.shots.push({ x: 700, y: 300, a: 2.3, trail: [[730, 250], [722, 265], [714, 278], [706, 290]], dead: false }); },
-      text: 'A chaser from above. It pulls your eyes to the ceiling while the floor below asks you to keep moving; the flail can knock a shot out of the air.' },
-    { name: 'The last stretch', crop: [1050, 140, 1556, 480], setup: s => { s.p.x = 1293; s.p.y = 437; s.shots.push({ x: 1380, y: 300, a: 2.6, trail: [[1440, 240], [1425, 255], [1410, 270], [1395, 285]], dead: false }); s.cracked[8].state = 'shaking'; s.cracked[8].stand = 0.5; s.cracked[9].state = 'shaking'; s.cracked[9].stand = 0.5; },
-      text: 'Three crumbling platforms over the pit while a Homing shot closes in: two pressures at once, which makes this the peak of the encounter.' },
+    { name: 'Spawn: Medusa heads', crop: [460, 150, 1040, 480], setup: s => { s.p.x = 640; s.p.y = 438; s.p.face = 1; s.heads.push(waved(742, 214, -1, 0.9, 360)); },
+      text: 'The Spawn keeps releasing heads that fly at you in a sine wave, drifting to your height. You read the wave and swing on the low beat, or jump the crest, while the floor asks you to keep moving.' },
+    { name: 'The last stretch', crop: [1050, 140, 1556, 480], setup: s => { s.p.x = 1293; s.p.y = 437; s.heads.push(waved(1456, 214, -1, 1.1, 330)); s.cracked[8].state = 'shaking'; s.cracked[8].stand = 0.5; s.cracked[9].state = 'shaking'; s.cracked[9].stand = 0.5; },
+      text: 'Three crumbling platforms over the pit while Medusa heads wave in: two pressures at once, which makes this the peak of the encounter.' },
   ];
+  function waved(x0, y0, dir, secs, midY) {
+    const h = { x: x0, y: y0, mid: y0 + RULES.waveAmp, ph: -Math.PI / 2, dir, hp: RULES.headHp, hit: 0, trail: [] }, w = 2 * Math.PI / RULES.wavePeriod;
+    for (let t = 0; t < secs; t += DT) { h.mid += clamp(midY - h.mid, -RULES.homing * DT, RULES.homing * DT); h.ph += w * DT; h.x += dir * RULES.headSpeed * DT; h.y = h.mid + Math.sin(h.ph) * RULES.waveAmp; h.trail.push([h.x, h.y]); if (h.trail.length > 40) h.trail.shift(); }
+    return h;
+  }
   demo('read', {
     init(sl) {
       const box = $(sl, '.rd-grid');

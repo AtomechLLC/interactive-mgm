@@ -10,7 +10,7 @@
 .sk-frame img { display: block; width: 1139.5px; margin: -39.5px 0 0 -17.2px; max-width: none; }
 
 /* 2, 3: the level */
-canvas.rv-canvas, canvas.pl-canvas { width: 1420px; height: 542px; }
+canvas.rv-canvas, canvas.pl-canvas { width: 1420px; height: 542px; background: #eef0f2; }
 canvas.pl-canvas { cursor: pointer; outline: none; }
 canvas.pl-canvas:focus { box-shadow: 0 0 0 4px var(--gold); }
 .pl-lab { display: flex; align-items: center; gap: 8px; font-size: 18px; color: var(--muted); }
@@ -19,7 +19,7 @@ canvas.pl-canvas:focus { box-shadow: 0 0 0 4px var(--gold); }
 /* 4: one card per piece */
 .rd-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px 22px; margin-top: 0; }
 .rd-card { margin: 0; display: grid; grid-template-columns: 310px 1fr; gap: 14px; align-items: center; background: var(--panel); border: 2px solid var(--line); border-radius: 12px; padding: 8px; }
-.rd-c { width: 310px; height: 175px; border-radius: 8px; background: #141a33; display: block; }
+.rd-c { width: 310px; height: 175px; border-radius: 8px; background: #eef0f2; display: block; }
 .rd-card figcaption { display: grid; gap: 4px; }
 .rd-card b { font-family: var(--display); font-size: 20px; line-height: 1.15; color: var(--text); }
 .rd-card span { font-size: 17px; line-height: 1.32; color: var(--text); }
