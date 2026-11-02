@@ -43,6 +43,7 @@ From [game-icons.net](https://game-icons.net), licensed [CC BY 3.0](https://crea
 | `pve-interactions--resistance.svg` | [shield-reflect](https://game-icons.net/1x1/lorc/shield-reflect.html) | Lorc |
 | `pve-interactions--enemy-counters.svg` | [turtle-shell](https://game-icons.net/1x1/lorc/turtle-shell.html) | Lorc |
 | `pve-interactions--counters-wow.svg` | [shield-disabled](https://game-icons.net/1x1/skoll/shield-disabled.html) | Skoll |
+| `pve-interactions--pulls.svg` | [frog](https://game-icons.net/1x1/lorc/frog.html) | Lorc |
 | `pve-interactions--escalation.svg` | [stairs-goal](https://game-icons.net/1x1/delapouite/stairs-goal.html) | Delapouite |
 | `pve-interactions--mutators.svg` | [dna2](https://game-icons.net/1x1/lorc/dna2.html) | Lorc |
 | `pve-interactions--gungeon-variants.svg` | [bullets](https://game-icons.net/1x1/lorc/bullets.html) | Lorc |
