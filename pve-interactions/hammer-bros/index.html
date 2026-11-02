@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hammer Bros. Encounter · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="hammer.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · PvE Interactions · Hammer Bros. Encounter', home: '../index.html', audio: null, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1 -->
+<section class="slide center" data-title="An Encounter Is a Combination" data-demo="hb-title">
+  <div class="kicker rise">fundamentals for designing engaging PvE interactions</div>
+  <h1 class="rise">Two Hammer Bros, a Plant <span class="accent">and a Pit</span></h1>
+  <div class="rule rise" style="margin:22px auto"></div>
+  <canvas class="demo ti-canvas rise" width="960" height="150"></canvas>
+  <p class="lede rise" style="margin:18px auto 0;text-align:center;max-width:1100px">Super Mario Bros., World 5-2. No single piece here is hard. Put together, the enemies and the obstacles ask one question: <i>when do I go, and which way?</i></p>
+</section>
+
+<!-- 2: the encounter, recreated -->
+<section class="slide" data-title="World 5-2, Recreated" data-demo="hb-tour">
+  <div class="kicker">worked example: combine enemies and obstacles</div>
+  <h2 class="sm">World 5-2, <span class="accent">Recreated</span></h2>
+  <div class="tour-grid">
+    <canvas class="demo tour-canvas" width="1120" height="672"></canvas>
+    <div class="tour-side">
+      <ol class="tour-list">
+        <li><img src="img/smb-piranha.png" alt=""><span><b>Piranha Plant</b> times the way in</span></li>
+        <li><img src="img/smb-hammer-bro-0.png" alt=""><span><b>Hammer Bros ×2</b> fill the air over the ground</span></li>
+        <li><img src="img/smb-brick.png" alt=""><span><b>Bricks</b> lift the threat and open a second route</span></li>
+        <li><img src="img/smb-block.png" alt=""><span><b>Pit + column</b> make the exit a committed jump</span></li>
+      </ol>
+      <p class="out tour-out"></p>
+      <div class="row wrap">
+        <button class="btn sm tour-replay">↻ From the top</button>
+        <button class="btn sm tour-pause">❚❚ Pause</button>
+        <button class="btn sm tour-slow">½ speed</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3: take it apart -->
+<section class="slide" data-title="Take It Apart" data-demo="hb-lab">
+  <div class="kicker">switch pieces off and see what the encounter stops asking</div>
+  <h2 class="sm">Take It <span class="accent">Apart</span></h2>
+  <div class="lab-grid">
+    <div>
+      <canvas class="demo lab-canvas" width="960" height="576" tabindex="0"></canvas>
+      <div class="row wrap lab-row">
+        <span class="muted">Watch:</span><span class="lab-bots row wrap"></span>
+        <button class="btn sm lab-next">Next run</button>
+        <button class="btn sm lab-all">All three routes</button>
+        <button class="btn sm lab-heat">Hammer zone</button>
+      </div>
+      <p class="lab-msg muted small"></p>
+    </div>
+    <div class="lab-side">
+      <h4>Pieces</h4>
+      <div class="lab-toggles"></div>
+      <h4>Presets</h4>
+      <div class="lab-presets row wrap"></div>
+      <h4>20 runs per route</h4>
+      <table class="lab-stats"></table>
+      <h4>What it asks now</h4>
+      <ul class="lab-asks"></ul>
+    </div>
+  </div>
+</section>
+
+<!-- 4: the explanation -->
+<section class="slide" data-title="Why the Combination Works" data-demo="hb-why">
+  <div class="kicker">every piece has a job; the jobs overlap</div>
+  <h2 class="sm">How the Pieces Form <span class="accent">One Encounter</span></h2>
+  <div class="why-grid">
+    <div class="why"><img src="img/smb-hammer-bro-2.png" alt=""><div><h3>Hammer Bros ×2 · pressure</h3><p>They throw in arcs toward Mario, so the ground under them is never safe for long, and they hop between rows, so the high route isn’t free either. Wait too long and they walk toward you. They set the <b>clock</b>.</p></div></div>
+    <div class="why"><img src="img/smb-piranha.png" alt=""><div><h3>Piranha Plant · gate</h3><p>The pipe is the step up to the bricks, and the plant decides when you can take it. It can’t rise while you stand on the pipe, so the pipe is also the one <b>safe perch</b> from which to read the hammers.</p></div></div>
+    <div class="why"><img src="img/smb-brick.png" alt=""><div><h3>Bricks · shape</h3><p>They lift the Hammer Bros so their hammers cover the whole lane, put a ceiling over your jumps, and give you a <b>second route and a weapon</b>: bump the brick under a Hammer Bro to knock it out.</p></div></div>
+    <div class="why"><span class="pit-ic big"></span><div><h3>Pit + column · commit</h3><p>The exit is a high jump from one spot. You can’t take it while side-stepping, so you have to <b>finish the dodge first</b> or time the jump between throws.</p></div></div>
+  </div>
+  <div class="proof"></div>
+  <div class="alone">
+    <p><b>Alone</b>, each piece asks one small thing: wait for the plant, dodge a hammer, make a jump. <b>Together</b>, the plant’s timer and the hammers’ timer run at once, the safe perch is right next to the danger, and the exit punishes a hurried crossing. That overlap is the encounter.</p>
+  </div>
+</section>
+
+<!-- 5: the assignment, worked -->
+<section class="slide" data-title="The Assignment, Worked" data-demo="hb-more">
+  <div class="kicker">your turn: the same four steps</div>
+  <h2 class="sm">The Assignment, <span class="accent">Worked</span></h2>
+  <div class="asg">
+    <ol class="steps">
+      <li><b>Combine enemies and obstacles.</b> Two ranged pressurers (Hammer Bros), one timed gate (Piranha Plant), and terrain that shapes the route: bricks, a pit and a column.</li>
+      <li><b>Tailor it to your genre.</b> A platformer speaks in jump arcs and timing, so every threat is a place and a moment. In a top-down shooter the same jobs could be a grenadier on a ledge, a turret at a doorway and a gap you must dash across.</li>
+      <li><b>Two more, to show the range.</b> Same parts, new questions: ↓</li>
+      <li><b>Get feedback in the Discord thread.</b> Post each encounter with one line per piece (its job) and the decision you want the player to make. Ask: which piece could I remove without losing anything?</li>
+    </ol>
+    <div class="more">
+      <p class="more-h">Two more encounters from the same pieces, each asking a different question. Below each: clean runs out of 20 for the lab’s three routes.</p>
+      <figure><canvas class="demo more-c" data-p="lesson" data-b="2" width="480" height="288"></canvas><figcaption><b>The Lesson</b>One Hammer Bro on the low bricks, flat ground, no plant. It teaches the bump from below with nothing else on the clock. <span class="more-stats" data-p="lesson"></span><button class="btn sm" data-load="lesson">Open in the lab</button></figcaption></figure>
+      <figure><canvas class="demo more-c" data-p="squeeze" data-b="1" width="480" height="288"></canvas><figcaption><b>The Squeeze</b>No bricks: both Hammer Bros stand in the lane, the plant still gates the pipe and the pit still ends it. No second route, only timing: the toughest of the three for every route. <span class="more-stats" data-p="squeeze"></span><button class="btn sm" data-load="squeeze">Open in the lab</button></figcaption></figure>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="hammer.js"></script>
+</body>
+</html>
