@@ -56,7 +56,7 @@
   function newGame() {
     return {
       t: 0, frame: 0, gen: 0, won: false, over: 0,
-      p: { x: START.x, y: START.y, vx: 0, vy: 0, face: 1, ground: false, coyote: 0, buf: 0, jumpHeld: false,
+      p: { x: START.x, y: START.y, vx: 0, vy: 0, face: 1, ground: true, coyote: 0, buf: 0, jumpHeld: false,
         hearts: RULES.hearts, sword: false, inv: 0, safe: { x: START.x, y: START.y }, falls: 0, onCracked: -1 },
       fl: null,                                  // the flail while it is out
       prevThrow: false, prevJump: false,
