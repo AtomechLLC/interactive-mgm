@@ -1,0 +1,31 @@
+{
+ "note": "World of Warcraft icons (Blizzard Entertainment), downloaded from https://wow.zamimg.com/images/wow/icons/large/<name>.jpg for educational use in this course.",
+ "icons": [
+  "classicon_warrior",
+  "classicon_rogue",
+  "classicon_mage",
+  "classicon_hunter",
+  "classicon_priest",
+  "inv_gauntlets_04",
+  "ability_kick",
+  "spell_frost_iceshock",
+  "inv_ammo_arrow_03",
+  "inv_pet_toad_black",
+  "inv_misc_head_murloc_01",
+  "ability_hunter_pet_wasp",
+  "spell_magic_polymorphrabbit",
+  "inv_foxpet",
+  "ability_hunter_pet_crab",
+  "spell_frost_frostbolt",
+  "spell_nature_slow",
+  "spell_shadow_shadowmend",
+  "spell_shadow_shadowfury",
+  "ability_druid_supriseattack",
+  "ability_rogue_sprint",
+  "spell_holy_flashheal"
+ ],
+ "maps": {
+  "map-pond.jpg": "DrMapzo (patreon.com/drmapzo) pond battle map, mirrored and cropped",
+  "map-ruins.jpg": "Neutral Party (patreon.com/neutralparty) forest ruins battle map, cropped"
+ }
+}
