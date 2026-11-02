@@ -1,0 +1,7882 @@
+[
+ {
+  "theme": "mario",
+  "name": "blooper",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "blooper.png",
+   "blooper-token-enemy.png"
+  ],
+  "source": "composition/shared/img/smb-blooper.png"
+ },
+ {
+  "theme": "mario",
+  "name": "bowser",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "bowser.png",
+   "bowser-token-enemy.png"
+  ],
+  "source": "composition/shared/img/smb-bowser.png"
+ },
+ {
+  "theme": "mario",
+  "name": "bullet-bill",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "bullet-bill.png",
+   "bullet-bill-token-enemy.png"
+  ],
+  "source": "composition/shared/img/smb-bullet-bill.png"
+ },
+ {
+  "theme": "mario",
+  "name": "buzzy-shell",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "buzzy-shell.png",
+   "buzzy-shell-token.png"
+  ],
+  "source": "composition/shared/img/smb-buzzy-shell.png"
+ },
+ {
+  "theme": "mario",
+  "name": "buzzy",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "buzzy.png",
+   "buzzy-token-enemy.png"
+  ],
+  "source": "composition/shared/img/smb-buzzy.png"
+ },
+ {
+  "theme": "mario",
+  "name": "cheep-cheep",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "cheep-cheep.png",
+   "cheep-cheep-token-enemy.png"
+  ],
+  "source": "composition/shared/img/smb-cheep-cheep.png"
+ },
+ {
+  "theme": "mario",
+  "name": "coin",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "coin.png",
+   "coin-token.png"
+  ],
+  "source": "composition/shared/img/smb-coin.png"
+ },
+ {
+  "theme": "mario",
+  "name": "fireball",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "fireball.png",
+   "fireball-token.png"
+  ],
+  "source": "composition/shared/img/smb-fireball.png"
+ },
+ {
+  "theme": "mario",
+  "name": "goomba-flat",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "goomba-flat.png",
+   "goomba-flat-token-enemy.png"
+  ],
+  "source": "composition/shared/img/smb-goomba-flat.png"
+ },
+ {
+  "theme": "mario",
+  "name": "goomba",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "goomba.png",
+   "goomba-token-enemy.png"
+  ],
+  "source": "composition/shared/img/smb-goomba.png"
+ },
+ {
+  "theme": "mario",
+  "name": "hammer-bro",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "hammer-bro.png",
+   "hammer-bro-token-enemy.png"
+  ],
+  "source": "composition/shared/img/smb-hammer-bro.png"
+ },
+ {
+  "theme": "mario",
+  "name": "koopa-shell",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "koopa-shell.png",
+   "koopa-shell-token.png"
+  ],
+  "source": "composition/shared/img/smb-koopa-shell.png"
+ },
+ {
+  "theme": "mario",
+  "name": "koopa",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "koopa.png",
+   "koopa-token-enemy.png"
+  ],
+  "source": "composition/shared/img/smb-koopa.png"
+ },
+ {
+  "theme": "mario",
+  "name": "lakitu",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "lakitu.png",
+   "lakitu-token-enemy.png"
+  ],
+  "source": "composition/shared/img/smb-lakitu.png"
+ },
+ {
+  "theme": "mario",
+  "name": "mario-jump",
+  "sides": [
+   "player"
+  ],
+  "files": [
+   "mario-jump.png",
+   "mario-jump-token-player.png"
+  ],
+  "source": "composition/shared/img/smb-mario-jump.png"
+ },
+ {
+  "theme": "mario",
+  "name": "mario-walk",
+  "sides": [
+   "player"
+  ],
+  "files": [
+   "mario-walk.png",
+   "mario-walk-token-player.png"
+  ],
+  "source": "composition/shared/img/smb-mario-walk1.png"
+ },
+ {
+  "theme": "mario",
+  "name": "mario",
+  "sides": [
+   "player"
+  ],
+  "files": [
+   "mario.png",
+   "mario-token-player.png"
+  ],
+  "source": "composition/shared/img/smb-mario.png"
+ },
+ {
+  "theme": "mario",
+  "name": "mushroom",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "mushroom.png",
+   "mushroom-token.png"
+  ],
+  "source": "composition/shared/img/smb-mushroom.png"
+ },
+ {
+  "theme": "mario",
+  "name": "paratroopa",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "paratroopa.png",
+   "paratroopa-token-enemy.png"
+  ],
+  "source": "composition/shared/img/smb-paratroopa.png"
+ },
+ {
+  "theme": "mario",
+  "name": "piranha",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "piranha.png",
+   "piranha-token-enemy.png"
+  ],
+  "source": "composition/shared/img/smb-piranha.png"
+ },
+ {
+  "theme": "mario",
+  "name": "podoboo",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "podoboo.png",
+   "podoboo-token-enemy.png"
+  ],
+  "source": "composition/shared/img/smb-podoboo.png"
+ },
+ {
+  "theme": "mario",
+  "name": "qblock",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "qblock.png",
+   "qblock-token.png"
+  ],
+  "source": "composition/shared/img/smb-qblock.png"
+ },
+ {
+  "theme": "mario",
+  "name": "red-koopa",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "red-koopa.png",
+   "red-koopa-token-enemy.png"
+  ],
+  "source": "composition/shared/img/smb-red-koopa.png"
+ },
+ {
+  "theme": "mario",
+  "name": "red-paratroopa",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "red-paratroopa.png",
+   "red-paratroopa-token-enemy.png"
+  ],
+  "source": "composition/shared/img/smb-red-paratroopa.png"
+ },
+ {
+  "theme": "mario",
+  "name": "red-shell",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "red-shell.png",
+   "red-shell-token.png"
+  ],
+  "source": "composition/shared/img/smb-red-shell.png"
+ },
+ {
+  "theme": "mario",
+  "name": "spiny-egg",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "spiny-egg.png",
+   "spiny-egg-token.png"
+  ],
+  "source": "composition/shared/img/smb-spiny-egg.png"
+ },
+ {
+  "theme": "mario",
+  "name": "spiny",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "spiny.png",
+   "spiny-token-enemy.png"
+  ],
+  "source": "composition/shared/img/smb-spiny.png"
+ },
+ {
+  "theme": "mario",
+  "name": "star",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "star.png",
+   "star-token.png"
+  ],
+  "source": "composition/shared/img/smb-star.png"
+ },
+ {
+  "theme": "mario",
+  "name": "cape-fly",
+  "sides": [
+   "player"
+  ],
+  "files": [
+   "cape-fly.png",
+   "cape-fly-token-player.png"
+  ],
+  "source": "mechanics-tools/reverse-map/img/smw-cape-fly.png"
+ },
+ {
+  "theme": "mario",
+  "name": "cape-mario",
+  "sides": [
+   "player"
+  ],
+  "files": [
+   "cape-mario.png",
+   "cape-mario-token-player.png"
+  ],
+  "source": "mechanics-tools/reverse-map/img/smw-cape-mario.png"
+ },
+ {
+  "theme": "mario",
+  "name": "dragon-coin",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "dragon-coin.png",
+   "dragon-coin-token.png"
+  ],
+  "source": "mechanics-tools/reverse-map/img/smw-dragon-coin.png"
+ },
+ {
+  "theme": "mario",
+  "name": "feather",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "feather.png",
+   "feather-token.png"
+  ],
+  "source": "mechanics-tools/reverse-map/img/smw-feather.png"
+ },
+ {
+  "theme": "mario",
+  "name": "hard-block",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "hard-block.png",
+   "hard-block-token.png"
+  ],
+  "source": "mechanics-tools/reverse-map/img/smw-hard-block.png"
+ },
+ {
+  "theme": "mario",
+  "name": "smw-mario-jump",
+  "sides": [
+   "player"
+  ],
+  "files": [
+   "smw-mario-jump.png",
+   "smw-mario-jump-token-player.png"
+  ],
+  "source": "mechanics-tools/reverse-map/img/smw-mario-jump.png"
+ },
+ {
+  "theme": "mario",
+  "name": "smw-mario-walk",
+  "sides": [
+   "player"
+  ],
+  "files": [
+   "smw-mario-walk.png",
+   "smw-mario-walk-token-player.png"
+  ],
+  "source": "mechanics-tools/reverse-map/img/smw-mario-walk1.png"
+ },
+ {
+  "theme": "mario",
+  "name": "smw-mario",
+  "sides": [
+   "player"
+  ],
+  "files": [
+   "smw-mario.png",
+   "smw-mario-token-player.png"
+  ],
+  "source": "mechanics-tools/reverse-map/img/smw-mario.png"
+ },
+ {
+  "theme": "mario",
+  "name": "smw-qblock",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "smw-qblock.png",
+   "smw-qblock-token.png"
+  ],
+  "source": "mechanics-tools/reverse-map/img/smw-qblock.png"
+ },
+ {
+  "theme": "mario",
+  "name": "trampoline",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "trampoline.png",
+   "trampoline-token.png"
+  ],
+  "source": "mechanics-tools/reverse-map/img/smw-trampoline.png"
+ },
+ {
+  "theme": "mario",
+  "name": "used-block",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "used-block.png",
+   "used-block-token.png"
+  ],
+  "source": "mechanics-tools/reverse-map/img/smw-used-block.png"
+ },
+ {
+  "theme": "mario",
+  "name": "vine-top",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "vine-top.png",
+   "vine-top-token.png"
+  ],
+  "source": "mechanics-tools/reverse-map/img/smw-vine-top.png"
+ },
+ {
+  "theme": "mario",
+  "name": "fire-mario-jump",
+  "sides": [
+   "player"
+  ],
+  "files": [
+   "fire-mario-jump.png",
+   "fire-mario-jump-token-player.png"
+  ],
+  "source": "understand-mechanics/img/smb-fire-mario-jump.png"
+ },
+ {
+  "theme": "mario",
+  "name": "fire-mario",
+  "sides": [
+   "player"
+  ],
+  "files": [
+   "fire-mario.png",
+   "fire-mario-token-player.png"
+  ],
+  "source": "understand-mechanics/img/smb-fire-mario.png"
+ },
+ {
+  "theme": "mario",
+  "name": "mario-hd",
+  "sides": [
+   "player"
+  ],
+  "files": [
+   "mario-hd.png",
+   "mario-hd-token-player.png"
+  ],
+  "source": "coop-interactions/interactions/img/mario.png"
+ },
+ {
+  "theme": "mario",
+  "name": "luigi-hd",
+  "sides": [
+   "player"
+  ],
+  "files": [
+   "luigi-hd.png",
+   "luigi-hd-token-player.png"
+  ],
+  "source": "coop-interactions/interactions/img/luigi.png"
+ },
+ {
+  "theme": "mario",
+  "name": "peach-hd",
+  "sides": [
+   "player"
+  ],
+  "files": [
+   "peach-hd.png",
+   "peach-hd-token-player.png"
+  ],
+  "source": "coop-interactions/interactions/img/peach.png"
+ },
+ {
+  "theme": "mario",
+  "name": "bobomb-hd",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "bobomb-hd.png",
+   "bobomb-hd-token-enemy.png"
+  ],
+  "source": "coop-interactions/interactions/img/bobomb.png"
+ },
+ {
+  "theme": "mario",
+  "name": "boo-hd",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "boo-hd.png",
+   "boo-hd-token-enemy.png"
+  ],
+  "source": "coop-interactions/interactions/img/boo.png"
+ },
+ {
+  "theme": "mario",
+  "name": "goomba-hd",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "goomba-hd.png",
+   "goomba-hd-token-enemy.png"
+  ],
+  "source": "coop-interactions/interactions/img/goomba.png"
+ },
+ {
+  "theme": "mario",
+  "name": "koopa-hd",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "koopa-hd.png",
+   "koopa-hd-token-enemy.png"
+  ],
+  "source": "coop-interactions/interactions/img/koopa.png"
+ },
+ {
+  "theme": "mario",
+  "name": "piranha-hd",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "piranha-hd.png",
+   "piranha-hd-token-enemy.png"
+  ],
+  "source": "coop-interactions/interactions/img/piranha.png"
+ },
+ {
+  "theme": "mario",
+  "name": "hammer-hd",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "hammer-hd.png",
+   "hammer-hd-token.png"
+  ],
+  "source": "coop-interactions/interactions/img/hammer.png"
+ },
+ {
+  "theme": "pokemon",
+  "name": "master-ball",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "master-ball.png",
+   "master-ball-token.png"
+  ],
+  "source": "blog-posts/too-weak-to-waste/img/pk-master-ball.png"
+ },
+ {
+  "theme": "pokemon",
+  "name": "mewtwo",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "mewtwo.png",
+   "mewtwo-token-enemy.png",
+   "mewtwo-token-player.png"
+  ],
+  "source": "blog-posts/too-weak-to-waste/img/pk-mewtwo.png"
+ },
+ {
+  "theme": "pokemon",
+  "name": "ultra-ball",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "ultra-ball.png",
+   "ultra-ball-token.png"
+  ],
+  "source": "blog-posts/too-weak-to-waste/img/pk-ultra-ball.png"
+ },
+ {
+  "theme": "pokemon",
+  "name": "bulbasaur",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "bulbasaur.png",
+   "bulbasaur-token-enemy.png",
+   "bulbasaur-token-player.png"
+  ],
+  "source": "composition/shared/img/pk-bulbasaur.png"
+ },
+ {
+  "theme": "pokemon",
+  "name": "charmander",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "charmander.png",
+   "charmander-token-enemy.png",
+   "charmander-token-player.png"
+  ],
+  "source": "composition/shared/img/pk-charmander.png"
+ },
+ {
+  "theme": "pokemon",
+  "name": "pikachu",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "pikachu.png",
+   "pikachu-token-enemy.png",
+   "pikachu-token-player.png"
+  ],
+  "source": "composition/shared/img/pk-pikachu.png"
+ },
+ {
+  "theme": "pokemon",
+  "name": "squirtle",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "squirtle.png",
+   "squirtle-token-enemy.png",
+   "squirtle-token-player.png"
+  ],
+  "source": "composition/shared/img/pk-squirtle.png"
+ },
+ {
+  "theme": "pokemon",
+  "name": "tauros",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "tauros.png",
+   "tauros-token-enemy.png",
+   "tauros-token-player.png"
+  ],
+  "source": "composition/shared/img/pk-tauros.png"
+ },
+ {
+  "theme": "pokemon",
+  "name": "bellsprout",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "bellsprout.png",
+   "bellsprout-token-enemy.png",
+   "bellsprout-token-player.png"
+  ],
+  "source": "mechanics-tools/reverse-map/img/pk-bellsprout.png"
+ },
+ {
+  "theme": "pokemon",
+  "name": "oddish",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "oddish.png",
+   "oddish-token-enemy.png",
+   "oddish-token-player.png"
+  ],
+  "source": "mechanics-tools/reverse-map/img/pk-oddish.png"
+ },
+ {
+  "theme": "pokemon",
+  "name": "pidgey",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "pidgey.png",
+   "pidgey-token-enemy.png",
+   "pidgey-token-player.png"
+  ],
+  "source": "mechanics-tools/reverse-map/img/pk-pidgey.png"
+ },
+ {
+  "theme": "pokemon",
+  "name": "rattata",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "rattata.png",
+   "rattata-token-enemy.png",
+   "rattata-token-player.png"
+  ],
+  "source": "mechanics-tools/reverse-map/img/pk-rattata.png"
+ },
+ {
+  "theme": "pokemon",
+  "name": "starmie",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "starmie.png",
+   "starmie-token-enemy.png",
+   "starmie-token-player.png"
+  ],
+  "source": "mechanics-tools/reverse-map/img/pk-starmie.png"
+ },
+ {
+  "theme": "pokemon",
+  "name": "staryu",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "staryu.png",
+   "staryu-token-enemy.png",
+   "staryu-token-player.png"
+  ],
+  "source": "mechanics-tools/reverse-map/img/pk-staryu.png"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "ability-druid-typhoon",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "ability-druid-typhoon.png",
+   "ability-druid-typhoon-token.png"
+  ],
+  "source": "composition/shared/img/wow-ability_druid_typhoon.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "ability-hunter-pet-turtle",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "ability-hunter-pet-turtle.png",
+   "ability-hunter-pet-turtle-token.png"
+  ],
+  "source": "composition/shared/img/wow-ability_hunter_pet_turtle.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "ability-kick",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "ability-kick.png",
+   "ability-kick-token.png"
+  ],
+  "source": "composition/shared/img/wow-ability_kick.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "ability-marksmanship",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "ability-marksmanship.png",
+   "ability-marksmanship-token.png"
+  ],
+  "source": "composition/shared/img/wow-ability_marksmanship.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "ability-meleedamage",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "ability-meleedamage.png",
+   "ability-meleedamage-token.png"
+  ],
+  "source": "composition/shared/img/wow-ability_meleedamage.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "ability-rogue-smoke",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "ability-rogue-smoke.png",
+   "ability-rogue-smoke-token.png"
+  ],
+  "source": "composition/shared/img/wow-ability_rogue_smoke.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "ability-shockwave",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "ability-shockwave.png",
+   "ability-shockwave-token.png"
+  ],
+  "source": "composition/shared/img/wow-ability_shockwave.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "ability-vanish",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "ability-vanish.png",
+   "ability-vanish-token.png"
+  ],
+  "source": "composition/shared/img/wow-ability_vanish.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "ability-warrior-battleshout",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "ability-warrior-battleshout.png",
+   "ability-warrior-battleshout-token.png"
+  ],
+  "source": "composition/shared/img/wow-ability_warrior_battleshout.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "ability-warrior-charge",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "ability-warrior-charge.png",
+   "ability-warrior-charge-token.png"
+  ],
+  "source": "composition/shared/img/wow-ability_warrior_charge.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "ability-warrior-defensivestance",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "ability-warrior-defensivestance.png",
+   "ability-warrior-defensivestance-token.png"
+  ],
+  "source": "composition/shared/img/wow-ability_warrior_defensivestance.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "ability-warrior-offensivestance",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "ability-warrior-offensivestance.png",
+   "ability-warrior-offensivestance-token.png"
+  ],
+  "source": "composition/shared/img/wow-ability_warrior_offensivestance.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "ability-warrior-savageblow",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "ability-warrior-savageblow.png",
+   "ability-warrior-savageblow-token.png"
+  ],
+  "source": "composition/shared/img/wow-ability_warrior_savageblow.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "ability-warrior-shieldbash",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "ability-warrior-shieldbash.png",
+   "ability-warrior-shieldbash-token.png"
+  ],
+  "source": "composition/shared/img/wow-ability_warrior_shieldbash.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "ability-warrior-shieldwall",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "ability-warrior-shieldwall.png",
+   "ability-warrior-shieldwall-token.png"
+  ],
+  "source": "composition/shared/img/wow-ability_warrior_shieldwall.jpg"
+ },
+ {
+  "theme": "wow-classes-and-bosses",
+  "name": "boss-ragnaros",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "boss-ragnaros.png",
+   "boss-ragnaros-token-enemy.png"
+  ],
+  "source": "composition/shared/img/wow-achievement_boss_ragnaros.jpg"
+ },
+ {
+  "theme": "wow-classes-and-bosses",
+  "name": "class-paladin",
+  "sides": [
+   "player"
+  ],
+  "files": [
+   "class-paladin.png",
+   "class-paladin-token-player.png"
+  ],
+  "source": "composition/shared/img/wow-classicon_paladin.jpg"
+ },
+ {
+  "theme": "wow-items",
+  "name": "inv-gauntlets-04",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "inv-gauntlets-04.png",
+   "inv-gauntlets-04-token.png"
+  ],
+  "source": "composition/shared/img/wow-inv_gauntlets_04.jpg"
+ },
+ {
+  "theme": "wow-items",
+  "name": "inv-misc-bandage-12",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "inv-misc-bandage-12.png",
+   "inv-misc-bandage-12-token.png"
+  ],
+  "source": "composition/shared/img/wow-inv_misc_bandage_12.jpg"
+ },
+ {
+  "theme": "wow-items",
+  "name": "inv-misc-bandage-15",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "inv-misc-bandage-15.png",
+   "inv-misc-bandage-15-token.png"
+  ],
+  "source": "composition/shared/img/wow-inv_misc_bandage_15.jpg"
+ },
+ {
+  "theme": "wow-items",
+  "name": "inv-misc-volatilewater",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "inv-misc-volatilewater.png",
+   "inv-misc-volatilewater-token.png"
+  ],
+  "source": "composition/shared/img/wow-inv_misc_volatilewater.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-arcane-blink",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-arcane-blink.png",
+   "spell-arcane-blink-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_arcane_blink.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-fire-felflamering",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-fire-felflamering.png",
+   "spell-fire-felflamering-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_fire_felflamering.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-fire-firearmor",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-fire-firearmor.png",
+   "spell-fire-firearmor-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_fire_firearmor.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-fire-fireball02",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-fire-fireball02.png",
+   "spell-fire-fireball02-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_fire_fireball02.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-fire-flamebolt",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-fire-flamebolt.png",
+   "spell-fire-flamebolt-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_fire_flamebolt.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-fire-incinerate",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-fire-incinerate.png",
+   "spell-fire-incinerate-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_fire_incinerate.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-fire-rune",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-fire-rune.png",
+   "spell-fire-rune-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_fire_rune.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-fire-sealoffire",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-fire-sealoffire.png",
+   "spell-fire-sealoffire-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_fire_sealoffire.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-fire-selfdestruct",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-fire-selfdestruct.png",
+   "spell-fire-selfdestruct-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_fire_selfdestruct.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-frost-chainsofice",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-frost-chainsofice.png",
+   "spell-frost-chainsofice-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_frost_chainsofice.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-frost-freezingbreath",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-frost-freezingbreath.png",
+   "spell-frost-freezingbreath-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_frost_freezingbreath.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-frost-frostarmor02",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-frost-frostarmor02.png",
+   "spell-frost-frostarmor02-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_frost_frostarmor02.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-frost-frostbolt02",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-frost-frostbolt02.png",
+   "spell-frost-frostbolt02-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_frost_frostbolt02.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-frost-frostnova",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-frost-frostnova.png",
+   "spell-frost-frostnova-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_frost_frostnova.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-frost-glacier",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-frost-glacier.png",
+   "spell-frost-glacier-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_frost_glacier.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-frost-icestorm",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-frost-icestorm.png",
+   "spell-frost-icestorm-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_frost_icestorm.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-frost-stun",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-frost-stun.png",
+   "spell-frost-stun-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_frost_stun.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-frost-summonwaterelemental-2",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-frost-summonwaterelemental-2.png",
+   "spell-frost-summonwaterelemental-2-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_frost_summonwaterelemental_2.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-holy-auraoflight",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-holy-auraoflight.png",
+   "spell-holy-auraoflight-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_holy_auraoflight.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-holy-crusaderaura",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-holy-crusaderaura.png",
+   "spell-holy-crusaderaura-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_holy_crusaderaura.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-holy-devotionaura",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-holy-devotionaura.png",
+   "spell-holy-devotionaura-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_holy_devotionaura.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-holy-divineprotection",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-holy-divineprotection.png",
+   "spell-holy-divineprotection-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_holy_divineprotection.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-holy-flashheal",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-holy-flashheal.png",
+   "spell-holy-flashheal-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_holy_flashheal.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-holy-heal",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-holy-heal.png",
+   "spell-holy-heal-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_holy_heal.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-holy-holybolt",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-holy-holybolt.png",
+   "spell-holy-holybolt-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_holy_holybolt.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-holy-layonhands",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-holy-layonhands.png",
+   "spell-holy-layonhands-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_holy_layonhands.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-holy-powerwordshield",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-holy-powerwordshield.png",
+   "spell-holy-powerwordshield-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_holy_powerwordshield.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-holy-renew",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-holy-renew.png",
+   "spell-holy-renew-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_holy_renew.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-holy-sealofmight",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-holy-sealofmight.png",
+   "spell-holy-sealofmight-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_holy_sealofmight.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-holy-searinglight",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-holy-searinglight.png",
+   "spell-holy-searinglight-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_holy_searinglight.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-nature-bloodlust",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-nature-bloodlust.png",
+   "spell-nature-bloodlust-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_nature_bloodlust.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-nature-chainlightning",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-nature-chainlightning.png",
+   "spell-nature-chainlightning-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_nature_chainlightning.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-nature-cyclone",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-nature-cyclone.png",
+   "spell-nature-cyclone-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_nature_cyclone.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-nature-earthbind",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-nature-earthbind.png",
+   "spell-nature-earthbind-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_nature_earthbind.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-nature-giftofthewaterspirit",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-nature-giftofthewaterspirit.png",
+   "spell-nature-giftofthewaterspirit-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_nature_giftofthewaterspirit.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-nature-healingwavegreater",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-nature-healingwavegreater.png",
+   "spell-nature-healingwavegreater-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_nature_healingwavegreater.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-nature-lightning",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-nature-lightning.png",
+   "spell-nature-lightning-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_nature_lightning.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-nature-lightningoverload",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-nature-lightningoverload.png",
+   "spell-nature-lightningoverload-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_nature_lightningoverload.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-nature-lightningshield",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-nature-lightningshield.png",
+   "spell-nature-lightningshield-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_nature_lightningshield.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-nature-magicimmunity",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-nature-magicimmunity.png",
+   "spell-nature-magicimmunity-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_nature_magicimmunity.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-nature-stormreach",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-nature-stormreach.png",
+   "spell-nature-stormreach-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_nature_stormreach.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-nature-thunderclap",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-nature-thunderclap.png",
+   "spell-nature-thunderclap-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_nature_thunderclap.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-nature-tranquility",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-nature-tranquility.png",
+   "spell-nature-tranquility-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_nature_tranquility.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-nature-wispsplode",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-nature-wispsplode.png",
+   "spell-nature-wispsplode-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_nature_wispsplode.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-shadow-charm",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-shadow-charm.png",
+   "spell-shadow-charm-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_shadow_charm.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-shadow-lifedrain",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-shadow-lifedrain.png",
+   "spell-shadow-lifedrain-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_shadow_lifedrain.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-shadow-lifedrain02",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-shadow-lifedrain02.png",
+   "spell-shadow-lifedrain02-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_shadow_lifedrain02.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-shadow-mindrot",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-shadow-mindrot.png",
+   "spell-shadow-mindrot-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_shadow_mindrot.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-shadow-rainoffire",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-shadow-rainoffire.png",
+   "spell-shadow-rainoffire-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_shadow_rainoffire.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-shadow-summoninfernal",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-shadow-summoninfernal.png",
+   "spell-shadow-summoninfernal-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_shadow_summoninfernal.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-shaman-thunderstorm",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-shaman-thunderstorm.png",
+   "spell-shaman-thunderstorm-token.png"
+  ],
+  "source": "composition/shared/img/wow-spell_shaman_thunderstorm.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "ability-racial-bearform",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "ability-racial-bearform.png",
+   "ability-racial-bearform-token.png"
+  ],
+  "source": "coop-interactions/keywords/img/wow-ability_racial_bearform.jpg"
+ },
+ {
+  "theme": "wow-classes-and-bosses",
+  "name": "class-deathknight",
+  "sides": [
+   "player"
+  ],
+  "files": [
+   "class-deathknight.png",
+   "class-deathknight-token-player.png"
+  ],
+  "source": "coop-interactions/keywords/img/wow-classicon_deathknight.jpg"
+ },
+ {
+  "theme": "wow-classes-and-bosses",
+  "name": "class-druid",
+  "sides": [
+   "player"
+  ],
+  "files": [
+   "class-druid.png",
+   "class-druid-token-player.png"
+  ],
+  "source": "coop-interactions/keywords/img/wow-classicon_druid.jpg"
+ },
+ {
+  "theme": "wow-classes-and-bosses",
+  "name": "class-warrior",
+  "sides": [
+   "player"
+  ],
+  "files": [
+   "class-warrior.png",
+   "class-warrior-token-player.png"
+  ],
+  "source": "coop-interactions/keywords/img/wow-classicon_warrior.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-deathknight-bloodpresence",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-deathknight-bloodpresence.png",
+   "spell-deathknight-bloodpresence-token.png"
+  ],
+  "source": "coop-interactions/keywords/img/wow-spell_deathknight_bloodpresence.jpg"
+ },
+ {
+  "theme": "wow-classes-and-bosses",
+  "name": "boss-onyxia",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "boss-onyxia.png",
+   "boss-onyxia-token-enemy.png"
+  ],
+  "source": "mechanics-tools/reverse-map/img/wow-boss_onyxia.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "meleedamage",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "meleedamage.png",
+   "meleedamage-token.png"
+  ],
+  "source": "mechanics-tools/reverse-map/img/wow-meleedamage.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "nature-lightningshield",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "nature-lightningshield.png",
+   "nature-lightningshield-token.png"
+  ],
+  "source": "mechanics-tools/reverse-map/img/wow-nature_lightningshield.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "nature-wispsplode",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "nature-wispsplode.png",
+   "nature-wispsplode-token.png"
+  ],
+  "source": "mechanics-tools/reverse-map/img/wow-nature_wispsplode.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "shaman-maelstromweapon",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "shaman-maelstromweapon.png",
+   "shaman-maelstromweapon-token.png"
+  ],
+  "source": "mechanics-tools/reverse-map/img/wow-shaman_maelstromweapon.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "shaman-staticshock",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "shaman-staticshock.png",
+   "shaman-staticshock-token.png"
+  ],
+  "source": "mechanics-tools/reverse-map/img/wow-shaman_staticshock.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "shaman-thunderstorm",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "shaman-thunderstorm.png",
+   "shaman-thunderstorm-token.png"
+  ],
+  "source": "mechanics-tools/reverse-map/img/wow-shaman_thunderstorm.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "warrior-savageblow",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "warrior-savageblow.png",
+   "warrior-savageblow-token.png"
+  ],
+  "source": "mechanics-tools/reverse-map/img/wow-warrior_savageblow.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "ability-ensnare",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "ability-ensnare.png",
+   "ability-ensnare-token.png"
+  ],
+  "source": "pve-interactions/permutations/img/ability_ensnare.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "ability-rogue-sprint",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "ability-rogue-sprint.png",
+   "ability-rogue-sprint-token.png"
+  ],
+  "source": "pve-interactions/permutations/img/ability_rogue_sprint.jpg"
+ },
+ {
+  "theme": "wow-classes-and-bosses",
+  "name": "class-mage",
+  "sides": [
+   "player"
+  ],
+  "files": [
+   "class-mage.png",
+   "class-mage-token-player.png"
+  ],
+  "source": "pve-interactions/permutations/img/classicon_mage.jpg"
+ },
+ {
+  "theme": "wow-items",
+  "name": "inv-misc-bandana-03",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "inv-misc-bandana-03.png",
+   "inv-misc-bandana-03-token.png"
+  ],
+  "source": "pve-interactions/permutations/img/inv_misc_bandana_03.jpg"
+ },
+ {
+  "theme": "wow-items",
+  "name": "inv-sword-04",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "inv-sword-04.png",
+   "inv-sword-04-token.png"
+  ],
+  "source": "pve-interactions/permutations/img/inv_sword_04.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-fire-fireball",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-fire-fireball.png",
+   "spell-fire-fireball-token.png"
+  ],
+  "source": "pve-interactions/permutations/img/spell_fire_fireball.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-nature-stoneskintotem",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-nature-stoneskintotem.png",
+   "spell-nature-stoneskintotem-token.png"
+  ],
+  "source": "pve-interactions/permutations/img/spell_nature_stoneskintotem.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "ability-warlock-backdraft",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "ability-warlock-backdraft.png",
+   "ability-warlock-backdraft-token.png"
+  ],
+  "source": "understand-mechanics/img/ability_warlock_backdraft.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "ability-warlock-baneofhavoc",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "ability-warlock-baneofhavoc.png",
+   "ability-warlock-baneofhavoc-token.png"
+  ],
+  "source": "understand-mechanics/img/ability_warlock_baneofhavoc.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "ability-warlock-burningembers",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "ability-warlock-burningembers.png",
+   "ability-warlock-burningembers-token.png"
+  ],
+  "source": "understand-mechanics/img/ability_warlock_burningembers.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "ability-warlock-chaosbolt",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "ability-warlock-chaosbolt.png",
+   "ability-warlock-chaosbolt-token.png"
+  ],
+  "source": "understand-mechanics/img/ability_warlock_chaosbolt.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "ability-warlock-fireandbrimstone",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "ability-warlock-fireandbrimstone.png",
+   "ability-warlock-fireandbrimstone-token.png"
+  ],
+  "source": "understand-mechanics/img/ability_warlock_fireandbrimstone.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "ability-warrior-rampage",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "ability-warrior-rampage.png",
+   "ability-warrior-rampage-token.png"
+  ],
+  "source": "understand-mechanics/img/ability_warrior_rampage.jpg"
+ },
+ {
+  "theme": "wow-classes-and-bosses",
+  "name": "class-priest",
+  "sides": [
+   "player"
+  ],
+  "files": [
+   "class-priest.png",
+   "class-priest-token-player.png"
+  ],
+  "source": "understand-mechanics/img/classicon_priest.jpg"
+ },
+ {
+  "theme": "wow-classes-and-bosses",
+  "name": "class-warlock",
+  "sides": [
+   "player"
+  ],
+  "files": [
+   "class-warlock.png",
+   "class-warlock-token-player.png"
+  ],
+  "source": "understand-mechanics/img/classicon_warlock.jpg"
+ },
+ {
+  "theme": "wow-items",
+  "name": "inv-chest-plate16",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "inv-chest-plate16.png",
+   "inv-chest-plate16-token.png"
+  ],
+  "source": "understand-mechanics/img/inv_chest_plate16.jpg"
+ },
+ {
+  "theme": "wow-items",
+  "name": "inv-ember",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "inv-ember.png",
+   "inv-ember-token.png"
+  ],
+  "source": "understand-mechanics/img/inv_ember.jpg"
+ },
+ {
+  "theme": "wow-items",
+  "name": "inv-inscription-tarot-volcanocard",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "inv-inscription-tarot-volcanocard.png",
+   "inv-inscription-tarot-volcanocard-token.png"
+  ],
+  "source": "understand-mechanics/img/inv_inscription_tarot_volcanocard.jpg"
+ },
+ {
+  "theme": "wow-items",
+  "name": "inv-misc-coin-02",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "inv-misc-coin-02.png",
+   "inv-misc-coin-02-token.png"
+  ],
+  "source": "understand-mechanics/img/inv_misc_coin_02.jpg"
+ },
+ {
+  "theme": "wow-items",
+  "name": "inv-misc-ticket-tarot-madness",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "inv-misc-ticket-tarot-madness.png",
+   "inv-misc-ticket-tarot-madness-token.png"
+  ],
+  "source": "understand-mechanics/img/inv_misc_ticket_tarot_madness.jpg"
+ },
+ {
+  "theme": "wow-items",
+  "name": "inv-potion-131",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "inv-potion-131.png",
+   "inv-potion-131-token.png"
+  ],
+  "source": "understand-mechanics/img/inv_potion_131.jpg"
+ },
+ {
+  "theme": "wow-items",
+  "name": "inv-potion-137",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "inv-potion-137.png",
+   "inv-potion-137-token.png"
+  ],
+  "source": "understand-mechanics/img/inv_potion_137.jpg"
+ },
+ {
+  "theme": "wow-items",
+  "name": "inv-potion-54",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "inv-potion-54.png",
+   "inv-potion-54-token.png"
+  ],
+  "source": "understand-mechanics/img/inv_potion_54.jpg"
+ },
+ {
+  "theme": "wow-items",
+  "name": "inv-potion-76",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "inv-potion-76.png",
+   "inv-potion-76-token.png"
+  ],
+  "source": "understand-mechanics/img/inv_potion_76.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-fire-burnout",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-fire-burnout.png",
+   "spell-fire-burnout-token.png"
+  ],
+  "source": "understand-mechanics/img/spell_fire_burnout.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-fire-immolation",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-fire-immolation.png",
+   "spell-fire-immolation-token.png"
+  ],
+  "source": "understand-mechanics/img/spell_fire_immolation.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-fire-moltenblood",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-fire-moltenblood.png",
+   "spell-fire-moltenblood-token.png"
+  ],
+  "source": "understand-mechanics/img/spell_fire_moltenblood.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-nature-timestop",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-nature-timestop.png",
+   "spell-nature-timestop-token.png"
+  ],
+  "source": "understand-mechanics/img/spell_nature_timestop.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-shadow-burningspirit",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-shadow-burningspirit.png",
+   "spell-shadow-burningspirit-token.png"
+  ],
+  "source": "understand-mechanics/img/spell_shadow_burningspirit.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-shadow-scourgebuild",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-shadow-scourgebuild.png",
+   "spell-shadow-scourgebuild-token.png"
+  ],
+  "source": "understand-mechanics/img/spell_shadow_scourgebuild.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-shadow-shadowbolt",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-shadow-shadowbolt.png",
+   "spell-shadow-shadowbolt-token.png"
+  ],
+  "source": "understand-mechanics/img/spell_shadow_shadowbolt.jpg"
+ },
+ {
+  "theme": "wow-abilities",
+  "name": "spell-warlock-demonsoul",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spell-warlock-demonsoul.png",
+   "spell-warlock-demonsoul-token.png"
+  ],
+  "source": "understand-mechanics/img/spell_warlock_demonsoul.jpg"
+ },
+ {
+  "theme": "wow-items",
+  "name": "wow-token01",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "wow-token01.png",
+   "wow-token01-token.png"
+  ],
+  "source": "understand-mechanics/img/wow_token01.jpg"
+ },
+ {
+  "theme": "league-of-legends",
+  "name": "champ-akali",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "champ-akali.png",
+   "champ-akali-token-enemy.png",
+   "champ-akali-token-player.png"
+  ],
+  "source": "coop-interactions/team-roles/img/champ-akali.png"
+ },
+ {
+  "theme": "league-of-legends",
+  "name": "champ-ryze",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "champ-ryze.png",
+   "champ-ryze-token-enemy.png",
+   "champ-ryze-token-player.png"
+  ],
+  "source": "coop-interactions/team-roles/img/champ-ryze.png"
+ },
+ {
+  "theme": "league-of-legends",
+  "name": "champ-sett",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "champ-sett.png",
+   "champ-sett-token-enemy.png",
+   "champ-sett-token-player.png"
+  ],
+  "source": "coop-interactions/team-roles/img/champ-sett.png"
+ },
+ {
+  "theme": "roles-and-classes",
+  "name": "lol-class-assassin",
+  "sides": [
+   "role"
+  ],
+  "files": [
+   "lol-class-assassin.png",
+   "lol-class-assassin-token.png"
+  ],
+  "source": "coop-interactions/team-roles/img/class-assassin.png"
+ },
+ {
+  "theme": "roles-and-classes",
+  "name": "lol-class-fighter",
+  "sides": [
+   "role"
+  ],
+  "files": [
+   "lol-class-fighter.png",
+   "lol-class-fighter-token.png"
+  ],
+  "source": "coop-interactions/team-roles/img/class-fighter.png"
+ },
+ {
+  "theme": "roles-and-classes",
+  "name": "lol-class-mage",
+  "sides": [
+   "role"
+  ],
+  "files": [
+   "lol-class-mage.png",
+   "lol-class-mage-token.png"
+  ],
+  "source": "coop-interactions/team-roles/img/class-mage.png"
+ },
+ {
+  "theme": "roles-and-classes",
+  "name": "lol-class-marksman",
+  "sides": [
+   "role"
+  ],
+  "files": [
+   "lol-class-marksman.png",
+   "lol-class-marksman-token.png"
+  ],
+  "source": "coop-interactions/team-roles/img/class-marksman.png"
+ },
+ {
+  "theme": "roles-and-classes",
+  "name": "lol-class-support",
+  "sides": [
+   "role"
+  ],
+  "files": [
+   "lol-class-support.png",
+   "lol-class-support-token.png"
+  ],
+  "source": "coop-interactions/team-roles/img/class-support.png"
+ },
+ {
+  "theme": "roles-and-classes",
+  "name": "lol-class-tank",
+  "sides": [
+   "role"
+  ],
+  "files": [
+   "lol-class-tank.png",
+   "lol-class-tank-token.png"
+  ],
+  "source": "coop-interactions/team-roles/img/class-tank.png"
+ },
+ {
+  "theme": "roles-and-classes",
+  "name": "lol-pos-bottom",
+  "sides": [
+   "role"
+  ],
+  "files": [
+   "lol-pos-bottom.png",
+   "lol-pos-bottom-token.png"
+  ],
+  "source": "coop-interactions/team-roles/img/pos-bottom.png"
+ },
+ {
+  "theme": "roles-and-classes",
+  "name": "lol-pos-jungle",
+  "sides": [
+   "role"
+  ],
+  "files": [
+   "lol-pos-jungle.png",
+   "lol-pos-jungle-token.png"
+  ],
+  "source": "coop-interactions/team-roles/img/pos-jungle.png"
+ },
+ {
+  "theme": "roles-and-classes",
+  "name": "lol-pos-middle",
+  "sides": [
+   "role"
+  ],
+  "files": [
+   "lol-pos-middle.png",
+   "lol-pos-middle-token.png"
+  ],
+  "source": "coop-interactions/team-roles/img/pos-middle.png"
+ },
+ {
+  "theme": "roles-and-classes",
+  "name": "lol-pos-top",
+  "sides": [
+   "role"
+  ],
+  "files": [
+   "lol-pos-top.png",
+   "lol-pos-top-token.png"
+  ],
+  "source": "coop-interactions/team-roles/img/pos-top.png"
+ },
+ {
+  "theme": "roles-and-classes",
+  "name": "lol-pos-utility",
+  "sides": [
+   "role"
+  ],
+  "files": [
+   "lol-pos-utility.png",
+   "lol-pos-utility-token.png"
+  ],
+  "source": "coop-interactions/team-roles/img/pos-utility.png"
+ },
+ {
+  "theme": "league-of-legends",
+  "name": "champ-zed",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "champ-zed.png",
+   "champ-zed-token-enemy.png",
+   "champ-zed-token-player.png"
+  ],
+  "source": "pvp/counter-cycles/img/moba-assassin.jpg"
+ },
+ {
+  "theme": "league-of-legends",
+  "name": "champ-darius",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "champ-darius.png",
+   "champ-darius-token-enemy.png",
+   "champ-darius-token-player.png"
+  ],
+  "source": "pvp/counter-cycles/img/moba-bruiser.jpg"
+ },
+ {
+  "theme": "league-of-legends",
+  "name": "champ-lux",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "champ-lux.png",
+   "champ-lux-token-enemy.png",
+   "champ-lux-token-player.png"
+  ],
+  "source": "pvp/counter-cycles/img/moba-mage.jpg"
+ },
+ {
+  "theme": "league-of-legends",
+  "name": "champ-jinx",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "champ-jinx.png",
+   "champ-jinx-token-enemy.png",
+   "champ-jinx-token-player.png"
+  ],
+  "source": "pvp/counter-cycles/img/moba-marksman.jpg"
+ },
+ {
+  "theme": "league-of-legends",
+  "name": "champ-malphite",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "champ-malphite.png",
+   "champ-malphite-token-enemy.png",
+   "champ-malphite-token-player.png"
+  ],
+  "source": "pvp/counter-cycles/img/moba-tank.jpg"
+ },
+ {
+  "theme": "league-of-legends",
+  "name": "ability-braum-e",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "ability-braum-e.png",
+   "ability-braum-e-token.png"
+  ],
+  "source": "composition/shared/img/lol-BraumE.png"
+ },
+ {
+  "theme": "league-of-legends",
+  "name": "ability-yasuo-e",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "ability-yasuo-e.png",
+   "ability-yasuo-e-token.png"
+  ],
+  "source": "composition/shared/img/lol-YasuoE.png"
+ },
+ {
+  "theme": "league-of-legends",
+  "name": "ability-yasuo-passive",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "ability-yasuo-passive.png",
+   "ability-yasuo-passive-token.png"
+  ],
+  "source": "composition/shared/img/lol-YasuoPassive.png"
+ },
+ {
+  "theme": "league-of-legends",
+  "name": "ability-yasuo-q1",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "ability-yasuo-q1.png",
+   "ability-yasuo-q1-token.png"
+  ],
+  "source": "composition/shared/img/lol-YasuoQ1Wrapper.png"
+ },
+ {
+  "theme": "league-of-legends",
+  "name": "ability-yasuo-r",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "ability-yasuo-r.png",
+   "ability-yasuo-r-token.png"
+  ],
+  "source": "composition/shared/img/lol-YasuoR.png"
+ },
+ {
+  "theme": "league-of-legends",
+  "name": "ability-yasuo-w",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "ability-yasuo-w.png",
+   "ability-yasuo-w-token.png"
+  ],
+  "source": "composition/shared/img/lol-YasuoW.png"
+ },
+ {
+  "theme": "league-of-legends",
+  "name": "champ-braum",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "champ-braum.png",
+   "champ-braum-token-enemy.png",
+   "champ-braum-token-player.png"
+  ],
+  "source": "composition/shared/img/lol-champ-Braum.png"
+ },
+ {
+  "theme": "league-of-legends",
+  "name": "champ-yasuo",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "champ-yasuo.png",
+   "champ-yasuo-token-enemy.png",
+   "champ-yasuo-token-player.png"
+  ],
+  "source": "composition/shared/img/lol-champ-Yasuo.png"
+ },
+ {
+  "theme": "league-of-legends",
+  "name": "item-dorans-blade",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "item-dorans-blade.png",
+   "item-dorans-blade-token.png"
+  ],
+  "source": "composition/shared/img/lol-item-1055.png"
+ },
+ {
+  "theme": "league-of-legends",
+  "name": "champ-ashe",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "champ-ashe.png",
+   "champ-ashe-token-enemy.png",
+   "champ-ashe-token-player.png"
+  ],
+  "source": "mechanics-tools/contrapositive-rules/img/lol-ashe.png"
+ },
+ {
+  "theme": "league-of-legends",
+  "name": "champ-pyke",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "champ-pyke.png",
+   "champ-pyke-token-enemy.png",
+   "champ-pyke-token-player.png"
+  ],
+  "source": "mechanics-tools/contrapositive-rules/img/lol-pyke.png"
+ },
+ {
+  "theme": "starcraft",
+  "name": "opening-expand",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "opening-expand.png",
+   "opening-expand-token.png"
+  ],
+  "source": "pvp/counter-cycles/img/rts-expand.jpg"
+ },
+ {
+  "theme": "starcraft",
+  "name": "opening-rush",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "opening-rush.png",
+   "opening-rush-token.png"
+  ],
+  "source": "pvp/counter-cycles/img/rts-rush.jpg"
+ },
+ {
+  "theme": "starcraft",
+  "name": "opening-turtle",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "opening-turtle.png",
+   "opening-turtle-token.png"
+  ],
+  "source": "pvp/counter-cycles/img/rts-turtle.jpg"
+ },
+ {
+  "theme": "starcraft",
+  "name": "broodling",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "broodling.png",
+   "broodling-token-enemy.png"
+  ],
+  "source": "pve-interactions/mutators/img/sc2-broodling.png"
+ },
+ {
+  "theme": "starcraft",
+  "name": "marine",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "marine.png",
+   "marine-token-enemy.png",
+   "marine-token-player.png"
+  ],
+  "source": "pve-interactions/mutators/img/sc2-marine.png"
+ },
+ {
+  "theme": "starcraft",
+  "name": "mutator-aggressive-deployment",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "mutator-aggressive-deployment.png",
+   "mutator-aggressive-deployment-token.png"
+  ],
+  "source": "pve-interactions/mutators/img/sc2-mut-aggressive-deployment.png"
+ },
+ {
+  "theme": "starcraft",
+  "name": "mutator-alien-incubation",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "mutator-alien-incubation.png",
+   "mutator-alien-incubation-token.png"
+  ],
+  "source": "pve-interactions/mutators/img/sc2-mut-alien-incubation.png"
+ },
+ {
+  "theme": "starcraft",
+  "name": "mutator-avenger",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "mutator-avenger.png",
+   "mutator-avenger-token.png"
+  ],
+  "source": "pve-interactions/mutators/img/sc2-mut-avenger.png"
+ },
+ {
+  "theme": "starcraft",
+  "name": "mutator-barrier",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "mutator-barrier.png",
+   "mutator-barrier-token.png"
+  ],
+  "source": "pve-interactions/mutators/img/sc2-mut-barrier.png"
+ },
+ {
+  "theme": "starcraft",
+  "name": "mutator-black-death",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "mutator-black-death.png",
+   "mutator-black-death-token.png"
+  ],
+  "source": "pve-interactions/mutators/img/sc2-mut-black-death.png"
+ },
+ {
+  "theme": "starcraft",
+  "name": "mutator-blizzard",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "mutator-blizzard.png",
+   "mutator-blizzard-token.png"
+  ],
+  "source": "pve-interactions/mutators/img/sc2-mut-blizzard.png"
+ },
+ {
+  "theme": "starcraft",
+  "name": "mutator-boom-bots",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "mutator-boom-bots.png",
+   "mutator-boom-bots-token.png"
+  ],
+  "source": "pve-interactions/mutators/img/sc2-mut-boom-bots.png"
+ },
+ {
+  "theme": "starcraft",
+  "name": "roach",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "roach.png",
+   "roach-token-enemy.png"
+  ],
+  "source": "pve-interactions/mutators/img/sc2-roach.png"
+ },
+ {
+  "theme": "starcraft",
+  "name": "siege-tank",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "siege-tank.png",
+   "siege-tank-token-enemy.png",
+   "siege-tank-token-player.png"
+  ],
+  "source": "pve-interactions/mutators/img/sc2-siege-tank.png"
+ },
+ {
+  "theme": "starcraft",
+  "name": "zergling",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "zergling.png",
+   "zergling-token-enemy.png"
+  ],
+  "source": "pve-interactions/mutators/img/sc2-zergling.png"
+ },
+ {
+  "theme": "enter-the-gungeon",
+  "name": "ashen-bullet-kin",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "ashen-bullet-kin.png",
+   "ashen-bullet-kin-token-enemy.png"
+  ],
+  "source": "pve-interactions/gungeon-variants/img/ashen-bullet-kin.png"
+ },
+ {
+  "theme": "enter-the-gungeon",
+  "name": "ashen-shotgun-kin",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "ashen-shotgun-kin.png",
+   "ashen-shotgun-kin-token-enemy.png"
+  ],
+  "source": "pve-interactions/gungeon-variants/img/ashen-shotgun-kin.png"
+ },
+ {
+  "theme": "enter-the-gungeon",
+  "name": "bandana-bullet-kin",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "bandana-bullet-kin.png",
+   "bandana-bullet-kin-token-enemy.png"
+  ],
+  "source": "pve-interactions/gungeon-variants/img/bandana-bullet-kin.png"
+ },
+ {
+  "theme": "enter-the-gungeon",
+  "name": "blue-shotgun-kin",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "blue-shotgun-kin.png",
+   "blue-shotgun-kin-token-enemy.png"
+  ],
+  "source": "pve-interactions/gungeon-variants/img/blue-shotgun-kin.png"
+ },
+ {
+  "theme": "enter-the-gungeon",
+  "name": "bullet-kin",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "bullet-kin.png",
+   "bullet-kin-token-enemy.png"
+  ],
+  "source": "pve-interactions/gungeon-variants/img/bullet-kin.png"
+ },
+ {
+  "theme": "enter-the-gungeon",
+  "name": "cardinal",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "cardinal.png",
+   "cardinal-token-enemy.png"
+  ],
+  "source": "pve-interactions/gungeon-variants/img/cardinal.png"
+ },
+ {
+  "theme": "enter-the-gungeon",
+  "name": "executioner",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "executioner.png",
+   "executioner-token-enemy.png"
+  ],
+  "source": "pve-interactions/gungeon-variants/img/executioner.png"
+ },
+ {
+  "theme": "enter-the-gungeon",
+  "name": "fallen-bullet-kin",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "fallen-bullet-kin.png",
+   "fallen-bullet-kin-token-enemy.png"
+  ],
+  "source": "pve-interactions/gungeon-variants/img/fallen-bullet-kin.png"
+ },
+ {
+  "theme": "enter-the-gungeon",
+  "name": "minelet",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "minelet.png",
+   "minelet-token-enemy.png"
+  ],
+  "source": "pve-interactions/gungeon-variants/img/minelet.png"
+ },
+ {
+  "theme": "enter-the-gungeon",
+  "name": "mutant-bullet-kin",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "mutant-bullet-kin.png",
+   "mutant-bullet-kin-token-enemy.png"
+  ],
+  "source": "pve-interactions/gungeon-variants/img/mutant-bullet-kin.png"
+ },
+ {
+  "theme": "enter-the-gungeon",
+  "name": "mutant-shotgun-kin",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "mutant-shotgun-kin.png",
+   "mutant-shotgun-kin-token-enemy.png"
+  ],
+  "source": "pve-interactions/gungeon-variants/img/mutant-shotgun-kin.png"
+ },
+ {
+  "theme": "enter-the-gungeon",
+  "name": "pilot",
+  "sides": [
+   "player"
+  ],
+  "files": [
+   "pilot.png",
+   "pilot-token-player.png"
+  ],
+  "source": "pve-interactions/gungeon-variants/img/pilot.png"
+ },
+ {
+  "theme": "enter-the-gungeon",
+  "name": "professional",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "professional.png",
+   "professional-token-enemy.png"
+  ],
+  "source": "pve-interactions/gungeon-variants/img/professional.png"
+ },
+ {
+  "theme": "enter-the-gungeon",
+  "name": "red-shotgun-kin",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "red-shotgun-kin.png",
+   "red-shotgun-kin-token-enemy.png"
+  ],
+  "source": "pve-interactions/gungeon-variants/img/red-shotgun-kin.png"
+ },
+ {
+  "theme": "enter-the-gungeon",
+  "name": "shotgrub",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "shotgrub.png",
+   "shotgrub-token-enemy.png"
+  ],
+  "source": "pve-interactions/gungeon-variants/img/shotgrub.png"
+ },
+ {
+  "theme": "enter-the-gungeon",
+  "name": "shroomer",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "shroomer.png",
+   "shroomer-token-enemy.png"
+  ],
+  "source": "pve-interactions/gungeon-variants/img/shroomer.png"
+ },
+ {
+  "theme": "enter-the-gungeon",
+  "name": "sniper-shell",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "sniper-shell.png",
+   "sniper-shell-token-enemy.png"
+  ],
+  "source": "pve-interactions/gungeon-variants/img/sniper-shell.png"
+ },
+ {
+  "theme": "enter-the-gungeon",
+  "name": "table",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "table.png",
+   "table-token.png"
+  ],
+  "source": "pve-interactions/gungeon-variants/img/table.png"
+ },
+ {
+  "theme": "enter-the-gungeon",
+  "name": "tanker",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "tanker.png",
+   "tanker-token-enemy.png"
+  ],
+  "source": "pve-interactions/gungeon-variants/img/tanker.png"
+ },
+ {
+  "theme": "enter-the-gungeon",
+  "name": "veteran-bullet-kin",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "veteran-bullet-kin.png",
+   "veteran-bullet-kin-token-enemy.png"
+  ],
+  "source": "pve-interactions/gungeon-variants/img/veteran-bullet-kin.png"
+ },
+ {
+  "theme": "enter-the-gungeon",
+  "name": "veteran-shotgun-kin",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "veteran-shotgun-kin.png",
+   "veteran-shotgun-kin-token-enemy.png"
+  ],
+  "source": "pve-interactions/gungeon-variants/img/veteran-shotgun-kin.png"
+ },
+ {
+  "theme": "zelda",
+  "name": "colgera",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "colgera.png",
+   "colgera-token-enemy.png"
+  ],
+  "source": "pve-interactions/lessons/img/colgera.png"
+ },
+ {
+  "theme": "zelda",
+  "name": "gibdo",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "gibdo.png",
+   "gibdo-token-enemy.png"
+  ],
+  "source": "pve-interactions/lessons/img/gibdo.png"
+ },
+ {
+  "theme": "zelda",
+  "name": "mucktorok",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "mucktorok.png",
+   "mucktorok-token-enemy.png"
+  ],
+  "source": "pve-interactions/lessons/img/mucktorok.png"
+ },
+ {
+  "theme": "zelda",
+  "name": "riju",
+  "sides": [
+   "ally"
+  ],
+  "files": [
+   "riju.png",
+   "riju-token.png"
+  ],
+  "source": "pve-interactions/lessons/img/riju-icon.png"
+ },
+ {
+  "theme": "zelda",
+  "name": "sidon",
+  "sides": [
+   "ally"
+  ],
+  "files": [
+   "sidon.png",
+   "sidon-token.png"
+  ],
+  "source": "pve-interactions/lessons/img/sidon-icon.png"
+ },
+ {
+  "theme": "zelda",
+  "name": "tulin",
+  "sides": [
+   "ally"
+  ],
+  "files": [
+   "tulin.png",
+   "tulin-token.png"
+  ],
+  "source": "pve-interactions/lessons/img/tulin-icon.png"
+ },
+ {
+  "theme": "zelda",
+  "name": "yunobo",
+  "sides": [
+   "ally"
+  ],
+  "files": [
+   "yunobo.png",
+   "yunobo-token.png"
+  ],
+  "source": "pve-interactions/lessons/img/yunobo-icon.png"
+ },
+ {
+  "theme": "zelda",
+  "name": "gohma",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "gohma.png",
+   "gohma-token-enemy.png"
+  ],
+  "source": "pve-interactions/lessons/img/gohma-portrait.jpg"
+ },
+ {
+  "theme": "zelda",
+  "name": "link",
+  "sides": [
+   "player"
+  ],
+  "files": [
+   "link.png",
+   "link-token-player.png"
+  ],
+  "source": "understand-mechanics/img/tloz-link.png"
+ },
+ {
+  "theme": "zelda",
+  "name": "link-red",
+  "sides": [
+   "player"
+  ],
+  "files": [
+   "link-red.png",
+   "link-red-token-player.png"
+  ],
+  "source": "understand-mechanics/img/tloz-link-red.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "celeste-badeline",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "celeste-badeline.png",
+   "celeste-badeline-token-enemy.png",
+   "celeste-badeline-token-player.png"
+  ],
+  "source": "composition/audits/img/cel-badeline.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "celeste-madeline",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "celeste-madeline.png",
+   "celeste-madeline-token-enemy.png",
+   "celeste-madeline-token-player.png"
+  ],
+  "source": "composition/audits/img/cel-madeline.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "celeste-strawberry",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "celeste-strawberry.png",
+   "celeste-strawberry-token.png"
+  ],
+  "source": "composition/audits/img/cel-strawberry.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "cyberpunk-2077-bounceback",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "cyberpunk-2077-bounceback.png",
+   "cyberpunk-2077-bounceback-token.png"
+  ],
+  "source": "composition/audits/img/cp-bounceback.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "cyberpunk-2077-camo",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "cyberpunk-2077-camo.png",
+   "cyberpunk-2077-camo-token.png"
+  ],
+  "source": "composition/audits/img/cp-camo.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "cyberpunk-2077-katana",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "cyberpunk-2077-katana.png",
+   "cyberpunk-2077-katana-token.png"
+  ],
+  "source": "composition/audits/img/cp-katana.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "cyberpunk-2077-kerenzikov",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "cyberpunk-2077-kerenzikov.png",
+   "cyberpunk-2077-kerenzikov-token.png"
+  ],
+  "source": "composition/audits/img/cp-kerenzikov.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "cyberpunk-2077-malfunction",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "cyberpunk-2077-malfunction.png",
+   "cyberpunk-2077-malfunction-token.png"
+  ],
+  "source": "composition/audits/img/cp-malfunction.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "cyberpunk-2077-mantis",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "cyberpunk-2077-mantis.png",
+   "cyberpunk-2077-mantis-token.png"
+  ],
+  "source": "composition/audits/img/cp-mantis.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "cyberpunk-2077-maxdoc",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "cyberpunk-2077-maxdoc.png",
+   "cyberpunk-2077-maxdoc-token.png"
+  ],
+  "source": "composition/audits/img/cp-maxdoc.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "cyberpunk-2077-overload",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "cyberpunk-2077-overload.png",
+   "cyberpunk-2077-overload-token.png"
+  ],
+  "source": "composition/audits/img/cp-overload.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "cyberpunk-2077-ping",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "cyberpunk-2077-ping.png",
+   "cyberpunk-2077-ping-token.png"
+  ],
+  "source": "composition/audits/img/cp-ping.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "cyberpunk-2077-sandevistan",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "cyberpunk-2077-sandevistan.png",
+   "cyberpunk-2077-sandevistan-token.png"
+  ],
+  "source": "composition/audits/img/cp-sandevistan.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "cyberpunk-2077-selfice",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "cyberpunk-2077-selfice.png",
+   "cyberpunk-2077-selfice-token.png"
+  ],
+  "source": "composition/audits/img/cp-selfice.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "cyberpunk-2077-v",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "cyberpunk-2077-v.png",
+   "cyberpunk-2077-v-token-enemy.png",
+   "cyberpunk-2077-v-token-player.png"
+  ],
+  "source": "composition/audits/img/cp-v.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "deadlock-abrams",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "deadlock-abrams.png",
+   "deadlock-abrams-token-enemy.png",
+   "deadlock-abrams-token-player.png"
+  ],
+  "source": "composition/audits/img/dl-abrams.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "deadlock-charge",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "deadlock-charge.png",
+   "deadlock-charge-token.png"
+  ],
+  "source": "composition/audits/img/dl-charge.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "deadlock-melee",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "deadlock-melee.png",
+   "deadlock-melee-token.png"
+  ],
+  "source": "composition/audits/img/dl-melee.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "deadlock-resilience",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "deadlock-resilience.png",
+   "deadlock-resilience-token.png"
+  ],
+  "source": "composition/audits/img/dl-resilience.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "deadlock-seismic",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "deadlock-seismic.png",
+   "deadlock-seismic-token.png"
+  ],
+  "source": "composition/audits/img/dl-seismic.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "deadlock-shop",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "deadlock-shop.png",
+   "deadlock-shop-token.png"
+  ],
+  "source": "composition/audits/img/dl-shop.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "deadlock-siphon",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "deadlock-siphon.png",
+   "deadlock-siphon-token.png"
+  ],
+  "source": "composition/audits/img/dl-siphon.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "deadlock-souls",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "deadlock-souls.png",
+   "deadlock-souls-token.png"
+  ],
+  "source": "composition/audits/img/dl-souls.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "deadlock-zipline",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "deadlock-zipline.png",
+   "deadlock-zipline-token.png"
+  ],
+  "source": "composition/audits/img/dl-zipline.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "expedition-33-gustave",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "expedition-33-gustave.png",
+   "expedition-33-gustave-token-enemy.png",
+   "expedition-33-gustave-token-player.png"
+  ],
+  "source": "composition/audits/img/e33-gustave.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "expedition-33-lune",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "expedition-33-lune.png",
+   "expedition-33-lune-token-enemy.png",
+   "expedition-33-lune-token-player.png"
+  ],
+  "source": "composition/audits/img/e33-lune.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "expedition-33-maelle",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "expedition-33-maelle.png",
+   "expedition-33-maelle-token-enemy.png",
+   "expedition-33-maelle-token-player.png"
+  ],
+  "source": "composition/audits/img/e33-maelle.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "expedition-33-sciel",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "expedition-33-sciel.png",
+   "expedition-33-sciel-token-enemy.png",
+   "expedition-33-sciel-token-player.png"
+  ],
+  "source": "composition/audits/img/e33-sciel.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "factorio-artillery",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "factorio-artillery.png",
+   "factorio-artillery-token.png"
+  ],
+  "source": "composition/audits/img/fac-artillery.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "factorio-biter",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "factorio-biter.png",
+   "factorio-biter-token-enemy.png",
+   "factorio-biter-token-player.png"
+  ],
+  "source": "composition/audits/img/fac-biter.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "factorio-exo",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "factorio-exo.png",
+   "factorio-exo-token.png"
+  ],
+  "source": "composition/audits/img/fac-exo.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "factorio-fish",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "factorio-fish.png",
+   "factorio-fish-token.png"
+  ],
+  "source": "composition/audits/img/fac-fish.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "factorio-gunturret",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "factorio-gunturret.png",
+   "factorio-gunturret-token.png"
+  ],
+  "source": "composition/audits/img/fac-gunturret.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "factorio-laser",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "factorio-laser.png",
+   "factorio-laser-token.png"
+  ],
+  "source": "composition/audits/img/fac-laser.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "factorio-mine",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "factorio-mine.png",
+   "factorio-mine-token.png"
+  ],
+  "source": "composition/audits/img/fac-mine.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "factorio-piercing",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "factorio-piercing.png",
+   "factorio-piercing-token.png"
+  ],
+  "source": "composition/audits/img/fac-piercing.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "factorio-poison",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "factorio-poison.png",
+   "factorio-poison-token.png"
+  ],
+  "source": "composition/audits/img/fac-poison.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "factorio-radar",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "factorio-radar.png",
+   "factorio-radar-token.png"
+  ],
+  "source": "composition/audits/img/fac-radar.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "factorio-wall",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "factorio-wall.png",
+   "factorio-wall-token.png"
+  ],
+  "source": "composition/audits/img/fac-wall.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "god-of-war-atreus",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "god-of-war-atreus.png",
+   "god-of-war-atreus-token-enemy.png",
+   "god-of-war-atreus-token-player.png"
+  ],
+  "source": "composition/audits/img/gow-atreus.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "god-of-war-axe",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "god-of-war-axe.png",
+   "god-of-war-axe-token.png"
+  ],
+  "source": "composition/audits/img/gow-axe.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "god-of-war-blades-greek",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "god-of-war-blades-greek.png",
+   "god-of-war-blades-greek-token.png"
+  ],
+  "source": "composition/audits/img/gow-blades-greek.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "god-of-war-blades",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "god-of-war-blades.png",
+   "god-of-war-blades-token.png"
+  ],
+  "source": "composition/audits/img/gow-blades.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "god-of-war-fleece",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "god-of-war-fleece.png",
+   "god-of-war-fleece-token.png"
+  ],
+  "source": "composition/audits/img/gow-fleece.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "god-of-war-kratos-greek",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "god-of-war-kratos-greek.png",
+   "god-of-war-kratos-greek-token-enemy.png",
+   "god-of-war-kratos-greek-token-player.png"
+  ],
+  "source": "composition/audits/img/gow-kratos-greek.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "god-of-war-kratos",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "god-of-war-kratos.png",
+   "god-of-war-kratos-token-enemy.png",
+   "god-of-war-kratos-token-player.png"
+  ],
+  "source": "composition/audits/img/gow-kratos.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "god-of-war-olympus",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "god-of-war-olympus.png",
+   "god-of-war-olympus-token.png"
+  ],
+  "source": "composition/audits/img/gow-olympus.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "god-of-war-poseidon",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "god-of-war-poseidon.png",
+   "god-of-war-poseidon-token.png"
+  ],
+  "source": "composition/audits/img/gow-poseidon.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "god-of-war-rage",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "god-of-war-rage.png",
+   "god-of-war-rage-token.png"
+  ],
+  "source": "composition/audits/img/gow-rage.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "god-of-war-runic",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "god-of-war-runic.png",
+   "god-of-war-runic-token.png"
+  ],
+  "source": "composition/audits/img/gow-runic.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "god-of-war-shield",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "god-of-war-shield.png",
+   "god-of-war-shield-token.png"
+  ],
+  "source": "composition/audits/img/gow-shield.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "legends-of-runeterra-axe",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "legends-of-runeterra-axe.png",
+   "legends-of-runeterra-axe-token.png"
+  ],
+  "source": "composition/audits/img/lor-axe.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "legends-of-runeterra-cloud",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "legends-of-runeterra-cloud.png",
+   "legends-of-runeterra-cloud-token.png"
+  ],
+  "source": "composition/audits/img/lor-cloud.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "legends-of-runeterra-draven",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "legends-of-runeterra-draven.png",
+   "legends-of-runeterra-draven-token-enemy.png",
+   "legends-of-runeterra-draven-token-player.png"
+  ],
+  "source": "composition/audits/img/lor-draven.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "legends-of-runeterra-draven2",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "legends-of-runeterra-draven2.png",
+   "legends-of-runeterra-draven2-token-enemy.png",
+   "legends-of-runeterra-draven2-token-player.png"
+  ],
+  "source": "composition/audits/img/lor-draven2.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "legends-of-runeterra-puffcap",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "legends-of-runeterra-puffcap.png",
+   "legends-of-runeterra-puffcap-token.png"
+  ],
+  "source": "composition/audits/img/lor-puffcap.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "legends-of-runeterra-teemo",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "legends-of-runeterra-teemo.png",
+   "legends-of-runeterra-teemo-token-enemy.png",
+   "legends-of-runeterra-teemo-token-player.png"
+  ],
+  "source": "composition/audits/img/lor-teemo.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "legends-of-runeterra-teemo2",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "legends-of-runeterra-teemo2.png",
+   "legends-of-runeterra-teemo2-token-enemy.png",
+   "legends-of-runeterra-teemo2-token-player.png"
+  ],
+  "source": "composition/audits/img/lor-teemo2.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "legends-of-runeterra-whirling",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "legends-of-runeterra-whirling.png",
+   "legends-of-runeterra-whirling-token.png"
+  ],
+  "source": "composition/audits/img/lor-whirling.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "minecraft-axe",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "minecraft-axe.png",
+   "minecraft-axe-token.png"
+  ],
+  "source": "composition/audits/img/mc-axe.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "minecraft-bed",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "minecraft-bed.png",
+   "minecraft-bed-token.png"
+  ],
+  "source": "composition/audits/img/mc-bed.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "minecraft-bow",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "minecraft-bow.png",
+   "minecraft-bow-token.png"
+  ],
+  "source": "composition/audits/img/mc-bow.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "minecraft-cobble",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "minecraft-cobble.png",
+   "minecraft-cobble-token.png"
+  ],
+  "source": "composition/audits/img/mc-cobble.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "minecraft-gapple",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "minecraft-gapple.png",
+   "minecraft-gapple-token.png"
+  ],
+  "source": "composition/audits/img/mc-gapple.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "minecraft-potion",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "minecraft-potion.png",
+   "minecraft-potion-token.png"
+  ],
+  "source": "composition/audits/img/mc-potion.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "minecraft-shield",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "minecraft-shield.png",
+   "minecraft-shield-token.png"
+  ],
+  "source": "composition/audits/img/mc-shield.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "minecraft-steve",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "minecraft-steve.png",
+   "minecraft-steve-token-enemy.png",
+   "minecraft-steve-token-player.png"
+  ],
+  "source": "composition/audits/img/mc-steve.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "minecraft-sword",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "minecraft-sword.png",
+   "minecraft-sword-token.png"
+  ],
+  "source": "composition/audits/img/mc-sword.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "minecraft-tnt",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "minecraft-tnt.png",
+   "minecraft-tnt-token.png"
+  ],
+  "source": "composition/audits/img/mc-tnt.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "minecraft-torch",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "minecraft-torch.png",
+   "minecraft-torch-token.png"
+  ],
+  "source": "composition/audits/img/mc-torch.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "minecraft-water",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "minecraft-water.png",
+   "minecraft-water-token.png"
+  ],
+  "source": "composition/audits/img/mc-water.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "mario-kart-8-banana",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "mario-kart-8-banana.png",
+   "mario-kart-8-banana-token.png"
+  ],
+  "source": "composition/audits/img/mk-banana.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "mario-kart-8-bill",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "mario-kart-8-bill.png",
+   "mario-kart-8-bill-token.png"
+  ],
+  "source": "composition/audits/img/mk-bill.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "mario-kart-8-bobomb",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "mario-kart-8-bobomb.png",
+   "mario-kart-8-bobomb-token.png"
+  ],
+  "source": "composition/audits/img/mk-bobomb.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "mario-kart-8-boo",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "mario-kart-8-boo.png",
+   "mario-kart-8-boo-token.png"
+  ],
+  "source": "composition/audits/img/mk-boo.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "mario-kart-8-coin",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "mario-kart-8-coin.png",
+   "mario-kart-8-coin-token.png"
+  ],
+  "source": "composition/audits/img/mk-coin.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "mario-kart-8-green",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "mario-kart-8-green.png",
+   "mario-kart-8-green-token.png"
+  ],
+  "source": "composition/audits/img/mk-green.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "mario-kart-8-horn",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "mario-kart-8-horn.png",
+   "mario-kart-8-horn-token.png"
+  ],
+  "source": "composition/audits/img/mk-horn.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "mario-kart-8-lightning",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "mario-kart-8-lightning.png",
+   "mario-kart-8-lightning-token.png"
+  ],
+  "source": "composition/audits/img/mk-lightning.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "mario-kart-8-mario",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "mario-kart-8-mario.png",
+   "mario-kart-8-mario-token-enemy.png",
+   "mario-kart-8-mario-token-player.png"
+  ],
+  "source": "composition/audits/img/mk-mario.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "mario-kart-8-mushroom",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "mario-kart-8-mushroom.png",
+   "mario-kart-8-mushroom-token.png"
+  ],
+  "source": "composition/audits/img/mk-mushroom.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "mario-kart-8-red",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "mario-kart-8-red.png",
+   "mario-kart-8-red-token.png"
+  ],
+  "source": "composition/audits/img/mk-red.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "mario-kart-8-spiny",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "mario-kart-8-spiny.png",
+   "mario-kart-8-spiny-token.png"
+  ],
+  "source": "composition/audits/img/mk-spiny.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "mario-kart-8-star",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "mario-kart-8-star.png",
+   "mario-kart-8-star-token.png"
+  ],
+  "source": "composition/audits/img/mk-star.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "portal-2-chell",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "portal-2-chell.png",
+   "portal-2-chell-token-enemy.png",
+   "portal-2-chell-token-player.png"
+  ],
+  "source": "composition/audits/img/p2-chell.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "portal-2-cube",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "portal-2-cube.png",
+   "portal-2-cube-token.png"
+  ],
+  "source": "composition/audits/img/p2-cube.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "portal-2-gel-blue",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "portal-2-gel-blue.png",
+   "portal-2-gel-blue-token.png"
+  ],
+  "source": "composition/audits/img/p2-gel-blue.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "portal-2-gel-orange",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "portal-2-gel-orange.png",
+   "portal-2-gel-orange-token.png"
+  ],
+  "source": "composition/audits/img/p2-gel-orange.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "portal-2-wheatley",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "portal-2-wheatley.png",
+   "portal-2-wheatley-token-enemy.png",
+   "portal-2-wheatley-token-player.png"
+  ],
+  "source": "composition/audits/img/p2-wheatley.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "starcraft-brood-war-bunker",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "starcraft-brood-war-bunker.png",
+   "starcraft-brood-war-bunker-token.png"
+  ],
+  "source": "composition/audits/img/sc-bunker.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "starcraft-brood-war-comsat",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "starcraft-brood-war-comsat.png",
+   "starcraft-brood-war-comsat-token.png"
+  ],
+  "source": "composition/audits/img/sc-comsat.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "starcraft-brood-war-lurker",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "starcraft-brood-war-lurker.png",
+   "starcraft-brood-war-lurker-token-enemy.png",
+   "starcraft-brood-war-lurker-token-player.png"
+  ],
+  "source": "composition/audits/img/sc-lurker.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "starcraft-brood-war-marine",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "starcraft-brood-war-marine.png",
+   "starcraft-brood-war-marine-token-enemy.png",
+   "starcraft-brood-war-marine-token-player.png"
+  ],
+  "source": "composition/audits/img/sc-marine.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "starcraft-brood-war-medic",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "starcraft-brood-war-medic.png",
+   "starcraft-brood-war-medic-token-enemy.png",
+   "starcraft-brood-war-medic-token-player.png"
+  ],
+  "source": "composition/audits/img/sc-medic.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "starcraft-brood-war-tank",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "starcraft-brood-war-tank.png",
+   "starcraft-brood-war-tank-token-enemy.png",
+   "starcraft-brood-war-tank-token-player.png"
+  ],
+  "source": "composition/audits/img/sc-tank.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "starcraft-brood-war-terran",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "starcraft-brood-war-terran.png",
+   "starcraft-brood-war-terran-token.png"
+  ],
+  "source": "composition/audits/img/sc-terran.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "starcraft-brood-war-vessel",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "starcraft-brood-war-vessel.png",
+   "starcraft-brood-war-vessel-token-enemy.png",
+   "starcraft-brood-war-vessel-token-player.png"
+  ],
+  "source": "composition/audits/img/sc-vessel.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "starcraft-brood-war-vulture",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "starcraft-brood-war-vulture.png",
+   "starcraft-brood-war-vulture-token-enemy.png",
+   "starcraft-brood-war-vulture-token-player.png"
+  ],
+  "source": "composition/audits/img/sc-vulture.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "subnautica-cyclops",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "subnautica-cyclops.png",
+   "subnautica-cyclops-token.png"
+  ],
+  "source": "composition/audits/img/sn-cyclops.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "subnautica-decoy",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "subnautica-decoy.png",
+   "subnautica-decoy-token.png"
+  ],
+  "source": "composition/audits/img/sn-decoy.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "subnautica-firstaid",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "subnautica-firstaid.png",
+   "subnautica-firstaid-token.png"
+  ],
+  "source": "composition/audits/img/sn-firstaid.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "subnautica-knife",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "subnautica-knife.png",
+   "subnautica-knife-token.png"
+  ],
+  "source": "composition/audits/img/sn-knife.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "subnautica-perimeter",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "subnautica-perimeter.png",
+   "subnautica-perimeter-token.png"
+  ],
+  "source": "composition/audits/img/sn-perimeter.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "subnautica-prawn",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "subnautica-prawn.png",
+   "subnautica-prawn-token.png"
+  ],
+  "source": "composition/audits/img/sn-prawn.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "subnautica-reaper",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "subnautica-reaper.png",
+   "subnautica-reaper-token.png"
+  ],
+  "source": "composition/audits/img/sn-reaper.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "subnautica-repulsion",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "subnautica-repulsion.png",
+   "subnautica-repulsion-token.png"
+  ],
+  "source": "composition/audits/img/sn-repulsion.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "subnautica-seaglide",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "subnautica-seaglide.png",
+   "subnautica-seaglide-token.png"
+  ],
+  "source": "composition/audits/img/sn-seaglide.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "subnautica-seamoth",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "subnautica-seamoth.png",
+   "subnautica-seamoth-token.png"
+  ],
+  "source": "composition/audits/img/sn-seamoth.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "subnautica-shield",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "subnautica-shield.png",
+   "subnautica-shield-token.png"
+  ],
+  "source": "composition/audits/img/sn-shield.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "subnautica-silent",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "subnautica-silent.png",
+   "subnautica-silent-token.png"
+  ],
+  "source": "composition/audits/img/sn-silent.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "subnautica-stasis",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "subnautica-stasis.png",
+   "subnautica-stasis-token.png"
+  ],
+  "source": "composition/audits/img/sn-stasis.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "slay-the-spire-bash",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "slay-the-spire-bash.png",
+   "slay-the-spire-bash-token.png"
+  ],
+  "source": "composition/audits/img/sts-bash.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "slay-the-spire-bludgeon",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "slay-the-spire-bludgeon.png",
+   "slay-the-spire-bludgeon-token.png"
+  ],
+  "source": "composition/audits/img/sts-bludgeon.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "slay-the-spire-burning",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "slay-the-spire-burning.png",
+   "slay-the-spire-burning-token.png"
+  ],
+  "source": "composition/audits/img/sts-burning.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "slay-the-spire-defend",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "slay-the-spire-defend.png",
+   "slay-the-spire-defend-token.png"
+  ],
+  "source": "composition/audits/img/sts-defend.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "slay-the-spire-inflame",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "slay-the-spire-inflame.png",
+   "slay-the-spire-inflame-token.png"
+  ],
+  "source": "composition/audits/img/sts-inflame.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "slay-the-spire-intimidate",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "slay-the-spire-intimidate.png",
+   "slay-the-spire-intimidate-token.png"
+  ],
+  "source": "composition/audits/img/sts-intimidate.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "slay-the-spire-ironclad",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "slay-the-spire-ironclad.png",
+   "slay-the-spire-ironclad-token-enemy.png",
+   "slay-the-spire-ironclad-token-player.png"
+  ],
+  "source": "composition/audits/img/sts-ironclad.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "slay-the-spire-nob",
+  "sides": [
+   "enemy",
+   "player"
+  ],
+  "files": [
+   "slay-the-spire-nob.png",
+   "slay-the-spire-nob-token-enemy.png",
+   "slay-the-spire-nob-token-player.png"
+  ],
+  "source": "composition/audits/img/sts-nob.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "slay-the-spire-reaper",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "slay-the-spire-reaper.png",
+   "slay-the-spire-reaper-token.png"
+  ],
+  "source": "composition/audits/img/sts-reaper.png"
+ },
+ {
+  "theme": "more-games",
+  "name": "slay-the-spire-strike",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "slay-the-spire-strike.png",
+   "slay-the-spire-strike-token.png"
+  ],
+  "source": "composition/audits/img/sts-strike.png"
+ },
+ {
+  "theme": "icons-creatures",
+  "name": "bat-wing",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "bat-wing.png",
+   "bat-wing-token-enemy.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-creatures",
+  "name": "brute",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "brute.png",
+   "brute-token-enemy.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-creatures",
+  "name": "charging-bull",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "charging-bull.png",
+   "charging-bull-token-enemy.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-creatures",
+  "name": "crab",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "crab.png",
+   "crab-token-enemy.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-creatures",
+  "name": "crowned-skull",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "crowned-skull.png",
+   "crowned-skull-token-enemy.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-creatures",
+  "name": "cyborg-face",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "cyborg-face.png",
+   "cyborg-face-token-enemy.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-creatures",
+  "name": "cyclops",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "cyclops.png",
+   "cyclops-token-enemy.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-creatures",
+  "name": "daemon-skull",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "daemon-skull.png",
+   "daemon-skull-token-enemy.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-creatures",
+  "name": "dragon-head",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "dragon-head.png",
+   "dragon-head-token-enemy.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-creatures",
+  "name": "evil-minion",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "evil-minion.png",
+   "evil-minion-token-enemy.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-creatures",
+  "name": "fire-silhouette",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "fire-silhouette.png",
+   "fire-silhouette-token-enemy.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-creatures",
+  "name": "ghost",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "ghost.png",
+   "ghost-token-enemy.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-creatures",
+  "name": "horned-skull",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "horned-skull.png",
+   "horned-skull-token-enemy.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-creatures",
+  "name": "imp",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "imp.png",
+   "imp-token-enemy.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-creatures",
+  "name": "imp-laugh",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "imp-laugh.png",
+   "imp-laugh-token-enemy.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-creatures",
+  "name": "mole",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "mole.png",
+   "mole-token-enemy.png"
+  ],
+  "source": "game-icons.net / caro-asercion"
+ },
+ {
+  "theme": "icons-creatures",
+  "name": "ogre",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "ogre.png",
+   "ogre-token-enemy.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-creatures",
+  "name": "owl",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "owl.png",
+   "owl-token-enemy.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-creatures",
+  "name": "robot-golem",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "robot-golem.png",
+   "robot-golem-token-enemy.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-creatures",
+  "name": "rock-golem",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "rock-golem.png",
+   "rock-golem-token-enemy.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-creatures",
+  "name": "shambling-zombie",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "shambling-zombie.png",
+   "shambling-zombie-token-enemy.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-creatures",
+  "name": "skull-crossed-bones",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "skull-crossed-bones.png",
+   "skull-crossed-bones-token-enemy.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-creatures",
+  "name": "snail",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "snail.png",
+   "snail-token-enemy.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-creatures",
+  "name": "spider-alt",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "spider-alt.png",
+   "spider-alt-token-enemy.png"
+  ],
+  "source": "game-icons.net / carl-olsen"
+ },
+ {
+  "theme": "icons-creatures",
+  "name": "spider-bot",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "spider-bot.png",
+   "spider-bot-token-enemy.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-creatures",
+  "name": "spider-face",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "spider-face.png",
+   "spider-face-token-enemy.png"
+  ],
+  "source": "game-icons.net / carl-olsen"
+ },
+ {
+  "theme": "icons-creatures",
+  "name": "troll",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "troll.png",
+   "troll-token-enemy.png"
+  ],
+  "source": "game-icons.net / skoll"
+ },
+ {
+  "theme": "icons-creatures",
+  "name": "turtle",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "turtle.png",
+   "turtle-token-enemy.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-creatures",
+  "name": "wizard-face",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "wizard-face.png",
+   "wizard-face-token-enemy.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-creatures",
+  "name": "wolf-head",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "wolf-head.png",
+   "wolf-head-token-enemy.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-creatures",
+  "name": "egg-clutch",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "egg-clutch.png",
+   "egg-clutch-token-enemy.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-creatures",
+  "name": "swordman",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "swordman.png",
+   "swordman-token-enemy.png"
+  ],
+  "source": "game-icons.net / cathelineau"
+ },
+ {
+  "theme": "icons-creatures",
+  "name": "fencer",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "fencer.png",
+   "fencer-token-enemy.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-creatures",
+  "name": "heavy-helm",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "heavy-helm.png",
+   "heavy-helm-token-enemy.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-creatures",
+  "name": "visored-helm",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "visored-helm.png",
+   "visored-helm-token-enemy.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-creatures",
+  "name": "skull-shield",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "skull-shield.png",
+   "skull-shield-token-enemy.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "battle-axe",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "battle-axe.png",
+   "battle-axe-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "bow-arrow",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "bow-arrow.png",
+   "bow-arrow-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "broadsword",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "broadsword.png",
+   "broadsword-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "chainsaw",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "chainsaw.png",
+   "chainsaw-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "claw-hammer",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "claw-hammer.png",
+   "claw-hammer-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "crossed-swords",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "crossed-swords.png",
+   "crossed-swords-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "curvy-knife",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "curvy-knife.png",
+   "curvy-knife-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "dripping-blade",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "dripping-blade.png",
+   "dripping-blade-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "flail",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "flail.png",
+   "flail-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "flat-hammer",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "flat-hammer.png",
+   "flat-hammer-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "halberd",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "halberd.png",
+   "halberd-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "hand-saw",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "hand-saw.png",
+   "hand-saw-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "high-shot",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "high-shot.png",
+   "high-shot-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "katana",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "katana.png",
+   "katana-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "mace-head",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "mace-head.png",
+   "mace-head-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "minigun",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "minigun.png",
+   "minigun-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "plain-dagger",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "plain-dagger.png",
+   "plain-dagger-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "pocket-bow",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "pocket-bow.png",
+   "pocket-bow-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "pointy-sword",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "pointy-sword.png",
+   "pointy-sword-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "reaper-scythe",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "reaper-scythe.png",
+   "reaper-scythe-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "relic-blade",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "relic-blade.png",
+   "relic-blade-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "rocket",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "rocket.png",
+   "rocket-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "saw-claw",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "saw-claw.png",
+   "saw-claw-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "scythe",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "scythe.png",
+   "scythe-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "shotgun",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "shotgun.png",
+   "shotgun-token.png"
+  ],
+  "source": "game-icons.net / sbed"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "spear-feather",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "spear-feather.png",
+   "spear-feather-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "spear-hook",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "spear-hook.png",
+   "spear-hook-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "spiked-mace",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "spiked-mace.png",
+   "spiked-mace-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "stiletto",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "stiletto.png",
+   "stiletto-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "sword-brandish",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "sword-brandish.png",
+   "sword-brandish-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "thrown-daggers",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "thrown-daggers.png",
+   "thrown-daggers-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "two-handed-sword",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "two-handed-sword.png",
+   "two-handed-sword-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "warhammer",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "warhammer.png",
+   "warhammer-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "whip",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "whip.png",
+   "whip-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "wizard-staff",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "wizard-staff.png",
+   "wizard-staff-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "zeus-sword",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "zeus-sword.png",
+   "zeus-sword-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "wood-axe",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "wood-axe.png",
+   "wood-axe-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "arrow-flights",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "arrow-flights.png",
+   "arrow-flights-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "missile-swarm",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "missile-swarm.png",
+   "missile-swarm-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "round-shield",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "round-shield.png",
+   "round-shield-token.png"
+  ],
+  "source": "game-icons.net / willdabeast"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "templar-shield",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "templar-shield.png",
+   "templar-shield-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "checked-shield",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "checked-shield.png",
+   "checked-shield-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-weapons",
+  "name": "crab-claw",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "crab-claw.png",
+   "crab-claw-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-items-and-pickups",
+  "name": "chest",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "chest.png",
+   "chest-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-items-and-pickups",
+  "name": "locked-chest",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "locked-chest.png",
+   "locked-chest-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-items-and-pickups",
+  "name": "potion-ball",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "potion-ball.png",
+   "potion-ball-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-items-and-pickups",
+  "name": "round-potion",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "round-potion.png",
+   "round-potion-token.png"
+  ],
+  "source": "game-icons.net / caro-asercion"
+ },
+ {
+  "theme": "icons-items-and-pickups",
+  "name": "round-bottom-flask",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "round-bottom-flask.png",
+   "round-bottom-flask-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-items-and-pickups",
+  "name": "poison-bottle",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "poison-bottle.png",
+   "poison-bottle-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-items-and-pickups",
+  "name": "heart-bottle",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "heart-bottle.png",
+   "heart-bottle-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-items-and-pickups",
+  "name": "heart-plus",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "heart-plus.png",
+   "heart-plus-token.png"
+  ],
+  "source": "game-icons.net / zeromancer"
+ },
+ {
+  "theme": "icons-items-and-pickups",
+  "name": "heart-organ",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "heart-organ.png",
+   "heart-organ-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-items-and-pickups",
+  "name": "health-increase",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "health-increase.png",
+   "health-increase-token.png"
+  ],
+  "source": "game-icons.net / sbed"
+ },
+ {
+  "theme": "icons-items-and-pickups",
+  "name": "healing",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "healing.png",
+   "healing-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-items-and-pickups",
+  "name": "sticking-plaster",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "sticking-plaster.png",
+   "sticking-plaster-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-items-and-pickups",
+  "name": "meat",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "meat.png",
+   "meat-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-items-and-pickups",
+  "name": "steak",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "steak.png",
+   "steak-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-items-and-pickups",
+  "name": "cherry",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "cherry.png",
+   "cherry-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-items-and-pickups",
+  "name": "two-coins",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "two-coins.png",
+   "two-coins-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-items-and-pickups",
+  "name": "gem-chain",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "gem-chain.png",
+   "gem-chain-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-items-and-pickups",
+  "name": "crown",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "crown.png",
+   "crown-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-items-and-pickups",
+  "name": "trophy",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "trophy.png",
+   "trophy-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-items-and-pickups",
+  "name": "scroll-unfurled",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "scroll-unfurled.png",
+   "scroll-unfurled-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-items-and-pickups",
+  "name": "spell-book",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "spell-book.png",
+   "spell-book-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-items-and-pickups",
+  "name": "treasure-map",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "treasure-map.png",
+   "treasure-map-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-items-and-pickups",
+  "name": "lantern",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "lantern.png",
+   "lantern-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-items-and-pickups",
+  "name": "lantern-flame",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "lantern-flame.png",
+   "lantern-flame-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-items-and-pickups",
+  "name": "dice-six-faces-four",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "dice-six-faces-four.png",
+   "dice-six-faces-four-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-items-and-pickups",
+  "name": "dice-twenty-faces-twenty",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "dice-twenty-faces-twenty.png",
+   "dice-twenty-faces-twenty-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-items-and-pickups",
+  "name": "card-play",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "card-play.png",
+   "card-play-token.png"
+  ],
+  "source": "game-icons.net / quoting"
+ },
+ {
+  "theme": "icons-items-and-pickups",
+  "name": "card-random",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "card-random.png",
+   "card-random-token.png"
+  ],
+  "source": "game-icons.net / faithtoken"
+ },
+ {
+  "theme": "icons-items-and-pickups",
+  "name": "cauldron",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "cauldron.png",
+   "cauldron-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-items-and-pickups",
+  "name": "mushroom-gills",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "mushroom-gills.png",
+   "mushroom-gills-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-items-and-pickups",
+  "name": "sprout",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "sprout.png",
+   "sprout-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-items-and-pickups",
+  "name": "lyre",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "lyre.png",
+   "lyre-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-items-and-pickups",
+  "name": "hourglass",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "hourglass.png",
+   "hourglass-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-items-and-pickups",
+  "name": "sands-of-time",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "sands-of-time.png",
+   "sands-of-time-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-elements-and-hazards",
+  "name": "acid",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "acid.png",
+   "acid-token.png"
+  ],
+  "source": "game-icons.net / sbed"
+ },
+ {
+  "theme": "icons-elements-and-hazards",
+  "name": "biohazard",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "biohazard.png",
+   "biohazard-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-elements-and-hazards",
+  "name": "drop",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "drop.png",
+   "drop-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-elements-and-hazards",
+  "name": "water-drop",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "water-drop.png",
+   "water-drop-token.png"
+  ],
+  "source": "game-icons.net / sbed"
+ },
+ {
+  "theme": "icons-elements-and-hazards",
+  "name": "water-splash",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "water-splash.png",
+   "water-splash-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-elements-and-hazards",
+  "name": "wave-crest",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "wave-crest.png",
+   "wave-crest-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-elements-and-hazards",
+  "name": "flame",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "flame.png",
+   "flame-token.png"
+  ],
+  "source": "game-icons.net / carl-olsen"
+ },
+ {
+  "theme": "icons-elements-and-hazards",
+  "name": "small-fire",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "small-fire.png",
+   "small-fire-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-elements-and-hazards",
+  "name": "fire-bowl",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "fire-bowl.png",
+   "fire-bowl-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-elements-and-hazards",
+  "name": "fire-bomb",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "fire-bomb.png",
+   "fire-bomb-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-elements-and-hazards",
+  "name": "fire-ray",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "fire-ray.png",
+   "fire-ray-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-elements-and-hazards",
+  "name": "frozen-orb",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "frozen-orb.png",
+   "frozen-orb-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-elements-and-hazards",
+  "name": "ice-cube",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "ice-cube.png",
+   "ice-cube-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-elements-and-hazards",
+  "name": "snowflake-1",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "snowflake-1.png",
+   "snowflake-1-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-elements-and-hazards",
+  "name": "lightning-arc",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "lightning-arc.png",
+   "lightning-arc-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-elements-and-hazards",
+  "name": "lightning-helix",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "lightning-helix.png",
+   "lightning-helix-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-elements-and-hazards",
+  "name": "lightning-storm",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "lightning-storm.png",
+   "lightning-storm-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-elements-and-hazards",
+  "name": "bolt-spell-cast",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "bolt-spell-cast.png",
+   "bolt-spell-cast-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-elements-and-hazards",
+  "name": "raining",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "raining.png",
+   "raining-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-elements-and-hazards",
+  "name": "tornado",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "tornado.png",
+   "tornado-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-elements-and-hazards",
+  "name": "whirlwind",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "whirlwind.png",
+   "whirlwind-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-elements-and-hazards",
+  "name": "leaf-swirl",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "leaf-swirl.png",
+   "leaf-swirl-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-elements-and-hazards",
+  "name": "grass",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "grass.png",
+   "grass-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-elements-and-hazards",
+  "name": "earth-crack",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "earth-crack.png",
+   "earth-crack-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-elements-and-hazards",
+  "name": "explosion-rays",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "explosion-rays.png",
+   "explosion-rays-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-elements-and-hazards",
+  "name": "spiky-explosion",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "spiky-explosion.png",
+   "spiky-explosion-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-elements-and-hazards",
+  "name": "unlit-bomb",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "unlit-bomb.png",
+   "unlit-bomb-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-elements-and-hazards",
+  "name": "smoke-bomb",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "smoke-bomb.png",
+   "smoke-bomb-token.png"
+  ],
+  "source": "game-icons.net / darkzaitzev"
+ },
+ {
+  "theme": "icons-elements-and-hazards",
+  "name": "trap-mask",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "trap-mask.png",
+   "trap-mask-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-elements-and-hazards",
+  "name": "rolling-energy",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "rolling-energy.png",
+   "rolling-energy-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-elements-and-hazards",
+  "name": "pentacle",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "pentacle.png",
+   "pentacle-token.png"
+  ],
+  "source": "game-icons.net / skoll"
+ },
+ {
+  "theme": "icons-elements-and-hazards",
+  "name": "wind-slap",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "wind-slap.png",
+   "wind-slap-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-elements-and-hazards",
+  "name": "sound-waves",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "sound-waves.png",
+   "sound-waves-token.png"
+  ],
+  "source": "game-icons.net / skoll"
+ },
+ {
+  "theme": "icons-elements-and-hazards",
+  "name": "dna1",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "dna1.png",
+   "dna1-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-obstacles-and-terrain",
+  "name": "brick-wall",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "brick-wall.png",
+   "brick-wall-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-obstacles-and-terrain",
+  "name": "stone-block",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "stone-block.png",
+   "stone-block-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-obstacles-and-terrain",
+  "name": "stone-pile",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "stone-pile.png",
+   "stone-pile-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-obstacles-and-terrain",
+  "name": "rock",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "rock.png",
+   "rock-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-obstacles-and-terrain",
+  "name": "log",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "log.png",
+   "log-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-obstacles-and-terrain",
+  "name": "wood-beam",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "wood-beam.png",
+   "wood-beam-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-obstacles-and-terrain",
+  "name": "wood-pile",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "wood-pile.png",
+   "wood-pile-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-obstacles-and-terrain",
+  "name": "wooden-crate",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "wooden-crate.png",
+   "wooden-crate-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-obstacles-and-terrain",
+  "name": "barrel",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "barrel.png",
+   "barrel-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-obstacles-and-terrain",
+  "name": "oil-drum",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "oil-drum.png",
+   "oil-drum-token.png"
+  ],
+  "source": "game-icons.net / skoll"
+ },
+ {
+  "theme": "icons-obstacles-and-terrain",
+  "name": "castle",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "castle.png",
+   "castle-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-obstacles-and-terrain",
+  "name": "tower-flag",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "tower-flag.png",
+   "tower-flag-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-obstacles-and-terrain",
+  "name": "door",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "door.png",
+   "door-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-obstacles-and-terrain",
+  "name": "padlock",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "padlock.png",
+   "padlock-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-obstacles-and-terrain",
+  "name": "portal",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "portal.png",
+   "portal-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-obstacles-and-terrain",
+  "name": "campfire",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "campfire.png",
+   "campfire-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-obstacles-and-terrain",
+  "name": "tree-branch",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "tree-branch.png",
+   "tree-branch-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-obstacles-and-terrain",
+  "name": "metal-bar",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "metal-bar.png",
+   "metal-bar-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-obstacles-and-terrain",
+  "name": "anvil",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "anvil.png",
+   "anvil-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-obstacles-and-terrain",
+  "name": "spawn-node",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "spawn-node.png",
+   "spawn-node-token.png"
+  ],
+  "source": "game-icons.net / sbed"
+ },
+ {
+  "theme": "icons-obstacles-and-terrain",
+  "name": "jeep",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "jeep.png",
+   "jeep-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-obstacles-and-terrain",
+  "name": "hang-glider",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "hang-glider.png",
+   "hang-glider-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "anticlockwise-rotation",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "anticlockwise-rotation.png",
+   "anticlockwise-rotation-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "clockwise-rotation",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "clockwise-rotation.png",
+   "clockwise-rotation-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "boot-kick",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "boot-kick.png",
+   "boot-kick-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "broken-bone",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "broken-bone.png",
+   "broken-bone-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "broken-shield",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "broken-shield.png",
+   "broken-shield-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "bullseye",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "bullseye.png",
+   "bullseye-token.png"
+  ],
+  "source": "game-icons.net / skoll"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "cape",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "cape.png",
+   "cape-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "conversation",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "conversation.png",
+   "conversation-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "crosshair",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "crosshair.png",
+   "crosshair-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "cycle",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "cycle.png",
+   "cycle-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "dodge",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "dodge.png",
+   "dodge-token.png"
+  ],
+  "source": "game-icons.net / felbrigg"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "dodging",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "dodging.png",
+   "dodging-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "eye-target",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "eye-target.png",
+   "eye-target-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "fist",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "fist.png",
+   "fist-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "grab",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "grab.png",
+   "grab-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "grapple",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "grapple.png",
+   "grapple-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "hand",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "hand.png",
+   "hand-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "heavy-fall",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "heavy-fall.png",
+   "heavy-fall-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "high-kick",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "high-kick.png",
+   "high-kick-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "hook",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "hook.png",
+   "hook-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "magic-shield",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "magic-shield.png",
+   "magic-shield-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "mirror-mirror",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "mirror-mirror.png",
+   "mirror-mirror-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "punch",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "punch.png",
+   "punch-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "punch-blast",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "punch-blast.png",
+   "punch-blast-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "return-arrow",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "return-arrow.png",
+   "return-arrow-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "shield-bash",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "shield-bash.png",
+   "shield-bash-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "shield-impact",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "shield-impact.png",
+   "shield-impact-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "shield-reflect",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "shield-reflect.png",
+   "shield-reflect-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "fire-shield",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "fire-shield.png",
+   "fire-shield-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "split-arrows",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "split-arrows.png",
+   "split-arrows-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "sprint",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "sprint.png",
+   "sprint-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "sword-clash",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "sword-clash.png",
+   "sword-clash-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "target-arrows",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "target-arrows.png",
+   "target-arrows-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "teleport",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "teleport.png",
+   "teleport-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "scales",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "scales.png",
+   "scales-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "stopwatch",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "stopwatch.png",
+   "stopwatch-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "plain-arrow",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "plain-arrow.png",
+   "plain-arrow-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "pin",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "pin.png",
+   "pin-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "round-star",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "round-star.png",
+   "round-star-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "radar-sweep",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "radar-sweep.png",
+   "radar-sweep-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "magnifying-glass",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "magnifying-glass.png",
+   "magnifying-glass-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "brain",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "brain.png",
+   "brain-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "spinning-sword",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "spinning-sword.png",
+   "spinning-sword-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-actions-and-keywords",
+  "name": "turtle-shell",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "turtle-shell.png",
+   "turtle-shell-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-design-tools",
+  "name": "cog",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "cog.png",
+   "cog-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-design-tools",
+  "name": "gears",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "gears.png",
+   "gears-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-design-tools",
+  "name": "game-console",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "game-console.png",
+   "game-console-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-design-tools",
+  "name": "joystick",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "joystick.png",
+   "joystick-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-design-tools",
+  "name": "video-camera",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "video-camera.png",
+   "video-camera-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-design-tools",
+  "name": "paint-brush",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "paint-brush.png",
+   "paint-brush-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-design-tools",
+  "name": "pencil",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "pencil.png",
+   "pencil-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-design-tools",
+  "name": "puzzle",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "puzzle.png",
+   "puzzle-token.png"
+  ],
+  "source": "game-icons.net / delapouite"
+ },
+ {
+  "theme": "icons-design-tools",
+  "name": "checkbox-tree",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "checkbox-tree.png",
+   "checkbox-tree-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "icons-design-tools",
+  "name": "spade",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "spade.png",
+   "spade-token.png"
+  ],
+  "source": "game-icons.net / lorc"
+ },
+ {
+  "theme": "map-markers",
+  "name": "acid",
+  "sides": [],
+  "files": [
+   "acid.png"
+  ],
+  "source": "assets/img/forsaken/Acid.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "circle-ally",
+  "sides": [],
+  "files": [
+   "circle-ally.png"
+  ],
+  "source": "assets/img/forsaken/Circle_Friendly.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "circle-enemy",
+  "sides": [],
+  "files": [
+   "circle-enemy.png"
+  ],
+  "source": "assets/img/forsaken/Circle_Hostile.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "circle-transparent",
+  "sides": [],
+  "files": [
+   "circle-transparent.png"
+  ],
+  "source": "assets/img/forsaken/Circle_Transparent.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "cone-ally",
+  "sides": [],
+  "files": [
+   "cone-ally.png"
+  ],
+  "source": "assets/img/forsaken/Cone_Friendly.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "cone-enemy",
+  "sides": [],
+  "files": [
+   "cone-enemy.png"
+  ],
+  "source": "assets/img/forsaken/Cone_Hostile.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "dizzy-swirl",
+  "sides": [],
+  "files": [
+   "dizzy-swirl.png"
+  ],
+  "source": "assets/img/forsaken/Dizzy_Swirl.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "earth",
+  "sides": [],
+  "files": [
+   "earth.png"
+  ],
+  "source": "assets/img/forsaken/Earth.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "hit-ally",
+  "sides": [],
+  "files": [
+   "hit-ally.png"
+  ],
+  "source": "assets/img/forsaken/Hit_Friendly.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "hit-enemy",
+  "sides": [],
+  "files": [
+   "hit-enemy.png"
+  ],
+  "source": "assets/img/forsaken/Hit_Hostile.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "mana-crystal",
+  "sides": [],
+  "files": [
+   "mana-crystal.png"
+  ],
+  "source": "assets/img/forsaken/Mana_Crystal.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "missile-ally",
+  "sides": [],
+  "files": [
+   "missile-ally.png"
+  ],
+  "source": "assets/img/forsaken/Missile_Friendly.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "missile-enemy",
+  "sides": [],
+  "files": [
+   "missile-enemy.png"
+  ],
+  "source": "assets/img/forsaken/Missile_Hostile.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "monster",
+  "sides": [],
+  "files": [
+   "monster.png"
+  ],
+  "source": "assets/img/forsaken/Monster.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "not-symbol",
+  "sides": [],
+  "files": [
+   "not-symbol.png"
+  ],
+  "source": "assets/img/forsaken/Not_Symbol.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "plague",
+  "sides": [],
+  "files": [
+   "plague.png"
+  ],
+  "source": "assets/img/forsaken/Plague.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "protect-ally",
+  "sides": [],
+  "files": [
+   "protect-ally.png"
+  ],
+  "source": "assets/img/forsaken/Protect_Friendly.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "protect-enemy",
+  "sides": [],
+  "files": [
+   "protect-enemy.png"
+  ],
+  "source": "assets/img/forsaken/Protect_Hostile.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "rock",
+  "sides": [],
+  "files": [
+   "rock.png"
+  ],
+  "source": "assets/img/forsaken/Rock.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "shieldbreak-left-enemy",
+  "sides": [],
+  "files": [
+   "shieldbreak-left-enemy.png"
+  ],
+  "source": "assets/img/forsaken/ShieldBreak_Left_Hostile.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "shieldbreak-right-enemy",
+  "sides": [],
+  "files": [
+   "shieldbreak-right-enemy.png"
+  ],
+  "source": "assets/img/forsaken/ShieldBreak_Right_Hostile.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "shielded-ally",
+  "sides": [],
+  "files": [
+   "shielded-ally.png"
+  ],
+  "source": "assets/img/forsaken/Shielded_Friendly.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "shielded-enemy",
+  "sides": [],
+  "files": [
+   "shielded-enemy.png"
+  ],
+  "source": "assets/img/forsaken/Shielded_Hostile.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "spear",
+  "sides": [],
+  "files": [
+   "spear.png"
+  ],
+  "source": "assets/img/forsaken/Spear.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "storm",
+  "sides": [],
+  "files": [
+   "storm.png"
+  ],
+  "source": "assets/img/forsaken/Storm.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "swoosh-ally",
+  "sides": [],
+  "files": [
+   "swoosh-ally.png"
+  ],
+  "source": "assets/img/forsaken/Swoosh_Friendly.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "swoosh-enemy",
+  "sides": [],
+  "files": [
+   "swoosh-enemy.png"
+  ],
+  "source": "assets/img/forsaken/Swoosh_Hostile.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "sword",
+  "sides": [],
+  "files": [
+   "sword.png"
+  ],
+  "source": "assets/img/forsaken/Sword.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "hammer",
+  "sides": [],
+  "files": [
+   "hammer.png"
+  ],
+  "source": "assets/img/forsaken/Hammer.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "dagger",
+  "sides": [],
+  "files": [
+   "dagger.png"
+  ],
+  "source": "assets/img/forsaken/Dagger.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "target-reticule",
+  "sides": [],
+  "files": [
+   "target-reticule.png"
+  ],
+  "source": "assets/img/forsaken/Target_Reticule.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "token-player1",
+  "sides": [],
+  "files": [
+   "token-player1.png"
+  ],
+  "source": "assets/img/forsaken/Token_Player1.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "token-player2",
+  "sides": [],
+  "files": [
+   "token-player2.png"
+  ],
+  "source": "assets/img/forsaken/Token_Player2.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "token-player3",
+  "sides": [],
+  "files": [
+   "token-player3.png"
+  ],
+  "source": "assets/img/forsaken/Token_Player3.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "trapezoid-ally",
+  "sides": [],
+  "files": [
+   "trapezoid-ally.png"
+  ],
+  "source": "assets/img/forsaken/Trapezoid_Friendly.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "trapezoid-enemy",
+  "sides": [],
+  "files": [
+   "trapezoid-enemy.png"
+  ],
+  "source": "assets/img/forsaken/Trapezoid_Hostile.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "zap-ally",
+  "sides": [],
+  "files": [
+   "zap-ally.png"
+  ],
+  "source": "assets/img/forsaken/Zap_Friendly.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "zap-enemy",
+  "sides": [],
+  "files": [
+   "zap-enemy.png"
+  ],
+  "source": "assets/img/forsaken/Zap_Hostile.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "zone-ally",
+  "sides": [],
+  "files": [
+   "zone-ally.png"
+  ],
+  "source": "assets/img/forsaken/Zone_Friendly.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "zone-enemy",
+  "sides": [],
+  "files": [
+   "zone-enemy.png"
+  ],
+  "source": "assets/img/forsaken/Zone_Hostile.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "arrow",
+  "sides": [],
+  "files": [
+   "arrow.png"
+  ],
+  "source": "assets/img/forsaken/Arrow.png"
+ },
+ {
+  "theme": "map-markers",
+  "name": "disc-foe-horns",
+  "sides": [],
+  "files": [
+   "disc-foe-horns.png"
+  ],
+  "source": "blog-posts/shared/topdown.js (TD.player / TD.foe)"
+ },
+ {
+  "theme": "map-markers",
+  "name": "disc-foe-plain",
+  "sides": [],
+  "files": [
+   "disc-foe-plain.png"
+  ],
+  "source": "blog-posts/shared/topdown.js (TD.player / TD.foe)"
+ },
+ {
+  "theme": "map-markers",
+  "name": "disc-foe-purple",
+  "sides": [],
+  "files": [
+   "disc-foe-purple.png"
+  ],
+  "source": "blog-posts/shared/topdown.js (TD.player / TD.foe)"
+ },
+ {
+  "theme": "map-markers",
+  "name": "disc-foe-scope",
+  "sides": [],
+  "files": [
+   "disc-foe-scope.png"
+  ],
+  "source": "blog-posts/shared/topdown.js (TD.player / TD.foe)"
+ },
+ {
+  "theme": "map-markers",
+  "name": "disc-foe-shield",
+  "sides": [],
+  "files": [
+   "disc-foe-shield.png"
+  ],
+  "source": "blog-posts/shared/topdown.js (TD.player / TD.foe)"
+ },
+ {
+  "theme": "map-markers",
+  "name": "disc-foe-staff",
+  "sides": [],
+  "files": [
+   "disc-foe-staff.png"
+  ],
+  "source": "blog-posts/shared/topdown.js (TD.player / TD.foe)"
+ },
+ {
+  "theme": "map-markers",
+  "name": "disc-player-blue",
+  "sides": [],
+  "files": [
+   "disc-player-blue.png"
+  ],
+  "source": "blog-posts/shared/topdown.js (TD.player / TD.foe)"
+ },
+ {
+  "theme": "map-markers",
+  "name": "disc-player-gold",
+  "sides": [],
+  "files": [
+   "disc-player-gold.png"
+  ],
+  "source": "blog-posts/shared/topdown.js (TD.player / TD.foe)"
+ },
+ {
+  "theme": "map-markers",
+  "name": "disc-player-green",
+  "sides": [],
+  "files": [
+   "disc-player-green.png"
+  ],
+  "source": "blog-posts/shared/topdown.js (TD.player / TD.foe)"
+ },
+ {
+  "theme": "map-markers",
+  "name": "disc-player-purple",
+  "sides": [],
+  "files": [
+   "disc-player-purple.png"
+  ],
+  "source": "blog-posts/shared/topdown.js (TD.player / TD.foe)"
+ },
+ {
+  "theme": "map-markers",
+  "name": "blank-ring-enemy",
+  "sides": [
+   "enemy"
+  ],
+  "files": [
+   "blank-ring-enemy.png"
+  ],
+  "source": "ring only, drop it over any image"
+ },
+ {
+  "theme": "map-markers",
+  "name": "blank-ring-player",
+  "sides": [
+   "player"
+  ],
+  "files": [
+   "blank-ring-player.png"
+  ],
+  "source": "ring only, drop it over any image"
+ },
+ {
+  "theme": "map-markers",
+  "name": "blank-ring-ally",
+  "sides": [
+   "ally"
+  ],
+  "files": [
+   "blank-ring-ally.png"
+  ],
+  "source": "ring only, drop it over any image"
+ },
+ {
+  "theme": "map-markers",
+  "name": "blank-ring-ability",
+  "sides": [
+   "ability"
+  ],
+  "files": [
+   "blank-ring-ability.png"
+  ],
+  "source": "ring only, drop it over any image"
+ },
+ {
+  "theme": "map-markers",
+  "name": "blank-ring-object",
+  "sides": [
+   "object"
+  ],
+  "files": [
+   "blank-ring-object.png"
+  ],
+  "source": "ring only, drop it over any image"
+ },
+ {
+  "theme": "map-markers",
+  "name": "blank-ring-hazard",
+  "sides": [
+   "hazard"
+  ],
+  "files": [
+   "blank-ring-hazard.png"
+  ],
+  "source": "ring only, drop it over any image"
+ },
+ {
+  "theme": "map-markers",
+  "name": "blank-ring-role",
+  "sides": [
+   "role"
+  ],
+  "files": [
+   "blank-ring-role.png"
+  ],
+  "source": "ring only, drop it over any image"
+ }
+]
