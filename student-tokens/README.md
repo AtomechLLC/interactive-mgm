@@ -63,6 +63,20 @@ To put any image in a different ring, drop it under one of the `map-markers/blan
 
 `index.json` lists every file with its theme, its ring and the deck image it was made from.
 
+## Vector basics (`vector-basics/`)
+
+These are flat, simple shapes for sketching a fight, in the style of the Forsaken mockup sheet. Every one comes as an editable **SVG** in `vector-basics/svg/`, plus PNG exports in `vector-basics/256px/` and `vector-basics/512px/`. Browse them in `vector-basics/contact-sheet.png`.
+
+| Folder | What's inside |
+| --- | --- |
+| `tokens/` | P1 to P4 player discs, each with a facing triangle (labelled and unlabelled). Enemy, minion, elite and boss faces, an ally NPC, a neutral creature and a facing marker. |
+| `arrows/` | Move, dashed path, curve, rotate, two-way, charge, knockback, pull and leap, each in black, ally teal and enemy peach. |
+| `telegraphs/` | Circle, ring, half-circle, crescent, cone, wide cone, line, trapezoid, square, cross, burst, lightning, sweep arc, shield, projectile, puddle, target circle and safe spot, each in ally teal (`-ally`) and enemy peach (`-enemy`). |
+| `status/` | Round condition badges: stun, slow, haste, silence, interrupt, root, taunt, invulnerable, shield, heal, regen, poison, burn, freeze, bleed, vulnerable, blind, sleep, fear, confuse, disarm, knocked down, marked, damage up, damage down, cooldown, channeling, immune, cleanse and dead. |
+| `props/` | Sword, spear, dagger, axe, bow, staff, chain, rock, pillar, wall, crate, barrel, spikes, vortex, flag, chest, key, door, lever, pressure plate, potion, bomb, a "no" symbol, a crossed-out target and a question mark. |
+
+The SVGs open in Figma, Illustrator or Inkscape, and Miro accepts them directly, so you can recolour or resize them without losing sharpness. Stack a status badge on the corner of a token to show a condition.
+
 ## Using them in Miro
 
 1. Drag a whole theme folder (or a handful of files) onto the board.
@@ -72,4 +86,4 @@ To put any image in a different ring, drop it under one of the `map-markers/blan
 
 ## Credits
 
-Course material for educational use. Game art belongs to its owners: Nintendo (Mario, Zelda), The Pokémon Company, Blizzard Entertainment (World of Warcraft, StarCraft), Riot Games (League of Legends, Legends of Runeterra), Dodge Roll / Devolver (Enter the Gungeon) and the studios of the audited games. The `icons-*` glyphs are from [game-icons.net](https://game-icons.net) under CC BY 3.0, by Lorc, Delapouite, Carl Olsen, Caro Asercion, Cathelineau, DarkZaitzev, Faithtoken, Felbrigg, Quoting, Sbed, Skoll, Willdabeast and Zeromancer. The map markers are from the Forsaken Spine mockups and the course's own top-down drawing kit.
+Course material for educational use. Game art belongs to its owners: Nintendo (Mario, Zelda), The Pokémon Company, Blizzard Entertainment (World of Warcraft, StarCraft), Riot Games (League of Legends, Legends of Runeterra), Dodge Roll / Devolver (Enter the Gungeon) and the studios of the audited games. The `icons-*` glyphs are from [game-icons.net](https://game-icons.net) under CC BY 3.0, by Lorc, Delapouite, Carl Olsen, Caro Asercion, Cathelineau, DarkZaitzev, Faithtoken, Felbrigg, Quoting, Sbed, Skoll, Willdabeast and Zeromancer. The vector basics are drawn for this course after the Forsaken mockup sheet. The map markers are from the Forsaken Spine mockups and the course's own top-down drawing kit.
