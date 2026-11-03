@@ -1,0 +1,19 @@
+/* Reading a Pull: side panel bits on top of ../shared/comp.css */
+.mt-side .seg { margin: 2px 0 6px; align-items: center; }
+.mt-side .seg .btn { font-size: 14px; padding: 4px 9px; }
+.mt-side .seg .tip { margin: 0 4px 0 0; font-size: 14px; }
+.mt-side .row.wrap { margin: 6px 0 4px; gap: 6px; }
+.mt-side .row.wrap .btn { font-size: 15px; padding: 5px 10px; }
+.mt-side .btn.pl-dodge { background: #fde9b8; border-color: #e0a92d; }
+.pl-hist { display: grid; gap: 4px; max-height: 196px; overflow: auto; }
+.pl-hist div { display: grid; grid-template-columns: auto 1fr; gap: 0 8px; background: #fffaf0; border: 2px solid #cdbf9f; border-left: 6px solid #8ea2e6; border-radius: 8px; padding: 3px 8px; font-size: 13px; line-height: 1.25; }
+.pl-hist div b { font-family: var(--display); font-size: 14px; color: var(--ink); }
+.pl-hist div span { color: var(--muted); grid-row: span 2; }
+.pl-hist div i { font-style: normal; color: var(--ink); font-weight: 600; }
+.pl-hist div.cleared { border-left-color: #2fae63; }
+.pl-hist div.close { border-left-color: #e0a92d; }
+.pl-hist div.wipe { border-left-color: #e5322d; }
+.pl-hist div.timeout { border-left-color: #a77fe0; }
+.pl-hist .tip { font-size: 14px; margin: 0; }
+.slide .mt-out { font-size: 16px; margin-top: 8px; }
+.mt-side .src { font-size: 12px; }

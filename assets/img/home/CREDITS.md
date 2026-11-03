@@ -43,6 +43,7 @@ From [game-icons.net](https://game-icons.net), licensed [CC BY 3.0](https://crea
 | `pve-interactions--resistance.svg` | [shield-reflect](https://game-icons.net/1x1/lorc/shield-reflect.html) | Lorc |
 | `pve-interactions--enemy-counters.svg` | [turtle-shell](https://game-icons.net/1x1/lorc/turtle-shell.html) | Lorc |
 | `pve-interactions--counters-wow.svg` | [shield-disabled](https://game-icons.net/1x1/skoll/shield-disabled.html) | Skoll |
+| `pve-interactions--pulls.svg` | [frog](https://game-icons.net/1x1/lorc/frog.html) | Lorc |
 | `pve-interactions--escalation.svg` | [stairs-goal](https://game-icons.net/1x1/delapouite/stairs-goal.html) | Delapouite |
 | `pve-interactions--mutators.svg` | [dna2](https://game-icons.net/1x1/lorc/dna2.html) | Lorc |
 | `pve-interactions--gungeon-variants.svg` | [bullets](https://game-icons.net/1x1/lorc/bullets.html) | Lorc |
@@ -80,3 +81,5 @@ From [game-icons.net](https://game-icons.net), licensed [CC BY 3.0](https://crea
 | `blog-posts--dnd-advantage.svg` | [dice-twenty-faces-twenty](https://game-icons.net/1x1/delapouite/dice-twenty-faces-twenty.html) | Delapouite |
 | `blog-posts--counter-strafe.svg` | [crosshair](https://game-icons.net/1x1/delapouite/crosshair.html) | Delapouite |
 | `blog-posts--gacha-pity.svg` | [locked-chest](https://game-icons.net/1x1/lorc/locked-chest.html) | Lorc |
+| `student-tokens.svg` | [pin](https://game-icons.net/1x1/delapouite/pin.html) | Delapouite |
+| `blog--ogre-table.svg` | [ogre](https://game-icons.net/1x1/delapouite/ogre.html) | Delapouite |

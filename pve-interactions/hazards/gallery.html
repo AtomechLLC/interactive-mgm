@@ -42,7 +42,7 @@
 <div class="band"><header>
   <div class="kicker">MGM C4 M5 · deck slides 186 to 199</div>
   <h1>Hazard <span>Patterns</span></h1>
-  <p>Slide GIFs for the 14 hazard movement patterns. <a href="index.html?p=1" style="color:var(--gold)">Open the interactive version</a> or go back to the <a href="../index.html" style="color:var(--gold)">module home</a>.</p>
+  <p>Slide GIFs for the 14 hazard movement patterns. The last two are hybrids: Spiral stacks Tethered on Rotation, and Crushing stacks two Across hazards from opposite walls. <a href="index.html?p=1" style="color:var(--gold)">Open the interactive version</a> or go back to the <a href="../index.html" style="color:var(--gold)">module home</a>.</p>
 </header></div>
 
 <section>
@@ -92,12 +92,14 @@
     'Spinning blade that expands and retracts (Zelda 3) · repulsive whirlwind · growing plant',
     'Logs that slam together · sci-fi crushing door · crystal spikes',
   ];
+  // hybrid patterns: [pattern name] -> the two base patterns it stacks
+  const HYBRID = { Spiral: 'Hybrid of Tethered + Rotation. ', Crushing: 'Hybrid of Across + Across. ' };
   document.getElementById('themes').innerHTML = GIFS.map(([s, f, name], i) =>
     `<figure><a href="../gifs/${f}-themes.gif"><img src="../gifs/${f}-themes.gif" alt="${name} in three themes" loading="lazy"></a>` +
-    `<figcaption><b>Pattern ${i + 1}: ${name}</b>${THEMES[i]}. Deck slide ${s}.</figcaption></figure>`).join('');
+    `<figcaption><b>Pattern ${i + 1}: ${name}</b>${HYBRID[name] || ''}${THEMES[i]}. Deck slide ${s}.</figcaption></figure>`).join('');
   document.getElementById('gifs').innerHTML = GIFS.map(([s, f, name, ex], i) =>
     `<figure><a href="../gifs/${f}.gif"><img src="../gifs/${f}.gif" alt="${name}: ${ex}" loading="lazy"></a>` +
-    `<figcaption><b>Pattern ${i + 1}: ${name}</b>${ex}. Deck slide ${s}.</figcaption></figure>`).join('');
+    `<figcaption><b>Pattern ${i + 1}: ${name}</b>${HYBRID[name] || ''}${ex}. Deck slide ${s}.</figcaption></figure>`).join('');
 </script>
 </body>
 </html>

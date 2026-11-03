@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unavoidable Calamity, a Delve · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="../shared/comp.css">
+<link rel="stylesheet" href="delve.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · PvE Interactions · Unavoidable Calamity (a delve)', home: '../index.html', audio: null, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1: title and credits -->
+<section class="slide center" data-title="Unavoidable Calamity" data-demo="dvtitle">
+  <div class="kicker rise">case study · a World of Warcraft delve concept</div>
+  <h1 class="rise">Unavoidable <span class="accent">Calamity</span></h1>
+  <div class="rule rise" style="margin:20px auto"></div>
+  <p class="dv-by rise">Designed by <b>Alonso R Baselli</b>, <b>Diogo Guerreiro</b> and <b>Pavle Sivakov</b></p>
+  <div class="dv-icons rise"></div>
+  <p class="lede rise dv-premise">Void cultists smuggled corrupted wine through a cavern under Silvermoon. The caged animals drank it first. Twenty-three pulls, an elite, a boss, and a barrel to break in every room: every pull built so that “DPS them down” is not the answer.</p>
+  <p class="dv-credit rise">Their enemies, encounters, solutions and map, played here as written. Icons: World of Warcraft (Blizzard Entertainment). Numbers are this page’s tuning.</p>
+</section>
+
+<!-- 2: the rules they set themselves -->
+<section class="slide" data-title="Their Rules" data-demo="none">
+  <div class="kicker">preproduction framework</div>
+  <h2 class="sm">The Rules They <span class="accent">Set Themselves</span></h2>
+  <div class="dv-rules">
+    <div class="dv-col">
+      <div class="rc rc-goal"><h4><img src="img/achievement_boss_xt002deconstructor_01.jpg" alt="">Goals</h4><ol class="rc-num g-goals"></ol></div>
+      <div class="rc rc-guide"><h4><img src="img/spell_holy_dispelmagic.jpg" alt="">Guidelines</h4><ul class="rc-check g-guide"></ul></div>
+    </div>
+    <div class="dv-col">
+      <div class="rc rc-anti"><h4><img src="img/spell_shadow_antishadow.jpg" alt="">Anti-goals</h4><ul class="rc-x g-anti"></ul></div>
+      <div class="rc rc-pillar"><h4><img src="img/inv_misc_volatileshadow.jpg" alt="">Design pillars</h4><ul class="rc-ico g-pillars"></ul></div>
+    </div>
+    <div class="dv-col">
+      <div class="rc rc-live"><h4><img src="img/ability_rogue_ambush.jpg" alt="">Rules from studying live delves</h4><ul class="rc-pips g-mobs"></ul><ul class="rc-dot g-delve"></ul></div>
+      <div class="rc rc-obj"><h4><img src="img/inv_drink_05.jpg" alt="">Objectives</h4><ul class="rc-objs g-obj"></ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3: the roster -->
+<section class="slide" data-title="The Roster" data-demo="roster">
+  <div class="kicker">every non-elite has two abilities, every ability teaches one thing</div>
+  <h2 class="sm">The <span class="accent">Roster</span></h2>
+  <div class="ro-wrap">
+    <div class="ro-grid"></div>
+    <div class="ro-detail"></div>
+  </div>
+</section>
+
+<!-- 4: the delve -->
+<section class="slide" data-title="Play the Delve" data-demo="delve">
+  <div class="kicker">23 pulls · 13 barrels · 4 patrols · 1 elite · 1 boss</div>
+  <h2 class="sm">Play the <span class="accent">Delve</span></h2>
+  <div class="dv-wrap">
+    <canvas class="demo dv-canvas" width="880" height="704"></canvas>
+    <div class="dv-side"></div>
+  </div>
+</section>
+
+<!-- 5: every pull, two ways -->
+<section class="slide" data-title="Solution vs DPS" data-demo="compare">
+  <div class="kicker">“There should be a straightforward solution to the mob groups other than DPS them down”</div>
+  <h2 class="sm">Every Pull, <span class="accent">Two Ways</span></h2>
+  <div class="cmp-wrap">
+    <canvas class="demo cmp-canvas" width="900" height="680"></canvas>
+    <div class="mt-side">
+      <h4>Player</h4>
+      <div class="seg cmp-role"><button class="btn on" data-r="melee">Warrior (melee)</button><button class="btn" data-r="ranged">Mage (ranged)</button></div>
+      <p class="mt-out cmp-out"></p>
+      <p class="src">Each bar is one simulated fight from <code>sim.js</code>. The solution player follows the board’s kill order, interrupts and stuns the casts the board names, dispels, dodges telegraphs and uses the Void Collector. The DPS player hits the nearest enemy and ignores every mechanic. Both have the same health, damage and potions.</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="data.js"></script>
+<script src="sim.js"></script>
+<script src="delve.js"></script>
+<script>
+  // slide 2: the board's rules, straight from data.js
+  (function () {
+    const R = DELVE_DATA.RULES, li = a => a.map(x => '<li>' + x + '</li>').join('');
+    const q = c => document.querySelector(c), img = f => '<img src="img/' + f + '.jpg" alt="">';
+    q('.g-goals').innerHTML = li(R.goals); q('.g-guide').innerHTML = li(R.guidelines); q('.g-anti').innerHTML = li(R.anti);
+    const PIL = ['ability_stealth', 'spell_priest_voidshift', 'inv_drink_05', 'ability_hunter_pet_cat', 'spell_shadow_shadowfury'];
+    q('.g-pillars').innerHTML = R.pillars.map((x, i) => '<li>' + img(PIL[i]) + '<span>' + x + '</span></li>').join('');
+    const TIER = ['Tiny', 'Non-elite', 'Elite'];
+    q('.g-mobs').innerHTML = R.mobs.map((x, i) => '<li><span class="pips" title="' + TIER[i] + '">' + '<i></i>'.repeat(i + 1) + '</span><span>' + x + '</span></li>').join('');
+    q('.g-delve').innerHTML = li(R.delve);
+    const OI = { primary: 'inv_drink_05', secondary: 'inv_misc_volatileshadow', boss: 'achievement_boss_xt002deconstructor_01' };
+    q('.g-obj').innerHTML = DELVE_DATA.OBJECTIVES.map(o => '<li class="o-' + o.k + '">' + img(OI[o.k]) + '<div><b>' + o.name + '</b><span>' + o.text + '</span></div></li>').join('');
+  })();
+</script>
+</body>
+</html>

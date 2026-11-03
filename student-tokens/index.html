@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Student Tokens · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* same theme as the course home page */
+  :root { --navy: #152044; --ink: #262c6a; --muted: #5d618c; --gold: #ffb951; --gold-ink: #9a5a06; --line: #cdbf9f; --card: rgba(255, 252, 244, .82); }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; background: #ede7e7 url("../assets/img/theme/paper.jpg") center / cover fixed; color: var(--ink); font-family: Jost, system-ui, sans-serif; border: 4px solid var(--gold); }
+  .band { background: var(--navy); color: #fff; clip-path: polygon(0 0, 100% 0, 100% 78%, 0 100%); padding: 0 0 70px; }
+  header { padding: 40px 24px 0; max-width: 1180px; margin: 0 auto; }
+  header a.home { color: var(--gold); text-decoration: none; font-weight: 600; font-size: 15px; }
+  .kicker { color: var(--gold); font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; margin-top: 18px; }
+  h1 { font-family: Montserrat, sans-serif; font-weight: 800; font-size: clamp(32px, 5.5vw, 60px); margin: 8px 0 10px; }
+  h1 span { color: var(--gold); }
+  header p { color: #d6dbef; font-size: 18px; max-width: 760px; margin: 0; }
+  main { max-width: 1180px; margin: 0 auto; padding: 24px 24px 80px; }
+  h2 { font-family: Montserrat, sans-serif; font-weight: 800; font-size: 26px; margin: 34px 0 6px; }
+  .lead { color: var(--muted); font-size: 16px; margin: 0 0 14px; max-width: 820px; }
+  .downloads { display: flex; flex-wrap: wrap; gap: 10px; margin: 6px 0 4px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 10px; background: var(--navy); color: #fff; text-decoration: none; font-weight: 600; font-size: 15px; border: 0; cursor: pointer; font-family: inherit; }
+  .btn.alt { background: var(--card); color: var(--ink); border: 1px solid var(--line); }
+  .btn:hover { filter: brightness(1.12); }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 14px 0 0; font-size: 14px; color: var(--muted); }
+  .legend i { display: inline-block; width: 14px; height: 14px; border-radius: 50%; border: 3px solid; vertical-align: -2px; margin-right: 6px; }
+  .tools { position: sticky; top: 0; z-index: 2; background: rgba(237, 231, 231, .94); backdrop-filter: blur(4px); padding: 10px 0; margin: 10px 0 0; border-bottom: 1px solid var(--line); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { padding: 5px 11px; border-radius: 999px; background: var(--card); border: 1px solid var(--line); color: var(--ink); font: 500 14px Jost, sans-serif; cursor: pointer; }
+  .chip[aria-pressed="true"] { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 8px; font-size: 14px; color: var(--muted); }
+  .row input[type=search] { font: 15px Jost, sans-serif; padding: 6px 10px; border-radius: 8px; border: 1px solid var(--line); background: #fffdf8; min-width: 200px; }
+  .seg button { font: 500 14px Jost, sans-serif; padding: 5px 10px; border: 1px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer; }
+  .seg button:first-child { border-radius: 8px 0 0 8px; } .seg button:last-child { border-radius: 0 8px 8px 0; }
+  .seg button[aria-pressed="true"] { background: var(--navy); color: #fff; border-color: var(--navy); }
+  h3 { font-family: Montserrat, sans-serif; font-weight: 700; font-size: 17px; margin: 22px 0 8px; }
+  h3 small { color: var(--muted); font: 500 14px Jost, sans-serif; margin-left: 6px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 8px; }
+  a.tok { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 4px 6px; border-radius: 10px; background: var(--card); border: 1px solid transparent; color: inherit; text-decoration: none; }
+  a.tok:hover { border-color: var(--navy); }
+  a.tok img { width: 72px; height: 72px; object-fit: contain; }
+  a.tok span { font-size: 11px; color: var(--muted); text-align: center; line-height: 1.2; word-break: break-word; }
+  .empty { color: var(--muted); font-style: italic; }
+  @media (max-width: 700px) { .tools { position: static; } }
+  footer { max-width: 1180px; margin: 0 auto; padding: 0 24px 40px; color: var(--muted); font-size: 13px; }
+  footer a { color: var(--gold-ink); }
+</style>
+</head>
+<body>
+<div class="band"><header>
+  <a class="home" href="../index.html">← All interactive visuals</a>
+  <div class="kicker">For your own encounters</div>
+  <h1>Student <span>Tokens</span></h1>
+  <p>Round battle-map tokens and simple shapes for laying out fights in Miro, FigJam or slides. Click any token to download it, or grab a whole set below.</p>
+</header></div>
+<main>
+  <h2>Vector basics</h2>
+  <p class="lead">Flat, simple shapes for sketching a fight: player and enemy discs, arrows, telegraphs in ally teal and enemy peach, status badges and props. Each one is an editable SVG and also comes as a PNG.</p>
+  <div class="downloads">
+    <a class="btn" href="vector-basics.zip" download>⬇ Download all vector basics (.zip, 3.6 MB)</a>
+    <a class="btn alt" href="vector-basics/contact-sheet.png" target="_blank">Contact sheet</a>
+  </div>
+
+  <h2>From the decks</h2>
+  <p class="lead">603 sprites, portraits, spell icons and glyphs from the course interactives, each as a plain cut-out and a ringed token. Characters that could be on either side come with both a red and a purple ring.</p>
+  <div class="downloads">
+    <a class="btn alt" href="contact-sheet-all.png" target="_blank">Contact sheet (everything)</a>
+    <a class="btn alt" href="https://github.com/AtomechLLC/interactive-mgm/tree/main/student-tokens" target="_blank">Browse every file on GitHub</a>
+  </div>
+  <div class="legend">
+    <span><i style="border-color:#ef5a55"></i>Enemy</span><span><i style="border-color:#8b1cf0"></i>Player</span><span><i style="border-color:#2fae63"></i>Ally</span>
+    <span><i style="border-color:#3d8bff"></i>Ability</span><span><i style="border-color:#f08c1a"></i>Hazard</span><span><i style="border-color:#7b8496"></i>Object</span><span><i style="border-color:#c8aa6e"></i>Role</span>
+  </div>
+
+  <div class="tools">
+    <div class="chips" id="chips"></div>
+    <div class="row">
+      <input type="search" id="q" placeholder="Search, e.g. goomba, stun, cone" aria-label="Search tokens">
+      <span class="seg" id="view"><button data-v="token" aria-pressed="true">Ringed tokens</button><button data-v="plain" aria-pressed="false">Plain cut-outs</button></span>
+      <span id="count"></span>
+    </div>
+  </div>
+  <div id="gallery"></div>
+</main>
+<footer>Course material for educational use. Game art belongs to its owners: Nintendo, The Pokémon Company, Blizzard Entertainment, Riot Games, Dodge Roll / Devolver and the studios of the audited games. Glyphs from <a href="https://game-icons.net">game-icons.net</a> under <a href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>. Full credits in <a href="https://github.com/AtomechLLC/interactive-mgm/blob/main/student-tokens/README.md">the README</a>.</footer>
+<script>
+(async () => {
+  const nice = s => s.replace(/^icons-/, '').replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()).replace('Wow', 'WoW').replace(/ (And|Of) /g, m => m.toLowerCase()).replace('Pokemon', 'Pokémon').replace('Starcraft', 'StarCraft');
+  const [deck, vec] = await Promise.all([fetch('index.json').then(r => r.json()), fetch('vector-basics/index.json').then(r => r.json())]);
+  // one list of groups: vector basics first, then the deck themes in index order
+  const groups = [];
+  const add = (key, label, items) => groups.push({ key, label, items });
+  ['tokens', 'arrows', 'telegraphs', 'status', 'props'].forEach(g =>
+    add('v-' + g, 'Vector ' + g, vec.filter(v => v.group === g).map(v => ({ name: v.name, vector: true, png: `vector-basics/256px/${g}/${v.name}.png`, svg: `vector-basics/svg/${g}/${v.name}.svg` }))));
+  [...new Set(deck.map(d => d.theme))].forEach(t =>
+    add(t, nice(t), deck.filter(d => d.theme === t).map(d => ({ name: d.name, files: d.files, theme: t }))));
+
+  let active = 'all', view = 'token', q = '';
+  const chips = document.getElementById('chips');
+  const mk = (key, label) => { const b = document.createElement('button'); b.className = 'chip'; b.textContent = label; b.dataset.k = key; b.onclick = () => { active = key; draw(); }; chips.append(b); };
+  mk('all', 'All'); mk('vector', 'All vector basics'); groups.forEach(g => mk(g.key, g.label));
+  document.querySelectorAll('#view button').forEach(b => b.onclick = () => { view = b.dataset.v; draw(); });
+  document.getElementById('q').oninput = e => { q = e.target.value.trim().toLowerCase(); draw(); };
+
+  function tile(it) {
+    let src, dl;
+    if (it.vector) { src = it.png; dl = it.svg; }
+    else {
+      const tok = it.files.find(f => f.includes('-token')) || it.files[0];
+      const f = view === 'plain' ? it.files[0] : tok;
+      src = dl = `256px/${it.theme}/${f}`;
+    }
+    const a = document.createElement('a'); a.className = 'tok'; a.href = dl; a.download = ''; a.title = it.vector ? it.name + ' (SVG)' : it.name;
+    a.innerHTML = `<img loading="lazy" alt="" src="${src}"><span>${it.name}</span>`; return a;
+  }
+  function draw() {
+    chips.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', c.dataset.k === active));
+    document.querySelectorAll('#view button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === view));
+    const g = document.getElementById('gallery'); g.innerHTML = ''; let n = 0;
+    groups.filter(x => active === 'all' || x.key === active || (active === 'vector' && x.key.startsWith('v-'))).forEach(x => {
+      const items = x.items.filter(it => !q || it.name.includes(q) || x.label.toLowerCase().includes(q));
+      if (!items.length) return;
+      n += items.length;
+      const h = document.createElement('h3'); h.innerHTML = `${x.label}<small>${items.length}</small>`; g.append(h);
+      const grid = document.createElement('div'); grid.className = 'grid'; items.forEach(it => grid.append(tile(it))); g.append(grid);
+    });
+    if (!n) g.innerHTML = '<p class="empty">No tokens match that search.</p>';
+    document.getElementById('count').textContent = `${n} shown · vector basics download as SVG, the rest as PNG`;
+  }
+  draw();
+})();
+</script>
+</body>
+</html>
