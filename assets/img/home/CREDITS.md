@@ -68,3 +68,4 @@ From [game-icons.net](https://game-icons.net), licensed [CC BY 3.0](https://crea
 | `composition--systems.svg` | [gears](https://game-icons.net/1x1/lorc/gears.html) | Lorc |
 | `composition--counter-circle.svg` | [linked-rings](https://game-icons.net/1x1/lorc/linked-rings.html) | Lorc |
 | `composition--whats-next.svg` | [direction-signs](https://game-icons.net/1x1/delapouite/direction-signs.html) | Delapouite |
+| `student-tokens.svg` | [pin](https://game-icons.net/1x1/delapouite/pin.html) | Delapouite |
