@@ -264,8 +264,7 @@
     box.innerHTML = KIT.map(k => `<label class="chk" style="margin:4px 0"><input type="checkbox" data-k="${k.id}"> ${k.name} <span style="font-weight:400;color:var(--muted);font-size:14px">${k.from}</span></label>`).join('');
     const sync = on => $$(box, 'input').forEach(i => { i.checked = on.has(i.dataset.k); });
     $$(box, 'input').forEach(i => i.onchange = () => { if (st.tour) { st.tour = false; tourBtn.classList.remove('on'); st.on = new Set(MTOUR.filter((k, j) => st.t >= j * MSTEP)); } i.checked ? st.on.add(i.dataset.k) : st.on.delete(i.dataset.k); st.t = 99; });
-    // with the guard ticked the walk-through skips to its guard part (the last three steps)
-    tourBtn.onclick = () => { const g = guardEl.checked; st.tour = true; st.t = g ? GUARD_FROM * ACT : 0; tourBtn.classList.add('on'); };
+    tourBtn.onclick = () => { st.tour = true; st.t = 0; tourBtn.classList.add('on'); };
     function render() {
       const t = st.t;
       const kit = st.tour ? KIT.filter(k => MTOUR.indexOf(k.id) * MSTEP <= t).map(k => ({ ...k, at: MTOUR.indexOf(k.id) * MSTEP })) : KIT.filter(k => st.on.has(k.id)).map(k => ({ ...k, at: -1 }));
