@@ -8,12 +8,44 @@
 .slide .lede.dv-premise { font-size: 24px; max-width: 1150px; margin: 14px auto 0; text-align: center; }
 .slide .dv-credit { font-size: 16px; text-align: center; color: var(--muted); margin: 14px auto 0; max-width: 1000px; }
 
-/* 2: rules */
-.dv-rules { display: grid; grid-template-columns: repeat(3, 1fr); gap: 34px; margin-top: 4px; }
-.dv-col h4 { font-family: var(--display); font-size: 16px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 10px 0 6px; }
-.dv-col ul { margin: 0 0 8px; padding-left: 22px; }
-.slide .dv-col li { font-size: 19px; line-height: 1.38; color: var(--ink); margin-bottom: 5px; }
-.dv-col .g-anti li::marker { content: "✗  "; color: #c0201a; }
+/* 2: rules, one card per section */
+.dv-rules { display: grid; grid-template-columns: 1fr 1fr 1.08fr; gap: 22px; margin-top: 0; align-items: stretch; }
+.dv-col { display: flex; flex-direction: column; gap: 18px; }
+.rc { --c: #262c6a; --t: #eef0fb; background: #fffaf0; border: 2px solid #cdbf9f; border-top: 6px solid var(--c); border-radius: 14px; padding: 12px 18px 14px; box-shadow: 0 4px 12px rgba(60,40,10,.12); flex: 1 1 auto; }
+.rc h4 { display: flex; align-items: center; gap: 10px; font-family: var(--display); font-size: 17px; text-transform: uppercase; letter-spacing: .07em; color: var(--c); margin: 0 0 10px; }
+.rc h4 img { width: 34px; height: 34px; border-radius: 8px; border: 2px solid var(--c); }
+.rc { display: flex; flex-direction: column; }
+.rc ul, .rc ol { list-style: none; margin: 0; padding: 0; }
+.rc-num, .rc-check { flex: 1; display: flex; flex-direction: column; justify-content: space-evenly; }
+.slide .rc-num li, .slide .rc-check li { font-size: 19px; margin: 0; }
+.slide .rc li { font-size: 18px; line-height: 1.32; color: #1d2240; margin: 0 0 8px; display: flex; gap: 10px; align-items: flex-start; }
+.slide .rc li:last-child { margin-bottom: 0; }
+.rc-goal { --c: #262c6a; } .rc-guide { --c: #1f7a46; } .rc-anti { --c: #b3261e; } .rc-pillar { --c: #6b3fa8; } .rc-live { --c: #a8740c; } .rc-obj { --c: #c0306a; }
+.rc-anti { background: #fff4f0; }
+/* goals: numbered discs */
+.rc-num { counter-reset: g; }
+.rc-num li::before { counter-increment: g; content: counter(g); flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--c); color: #fff; font: 700 14px/26px var(--display); text-align: center; margin-top: 1px; }
+/* guidelines: check marks; anti-goals: crosses */
+.rc-check li::before, .rc-x li::before { flex: none; width: 24px; height: 24px; border-radius: 6px; color: #fff; font: 800 15px/24px Jost, sans-serif; text-align: center; margin-top: 1px; }
+.rc-check li::before { content: "\2713"; background: var(--c); }
+.rc-x li::before { content: "\2715"; background: var(--c); }
+/* pillars: icon chips */
+.rc-ico { flex: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 7px; }
+.slide .rc-ico li { align-items: center; margin: 0; background: #f3ecfb; border-radius: 10px; padding: 7px 10px 7px 7px; font-weight: 600; }
+.rc-ico img { width: 30px; height: 30px; border-radius: 7px; border: 2px solid var(--c); }
+/* live-delve rules: ability pips per mob tier, then plain dots */
+.rc-pips { margin-bottom: 10px !important; padding-bottom: 10px !important; border-bottom: 2px dashed #e2d6b8 !important; }
+.rc-pips .pips { flex: none; display: flex; gap: 4px; width: 46px; padding: 6px 0 0 3px; }
+.rc-pips .pips i { width: 10px; height: 10px; border-radius: 3px; background: var(--c); transform: rotate(45deg); }
+.rc-dot li::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--c); margin: 9px 34px 0 4px; }
+/* objectives: labelled rows */
+.rc-objs { display: grid; gap: 8px; }
+.slide .rc-objs li { margin: 0; align-items: center; background: #fff; border: 2px solid #ead9c0; border-left: 6px solid var(--oc, var(--c)); border-radius: 10px; padding: 6px 10px; }
+.rc-objs img { width: 38px; height: 38px; border-radius: 8px; border: 2px solid var(--oc, var(--c)); flex: none; }
+.rc-objs div { display: flex; flex-direction: column; }
+.rc-objs b { font-family: var(--display); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--oc, var(--c)); }
+.rc-objs span { font-size: 17px; line-height: 1.3; }
+.rc-objs .o-primary { --oc: #c0306a; } .rc-objs .o-secondary { --oc: #6b3fa8; } .rc-objs .o-boss { --oc: #a8740c; }
 
 /* 3: roster */
 .ro-wrap { display: grid; grid-template-columns: 640px 1fr; gap: 26px; }

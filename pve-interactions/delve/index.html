@@ -34,9 +34,18 @@
   <div class="kicker">preproduction framework</div>
   <h2 class="sm">The Rules They <span class="accent">Set Themselves</span></h2>
   <div class="dv-rules">
-    <div class="dv-col"><h4>Goals</h4><ul class="g-goals"></ul><h4>Guidelines</h4><ul class="g-guide"></ul></div>
-    <div class="dv-col"><h4>Anti-goals</h4><ul class="g-anti"></ul><h4>Design pillars</h4><ul class="g-pillars"></ul></div>
-    <div class="dv-col"><h4>Rules from studying live delves</h4><ul class="g-mobs"></ul><ul class="g-delve"></ul><h4>Objectives</h4><ul class="g-obj"></ul></div>
+    <div class="dv-col">
+      <div class="rc rc-goal"><h4><img src="img/achievement_boss_xt002deconstructor_01.jpg" alt="">Goals</h4><ol class="rc-num g-goals"></ol></div>
+      <div class="rc rc-guide"><h4><img src="img/spell_holy_dispelmagic.jpg" alt="">Guidelines</h4><ul class="rc-check g-guide"></ul></div>
+    </div>
+    <div class="dv-col">
+      <div class="rc rc-anti"><h4><img src="img/spell_shadow_antishadow.jpg" alt="">Anti-goals</h4><ul class="rc-x g-anti"></ul></div>
+      <div class="rc rc-pillar"><h4><img src="img/inv_misc_volatileshadow.jpg" alt="">Design pillars</h4><ul class="rc-ico g-pillars"></ul></div>
+    </div>
+    <div class="dv-col">
+      <div class="rc rc-live"><h4><img src="img/ability_rogue_ambush.jpg" alt="">Rules from studying live delves</h4><ul class="rc-pips g-mobs"></ul><ul class="rc-dot g-delve"></ul></div>
+      <div class="rc rc-obj"><h4><img src="img/inv_drink_05.jpg" alt="">Objectives</h4><ul class="rc-objs g-obj"></ul></div>
+    </div>
   </div>
 </section>
 
@@ -85,10 +94,15 @@
   // slide 2: the board's rules, straight from data.js
   (function () {
     const R = DELVE_DATA.RULES, li = a => a.map(x => '<li>' + x + '</li>').join('');
-    const q = c => document.querySelector(c);
+    const q = c => document.querySelector(c), img = f => '<img src="img/' + f + '.jpg" alt="">';
     q('.g-goals').innerHTML = li(R.goals); q('.g-guide').innerHTML = li(R.guidelines); q('.g-anti').innerHTML = li(R.anti);
-    q('.g-pillars').innerHTML = li(R.pillars); q('.g-mobs').innerHTML = li(R.mobs); q('.g-delve').innerHTML = li(R.delve);
-    q('.g-obj').innerHTML = li(DELVE_DATA.OBJECTIVES.map(o => '<b>' + o.name + ':</b> ' + o.text));
+    const PIL = ['ability_stealth', 'spell_priest_voidshift', 'inv_drink_05', 'ability_hunter_pet_cat', 'spell_shadow_shadowfury'];
+    q('.g-pillars').innerHTML = R.pillars.map((x, i) => '<li>' + img(PIL[i]) + '<span>' + x + '</span></li>').join('');
+    const TIER = ['Tiny', 'Non-elite', 'Elite'];
+    q('.g-mobs').innerHTML = R.mobs.map((x, i) => '<li><span class="pips" title="' + TIER[i] + '">' + '<i></i>'.repeat(i + 1) + '</span><span>' + x + '</span></li>').join('');
+    q('.g-delve').innerHTML = li(R.delve);
+    const OI = { primary: 'inv_drink_05', secondary: 'inv_misc_volatileshadow', boss: 'achievement_boss_xt002deconstructor_01' };
+    q('.g-obj').innerHTML = DELVE_DATA.OBJECTIVES.map(o => '<li class="o-' + o.k + '">' + img(OI[o.k]) + '<div><b>' + o.name + '</b><span>' + o.text + '</span></div></li>').join('');
   })();
 </script>
 </body>
