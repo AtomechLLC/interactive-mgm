@@ -892,6 +892,12 @@
     const pk = [[0, [405, 335]], [1.15, [650, 335], 'lin'], [1.8, [880, 335]], [3.6, [880, 335]], [3.6, [-40, 335]], [4.4, [150, 335]], [4.75, [150, 335]], [6, [405, 335], 'lin']];
     P.push({ name: 'Spiral', label: 'Spiral', slide: 198, T, file: 'p13-spiral',
       caption: 'A spinning blade that expands and retracts (Zelda 3)',
+      // hybrid: built by stacking two base patterns, shown as a small equation in the header.
+      // Each part is [base pattern name, its schematic driven by this pattern's clock, mirror?], so the tiles move in step.
+      hybrid: { parts: [
+        ['Tethered', t => { const [x, y] = G(1.5, 1.5); X.fillStyle = C.navy; X.beginPath(); X.arc(x, y, 9, 0, TAU); X.fill(); sArrow(line([1.5, 1.5], [2.75, .25]), (Lk(t) - 50) / 170); sPlayer(); }],
+        ['Rotation', t => P[8].schem(t * 2 / 3)],
+      ], note: ['A Tethered reach that grows and shrinks,', 'swept around the room by a Rotation'] },
       themes: [{ tag: 'Castle', env: 'dungeon' }, { tag: 'Desert', env: 'desert', caption: 'A repulsive whirlwind' }, { tag: 'Jungle', env: 'jungle', caption: 'A growing plant that expands over time' }],
       scene(t, v = 0) {
         floor();
@@ -933,6 +939,10 @@
     const pk = [[0, [-40, 220]], [1.1, [300, 220]], [3.05, [300, 220]], [3.6, [600, 220], 'lin'], [4.5, [880, 220]], [T, [880, 220]]];
     P.push({ name: 'Crushing', label: 'Crushing', slide: 199, T, file: 'p14-crushing',
       caption: 'Two logs that slam together',
+      hybrid: { parts: [
+        ['Across', t => { sArrow(line([.2, 1.5], [2.75, 1.5]), ck(t)); sPlayer(); }],
+        ['Across', t => { sArrow(line([.2, 1.5], [2.75, 1.5]), ck(t)); sPlayer(); }, true],
+      ], note: ['Two Across hazards from opposite walls,', 'timed to meet in the middle'] },
       themes: [{ tag: 'Temple', env: 'dungeon' }, { tag: 'Sci-fi', env: 'scifi', caption: 'A door that crushes close' }, { tag: 'Ice cave', env: 'ice', caption: 'Crystalline spikes growing out of two surfaces' }],
       scene(t, v = 0) {
         const hit = [1.5, 4.15].map(h => t - h).find(a => a >= 0 && a < .25);
@@ -974,6 +984,35 @@
     });
   }
 
+  // a pattern's schematic, shrunk to a size x size tile at (x, y); mirror flips it left to right
+  function miniSchem(schem, t, x, y, size, mirror) {
+    X.save(); X.translate(x, y); const s = size / (3 * CELL); X.scale(s, s);
+    if (mirror) { X.translate(3 * CELL, 0); X.scale(-1, 1); }
+    X.translate(-GX, -GY);
+    X.fillStyle = '#fff'; X.fillRect(GX, GY, 3 * CELL, 3 * CELL);
+    X.beginPath(); X.rect(GX, GY, 3 * CELL, 3 * CELL); X.clip();
+    X.save(); schem(t); X.restore();
+    X.strokeStyle = '#111'; X.lineWidth = 5; X.beginPath();
+    for (let i = 0; i <= 3; i++) { X.moveTo(GX + i * CELL, GY); X.lineTo(GX + i * CELL, GY + 3 * CELL); X.moveTo(GX, GY + i * CELL); X.lineTo(GX + 3 * CELL, GY + i * CELL); }
+    X.stroke(); X.restore();
+  }
+  // hybrid patterns: "base A + base B = this pattern", top right of the slide, each tile animating its own schematic
+  function hybridStrip(p, t) {
+    const h = p.hybrid, S = 84, R = 1240, top = 46, gap = 56;
+    const tiles = [...h.parts, [p.name, p.schem, false]];
+    X.textAlign = 'right'; X.fillStyle = C.goldInk; X.font = '600 14px Jost'; X.letterSpacing = '2px';
+    X.fillText('HYBRID: TWO BASE PATTERNS STACKED', R, 30); X.letterSpacing = '0px';
+    X.textAlign = 'center';
+    tiles.forEach(([name, schem, m], i) => {
+      const x = R - S - (2 - i) * (S + gap);
+      X.save(); X.shadowColor = 'rgba(60,40,10,.25)'; X.shadowBlur = 8; X.shadowOffsetY = 2; X.fillStyle = '#fff'; X.fillRect(x - 4, top - 4, S + 8, S + 8); X.restore();
+      if (i === 2) { X.strokeStyle = C.gold; X.lineWidth = 4; X.strokeRect(x - 4, top - 4, S + 8, S + 8); }
+      miniSchem(schem, t, x, top, S, m);
+      X.fillStyle = i === 2 ? C.ink : '#5d618c'; X.font = (i === 2 ? '700' : '500') + ' 16px Jost'; X.fillText(name, x + S / 2, top + S + 24);
+      if (i < 2) { X.fillStyle = C.ink; X.font = '700 34px Montserrat'; X.fillText(i ? '=' : '+', x + S + gap / 2, top + S / 2 + 12); }
+    });
+  }
+
   // ---------- frame ----------
   const cv = document.getElementById('c'); X = cv.getContext('2d');
   const qs = new URLSearchParams(location.search);
@@ -1001,7 +1040,7 @@
     X.fillStyle = C.blue; X.beginPath(); X.moveTo(0, 0); X.lineTo(612, 0); X.lineTo(560, 134); X.lineTo(0, 134); X.fill();
     X.fillStyle = C.navy; X.beginPath(); X.moveTo(0, 0); X.lineTo(598, 0); X.lineTo(552, 120); X.lineTo(0, 120); X.fill();
     X.textAlign = 'left'; X.textBaseline = 'alphabetic';
-    X.fillStyle = '#aab3e0'; X.font = '600 17px Jost'; X.letterSpacing = '3px'; X.fillText(`HAZARD PATTERN ${idx + 1}`, 40, 44); X.letterSpacing = '0px';
+    X.fillStyle = '#aab3e0'; X.font = '600 17px Jost'; X.letterSpacing = '3px'; X.fillText(`HAZARD PATTERN ${idx + 1}${p.hybrid ? ' · HYBRID' : ''}`, 40, 44); X.letterSpacing = '0px';
     X.font = '800 44px Montserrat'; X.fillStyle = C.gold; X.fillText(p.name, 40, 96);
     // schematic card
     X.save(); X.shadowColor = 'rgba(60,40,10,.25)'; X.shadowBlur = 12; X.shadowOffsetY = 3;
@@ -1013,6 +1052,7 @@
     X.fillStyle = '#222'; X.font = '500 22px Jost'; X.textAlign = 'center'; X.fillText(p.label, GX + 1.5 * CELL, 534);
     X.fillStyle = C.goldInk; X.font = '600 14px Jost'; X.letterSpacing = '2px'; X.fillText('THE PATTERN', 220, 590); X.letterSpacing = '0px';
     X.fillStyle = C.ink; X.font = '500 17px Jost'; X.fillText('The arrow fills as the hazard moves', 220, 614);
+    if (p.hybrid) { X.font = 'italic 500 17px Jost'; X.fillStyle = C.goldInk; p.hybrid.note.forEach((ln, i) => X.fillText(ln, 220, 652 + i * 24)); hybridStrip(p, t); }
     // example caption + panel
     X.textAlign = 'left'; X.fillStyle = C.goldInk; X.font = '600 14px Jost'; X.letterSpacing = '2px';
     const eb = th ? `EXAMPLE ${v + 1} OF ${p.themes.length}: ${th.tag.toUpperCase()}` : 'EXAMPLE', ew = X.measureText(eb).width;
