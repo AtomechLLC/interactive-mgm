@@ -3,7 +3,8 @@
  "files": {
   "smb-hammer-bro-*.png, smb-hammer-*.png": "wp-content/img/sprites/nes/smb/enemies.png",
   "smb-ground, smb-brick, smb-block, smb-pipe, smb-tree*, smb-fence, smb-cloud*": "wp-content/img/sprites/nes/smb/bg-5-2-a.png (World 5-2 map, ripped by A.J. Nitro), around x 1800-2120",
-  "smb-mario*, smb-piranha*": "copied from composition/shared/img (same site)"
+  "smb-mario*, smb-piranha*": "copied from composition/shared/img (same site)",
+  "smb-mario-big*.png, smb-mario-dead.png": "wp-content/img/sprites/nes/smb/mario.png"
  },
  "game": "Super Mario Bros. (Nintendo, 1985)"
 }
