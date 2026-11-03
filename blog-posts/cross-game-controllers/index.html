@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cross-Game Controllers · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="../shared/blog.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · Blog · Cross-Game Controllers', home: '../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1: input map vs controller -->
+<section class="slide" data-title="What Did They Mean?" data-demo="intent">
+  <div class="kicker">input map vs controller</div>
+  <h2 class="sm">What Did <span class="accent">They Mean?</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4 style="margin-top:0">The situation</h4>
+      <div class="seg in-state"><button class="btn on" data-s="ground">Grounded</button><button class="btn" data-s="air">Mid-air</button><button class="btn" data-s="tired">Out of stamina</button><button class="btn" data-s="door">Next to a door</button></div>
+      <label class="chk"><input type="checkbox" class="in-shared"> Attack also opens doors</label>
+      <div class="row wrap"><button class="btn in-atk">Press Attack (Y)</button><button class="btn in-use">Press Interact (A)</button></div>
+      <p class="tip">The input map answers “what did they press?”. The controller answers the harder question, “what did they mean?”, from the state of the world.</p>
+      <div class="row wrap"><button class="btn in-tour on">▶ Walk-through</button></div>
+      <p class="mt-out in-out"></p>
+      <p class="src">The door story is the article’s, from No Rest for the Wicked playtests. Figures are this page’s own.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 2: coyote time and the buffer -->
+<section class="slide" data-title="Do What They Meant" data-demo="meant">
+  <div class="kicker">how games read your mind</div>
+  <h2 class="sm">Do What <span class="accent">They Meant</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4 style="margin-top:0">The jump</h4>
+      <div class="seg mn-sc"><button class="btn on" data-s="ledge">Run off a ledge</button><button class="btn" data-s="land">Hop off a narrow block</button></div>
+      <label class="rng">Coyote time <b class="mn-cv"></b><input type="range" class="mn-coy" min="0" max="10" step="1" value="0"></label>
+      <label class="rng">Jump buffer <b class="mn-bv"></b><input type="range" class="mn-buf" min="0" max="10" step="1" value="0"></label>
+      <p class="tip">Twenty players press jump around the right moment, a few frames early or late, the way real hands do. Coyote time still lets a jump out after you leave the ledge; the buffer remembers a press made just before landing.</p>
+      <div class="row wrap"><button class="btn mn-tour on">▶ Walk-through</button></div>
+      <p class="mt-out mn-out"></p>
+      <p class="src">Super Mario Bros. sprites (Nintendo, 1985) via mariouniverse.com. Press timings are a seeded toy model. Celeste’s Maddy Thorson documented both tricks publicly.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 3: same camera, three games -->
+<section class="slide" data-title="Same Camera, Three Games" data-demo="camera">
+  <div class="kicker">no standard constraints</div>
+  <h2 class="sm">Same Camera, <span class="accent">Three Games</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4 style="margin-top:0">Framing</h4>
+      <div class="seg ca-game"><button class="btn on" data-g="gow">God of War</button><button class="btn" data-g="hzd">Horizon</button><button class="btn" data-g="er">Elden Ring</button></div>
+      <label class="rng">Hero across the screen (%) <input type="range" class="ca-sx" min="20" max="50" step="1" value="30"></label>
+      <label class="rng">Camera distance <input type="range" class="ca-dist" min="30" max="140" step="1" value="46"></label>
+      <label class="rng">Field of view (°) <input type="range" class="ca-fov" min="45" max="100" step="1" value="62"></label>
+      <p class="tip">All three are over-the-shoulder third-person combat games. Nudging the camera offset takes minutes in any engine; the effect on what the player can see, and so on the whole combat design, is deep.</p>
+      <div class="row wrap"><button class="btn ca-tour on">▶ Walk-through</button></div>
+      <p class="mt-out ca-out"></p>
+      <p class="src">Screen positions follow the article (Kratos far left, Aloy a third in, the Tarnished centred); distances and fields of view are illustrative. Table rows: the article’s comparison table.</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="../shared/topdown.js"></script>
+<script src="../shared/icons.js"></script>
+<script src="controls.js"></script>
+</body>
+</html>

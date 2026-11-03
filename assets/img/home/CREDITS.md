@@ -69,3 +69,8 @@ From [game-icons.net](https://game-icons.net), licensed [CC BY 3.0](https://crea
 | `composition--counter-circle.svg` | [linked-rings](https://game-icons.net/1x1/lorc/linked-rings.html) | Lorc |
 | `composition--whats-next.svg` | [direction-signs](https://game-icons.net/1x1/delapouite/direction-signs.html) | Delapouite |
 | `student-tokens.svg` | [pin](https://game-icons.net/1x1/delapouite/pin.html) | Delapouite |
+| `blog-posts--games-played.svg` | [gamepad](https://game-icons.net/1x1/delapouite/gamepad.html) | Delapouite |
+| `blog-posts--compositional-cats.svg` | [cat](https://game-icons.net/1x1/lorc/cat.html) | Lorc |
+| `blog-posts--cross-game-controllers.svg` | [joystick](https://game-icons.net/1x1/delapouite/joystick.html) | Delapouite |
+| `blog-posts--hardware-mistake.svg` | [cpu](https://game-icons.net/1x1/delapouite/cpu.html) | Delapouite |
+| `blog-posts--atomech-lesson.svg` | [robot-golem](https://game-icons.net/1x1/lorc/robot-golem.html) | Lorc |
