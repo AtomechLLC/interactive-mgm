@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compositional Cats · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="../shared/blog.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · Blog · Compositional Cats', home: '../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1: the number -->
+<section class="slide" data-title="The Number That Shouldn’t Be Possible" data-demo="reels">
+  <div class="kicker">interchangeability gives variety</div>
+  <h2 class="sm">The Number That <span class="accent">Shouldn’t Be Possible</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4 style="margin-top:0">Slots in play</h4>
+      <div class="kw re-slots"></div>
+      <div class="row wrap"><button class="btn re-all">All nine</button></div>
+      <label class="chk"><input type="checkbox" class="re-cls"> Then a collar class (14)</label>
+      <p class="tip">Every slot the team adds is authored once and multiplies everything else. The blue total is the work; the gold total is what players see.</p>
+      <div class="row wrap"><button class="btn re-tour on">▶ Walk-through</button></div>
+      <p class="mt-out re-out"></p>
+      <p class="src">Mutation and birth-defect lists by slot: mewgenics.wiki, via the <a href="https://atomechllc.github.io/mewgenics-kitten-share/mutations.html" target="_blank" rel="noopener">Mewgenics wiki tools</a>. Slot glyphs are the game’s own part sprites (Mewgenics, Edmund McMillen and Tyler Glaiel).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 2: parts and anchors -->
+<section class="slide" data-title="Parts and Anchors" data-demo="anchors">
+  <div class="kicker">interaction gives depth</div>
+  <h2 class="sm">Parts and <span class="accent">Anchors</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4 style="margin-top:0">How pieces connect</h4>
+      <div class="seg an-mode"><button class="btn on" data-m="scarce">Through a few anchors</button><button class="btn" data-m="all">Everything to everything</button></div>
+      <p class="tip">Pieces never talk to each other directly, only through a shared anchor. Hover an anchor to see who reaches it. Click a piece to cut it: as long as its anchors have another source, nothing else breaks.</p>
+      <div class="row wrap"><button class="btn an-tour on">▶ Walk-through</button></div>
+      <p class="mt-out an-out"></p>
+      <p class="src">Pieces are the article’s examples (Cleric, Butcher, Tinker, Mage and items); the item names and the Mage’s exact spells are illustrative. Icons: game-icons.net (CC BY 3.0) by Lorc and Zeromancer.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 3: the elemental board -->
+<section class="slide" data-title="One Bolt, Two Classes" data-demo="board">
+  <div class="kicker">cross-class synergy</div>
+  <h2 class="sm">One Bolt, <span class="accent">Two Classes</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4 style="margin-top:0">Cast</h4>
+      <div class="seg bd-el"><button class="btn" data-e="water">💧 Water</button><button class="btn" data-e="cold">❄️ Cold</button><button class="btn" data-e="fire">🔥 Fire</button><button class="btn on" data-e="elec">⚡ Lightning</button></div>
+      <p class="tip">Pick an element and click a tile. The Tinker’s whole class runs on one rule: a mechanical unit struck by electricity takes an extra turn. The Mage was never designed for the Tinker, but they share the electric anchor.</p>
+      <div class="row wrap"><button class="btn bd-reset">↺ Reset board</button><button class="btn bd-tour on">▶ Walk-through</button></div>
+      <p class="mt-out bd-out"></p>
+      <p class="src">Reactions follow the game’s own element tips, collected on the <a href="https://atomechllc.github.io/mewgenics-kitten-share/elements.html" target="_blank" rel="noopener">element interactions page</a>; damage numbers are illustrative. Icons: game-icons.net (CC BY 3.0) by Lorc, Delapouite and Sbed.</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="../shared/topdown.js"></script>
+<script src="../shared/icons.js"></script>
+<script src="parts.js"></script>
+<script src="cats.js"></script>
+</body>
+</html>

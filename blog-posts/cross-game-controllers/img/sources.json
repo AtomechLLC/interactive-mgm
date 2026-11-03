@@ -1,0 +1,5 @@
+{
+ "source": "https://www.mariouniverse.com/sprites-nes-smb/",
+ "files": { "smb-*.png": "copied from ../../../pve-interactions/hammer-bros/img (same site; see its sources.json)" },
+ "game": "Super Mario Bros. (Nintendo, 1985)"
+}
