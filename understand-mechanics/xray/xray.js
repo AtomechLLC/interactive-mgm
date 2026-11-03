@@ -23,7 +23,7 @@
       // a press waits for the last hop to land, so signals never cross
       const busyUntil = () => Math.max(st.t, XR.end(st.flow));
       $$(s, '.xr-act').forEach(b => b.onclick = () => { free(); st.acts.push({ at: busyUntil() + .05, type: b.dataset.a, ...st.opts }); rebuild(); });
-      (cfg.toggles || []).forEach(([sel, k, type]) => { const el = $(s, sel); if (!el) return; el.onchange = () => { free(); st.opts[k] = el.checked; if (type) { st.acts.push({ at: busyUntil() + .01, type, ...st.opts }); rebuild(); } }; });
+      (cfg.toggles || []).forEach(([sel, k, type]) => { const el = $(s, sel); if (!el) return; el.onchange = () => { const on = el.checked; free(); st.opts[k] = on; el.checked = on; if (type) { st.acts.push({ at: busyUntil() + .01, type, ...st.opts }); rebuild(); } }; });
       $(s, '.xr-reset').onclick = () => { st.tour = true; free(); };
       tourBtn.onclick = () => { st.tour = true; st.t = 0; tourBtn.classList.add('on'); rebuild(); };
       rebuild();
@@ -38,6 +38,8 @@
         XR.draw(g, cfg.nodes, st.flow, t, { focus: phase?.focus });
         if (phase?.cap) T.label(phase.cap, W / 2, 24, 'center', '#fff', 15, C.navy);
         const key = JSON.stringify(val) + (phase?.cap || ''); if (key === st.key) return; st.key = key;
+        // the walk-through flips receivers itself: the checkboxes show what the diagram is doing
+        if (st.tour) (cfg.toggles || []).forEach(([sel, , , of]) => { const el = $(s, sel); if (el && of) el.checked = of(val); });
         say($(s, '.xr-stats'), cfg.stats(val));
         say($(s, '.xr-out'), cfg.out(val, phase, st.tour));
       }
@@ -53,7 +55,7 @@
   const candle = xrDemo('candle', {
     parts: ['entity', 'receiver', 'transform', 'state'], kinds: ['command', 'system'],
     opts: { warm: true, cool: true },
-    toggles: [['.xr-warm', 'warm', 'recv'], ['.xr-cool', 'cool', 'recv']],
+    toggles: [['.xr-warm', 'warm', 'recv', v => v.warm === 'on'], ['.xr-cool', 'cool', 'recv', v => v.cool === 'on']],
     nodes: [
       { id: 'box', back: true, x: 395, y: 266, w: 625, h: 300, part: 'entity', title: 'Candle' },
       { id: 'fire', x: 14, y: 280, w: 140, h: 84, part: 'entity', title: 'Fire spell', art: (g, x, y) => { T.flash(x, y, 26, 1); g.fillStyle = '#e5322d'; g.beginPath(); g.arc(x, y, 9, 0, Math.PI * 2); g.fill(); } },
@@ -349,7 +351,7 @@
   const flame = xrDemo('flame', {
     parts: ['entity', 'receiver', 'transform', 'state'], kinds: ['command', 'effect', 'system'],
     opts: { dry: true },
-    toggles: [['.xr-dry', 'dry', 'dry']],
+    toggles: [['.xr-dry', 'dry', 'dry', v => v.rb !== 'wet']],
     nodes: [
       { id: 'boxA', back: true, x: 300, y: 262, w: 420, h: 146, part: 'entity', title: 'Grass A' },
       { id: 'boxB', back: true, x: 300, y: 424, w: 420, h: 146, part: 'entity', title: 'Grass B' },

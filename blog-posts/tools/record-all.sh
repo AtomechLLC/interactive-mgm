@@ -7,6 +7,8 @@ rec() { node record-slide-gif.js "$U/$1" "$2" "../gifs/$3.gif" 15 "" "$NOSIDE" &
 rec 'too-weak-to-waste/index.html#1' flip too-weak-to-waste-flip-the-fight
 rec 'too-weak-to-waste/index.html#2' dice too-weak-to-waste-bypass-the-dice
 rec 'too-weak-to-waste/index.html#3' keys too-weak-to-waste-items-as-keys
+rec 'ogre-table/index.html#1' scene ogre-table-one-turn
+rec 'ogre-table/index.html#2' odds ogre-table-what-the-dice-allowed
 wait
 rec 'games-played/index.html#1' draw games-played-draw-ten
 rec 'games-played/index.html#2' range games-played-range-or-rut

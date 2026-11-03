@@ -15,7 +15,15 @@
   // Small helpers shared by demo scripts
   FPF.raf = function loop(fn) {          // returns a stop() function
     let id, last = performance.now(), on = true;
-    const tick = t => { if (!on) return; fn(Math.min(0.05, (t - last) / 1000), t / 1000); last = t; id = requestAnimationFrame(tick); };
+    // a frame's timestamp is when the frame started, which can be before the performance.now() above, so the first dt
+    // can be negative: clamp it (a negative dt sent demo clocks below 0 and threw on every frame, leaving a blank canvas).
+    // The next frame is booked first, so one frame that throws can't stop the demo for good.
+    const tick = t => {
+      if (!on) return;
+      id = requestAnimationFrame(tick);
+      const dt = Math.max(0, Math.min(0.05, (t - last) / 1000)); last = Math.max(last, t);
+      fn(dt, t / 1000);
+    };
     id = requestAnimationFrame(tick);
     return () => { on = false; cancelAnimationFrame(id); };
   };

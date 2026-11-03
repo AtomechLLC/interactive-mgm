@@ -74,3 +74,4 @@ From [game-icons.net](https://game-icons.net), licensed [CC BY 3.0](https://crea
 | `blog-posts--cross-game-controllers.svg` | [joystick](https://game-icons.net/1x1/delapouite/joystick.html) | Delapouite |
 | `blog-posts--hardware-mistake.svg` | [cpu](https://game-icons.net/1x1/delapouite/cpu.html) | Delapouite |
 | `blog-posts--atomech-lesson.svg` | [robot-golem](https://game-icons.net/1x1/lorc/robot-golem.html) | Lorc |
+| `blog--ogre-table.svg` | [ogre](https://game-icons.net/1x1/delapouite/ogre.html) | Delapouite |
