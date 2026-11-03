@@ -39,7 +39,8 @@ canvas.demo { image-rendering: pixelated; }
 .lab-stats tr th i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; }
 .lab-stats tr[data-b] { cursor: pointer; }
 .lab-stats tr.cur th:first-child { text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 4px; }
-.lab-stats td { position: relative; text-align: center; padding: 4px; min-width: 50px; }
+.lab-stats td { position: relative; text-align: center; padding: 4px; min-width: 40px; }
+.lab-stats td.dead .bar { background: #ff6b4a; }
 .lab-stats td .bar { position: absolute; left: 3px; right: 3px; bottom: 2px; height: calc(var(--v) * 100% - 4px); border-radius: 4px; opacity: .35; }
 .lab-stats td.clean .bar { background: #5fe0a0; }
 .lab-stats td.hit .bar { background: #ffb951; }
