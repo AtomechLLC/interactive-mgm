@@ -1,0 +1,534 @@
+[
+{
+"group": "tokens",
+"name": "ally-npc"
+},
+{
+"group": "tokens",
+"name": "enemy-boss"
+},
+{
+"group": "tokens",
+"name": "enemy-elite"
+},
+{
+"group": "tokens",
+"name": "enemy-minion"
+},
+{
+"group": "tokens",
+"name": "enemy"
+},
+{
+"group": "tokens",
+"name": "facing-marker"
+},
+{
+"group": "tokens",
+"name": "neutral-creature"
+},
+{
+"group": "tokens",
+"name": "player-1-unlabelled"
+},
+{
+"group": "tokens",
+"name": "player-1"
+},
+{
+"group": "tokens",
+"name": "player-2-unlabelled"
+},
+{
+"group": "tokens",
+"name": "player-2"
+},
+{
+"group": "tokens",
+"name": "player-3-unlabelled"
+},
+{
+"group": "tokens",
+"name": "player-3"
+},
+{
+"group": "tokens",
+"name": "player-4-unlabelled"
+},
+{
+"group": "tokens",
+"name": "player-4"
+},
+{
+"group": "arrows",
+"name": "charge-ally"
+},
+{
+"group": "arrows",
+"name": "charge-black"
+},
+{
+"group": "arrows",
+"name": "charge-enemy"
+},
+{
+"group": "arrows",
+"name": "curve-ally"
+},
+{
+"group": "arrows",
+"name": "curve-black"
+},
+{
+"group": "arrows",
+"name": "curve-enemy"
+},
+{
+"group": "arrows",
+"name": "knockback-ally"
+},
+{
+"group": "arrows",
+"name": "knockback-black"
+},
+{
+"group": "arrows",
+"name": "knockback-enemy"
+},
+{
+"group": "arrows",
+"name": "leap-ally"
+},
+{
+"group": "arrows",
+"name": "leap-black"
+},
+{
+"group": "arrows",
+"name": "leap-enemy"
+},
+{
+"group": "arrows",
+"name": "move-ally"
+},
+{
+"group": "arrows",
+"name": "move-black"
+},
+{
+"group": "arrows",
+"name": "move-enemy"
+},
+{
+"group": "arrows",
+"name": "path-dashed-ally"
+},
+{
+"group": "arrows",
+"name": "path-dashed-black"
+},
+{
+"group": "arrows",
+"name": "path-dashed-enemy"
+},
+{
+"group": "arrows",
+"name": "pull-ally"
+},
+{
+"group": "arrows",
+"name": "pull-black"
+},
+{
+"group": "arrows",
+"name": "pull-enemy"
+},
+{
+"group": "arrows",
+"name": "rotate-ally"
+},
+{
+"group": "arrows",
+"name": "rotate-black"
+},
+{
+"group": "arrows",
+"name": "rotate-enemy"
+},
+{
+"group": "arrows",
+"name": "two-way-ally"
+},
+{
+"group": "arrows",
+"name": "two-way-black"
+},
+{
+"group": "arrows",
+"name": "two-way-enemy"
+},
+{
+"group": "telegraphs",
+"name": "burst-ally"
+},
+{
+"group": "telegraphs",
+"name": "burst-enemy"
+},
+{
+"group": "telegraphs",
+"name": "circle-ally"
+},
+{
+"group": "telegraphs",
+"name": "circle-enemy"
+},
+{
+"group": "telegraphs",
+"name": "cone-ally"
+},
+{
+"group": "telegraphs",
+"name": "cone-enemy"
+},
+{
+"group": "telegraphs",
+"name": "cone-wide-ally"
+},
+{
+"group": "telegraphs",
+"name": "cone-wide-enemy"
+},
+{
+"group": "telegraphs",
+"name": "crescent-ally"
+},
+{
+"group": "telegraphs",
+"name": "crescent-enemy"
+},
+{
+"group": "telegraphs",
+"name": "cross-ally"
+},
+{
+"group": "telegraphs",
+"name": "cross-enemy"
+},
+{
+"group": "telegraphs",
+"name": "half-circle-ally"
+},
+{
+"group": "telegraphs",
+"name": "half-circle-enemy"
+},
+{
+"group": "telegraphs",
+"name": "lightning-ally"
+},
+{
+"group": "telegraphs",
+"name": "lightning-enemy"
+},
+{
+"group": "telegraphs",
+"name": "line-ally"
+},
+{
+"group": "telegraphs",
+"name": "line-enemy"
+},
+{
+"group": "telegraphs",
+"name": "projectile-ally"
+},
+{
+"group": "telegraphs",
+"name": "projectile-enemy"
+},
+{
+"group": "telegraphs",
+"name": "puddle-ally"
+},
+{
+"group": "telegraphs",
+"name": "puddle-enemy"
+},
+{
+"group": "telegraphs",
+"name": "ring-ally"
+},
+{
+"group": "telegraphs",
+"name": "ring-enemy"
+},
+{
+"group": "telegraphs",
+"name": "safe-spot-ally"
+},
+{
+"group": "telegraphs",
+"name": "safe-spot-enemy"
+},
+{
+"group": "telegraphs",
+"name": "shield-ally"
+},
+{
+"group": "telegraphs",
+"name": "shield-enemy"
+},
+{
+"group": "telegraphs",
+"name": "square-ally"
+},
+{
+"group": "telegraphs",
+"name": "square-enemy"
+},
+{
+"group": "telegraphs",
+"name": "sweep-arc-ally"
+},
+{
+"group": "telegraphs",
+"name": "sweep-arc-enemy"
+},
+{
+"group": "telegraphs",
+"name": "target-circle-ally"
+},
+{
+"group": "telegraphs",
+"name": "target-circle-enemy"
+},
+{
+"group": "telegraphs",
+"name": "trapezoid-ally"
+},
+{
+"group": "telegraphs",
+"name": "trapezoid-enemy"
+},
+{
+"group": "status",
+"name": "bleed"
+},
+{
+"group": "status",
+"name": "blind"
+},
+{
+"group": "status",
+"name": "burn"
+},
+{
+"group": "status",
+"name": "channeling"
+},
+{
+"group": "status",
+"name": "cleanse"
+},
+{
+"group": "status",
+"name": "confuse"
+},
+{
+"group": "status",
+"name": "cooldown"
+},
+{
+"group": "status",
+"name": "damage-down"
+},
+{
+"group": "status",
+"name": "damage-up"
+},
+{
+"group": "status",
+"name": "dead"
+},
+{
+"group": "status",
+"name": "disarm"
+},
+{
+"group": "status",
+"name": "fear"
+},
+{
+"group": "status",
+"name": "freeze"
+},
+{
+"group": "status",
+"name": "haste"
+},
+{
+"group": "status",
+"name": "heal"
+},
+{
+"group": "status",
+"name": "immune"
+},
+{
+"group": "status",
+"name": "interrupt"
+},
+{
+"group": "status",
+"name": "invulnerable"
+},
+{
+"group": "status",
+"name": "knocked-down"
+},
+{
+"group": "status",
+"name": "marked"
+},
+{
+"group": "status",
+"name": "poison"
+},
+{
+"group": "status",
+"name": "regen"
+},
+{
+"group": "status",
+"name": "root"
+},
+{
+"group": "status",
+"name": "shield"
+},
+{
+"group": "status",
+"name": "silence"
+},
+{
+"group": "status",
+"name": "sleep"
+},
+{
+"group": "status",
+"name": "slow"
+},
+{
+"group": "status",
+"name": "stun"
+},
+{
+"group": "status",
+"name": "taunt"
+},
+{
+"group": "status",
+"name": "vulnerable"
+},
+{
+"group": "props",
+"name": "axe"
+},
+{
+"group": "props",
+"name": "barrel"
+},
+{
+"group": "props",
+"name": "bomb"
+},
+{
+"group": "props",
+"name": "bow"
+},
+{
+"group": "props",
+"name": "chain"
+},
+{
+"group": "props",
+"name": "chest"
+},
+{
+"group": "props",
+"name": "crate"
+},
+{
+"group": "props",
+"name": "crossed-target"
+},
+{
+"group": "props",
+"name": "dagger"
+},
+{
+"group": "props",
+"name": "door"
+},
+{
+"group": "props",
+"name": "flag"
+},
+{
+"group": "props",
+"name": "key"
+},
+{
+"group": "props",
+"name": "lever"
+},
+{
+"group": "props",
+"name": "no-symbol"
+},
+{
+"group": "props",
+"name": "pillar"
+},
+{
+"group": "props",
+"name": "potion"
+},
+{
+"group": "props",
+"name": "pressure-plate"
+},
+{
+"group": "props",
+"name": "question"
+},
+{
+"group": "props",
+"name": "rock"
+},
+{
+"group": "props",
+"name": "spear"
+},
+{
+"group": "props",
+"name": "spikes"
+},
+{
+"group": "props",
+"name": "staff"
+},
+{
+"group": "props",
+"name": "sword"
+},
+{
+"group": "props",
+"name": "vortex"
+},
+{
+"group": "props",
+"name": "wall"
+}
+]
