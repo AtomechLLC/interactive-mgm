@@ -1,0 +1,5 @@
+// Speaker notes. Source: funsmith.world post-mortem, "Warlock's Overhaul: Streamlining and Gameplay Balance".
+window.NOTES = [
+  { script: 'Spell power coefficients scale with cast time against a 3.5 second baseline. Shadow Bolt dropped to a 3.0 second cast but kept a coefficient of about six sevenths. With no talents, the damage over time spells earn more per second of casting, so you weave them in. Then add the build one talent at a time: Bane cuts the cast, Shadow and Flame adds twenty percent to the coefficient, Improved Shadow Bolt and Demonic Sacrifice multiply it, Ruin and Backlash make its crits bigger and more frequent. Every one of them lands on the same spell. Nothing else in the book had a coefficient above one, so there was no other button worth pressing.' },
+  { script: 'Talents are tiny but potent, especially multiplicative ones. Two percent on its own is a rounding error. Thirty of them added together is sixty percent; multiplied, it is about eighty one. Stack too many bonuses on one thing and it runs away from everything else.' },
+];

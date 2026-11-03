@@ -1,0 +1,4 @@
+// Speaker notes. Source: funsmith.world post-mortem, "Netherspite: The Clash of Novelty and Game Difficulty".
+window.NOTES = [
+  { script: 'Netherspite breaks a deep rule: you stand in the boss’s beams and steal his power. Version two forced the beams to change hands by killing anyone who held one for twenty seconds. It worked, and it was boring. So version three took every colleague’s feedback at once: void zones for movement, a banish phase with knockbacks for a break, portals that move for situational awareness. Each layer is reasonable on its own. Stack them and the meters tell the story: more steps that must be exact, almost no mistakes the raid can recover from. Players learned it, and then skipped it. The retrospective is the last toggle: telegraph the moments that need protection, simplify the layering, and create situations that let players use their own tools, not just yours.' },
+];

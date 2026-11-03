@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Netherspite Beams · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="../shared/blog.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · Blog Posts · Netherspite Beams', home: '../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<section class="slide" data-title="Layering a novelty fight" data-demo="nether">
+  <div class="kicker">post-mortem</div>
+  <h2 class="sm">Every layer was reasonable. <span class="accent">Together, a dance.</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Version 3's layers</h4>
+      <label class="chk"><input type="checkbox" class="ns-zones"> Void zones (25 s each)</label>
+      <label class="chk"><input type="checkbox" class="ns-banish"> Banish phase with knockbacks</label>
+      <label class="chk"><input type="checkbox" class="ns-random"> Portals move after the banish</label>
+      <label class="chk"><input type="checkbox" class="ns-tools"> Let players use their own tools (telegraphs, no knockbacks, cooldowns)</label>
+      <div class="row wrap"><button class="btn ns-tour on">▶ Walk-through</button><button class="btn ns-play">Hold blue yourself (W A S D)</button></div>
+      <div class="mt-stats ns-stats"></div>
+      <p class="mt-out ns-out"></p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="../shared/topdown.js"></script>
+<script src="nether.js"></script>
+</body>
+</html>
