@@ -8,7 +8,7 @@
   /* ---------- sprites ---------- */
   const IMG = {};
   ['ground', 'brick', 'block', 'pipe', 'tree-tall', 'tree', 'fence', 'cloud', 'cloud-2', 'piranha', 'piranha-shut',
-    'mario', 'mario-walk1', 'mario-walk2', 'mario-walk3', 'mario-jump', 'hammer-0', 'hammer-1', 'hammer-2', 'hammer-3',
+    'mario', 'mario-walk1', 'mario-walk2', 'mario-walk3', 'mario-jump', 'mario-big', 'mario-big-walk1', 'mario-big-walk2', 'mario-big-walk3', 'mario-big-jump', 'mario-dead', 'hammer-0', 'hammer-1', 'hammer-2', 'hammer-3',
     'hammer-bro-0', 'hammer-bro-1', 'hammer-bro-2', 'hammer-bro-3'].forEach(n => {
     const i = new Image(); i.src = new URL(`img/smb-${n}.png`, document.currentScript?.src || location.href).href; IMG[n] = i;
   });
@@ -62,17 +62,27 @@
     return {
       on, R, levels, S: level(on), bros, t: 0,
       plant: on.plant ? { st: 'up', k: .3, wait: 1.6, off: 24 } : null,
-      m: { x: 14, y: GY, vx: 0, vy: 0, ground: true, face: 1, hits: 0, inv: 0, fell: false, done: false, jp: false, walk: 0 },
+      m: { x: 14, y: GY, vx: 0, vy: 0, ground: true, face: 1, hits: 0, inv: 0, big: true, dead: false, fell: false, done: false, jp: false, walk: 0 },
       hm: [], trail: [], ev: [], bumps: [], over: null,
     };
   }
 
   /* ---------- one 1/60 s step ---------- */
-  const mBox = m => ({ x0: m.x - 6, x1: m.x + 6, y0: m.y - 15, y1: m.y });
+  // Super Mario is two tiles tall; small Mario one
+  const mH = m => m.big ? 30 : 15;
+  const mBox = m => ({ x0: m.x - 6, x1: m.x + 6, y0: m.y - mH(m), y1: m.y });
+  // the game's hurt box for Super Mario leaves out the top of his sprite (about 24 px tall, not 32)
+  const hurtBox = m => ({ x0: m.x - 6, x1: m.x + 6, y0: m.y - (m.big ? 24 : 15), y1: m.y });
   const broBox = b => ({ x0: b.x - 7, x1: b.x + 7, y0: b.y - 22, y1: b.y });
   const plantBox = p => ({ x0: 41, x1: 55, y0: 128 - p.off, y1: 128 });
   const hamBox = h => ({ x0: h.x - 6, x1: h.x + 6, y0: h.y - 6, y1: h.y + 6 });
-  function hurt(w, why) { const m = w.m; if (m.inv > 0 || m.done) return; m.hits++; m.inv = 1.6; w.ev.push({ t: w.t, k: 'hit', why, x: m.x, y: m.y }); }
+  // As in the game: a hit shrinks Super Mario (with a short flicker), and a hit on small Mario costs the life.
+  function hurt(w, why) {
+    const m = w.m; if (m.inv > 0 || m.done || m.dead) return;
+    m.hits++; w.ev.push({ t: w.t, k: m.big ? 'shrink' : 'dead', why, x: m.x, y: m.y });
+    if (m.big) { m.big = false; m.inv = 1.6; }
+    else { m.dead = true; m.vx = 0; m.vy = -330; m.deadAt = w.t; }
+  }
 
   function moveMario(w, inp) {
     const m = w.m;
@@ -91,7 +101,7 @@
       const b = mBox(m); if (!hit(b, s)) continue;
       if (m.vy > 0) { m.y = s.y0; m.vy = 0; m.ground = true; }
       else if (m.vy < 0) {
-        m.y = s.y1 + 15; m.vy = 0;
+        m.y = s.y1 + mH(m); m.vy = 0;
         if (s.k === 'brick') bump(w, s, m.x);
       }
     }
@@ -158,11 +168,11 @@
   }
 
   function collide(w) {
-    const m = w.m; if (m.done || m.fell) return;
-    const mb = mBox(m);
+    const m = w.m; if (m.done || m.fell || m.dead) return;
+    const mb = hurtBox(m);
     for (const b of w.bros) {
       if (!b.alive || !hit(mb, broBox(b))) continue;
-      if (m.vy > 0 && m.y - (b.y - 22) < 9) { kill(w, b, 'stomp'); m.vy = -220; }
+      if (m.vy > 0 && m.y - (b.y - 22) < 9 + (m.big ? 4 : 0)) { kill(w, b, 'stomp'); m.vy = -220; }
       else hurt(w, 'Hammer Bro');
     }
     for (const h of w.hm) if (hit(mb, hamBox(h))) hurt(w, 'hammer');
@@ -172,22 +182,25 @@
   function step(w, inp) {
     if (w.over) return;
     w.t += DT;
-    if (!w.m.done && !w.m.fell) moveMario(w, inp); else if (w.m.fell) { w.m.vy += 2000 * DT; w.m.y += w.m.vy * DT; }
+    const M = w.m;
+    if (M.dead) { if (w.t - M.deadAt > .45) { M.vy += 1100 * DT; M.y += M.vy * DT; } }
+    else if (!M.done && !M.fell) moveMario(w, inp); else if (M.fell) { M.vy += 2000 * DT; M.y += M.vy * DT; }
     stepBros(w); stepPlant(w); collide(w);
     if ((w.t * FPS | 0) % 3 === 0) w.trail.push([w.m.x, w.m.y - 8]);
     if (w.m.done) w.over = w.over || { k: w.m.hits ? 'hit' : 'clean', t: w.t };
+    else if (w.m.dead && w.m.y > VH + 30) w.over = { k: 'dead', t: w.t };
     else if (w.m.fell) w.over = { k: 'fell', t: w.t };
     else if (w.t >= LIMIT) w.over = { k: 'time', t: w.t };
   }
 
   /* ---------- the route bots ---------- */
   // When will a hammer in the air touch Mario if he keeps moving at vx along his current row?
-  function threatAt(w, x, y, vx, horizon = .6) {
+  function threatAt(w, x, y, vx, horizon = .6, h = w.m.big ? 24 : 15) {
     let first = Infinity;
     for (const h of w.hm) {
       for (let t = 0; t <= horizon; t += 1 / 30) {
         const hx = h.x + h.vx * t, hy = h.y + h.vy * t + 360 * t * t, mx = x + vx * t;
-        if (Math.abs(hx - mx) < 13 && hy > y - 22 && hy < y + 7) { first = Math.min(first, t); break; }
+        if (Math.abs(hx - mx) < 13 && hy > y - h - 7 && hy < y + 7) { first = Math.min(first, t); break; }
       }
     }
     return first;
@@ -307,7 +320,7 @@
     const key = PIECES.map(p => on[p.id] ? 1 : 0).join('');
     if (statsCache.has(key)) return statsCache.get(key);
     const out = BOTS.map(b => {
-      const r = { clean: 0, hit: 0, fell: 0, time: 0, hits: 0 };
+      const r = { clean: 0, hit: 0, dead: 0, fell: 0, time: 0, hits: 0 };
       for (let i = 1; i <= TRIALS; i++) { const w = runBot(on, i, b); r[w.over.k]++; r.hits += w.m.hits; }
       return r;
     });
@@ -363,12 +376,18 @@
     }
     for (const h of w.hm) img(g, 'hammer-' + ((h.rot * 12 | 0) % 4), h.x, h.y + 4, { flip: h.vx > 0 });
     const m = w.m;
-    if (!(m.inv > 0 && (w.t * 20 | 0) % 2) && m.y < VH + 20) {
-      const fr = !m.ground ? 'mario-jump' : Math.abs(m.vx) > 8 ? 'mario-walk' + (1 + (m.walk / 6 | 0) % 3) : 'mario';
+    if (m.dead) { if (m.y < VH + 40) img(g, 'mario-dead', m.x, m.y + 1); }
+    else if (!(m.inv > 0 && (w.t * 20 | 0) % 2) && m.y < VH + 20) {
+      // the shrink: for the first beat of the flicker he alternates between big and small
+      const big = m.big || (m.inv > 1.2 && (w.t * 12 | 0) % 2), p = big ? 'mario-big' : 'mario';
+      const fr = !m.ground ? p + '-jump' : Math.abs(m.vx) > 8 ? p + '-walk' + (1 + (m.walk / 6 | 0) % 3) : p;
       img(g, fr, m.x, m.y + 1, { flip: m.face < 0 });
     }
     g.restore();
   }
+
+  // how a finished run reads
+  const OUTCOME = { clean: 'Through as Super Mario, untouched', hit: 'Through, shrunk to small Mario', dead: 'Hit while small: a life lost', fell: 'Fell in the pit: a life lost', time: 'Stuck: out of time' };
 
   /* ---------- labels drawn over the scene (in screen pixels) ---------- */
   function tag(g, s, x, y, o = {}) {
@@ -402,7 +421,7 @@
 
   /* ---------- slide 2: the encounter, piece by piece, then played (the GIF) ---------- */
   // First the pieces one at a time with Mario off screen (INTRO seconds), then one run by the "Read the throws" bot.
-  const TOUR_SEED = 4, TOUR_BOT = 1, CALL = 3.2;
+  const TOUR_SEED = 1, TOUR_BOT = 1, CALL = 3.2;
   const CALLS = [
     { k: 'plant', text: 'Piranha Plant: guards the pipe, the step up' },
     { k: 'bros', text: 'Hammer Bros: hammers arc down over the ground lane' },
@@ -446,7 +465,7 @@
           if (cl.k === 'exit') { ring(g, 222 * S, 108 * S, 52 * S, 70 * S, '#5fe0a0', a); tag(g, cl.text, 312 * S, 92 * S, { a, align: 'right', edge: '#5fe0a0' }); }
         } else {
           tag(g, 'Played: read the throws', 8 * S, 10 * S, { align: 'left', size: 18 });
-          if (w.over) tag(g, w.over.k === 'clean' ? 'Through, untouched' : w.over.k === 'hit' ? `Through, hit ${w.m.hits}×` : 'Fell in the pit', 160 * S, 124 * S, { size: 26, bg: '#ffb951', col: '#152044' });
+          if (w.over) tag(g, OUTCOME[w.over.k], 160 * S, 124 * S, { size: 26, bg: '#ffb951', col: '#152044' });
         }
         $$(list, 'li').forEach((li, i) => li.classList.toggle('on', intro ? i === cur : true));
         say(out, intro ? SIDE[cur] : w.over ? 'Through: wait out the plant, perch on the pipe, cross between volleys, then make the one committed jump.' :
@@ -492,8 +511,8 @@
       }
       function table() {
         const R = stats(LAB.on);
-        tb.innerHTML = `<tr><th></th><th>clean</th><th>hit</th><th>fell</th><th>stuck</th></tr>` + R.map((r, i) =>
-          `<tr data-b="${i}" class="${LAB.mode === 'bot' && LAB.bot === i ? 'cur' : ''}"><th><i style="background:${BOT_COL[i]}"></i>${BOTS[i].name}</th>${['clean', 'hit', 'fell', 'time'].map(k => `<td class="${k}"><span class="bar" style="--v:${r[k] / TRIALS}"></span><b>${r[k]}</b></td>`).join('')}</tr>`).join('');
+        tb.innerHTML = `<tr><th></th><th title="through as Super Mario">clean</th><th title="through, shrunk to small Mario">shrank</th><th title="hit while small">died</th><th>fell</th><th>stuck</th></tr>` + R.map((r, i) =>
+          `<tr data-b="${i}" class="${LAB.mode === 'bot' && LAB.bot === i ? 'cur' : ''}"><th><i style="background:${BOT_COL[i]}"></i>${BOTS[i].name}</th>${['clean', 'hit', 'dead', 'fell', 'time'].map(k => `<td class="${k}"><span class="bar" style="--v:${r[k] / TRIALS}"></span><b>${r[k]}</b></td>`).join('')}</tr>`).join('');
         $$(tb, 'tr[data-b]').forEach(tr => tr.onclick = () => { LAB.mode = 'bot'; LAB.bot = +tr.dataset.b; LAB.seed = 1; refresh(); });
       }
       function refresh() {
@@ -529,7 +548,9 @@
         while (n-- > 0) {
           if (LAB.mode === 'play') {
             step(w, keys);
-            if (w.m.fell && w.t - (w.ev.find(e => e.k === 'fell')?.t || 0) > .8) { const hits = w.m.hits; w = world(LAB.on, 1 + (Math.random() * 999 | 0)); w.m.hits = hits; w.ev.push({ k: 'respawn', t: 0 }); }
+            // a lost life (hit while small, or the pit): start again as Super Mario
+            const lost = w.ev.find(e => e.k === 'fell' || e.k === 'dead');
+            if (lost && w.t - lost.t > (lost.k === 'dead' ? 1.8 : .8)) { const lives = (w.lives || 0) + 1; w = world(LAB.on, 1 + (Math.random() * 999 | 0)); w.lives = lives; }
           } else if (!w.over) step(w, BOTS[LAB.bot].ctl(w, st));
           else if (w.t - w.over.t > 2) { LAB.seed = LAB.seed % TRIALS + 1; restart(); say(msg, `Watching <b>${BOTS[LAB.bot].name}</b>, run ${LAB.seed} of ${TRIALS}: ${BOTS[LAB.bot].blurb}`); }
           else w.t += DT;
@@ -537,9 +558,8 @@
         render(g, w, { S, heat: LAB.heat, ghost: ghosts.length && performance.now() - shown < 8000 ? ghosts : null });
         if (ghosts.length && performance.now() - shown < 8000) BOTS.forEach((b, i) => tag(g, b.name, 12, 22 + i * 38, { align: 'left', size: 16, edge: BOT_COL[i] }));
         const m = w.m;
-        tag(g, LAB.mode === 'play' ? `hits ${m.hits}` : `${BOTS[LAB.bot].name} · run ${LAB.seed}`, c.width - 12, 22, { align: 'right', size: 16 });
-        if (w.over && LAB.mode !== 'play') tag(g, w.over.k === 'clean' ? 'Through, untouched' : w.over.k === 'hit' ? `Through, hit ${m.hits}×` : w.over.k === 'fell' ? 'Fell in the pit' : 'Stuck: out of time', c.width / 2, c.height / 2 - 40, { size: 24, bg: '#ffb951', col: '#152044' });
-        if (LAB.mode === 'play' && m.done) tag(g, m.hits ? `Through, hit ${m.hits}×. Small Mario would have lost a life.` : 'Through, untouched', c.width / 2, c.height / 2 - 40, { size: 22, bg: '#ffb951', col: '#152044' });
+        tag(g, LAB.mode === 'play' ? `${m.big ? 'Super Mario' : 'small Mario'} · lives lost ${w.lives || 0}` : `${BOTS[LAB.bot].name} · run ${LAB.seed}`, c.width - 12, 22, { align: 'right', size: 16 });
+        if (w.over && (LAB.mode !== 'play' || w.over.k === 'clean' || w.over.k === 'hit')) tag(g, OUTCOME[w.over.k], c.width / 2, c.height / 2 - 40, { size: 24, bg: '#ffb951', col: '#152044' });
       };
       refresh();
     },
@@ -550,14 +570,14 @@
   demo('hb-why', {
     init(s) {
       const base = stats(ALL), without = id => stats({ ...ALL, [id]: 0 });
-      const c = (r, i) => r[i].clean;
+      const c = (r, i) => r[i].dead + r[i].fell;   // lives lost
       const noBros = stats({ ...ALL, bro1: 0, bro2: 0 }), noPlant = without('plant'), noBricks = without('bricks');
       const nums = (b) => BOTS.map((x, i) => `${x.name} ${c(base, i)} → <b>${c(b, i)}</b>`).join('<br>');
       const cell = (h, b, txt) => `<div><h4>${h}</h4><p class="n">${nums(b)}</p><p>${txt}</p></div>`;
-      $(s, '.proof').innerHTML = `<h4 class="proof-h">Remove one piece: clean runs out of ${TRIALS} per route, before → after (from the lab)</h4><div class="proof-row">` +
-        cell('No Hammer Bros', noBros, 'Nothing runs a clock, so any route that waits for the plant walks through. Only a blind run still meets it.') +
-        cell('No Piranha Plant', noPlant, 'The way in stops asking you to wait, so running for it starts to work.') +
-        cell('No bricks', noBricks, 'The Hammer Bros drop into the lane: no high ground for them, no second route or bump for you, and almost every run takes a hit.') + '</div>';
+      $(s, '.proof').innerHTML = `<h4 class="proof-h">Remove one piece: lives lost out of ${TRIALS} runs per route, before → after (Mario starts as Super Mario)</h4><div class="proof-row">` +
+        cell('No Hammer Bros', noBros, 'Nothing runs a clock. A blind run can still shrink on the plant, but no route loses a life.') +
+        cell('No Piranha Plant', noPlant, 'The way in stops asking you to wait, so running for it no longer costs a life.') +
+        cell('No bricks', noBricks, 'The Hammer Bros drop into the lane: no high ground for them, no second route or bump for you. A blind run loses the life every time.') + '</div>';
     },
   });
 
@@ -571,7 +591,7 @@
         let n = Math.round(Math.min(.05, dt) * FPS) || 1; while (n-- > 0) step(c._w, BOTS[+c.dataset.b].ctl(c._w, c._s));
         render(g, c._w, { S: c.width / VW, heat: true });
       });
-      $$(s, '.more-stats').forEach(el => { const r = stats(PRESETS[el.dataset.p].on); el.innerHTML = BOTS.map((b, i) => `<span><i style="background:${BOT_COL[i]}"></i>${b.name}: <b>${r[i].clean}</b>/${TRIALS} clean</span>`).join(''); });
+      $$(s, '.more-stats').forEach(el => { const r = stats(PRESETS[el.dataset.p].on); el.innerHTML = BOTS.map((b, i) => `<span><i style="background:${BOT_COL[i]}"></i>${b.name}: <b>${r[i].clean}</b> clean, <b>${r[i].dead + r[i].fell}</b> lives lost</span>`).join(''); });
       $$(s, '[data-load]').forEach(b => b.onclick = () => { window.__hbPreset(b.dataset.load); FPF.go(2); });
     },
     enter(s) { s._stop = raf(s._draw); }, leave(s) { s._stop?.(); },
