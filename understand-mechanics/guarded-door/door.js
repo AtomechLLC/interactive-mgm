@@ -118,7 +118,7 @@
     ['key', 'door'], ['key', 'chest'], ['key', 'enemy'], ['pick', 'door'], ['pick', 'chest'], ['pick', 'enemy'], ['hammer', 'door'], ['hammer', 'chest'], ['hammer', 'enemy'],
     ['key', 'door', 1], ['pick', 'door', 1], ['hammer', 'door', 1],
   ].map(([tool, target, guard]) => ({ tool, target, guard: !!guard }));
-  const DUR = TOUR.length * ACT + 2;
+  const DUR = TOUR.length * ACT + 2, GUARD_FROM = TOUR.findIndex(a => a.guard), RES = 1.25;   // RES: when an action's result lands
   const doneAfter = (acts, t) => { const d = {}; acts.forEach((a, i) => { if (t >= a.at + 1.25) { d[a.tool + a.target] = !!WORKS[a.tool][a.target]; if (a.guard && a.target === 'door') d['g' + a.tool] = true; } }); return d; };
 
   let api1;
@@ -127,12 +127,19 @@
     const tourBtn = $(s, '.gd-tour'), guardEl = $(s, '.gd-guard');
     const sync = () => { $$(s, '.gd-tool .btn').forEach(b => b.classList.toggle('on', b.dataset.v === st.tool)); guardEl.checked = st.guard; };
     const free = () => { if (!st.tour) return; st.tour = false; tourBtn.classList.remove('on'); st.t = 0; st.acts = []; };
-    const use = target => { free(); const last = st.acts.at(-1), at = Math.max(st.t, last ? last.at + ACT : 0); st.acts.push({ tool: st.tool, target, guard: st.guard, at }); };
+    // a click plays now: it cuts off the action on screen (which only counts in the grid if its result already landed)
+    // and anything still queued, so the hero never replays the old action before the one that was clicked
+    const use = target => {
+      free();
+      st.acts = st.acts.filter(a => st.t >= a.at + RES);
+      st.acts.push({ tool: st.tool, target, guard: st.guard, at: st.t });
+    };
     $$(s, '.gd-tool .btn').forEach(b => b.onclick = () => { free(); st.tool = b.dataset.v; sync(); });
     $$(s, '.gd-target .btn').forEach(b => b.onclick = () => use(b.dataset.v));
     guardEl.onchange = () => { free(); st.guard = guardEl.checked; };
     $(s, '.gd-reset').onclick = () => { st.tour = true; free(); };
-    tourBtn.onclick = () => { st.tour = true; st.t = 0; tourBtn.classList.add('on'); };
+    // with the guard ticked the walk-through skips to its guard part (the last three steps)
+    tourBtn.onclick = () => { const g = guardEl.checked; st.tour = true; st.t = g ? GUARD_FROM * ACT : 0; tourBtn.classList.add('on'); };
     cv.addEventListener('pointerdown', e => {
       const r = cv.getBoundingClientRect(), mx = (e.clientX - r.left) * W / r.width, my = (e.clientY - r.top) * H / r.height;
       Object.entries(SPOT).forEach(([k, [x, y]]) => { if (Math.hypot(mx - x, my - y) < 50) use(k); });
@@ -257,7 +264,8 @@
     box.innerHTML = KIT.map(k => `<label class="chk" style="margin:4px 0"><input type="checkbox" data-k="${k.id}"> ${k.name} <span style="font-weight:400;color:var(--muted);font-size:14px">${k.from}</span></label>`).join('');
     const sync = on => $$(box, 'input').forEach(i => { i.checked = on.has(i.dataset.k); });
     $$(box, 'input').forEach(i => i.onchange = () => { if (st.tour) { st.tour = false; tourBtn.classList.remove('on'); st.on = new Set(MTOUR.filter((k, j) => st.t >= j * MSTEP)); } i.checked ? st.on.add(i.dataset.k) : st.on.delete(i.dataset.k); st.t = 99; });
-    tourBtn.onclick = () => { st.tour = true; st.t = 0; tourBtn.classList.add('on'); };
+    // with the guard ticked the walk-through skips to its guard part (the last three steps)
+    tourBtn.onclick = () => { const g = guardEl.checked; st.tour = true; st.t = g ? GUARD_FROM * ACT : 0; tourBtn.classList.add('on'); };
     function render() {
       const t = st.t;
       const kit = st.tour ? KIT.filter(k => MTOUR.indexOf(k.id) * MSTEP <= t).map(k => ({ ...k, at: MTOUR.indexOf(k.id) * MSTEP })) : KIT.filter(k => st.on.has(k.id)).map(k => ({ ...k, at: -1 }));
