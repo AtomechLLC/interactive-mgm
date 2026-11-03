@@ -152,36 +152,34 @@
     if (h.hp < RULES.headHp) stroke(g, [[3, -10], [7, -3], [3, 4]], sd + 12, C.ink, 1.6, 0.4, 1);
     g.restore();
   }
-  // the hooded figure from the sketch, in pencil
+  // the player is the student's own drawing, cut out of the sketch and posed after Castlevania 1's Simon
+  // (tools/simon_frames.py builds img/simon.png): stand, a three-frame walk, the tucked jump, a three-frame whip and a knock-back
+  const SIMON = new Image(); SIMON.src = 'img/simon.png';
+  const SF = { names: ['stand', 'walk1', 'walk2', 'walk3', 'jump', 'whip1', 'whip2', 'whip3', 'hurt'], w: 76, h: 100, k: 4, foot: 97, cx: 39 };
+  const WALK = ['walk1', 'walk2', 'walk3', 'walk2'];
+  function simonFrame(s) {
+    const p = s.p;
+    if (p.inv > RULES.invuln - 0.35) return 'hurt';
+    if (s.fl) { const ft = s.fl.t; return ft < 0.05 ? 'whip1' : ft < 0.1 || (s.fl.dy < 0 && !s.fl.dx) ? 'whip2' : 'whip3'; }
+    if (!p.ground) return 'jump';
+    if (Math.abs(p.vx) > 1) return WALK[Math.floor(s.t * 9) % 4];
+    return 'stand';
+  }
+  const FIST = { whip1: [-6, -82], whip2: [10, -78], whip3: [28, -56] };
   function player(g, s, t) {
     const p = s.p;
-    if (p.inv > 0 && Math.floor(p.inv * 14) % 2) return;
-    const x = p.x, foot = p.y, f = p.face, moving = Math.abs(p.vx) > 1 && p.ground;
-    const ph = moving ? Math.sin(s.t * 16) : 0, sd = 3000 + (moving || !p.ground ? boil(t) : 0) * 3;
-    g.save(); g.translate(x, foot); g.scale(f, 1);
-    const ink = C.ink;
-    // legs
-    if (!p.ground) { stroke(g, [[-4, -30], [-10, -14], [-5, -4]], sd, ink, 2.6, 0.5, 1); stroke(g, [[5, -30], [11, -17], [15, -10]], sd + 1, ink, 2.6, 0.5, 1); }
-    else { stroke(g, [[-4, -30], [-4 - ph * 8, -1], [-9 - ph * 8, 0]], sd, ink, 2.6, 0.5, 1); stroke(g, [[5, -30], [5 + ph * 8, -1], [10 + ph * 8, 0]], sd + 1, ink, 2.6, 0.5, 1); }
-    // body, shaded with graphite
-    g.fillStyle = C.paper; g.beginPath(); g.roundRect(-12, -62, 24, 34, 7); g.fill();
-    hatch(g, -12, -62, 12, -28, sd + 4, 'rgba(60,62,70,.22)', 5);
-    stroke(g, [[-11, -30], [-13, -50], [-9, -62], [9, -62], [13, -50], [11, -30], [-11, -30]], sd + 5, ink, 2.4, 0.5, 1);
-    stroke(g, [[-11, -36], [11, -36]], sd + 6, ink, 1.6, 0.4, 1);
-    if (p.sword) { stroke(g, [[-14, -58], [-4, -60]], sd + 7, C.purple, 3, 0.4, 1); stroke(g, [[4, -60], [14, -58]], sd + 8, C.purple, 3, 0.4, 1); }
-    // the hood
-    g.fillStyle = C.paper; g.beginPath(); g.moveTo(-13, -62); g.quadraticCurveTo(-14, -88, 2, -86); g.quadraticCurveTo(15, -84, 13, -62); g.closePath(); g.fill();
-    stroke(g, [[-13, -62], [-14, -76], [-8, -85], [2, -87], [11, -82], [14, -72], [13, -62]], sd + 9, ink, 2.4, 0.5, 1);
-    stroke(g, [[1, -77], [12, -76], [12, -68], [3, -67], [1, -77]], sd + 10, ink, 1.6, 0.4, 1);
-    // the arm reaches out while the flail is out
-    if (s.fl) stroke(g, [[3, -56], [15, -54]], sd + 11, ink, 2.4, 0.4, 1);
-    else stroke(g, [[3, -56], [9, -44 + ph * 2], [12, -40 + ph * 2]], sd + 11, ink, 2.4, 0.4, 1);
+    if (p.inv > 0 && p.inv <= RULES.invuln - 0.35 && Math.floor(p.inv * 14) % 2) return;
+    if (!SIMON.complete || !SIMON.naturalWidth) return;
+    const name = simonFrame(s), i = SF.names.indexOf(name), lift = name === 'jump' ? 4 : 0;
+    g.save(); g.translate(p.x, p.y - lift); g.scale(p.face, 1);
+    g.drawImage(SIMON, i * SF.w * SF.k, 0, SF.w * SF.k, SF.h * SF.k, -SF.cx, -SF.foot, SF.w, SF.h);
     g.restore();
   }
   // the chain is a row of little red loops and the head a red gear, as sketched
   function flail(g, s, t) {
     const f = s.fl; if (!f || f.hx === undefined) return;
-    const c = chest(s.p), n = Math.max(2, Math.floor(f.len / 9)), col = s.p.sword ? C.purple : C.red;
+    const fist = FIST[simonFrame(s)] || [24, -56], c = { x: s.p.x + fist[0] * s.p.face, y: s.p.y + fist[1] };
+    const n = Math.max(2, Math.floor(Math.hypot(f.hx - c.x, f.hy - c.y) / 9)), col = s.p.sword ? C.purple : C.red;
     for (let k = 1; k < n; k++) { const u = k / n; circ(g, c.x + (f.hx - c.x) * u, c.y + (f.hy - c.y) * u, 3, 4000 + k, col, 1.4, 7); }
     const pts = []; const r = RULES.headR - 2;
     for (let k = 0; k <= 16; k++) { const a = k * Math.PI / 8 + t * 12, rr = k % 2 ? r : r + 5; pts.push([f.hx + Math.cos(a) * rr, f.hy + Math.sin(a) * rr]); }
