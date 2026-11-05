@@ -5,3 +5,9 @@
 .mt-side .kw label.chk { font-size: 15px; }
 .tj-hold { touch-action: none; user-select: none; }
 .tj-hold.on { background: var(--navy); color: #fff; }
+/* slide 2: stats themed to each side */
+.ar-stats div { align-items: center; padding: 6px 12px; }
+.ar-stats div b { min-width: 34px; font-size: 30px; }
+.ar-stats div span { font-size: 15px; line-height: 1.25; }
+.ar-stats div.ori { border-left-color: #3fc6e8; background: linear-gradient(90deg, #e6f9ff, #fffaf0 70%); }
+.ar-stats div.wk { border-left-color: #e08a1e; background: linear-gradient(90deg, #fff0d9, #fffaf0 70%); }
