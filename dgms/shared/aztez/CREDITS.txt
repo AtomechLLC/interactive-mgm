@@ -1,0 +1,5 @@
+Character animation, effects and sounds: Aztez, (c) Team Colorblind (Ben Ruiz, Matt Wegner).
+Captured from the "Impact Effects" demo that accompanies Ben Ruiz's essay
+"Anatomy of a Successful Attack" (https://aztez.com/blog/2014/01/06/anatomy-of-a-successful-attack/).
+Used in this course with permission. Not covered by any license in this repository.
+Frame layout and the layer schedule come from the Atomech rebuild, anatomy-of-a-successful-attack.
