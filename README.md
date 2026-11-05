@@ -279,3 +279,23 @@ Bonus, Getting Hired as a Game Designer (`interview/`):
 - `rubric/`: Interview Rubric. A printable card with the four interviewer questions and the 4Cs, each with a "looks like" line and a 1-4 self-score. (slides 29-34, 42-47).
 - `five-levels/`: One Question, Five Levels. One prompt, five answers from Junior to Director, with each level's trait highlighted. (slides 35-41).
 - `practice/`: Interview Practice Card. Draw a prompt for your role, answer against a timer, tick the five tactics, then score yourself on the rubric. (slides 48-52).
+
+Module 5, 3Cs: Controllers (`m5-controller/`):
+- `puppet-tracer/`: Puppet Signal Tracer. Press jump, attack and swim and follow each signal from Input to Controller to Pawn: a jump pressed while falling waits in a queue, an attack in the water is refused until you flip one flag. (slides 17-62).
+- `two-jumps/`: Two Jumps, Two Philosophies. One key drives two jumpers: an Ori-style jump built from six pieces you can switch on and off, and a No Rest-style jump that only fires at a ledge marker and follows one fixed curve. (slides 69-115).
+- `control-metaphors/`: Controls as Metaphor. One controller, five metaphors: left and right hand, horizontal and vertical, body parts, light and heavy, and numbered slots, each relabelled with the game that used it. (slides 143-155).
+- `one-thumb/`: One Thumb, Too Many Buttons. Map Souls actions to a gamepad or to mouse and keyboard, and see every pair of actions that must happen at once but lands on the same thumb or finger. (slides 157-164).
+- `adr-curves/`: ADR Curves. Tune acceleration, deceleration and rotation on a top-down runner and watch the speed curve, from Mega Man X's instant turns to heavy momentum. (slides 190-193).
+- `axe-context/`: Interaction + Context = Outcome. One axe button and a hero you can drag: the same press chops a tree, backstabs from behind, attacks from the front or swings at the air. (slides 235-243).
+- `attack-windows/`: Attack Window Editor. Drag the windows of a looping strike (queue, interrupt, hit, iFrames, motion, VFX, sound and shake), compare a dagger with a greatsword, and read plus, even or minus on block. (slides 248-323).
+- `cancel-playground/`: Cancel Playground. Press keys mid-attack to see which of the seventeen cancels lets you out, and watch an anti-pattern detector flag free-cancel loops and option selects. (slides 329-392).
+- `hitbox-lab/`: Hitbox Lab. One looping sword swing with its colliders drawn: switch genres to watch "hitbox" change sides, swap the five attack shapes, ride the weapon bone, and replay seven placement tips before and after. (slides 396-441).
+
+Module 4, 3Cs: Character (`m4-character/`):
+- `same-button/`: Same Button, Five Meanings. One jump key, five character states: follow the signal from input through the controller to the character and see five different results. (slides 9-20, 30-31).
+- `same-kit-new-fantasy/`: Same Kit, New Fantasy. The kit never changes, only the character wearing it: step through Ziggs, Trundle, Braum, Ori and three Apex Legends reworks and watch how they read. (slides 37-48, 102, 127-137).
+- `champion-dossier/`: Champion Dossier. Alex Yee's seven-layer Pyramid of Complexity and Devon Giehl's six pieces, filled in for Jinx, Draven, Braum, Lucian, Gnar and Ziggs, plus a lug-nut pyramid for your own cast. (slides 54-123, 141-200).
+- `world-speeds-up/`: The World Speeds Up. Slow the hero or speed up the world: two runs of the same chase, and only one makes the controls feel heavy. (slides 82).
+- `silhouette-test/`: Silhouette Test. Mario, Bowser and League champions filled solid black: name each shape, then sort friend from foe before the colours come back. (Part 6).
+- `jump-tuner/`: Jump Metrics Tuner. Play a Mario runner and tune run speed, jump height, apex time, fall gravity and coyote time; see where each preset's arc lands and whether the level still fits. (Part 6).
+- `core-actions-by-genre/`: Core Actions by Genre. One puppet, five genres: swap the action bar and play each core verb, from a platformer's stomp to a Souls-like dodge. (Part 6).
