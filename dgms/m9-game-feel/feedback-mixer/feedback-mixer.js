@@ -299,65 +299,103 @@ function build3D(canvas) {
 
 const KX = -.95;   // the knight's rest position
 
-/* ---------- an imported character (optional): when MODEL.url loads, it replaces the grey-box knight ----------
-   The clip is driven by the hit's action time, not by a clock, so hit stop freezes it and __seek stays deterministic.
-   marks are seconds in the clip: start (idle pose), windEnd (top of the wind-up), impact (blade meets the target), end.
-   hand is the bone the sword hangs from (or the weapon bone, if the model has its own blade), tip the blade's length. */
-const MODEL = {
-  url: new URLSearchParams(location.search).get('model'), clip: new URLSearchParams(location.search).get('clip'), height: 1.85, x: 0, facing: 0,
-  marks: { start: 0, windEnd: .45, impact: .62, end: 1.4 },
-  hand: null, sword: true, swordOffset: [0, .05, 0], swordRot: [0, 0, 0], tip: 1.0,
-};
+/* ---------- the Elden Ring knight: the Haligtree Knight set with a Longsword, playing the straight sword's first light
+   attack. Files come from the Move Explorer export (GameCombatAnimationLibrary, tools/frame_data/export_er_models.py):
+   the armor glb is skinned to the c0000 skeleton, er/a023_030000.bin is the move baked to one pose per frame at 30 fps
+   (FDA2: smallest-three quaternions and millimetre translations per bone, then root motion). The move's own hit
+   frames are 14 to 16. The clip is driven by the hit's action time, never by a clock, so hit stop freezes it and
+   window.__seek stays deterministic. If the files fail to load, the grey-box knight stays. ---------- */
+const ER = { dir: 'er/', armor: 'armor-haligtree-knight.glb', weapon: 'weapon-wp_a_0200.glb', anim: 'a023_030000.bin', fps: 30,
+  windTop: 10, impact: 14, end: 26, height: 1.85 };
 let modelReady = Promise.resolve(false);
+function decodeAnim(buf, names) {
+  const dv = new DataView(buf), B = dv.getUint16(4, true), N = dv.getUint16(6, true), hasRoot = dv.getUint8(8);
+  const step = dv.getUint8(9) || 1, M = Math.ceil(N / step);
+  let o = 10; const ids = [], flags = [];
+  for (let k = 0; k < B; k++, o += 2) ids.push(dv.getUint16(o, true));
+  for (let k = 0; k < B; k++, o++) flags.push(dv.getUint8(o));
+  const S2 = Math.SQRT1_2, bones = [];
+  for (let k = 0; k < B; k++) {
+    const nr = flags[k] & 1 ? M : 1, np = flags[k] & 2 ? M : 1, rot = new Float32Array(nr * 4), pos = new Float32Array(np * 3);
+    for (let i = 0; i < nr; i++, o += 4) {
+      const v = dv.getUint32(o, true), big = v >>> 30; let jj = 0, ss = 0;
+      for (let c = 0; c < 4; c++) { if (c === big) continue; const x = ((v >>> (20 - 10 * jj++)) & 1023) / 1023 * 2 * S2 - S2; rot[i * 4 + c] = x; ss += x * x; }
+      rot[i * 4 + big] = Math.sqrt(Math.max(0, 1 - ss));
+    }
+    for (let i = 0; i < np * 3; i++, o += 2) pos[i] = dv.getInt16(o, true) / 1000;
+    bones.push({ name: names[ids[k]], rot, pos, nr, np });
+  }
+  let root = null;
+  if (hasRoot) { root = new Float32Array(N * 3); for (let i = 0; i < N * 3; i++, o += 4) root[i] = dv.getFloat32(o, true); }
+  return { frames: N, bones, root };
+}
 function loadModel(R) {
-  modelReady = new Promise(done => {
-    new GLTFLoader().load(MODEL.url, gl => {
-      try {
-        const root = gl.scene; root.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; o.frustumCulled = false; } });
-        const clip0 = (MODEL.clip && gl.animations.find(a => a.name === MODEL.clip)) || gl.animations[0];
-        if (clip0) { const mx = new THREE.AnimationMixer(root), ac = mx.clipAction(clip0); ac.play(); ac.time = MODEL.marks.start; mx.update(0); }
-        root.updateMatrixWorld(true); root.traverse(o => { if (o.isSkinnedMesh) o.computeBoundingBox(); });
-        const box = new THREE.Box3().setFromObject(root), h = box.max.y - box.min.y || 1, k = MODEL.height / h;
-        const wrap = new THREE.Group(); wrap.add(root); root.scale.setScalar(k); root.position.y = -box.min.y * k;
-        wrap.rotation.y = MODEL.facing; wrap.position.x = MODEL.x;
-        R.knight.children.forEach(c => { c.visible = false; }); R.knight.add(wrap);
-        const clip = (MODEL.clip && gl.animations.find(a => a.name === MODEL.clip)) || gl.animations[0];
-        const M = { wrap, root, clip, mixer: null, action: null, hand: null, sword: null };
-        if (clip) { M.mixer = new THREE.AnimationMixer(root); M.action = M.mixer.clipAction(clip); M.action.play(); M.action.paused = true; }
-        if (MODEL.hand) root.traverse(o => { if (o.name === MODEL.hand) M.hand = o; });
-        if (M.hand && MODEL.sword) {   // our blade, hung from the hand bone; its scale undoes the model's
-          const sw = new THREE.Group(); sw.position.set(...MODEL.swordOffset); sw.rotation.set(...MODEL.swordRot); sw.scale.setScalar(1 / k);
-          R.arm.children.forEach(c => { if (c.position.x > .44) sw.add(c.clone()); });
-          sw.children.forEach(c => { c.position.x -= .47; }); M.hand.add(sw); M.sword = sw;
-        }
-        R.model = M; done(true);
-      } catch (e) { console.warn('model setup failed', e); done(false); }
-    }, undefined, () => done(false));
-  });
+  const gl = url => new Promise((ok, no) => new GLTFLoader().load(ER.dir + url, ok, undefined, no));
+  const get = url => fetch(ER.dir + url).then(r => { if (!r.ok) throw new Error(url); return url.endsWith('.json') ? r.json() : r.arrayBuffer(); });
+  modelReady = Promise.all([gl(ER.armor), gl(ER.weapon), get(ER.anim), get('skeleton.json')]).then(([ag, wg, ab, sk]) => {
+    const anim = decodeAnim(ab, sk.bones);
+    // game space is left-handed: mirror X once; the character faces +z there, the scene wants +x
+    const wrap = new THREE.Group(), mirror = new THREE.Group(), motion = new THREE.Group();
+    wrap.rotation.y = Math.PI / 2; mirror.scale.x = -1; wrap.add(mirror); mirror.add(motion);
+    const body = ag.scene; motion.add(body);
+    body.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; o.frustumCulled = false; } });
+    const tracks = anim.bones.map(b => body.getObjectByName(b.name));
+    const wb = body.getObjectByName(sk.weaponBone), sword = wg.scene.clone(); sword.rotation.z = Math.PI; wb.add(sword);
+    sword.traverse(o => { if (o.isMesh) o.castShadow = true; });
+    // the blade's far end in the sword's own space: the longest axis of its bounds, away from the grip
+    const bb = new THREE.Box3().setFromObject(wg.scene), ext = [bb.min, bb.max].map(v => v.toArray());
+    const ax = [0, 1, 2].reduce((m, a) => Math.abs(bb.max.getComponent(a) - bb.min.getComponent(a)) > Math.abs(bb.max.getComponent(m) - bb.min.getComponent(m)) ? a : m, 0);
+    const far = Math.abs(ext[1][ax]) > Math.abs(ext[0][ax]) ? ext[1][ax] : ext[0][ax], tip = new V3(); tip.setComponent(ax, far);
+    R.knight.children.forEach(c => { c.visible = false; }); R.knight.add(wrap);
+    const M = { wrap, motion, body, anim, tracks, sword, tip, k: 1 };
+    R.model = M;
+    // scale to the scene's knight height, then stand him so the blade lands on the dummy at the hit frame
+    poseFrame(M, 1); wrap.updateMatrixWorld(true);
+    const box = new THREE.Box3().setFromObject(body); M.k = ER.height / Math.max(.5, box.max.y - box.min.y); wrap.scale.setScalar(M.k);
+    poseFrame(M, ER.impact); R.knight.position.set(KX, 0, 0); R.knight.updateMatrixWorld(true);
+    const tp = modelBladePoint(R, 1, new V3()), mid = modelBladePoint(R, .55, new V3());
+    // slide him along x until the blade crosses the burlap, then put the contact point where the blade meets it
+    wrap.position.x += (R.DX - .05) - Math.max(tp.x, mid.x);
+    R.knight.updateMatrixWorld(true); modelBladePoint(R, .8, tp);
+    R.HP.set(R.DX - .27, clamp(tp.y, .95, 1.6), clamp(tp.z, -.2, .3));
+    R.flash.position.copy(R.HP); R.shock.position.copy(R.HP); R.decal.position.y = R.HP.y - .85;
+    return true;
+  }).catch(e => { console.warn('Elden Ring model not loaded; keeping the grey-box knight', e); return false; });
   return modelReady;
 }
-// the clip time for action time a: the anim channel's poses come from the clip; with the channel off the swing skips
-// its wind-up and follow-through, so the body snaps from the idle pose to the hit and back
-function clipTime(st, a, TL) {
-  const m = MODEL.marks, animOn = st.ch.anim.on;
-  if (a < TL.press) return m.start;
+// one pose per clip frame (1-based, fractional frames blend the two around them)
+const qa = [0, 0, 0, 1], pv = new V3();
+function poseFrame(M, f) {
+  const A = M.anim, u = clamp(f - 1, 0, A.frames - 1), k0 = Math.floor(u), k1 = Math.min(k0 + 1, A.frames - 1), t = u - k0;
+  A.bones.forEach((b, i) => {
+    const o = M.tracks[i]; if (!o) return;
+    if (b.nr > 1) { THREE.Quaternion.slerpFlat(qa, 0, b.rot, k0 * 4, b.rot, k1 * 4, t); o.quaternion.fromArray(qa); } else o.quaternion.fromArray(b.rot, 0);
+    if (b.np > 1) { o.position.fromArray(b.pos, k0 * 3).lerp(pv.fromArray(b.pos, k1 * 3), t); } else o.position.fromArray(b.pos, 0);
+  });
+  // root motion: the step into the swing, stopped a few frames after the hit so he doesn't walk through the dummy
+  if (A.root) { const r0 = Math.min(k0, ER.impact + 3), r1 = Math.min(k1, ER.impact + 3); M.motion.position.fromArray(A.root, r0 * 3).lerp(pv.fromArray(A.root, r1 * 3), t); M.motion.position.z *= -1; }
+}
+// the clip frame for action time a: the swing's three phases map onto the move's own wind-up, strike and recovery.
+// With the animation channel off the knight snaps from his idle pose to the hit frame and back, no anticipation.
+function clipFrame(st, a, TL) {
+  const animOn = st.ch.anim.on;
+  if (a < TL.press) return 1;
   if (!animOn) {
-    if (a < TL.wEnd) return m.start;
-    if (a < TL.imp) return lerp(m.start, m.impact, (a - TL.wEnd) / (TL.imp - TL.wEnd));
-    return lerp(m.impact, m.start, clamp((a - TL.imp) / .5));
+    if (a < TL.wEnd) return 1;
+    if (a < TL.imp) return lerp(1, ER.impact, (a - TL.wEnd) / (TL.imp - TL.wEnd));
+    return lerp(ER.impact, 1, clamp((a - TL.imp) / .4));
   }
-  if (a < TL.wEnd) { const k = (a - TL.press) / TL.wind; return lerp(st.cut ? lerp(m.start, m.windEnd, .75) : m.start, m.windEnd, k); }
-  if (a < TL.imp) return lerp(m.windEnd, m.impact, (a - TL.wEnd) / (TL.imp - TL.wEnd));
-  const d = a - TL.imp, span = m.end - m.impact;
-  return has(st, 'anim', 1) ? Math.min(m.end, m.impact + d * span / 1.0) : lerp(m.impact, m.start, clamp(d / .5));
+  if (a < TL.wEnd) { const k = (a - TL.press) / TL.wind; return lerp(st.cut ? lerp(1, ER.windTop, .7) : 1, ER.windTop, k); }
+  if (a < TL.imp) return lerp(ER.windTop, ER.impact, (a - TL.wEnd) / (TL.imp - TL.wEnd));
+  const d = a - TL.imp;
+  return has(st, 'anim', 1) ? Math.min(ER.end, ER.impact + d * ER.fps) : lerp(ER.impact, 1, clamp(d / .5));
 }
-function poseModel(R, st, a, TL) { const M = R.model; if (!M || !M.action) return; M.action.time = clipTime(st, a, TL); M.mixer.update(0); }
-// world position of a point on the imported character's blade
+function poseModel(R, st, a, TL) { if (R.model) poseFrame(R.model, clipFrame(st, a, TL)); }
+// world position of a point on the Longsword, d = 0 at the grip to 1 at the tip
 function modelBladePoint(R, d, out) {
-  const M = R.model, o = M.sword || M.hand; o.updateWorldMatrix(true, false);
-  return o.localToWorld(out.set(M.sword ? d : d / o.getWorldScale(tmpS).x, 0, 0));
+  const M = R.model; M.sword.updateWorldMatrix(true, false);
+  return M.sword.localToWorld(out.copy(M.tip).multiplyScalar(d));
 }
-const tmpS = new THREE.Vector3();
 const tmpO = new THREE.Object3D(), tmpV = new V3(), tmpV2 = new V3();
 // a point on the blade (d metres from the shoulder) at a pose, in world space, without touching the scene graph
 function bladePoint(p, d, out) {
@@ -373,7 +411,7 @@ function render3D(R, st, t) {
   const TL = timeline(st), A = actionAt(TL, t), a = A.a, p = pose(st, a, TL), s = p.since, hit = s >= 0;
   const vfx = lvl(st, 'vfx'), mat = lvl(st, 'mat'), camL = lvl(st, 'cam'), tm = lvl(st, 'time');
   // knight
-  R.knight.position.set(KX + p.lunge, 0, 0);
+  R.knight.position.set(R.model ? KX : KX + p.lunge, 0, 0);
   R.hips.position.y = .9 - p.crouch; R.hips.rotation.z = -p.lean;
   R.arm.rotation.z = -p.ang;
   R.legs[0].rotation.z = -p.lunge * .9 - p.crouch * 1.5; R.legs[1].rotation.z = p.lunge * .7 + p.crouch;
@@ -447,11 +485,11 @@ function render3D(R, st, t) {
     const fade = a > TL.imp ? 1 - (a - TL.imp) / .2 : 1;
     for (let i = 0; i < TS; i++) {
       const aa = Math.max(TL.wEnd, a - i * .007), pp = pose(st, aa, TL), k = Math.pow(1 - i / (TS - 1), 2) * fade * (.3 + .5 * vfx);
-      if (R.model && R.model.hand) { R.knight.position.x = KX + pp.lunge; poseModel(R, st, aa, TL); modelBladePoint(R, MODEL.tip * .6, tmpV).toArray(R.tPos, i * 6); modelBladePoint(R, MODEL.tip, tmpV).toArray(R.tPos, i * 6 + 3); }
+      if (R.model) { poseModel(R, st, aa, TL); modelBladePoint(R, .45, tmpV).toArray(R.tPos, i * 6); modelBladePoint(R, 1, tmpV).toArray(R.tPos, i * 6 + 3); }
       else { bladePoint(pp, 1.15, tmpV).toArray(R.tPos, i * 6); bladePoint(pp, 1.55, tmpV).toArray(R.tPos, i * 6 + 3); }
       R.tCol.set([.25 * k, .55 * k, .8 * k, .75 * k, .95 * k, 1 * k], i * 6);
     }
-    if (R.model) { R.knight.position.x = KX + p.lunge; poseModel(R, st, a, TL); }
+    if (R.model) poseModel(R, st, a, TL);
     R.trailGeo.attributes.position.needsUpdate = true; R.trailGeo.attributes.color.needsUpdate = true; R.trailGeo.computeBoundingSphere();
   }
   // braziers flicker on the clock, so a frozen hit still feels alive around it (held still for the GIF, which stays smaller)
