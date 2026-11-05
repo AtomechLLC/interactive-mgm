@@ -383,55 +383,55 @@
      Wicked's painterly firelight on the right (Photon Quantum: Unity input, Quantum simulation, Unity view). The flow is
      scripted with XR.script and replayed with XR.replay, so every frame is a pure function of t; the drawing is local. */
   const ART = {};
-  ['ori', 'ori-forest', 'ab-doublejump', 'ab-dash', 'ab-bash', 'nr-bg', 'nr-screen', 'nr-screen2', 'knight-idle', 'knight-jump', 'knight-p2', 'knight-jump-p2']
-    .forEach(n => { const i = new Image(); i.src = 'art/' + n + (/forest|bg|screen/.test(n) ? '.jpg' : '.png'); ART[n] = i; });
+  ['ori', 'ori-forest', 'ab-doublejump', 'ab-dash', 'ab-bash', 'nr-bg', 'nr-screen', 'nr-screen2', 'knight-idle', 'knight-jump', 'knight-p2', 'knight-jump-p2', 'knight-top-idle', 'knight-top-jump', 'nr-ground', 'ori-nibel']
+    .forEach(n => { const i = new Image(); i.src = 'art/' + n + (/forest|bg|screen|ground|nibel/.test(n) ? '.jpg' : '.png'); ART[n] = i; });
   const ok = i => i && i.complete && i.naturalWidth > 0;
   const LP = { x: 0, w: 512 }, RP = { x: 528, w: 512 };
   const ORI = { glow: '#8fe9ff', ink: '#e9fbff', sub: '#a9e3f5', card: 'rgba(6,26,48,.74)', edge: 'rgba(143,233,255,.55)' };
   const WK = { glow: '#ffb547', ink: '#fff3e0', sub: '#f3c999', card: 'rgba(28,14,8,.76)', edge: 'rgba(255,181,71,.5)' };
   const AR_N = [
-    { id: 'm_in', side: 'L', x: 30, y: 96, w: 204, h: 92, title: 'Input reading', sub: 'buttons', icon: 'pad' },
-    { id: 'm_ctl', side: 'L', x: 278, y: 96, w: 204, h: 92, title: 'Control logic', value: 'Ready' },
-    { id: 'm_ab', side: 'L', x: 278, y: 216, w: 204, h: 92, title: 'Abilities', sub: 'jump, dash, bash', icon: 'abilities' },
-    { id: 'm_ph', side: 'L', x: 30, y: 216, w: 204, h: 92, title: 'Physics', sub: 'velocity', icon: 'vel' },
-    { id: 'm_an', side: 'L', x: 30, y: 336, w: 204, h: 92, title: 'Animation', sub: 'events', icon: 'film' },
-    { id: 'm_vw', side: 'L', x: 278, y: 336, w: 204, h: 92, title: 'Rendering', sub: 'sprite, effects', icon: 'ori', value: 'ground' },
-    { id: 'm_ai', side: 'L', x: 30, y: 482, w: 204, h: 84, title: 'AI brain', sub: 'wants to drive', icon: 'brain', ghost: true },
-    { id: 'm_net', side: 'L', x: 278, y: 482, w: 204, h: 84, title: 'Online player', sub: 'wants to join', icon: 'p2', ghost: true },
-    { id: 'p_in', side: 'R', x: 538, y: 122, w: 128, h: 100, title: 'Device', sub: 'keyboard, pad', icon: 'pad' },
-    { id: 'p_ctl', side: 'R', x: 690, y: 122, w: 176, h: 100, title: 'Controller', value: 'Ready' },
-    { id: 'p_pawn', side: 'R', x: 708, y: 270, w: 158, h: 118, title: 'Pawn', value: 'Idle', sub: 'actions: jump, attack' },
-    { id: 'p_vw', side: 'R', x: 884, y: 236, w: 146, h: 178, title: 'View', icon: 'knight', value: 'idle' },
-    { id: 'p_ai', side: 'R', x: 690, y: 452, w: 176, h: 96, title: 'AI brain', sub: 'issues commands', icon: 'brain' },
-    { id: 'p_net', side: 'R', x: 538, y: 452, w: 128, h: 96, title: 'Online input', sub: 'player 2', icon: 'p2' },
-    { id: 'p_vw2', side: 'R', x: 884, y: 434, w: 146, h: 132, title: 'View, player 2', sub: 'same simulation', icon: 'knight2', value: 'idle' },
+    { id: 'm_in', side: 'L', x: 28, y: 282, w: 204, h: 58, title: 'Input reading', sub: 'buttons', icon: 'pad' },
+    { id: 'm_ctl', side: 'L', x: 280, y: 282, w: 204, h: 58, title: 'Control logic', value: 'Ready' },
+    { id: 'm_ab', side: 'L', x: 280, y: 350, w: 204, h: 58, title: 'Abilities', sub: 'jump, dash, bash', icon: 'abilities' },
+    { id: 'm_ph', side: 'L', x: 28, y: 350, w: 204, h: 58, title: 'Physics', sub: 'velocity', icon: 'vel' },
+    { id: 'm_an', side: 'L', x: 28, y: 418, w: 204, h: 58, title: 'Animation', sub: 'events', icon: 'film' },
+    { id: 'm_vw', side: 'L', x: 280, y: 418, w: 204, h: 58, title: 'Rendering', sub: 'sprite, effects', icon: 'ori', value: 'ground' },
+    { id: 'm_ai', side: 'L', x: 28, y: 502, w: 204, h: 70, title: 'AI brain', sub: 'wants to drive', icon: 'brain', ghost: true },
+    { id: 'm_net', side: 'L', x: 280, y: 502, w: 204, h: 70, title: 'Online player', sub: 'wants to join', icon: 'p2', ghost: true },
+    { id: 'p_in', side: 'R', x: 538, y: 312, w: 128, h: 66, title: 'Device', sub: 'keyboard, pad', icon: 'pad' },
+    { id: 'p_ctl', side: 'R', x: 690, y: 312, w: 176, h: 66, title: 'Controller', value: 'Ready' },
+    { id: 'p_pawn', side: 'R', x: 708, y: 398, w: 158, h: 76, title: 'Pawn', value: 'Idle', sub: 'actions: jump, attack' },
+    { id: 'p_vw', side: 'R', x: 884, y: 312, w: 146, h: 96, title: 'View', icon: 'knight', value: 'idle' },
+    { id: 'p_ai', side: 'R', x: 690, y: 500, w: 176, h: 72, title: 'AI brain', sub: 'issues commands', icon: 'brain' },
+    { id: 'p_net', side: 'R', x: 538, y: 500, w: 128, h: 72, title: 'Online input', sub: 'player 2', icon: 'p2' },
+    { id: 'p_vw2', side: 'R', x: 884, y: 422, w: 146, h: 116, title: 'View, player 2', sub: 'same simulation', icon: 'knight2', value: 'idle' },
   ];
   const AR_RULES = {
     jump: () => [
       { dt: 0, dur: .5, from: 'm_in', to: 'm_ctl', label: 'Jump' },
-      { dt: .55, dur: .5, from: 'm_ctl', to: 'm_ab', set: { m_ctl: 'Jumping' }, via: [352, 202] },
+      { dt: .55, dur: .5, from: 'm_ctl', to: 'm_ab', set: { m_ctl: 'Jumping' }, via: [352, 345] },
       { dt: 1.1, dur: .5, from: 'm_ab', to: 'm_ph', label: 'velocity' },
       { dt: 1.65, dur: .5, from: 'm_ph', to: 'm_an', label: 'airborne' },
-      { dt: 2.2, dur: .6, from: 'm_an', to: 'm_ab', label: 'anim event', via: [256, 318], loop: true },
-      { dt: 2.85, dur: .6, from: 'm_ab', to: 'm_ctl', label: 'state changed', via: [410, 202], loop: true },
+      { dt: 2.2, dur: .6, from: 'm_an', to: 'm_ab', label: 'anim event', via: [256, 410], loop: true },
+      { dt: 2.85, dur: .6, from: 'm_ab', to: 'm_ctl', label: 'state changed', via: [410, 345], loop: true },
       { dt: 3.5, dur: .5, from: 'm_an', to: 'm_vw', set: { m_vw: 'air' } },
       { dt: 0, dur: .5, from: 'p_in', to: 'p_ctl', label: 'Jump', chain: ['Input', 'Device'] },
       { dt: .55, dur: .5, from: 'p_ctl', to: 'p_pawn', label: 'Jump', set: { p_pawn: 'Jumping' }, chain: ['Controller'] },
       { dt: 1.1, dur: .5, from: 'p_pawn', to: 'p_vw', label: 'state', set: { p_vw: 'jump' }, chain: ['Pawn', 'Actions'] },
-      { dt: 4.4, dur: .01, set: { m_ctl: 'Ready', p_pawn: 'Idle', m_vw: 'ground', p_vw: 'idle' } },
+      { dt: 4.95, dur: .01, set: { m_ctl: 'Ready', p_pawn: 'Idle', m_vw: 'ground', p_vw: 'idle' } },
     ],
     ai: () => [
-      { dt: 0, dur: .9, from: 'm_ai', to: 'm_in', label: 'Jump', bounce: 'input is wired inside', stop: .12 },
-      { dt: 0, dur: .7, from: 'p_ai', to: 'p_ctl', label: 'Jump', via: [690, 340], chain: ['Controller'], skip: true },
+      { dt: 0, dur: .9, from: 'm_ai', to: 'm_in', label: 'Jump', bounce: 'input is wired inside', stop: .075 },
+      { dt: 0, dur: .7, from: 'p_ai', to: 'p_ctl', label: 'Jump', via: [686, 452], chain: ['Controller'], skip: true },
       { dt: .75, dur: .5, from: 'p_ctl', to: 'p_pawn', label: 'Jump', set: { p_pawn: 'Jumping' }, chain: ['Controller'] },
-      { dt: 1.3, dur: .5, from: 'p_pawn', to: 'p_vw', label: 'state', set: { p_vw: 'jump' }, chain: ['Pawn', 'Actions'] },
+      { dt: 1.3, dur: .5, from: 'p_pawn', to: 'p_vw', label: 'state', set: { p_vw: 'jump' }, chain: ['Pawn', 'Actions'], who: 'AI' },
       { dt: 2.6, dur: .01, set: { p_pawn: 'Idle', p_vw: 'idle' } },
     ],
     net: () => [
       { dt: 0, dur: .9, from: 'm_net', to: 'm_vw', label: 'Join', bounce: 'no seam to sync', stop: .45 },
-      { dt: 0, dur: .6, from: 'p_net', to: 'p_ctl', label: 'synced input', via: [640, 300], chain: ['Input'] },
+      { dt: 0, dur: .6, from: 'p_net', to: 'p_ctl', label: 'synced input', via: [640, 434], chain: ['Input'] },
       { dt: .65, dur: .5, from: 'p_ctl', to: 'p_pawn', set: { p_pawn: 'Jumping' }, chain: ['Controller'] },
-      { dt: 1.2, dur: .5, from: 'p_pawn', to: 'p_vw', set: { p_vw: 'jump' }, chain: ['Pawn', 'Actions'] },
+      { dt: 1.2, dur: .5, from: 'p_pawn', to: 'p_vw', set: { p_vw: 'jump' }, chain: ['Pawn', 'Actions'], who: 'P2' },
       { dt: 1.2, dur: .5, from: 'p_pawn', to: 'p_vw2', set: { p_vw2: 'jump' }, chain: ['Pawn', 'Actions'] },
       { dt: 2.8, dur: .01, set: { p_pawn: 'Idle', p_vw: 'idle', p_vw2: 'idle' } },
     ],
@@ -473,11 +473,11 @@
   function text(g, s, x, y, font, col, align = 'left') { g.font = font; g.fillStyle = col; g.textAlign = align; g.textBaseline = 'middle'; g.fillText(s, x, y); }
   function chip(g, s, x, y, th, pop = 1) {
     g.save(); g.translate(x, y); g.scale(pop, pop);
-    g.font = '800 18px Montserrat, sans-serif'; const w = Math.max(70, g.measureText(s).width + 26);
+    g.font = '800 16px Montserrat, sans-serif'; const w = Math.max(64, g.measureText(s).width + 22);
     g.shadowColor = th.glow; g.shadowBlur = 10 * pop;
     g.fillStyle = th === ORI ? '#eafcff' : '#fff1d6'; g.strokeStyle = th.glow; g.lineWidth = 2.5;
-    g.beginPath(); g.roundRect(-w / 2, -17, w, 34, 9); g.fill(); g.stroke(); g.shadowBlur = 0;
-    text(g, s, 0, 1, '800 18px Montserrat, sans-serif', th === ORI ? '#063a52' : '#5a2a00', 'center'); g.restore();
+    g.beginPath(); g.roundRect(-w / 2, -14, w, 28, 8); g.fill(); g.stroke(); g.shadowBlur = 0;
+    text(g, s, 0, 1, '800 16px Montserrat, sans-serif', th === ORI ? '#063a52' : '#5a2a00', 'center'); g.restore();
   }
   function pill(g, s, x, y, col, bg = 'rgba(10,12,24,.88)', size = 12.5) {
     g.font = `700 ${size}px Jost, sans-serif`; const w = g.measureText(s).width + 16;
@@ -515,22 +515,22 @@
     if (n.ghost) g.setLineDash([6, 5]);
     g.beginPath(); g.roundRect(x, y, w, h, 12); g.fill(); g.stroke(); g.setLineDash([]); g.shadowBlur = 0;
     // header strip
-    text(g, n.title, x + 12, y + 16, '700 13.5px Montserrat, sans-serif', th.ink);
-    g.fillStyle = th.edge; g.fillRect(x + 12, y + 28, w - 24, 1);
-    const cx = x + w / 2, body = y + 30, room = h - 30, my = body + room / 2;
-    const subY = y + h - 13;
+    text(g, n.title, x + 10, y + 13, '700 12.5px Montserrat, sans-serif', th.ink);
+    g.fillStyle = th.edge; g.fillRect(x + 10, y + 24, w - 20, 1);
+    const cx = x + w / 2, body = y + 26, room = h - 26, my = body + room / 2;
+    const subY = y + h - 10;
     if (n.icon === 'abilities') {
-      ['ab-doublejump', 'ab-dash', 'ab-bash'].forEach((k, i) => fit(g, ART[k], x + w / 2 + (i - 1) * 50, my - 7, 44, 44));
+      ['ab-doublejump', 'ab-dash', 'ab-bash'].forEach((k, i) => fit(g, ART[k], x + w / 2 + (i - 1) * 34, my - 5, 24, 24));
       text(g, n.sub, cx, subY, 'italic 500 12px Jost, sans-serif', th.sub, 'center');
     } else if (n.icon === 'ori') {
       const air = v === 'air', bob = Math.sin(t * 2.4) * 2 - (air ? 10 : 0);
       if (air) { g.save(); g.shadowColor = th.glow; g.shadowBlur = 18; }
-      fit(g, ART.ori, cx - 34, my - 4 + bob, 40, 52);
+      fit(g, ART.ori, cx - 40, my + bob, 24, 30);
       if (air) g.restore();
-      text(g, n.sub, cx + 28, my - 4, 'italic 500 12px Jost, sans-serif', th.sub, 'center');
-      text(g, air ? 'airborne' : 'grounded', cx + 28, my + 14, '700 11px Jost, sans-serif', air ? th.glow : th.sub, 'center');
+      text(g, n.sub, cx + 22, my - 6, 'italic 500 12px Jost, sans-serif', th.sub, 'center');
+      text(g, air ? 'airborne' : 'grounded', cx + 22, my + 10, '700 11px Jost, sans-serif', air ? th.glow : th.sub, 'center');
     } else if (n.icon === 'knight' || n.icon === 'knight2') {
-      const sx = x + 8, sy = body + 4, sw = w - 16, sh = room - (n.sub ? 30 : 12);
+      const sx = x + 8, sy = body + 4, sw = w - 16, sh = room - (n.sub ? 26 : 10);
       g.save(); g.beginPath(); g.roundRect(sx, sy, sw, sh, 6); g.clip();
       cover(g, n.icon === 'knight' ? ART['nr-screen'] : ART['nr-screen2'], sx, sy, sw, sh);
       g.fillStyle = 'rgba(10,5,0,.35)'; g.fillRect(sx, sy, sw, sh);
@@ -541,10 +541,10 @@
       if (n.sub) text(g, n.sub, cx, subY, 'italic 500 12px Jost, sans-serif', th.sub, 'center');
     } else if (n.value != null && v != null) {
       const pop = 1 + .18 * glow;
-      chip(g, v, cx, n.sub ? my - 8 : my, th, pop);
+      chip(g, v, cx, n.sub ? my - 7 : my, th, pop);
       if (n.sub) text(g, n.sub, cx, subY, 'italic 500 12px Jost, sans-serif', th.sub, 'center');
     } else if (n.icon) {
-      glyph(g, n.icon, cx, my - 8, th.glow, t);
+      g.save(); g.translate(cx, my - 9); g.scale(.6, .6); glyph(g, n.icon, 0, 0, th.glow, t); g.restore();
       text(g, n.sub, cx, subY, 'italic 500 12px Jost, sans-serif', th.sub, 'center');
     }
     g.restore();
@@ -575,6 +575,117 @@
     text(g, name, P.x + 66 + tw, 27, '800 19px Montserrat, sans-serif', '#fff');
   }
 
+  // when a hop that set node `id` to `v` last landed, at or before t
+  function landed(flow, id, v, t) {
+    let best = null;
+    flow.forEach(f => { if (f.to === id && f.set && f.set[id] === v && f.t + f.dur <= t) best = f; });
+    return best;
+  }
+  function sceneFrame(g, x, y, w, h, ring, label, col) {
+    g.save(); g.strokeStyle = ring; g.lineWidth = 2; g.shadowColor = ring; g.shadowBlur = 8;
+    g.beginPath(); g.roundRect(x, y, w, h, 10); g.stroke(); g.restore();
+    pill(g, label, x + 62, y + 15, col, 'rgba(6,8,16,.78)', 11.5);
+  }
+  // Ori: a side-on slice of Nibel, two mossy ledges and a gap; Rendering going airborne plays the jump
+  const OS = { x: 10, y: 44, w: 492, h: 204 }, OA = { x0: 10, x1: 196, y: 214 }, OB = { x0: 300, x1: 502, y: 190 };
+  function oriScene(g, flow, val, t) {
+    const { x, y, w, h } = OS;
+    g.save(); g.beginPath(); g.roundRect(x, y, w, h, 10); g.clip();
+    cover(g, ART['ori-nibel'], x, y - 30, w, h + 60);
+    const gr = g.createLinearGradient(0, y, 0, y + h); gr.addColorStop(0, 'rgba(10,40,70,.05)'); gr.addColorStop(1, 'rgba(4,22,40,.55)'); g.fillStyle = gr; g.fillRect(x, y, w, h);
+    // drifting spirit motes
+    for (let i = 0; i < 18; i++) { const px = x + ((i * 83 + t * 14 * (1 + i % 3)) % w), py = y + 20 + ((i * 47) % (h - 50)) + Math.sin(t * 1.3 + i) * 6; g.fillStyle = `rgba(190,250,255,${.35 + .3 * Math.sin(t * 2 + i)})`; g.beginPath(); g.arc(px, py, 1.6, 0, TAU); g.fill(); }
+    // ledges: rounded rock silhouettes with glowing moss along a bumpy top
+    [[OA, 1], [OB, -1]].forEach(([L, sd]) => {
+      const top = []; for (let k = 0; k <= 24; k++) { const px = lerp(L.x0 - 8, L.x1, k / 24); top.push([px, L.y + Math.sin(k * 1.9 + L.x0) * 2 + Math.sin(k * .7) * 1.5]); }
+      const ex = sd > 0 ? L.x1 : L.x0;
+      g.beginPath(); top.forEach(([px, py], i) => i ? g.lineTo(px, py) : g.moveTo(px, py));
+      if (sd > 0) { g.quadraticCurveTo(L.x1 + 12, L.y + 20, L.x1 - 4, L.y + 46); g.quadraticCurveTo(L.x1 - 14, L.y + 70, L.x1 - 6, y + h); g.lineTo(L.x0 - 8, y + h); }
+      else { g.lineTo(L.x1 + 8, y + h); g.lineTo(L.x0 + 6, y + h); g.quadraticCurveTo(L.x0 + 14, L.y + 60, L.x0 + 2, L.y + 40); g.quadraticCurveTo(L.x0 - 12, L.y + 16, L.x0 - 8, L.y); }
+      g.closePath();
+      const rg = g.createLinearGradient(0, L.y, 0, y + h); rg.addColorStop(0, '#12403f'); rg.addColorStop(.25, '#0a2a2c'); rg.addColorStop(1, '#03100f'); g.fillStyle = rg; g.fill();
+      // rock strata
+      g.save(); g.clip(); g.strokeStyle = 'rgba(120,220,200,.10)'; g.lineWidth = 3;
+      for (let k = 1; k < 4; k++) { g.beginPath(); g.moveTo(L.x0 - 10, L.y + k * 14); g.quadraticCurveTo((L.x0 + L.x1) / 2, L.y + k * 14 + 6, L.x1 + 10, L.y + k * 14 - 2); g.stroke(); } g.restore();
+      g.save(); g.shadowColor = '#7ff5d2'; g.shadowBlur = 12; g.strokeStyle = '#8af7d8'; g.lineWidth = 3; g.lineCap = 'round';
+      g.beginPath(); top.forEach(([px, py], i) => i ? g.lineTo(px, py) : g.moveTo(px, py)); g.stroke(); g.restore();
+      // grass and leaf tufts
+      for (let i = 2; i < top.length - 1; i += 2) { const [px, py] = top[i], sw = Math.sin(t * 2 + i) * 1.5;
+        g.strokeStyle = i % 4 ? 'rgba(140,250,210,.8)' : 'rgba(80,190,150,.9)'; g.lineWidth = 1.5;
+        g.beginPath(); g.moveTo(px, py); g.quadraticCurveTo(px - 2 + sw, py - 5, px - 4 + sw, py - 9 - (i % 3) * 2); g.moveTo(px + 2, py); g.quadraticCurveTo(px + 3 + sw, py - 4, px + 5 + sw, py - 7); g.stroke(); }
+      // hanging roots at the gap edge
+      g.strokeStyle = 'rgba(30,90,85,.9)'; g.lineWidth = 2;
+      for (let k = 0; k < 3; k++) { const rx = ex - sd * (8 + k * 9); g.beginPath(); g.moveTo(rx, L.y + 6); g.quadraticCurveTo(rx + sd * 3 + Math.sin(t + k) * 2, L.y + 26, rx - sd * 2, L.y + 38 + k * 9); g.stroke(); }
+    });
+    // Ori: idle on the low ledge, or the jump that Rendering just received
+    const f = val.m_vw === 'air' && landed(flow, 'm_vw', 'air', t);
+    const q = f ? clamp((t - (f.t + f.dur)) / .9) : 0;
+    const path = k => { const px = lerp(OA.x1 - 70, OB.x0 + 70, ease(k)), base = lerp(OA.y, OB.y, k), up = 4 * 64 * k * (1 - k) + 34 * Math.max(0, Math.sin(Math.PI * clamp((k - .45) / .4))); return [px, base - up]; };
+    if (f) { // Sein's light trail
+      for (let i = 0; i < 26; i++) { const k = q - i * .012; if (k < 0) break; const [px, py] = path(k); g.fillStyle = `rgba(160,245,255,${.5 * (1 - i / 26)})`; g.beginPath(); g.arc(px, py - 24, 3.6 - i * .1, 0, TAU); g.fill(); }
+      if (q > .45 && q < .75) { const [px, py] = path(q); fit(g, ART['ab-doublejump'], px + 26, py - 40, 30, 30, 1 - Math.abs(q - .6) / .15); }
+    }
+    const [ox, oy] = f ? path(q) : [OA.x1 - 70, OA.y];
+    g.save(); g.shadowColor = '#bff8ff'; g.shadowBlur = f && q < 1 ? 18 : 10;
+    g.translate(ox, oy - 26 + (f ? 0 : Math.sin(t * 2.4) * 1.5)); g.rotate(f && q < 1 ? Math.sin(q * Math.PI) * .25 : 0);
+    fit(g, ART.ori, 0, 0, 40, 54); g.restore();
+    // Sein, the spirit light that follows Ori
+    const sx = ox - 26 + Math.sin(t * 3) * 4, sy = oy - 62 + Math.cos(t * 2.2) * 4, grd = g.createRadialGradient(sx, sy, 0, sx, sy, 12);
+    grd.addColorStop(0, '#fff'); grd.addColorStop(.3, '#9ff3ff'); grd.addColorStop(1, 'rgba(120,230,255,0)'); g.fillStyle = grd; g.beginPath(); g.arc(sx, sy, 12, 0, TAU); g.fill();
+    g.restore();
+    sceneFrame(g, x, y, w, h, 'rgba(143,233,255,.7)', 'Side-on camera', ORI.ink);
+  }
+  // No Rest: a top-down patch of meadow split by a ravine; the knight leaps it from a jump point when the View gets the state
+  const WS = { x: 538, y: 44, w: 492, h: 204 }, GAP = { x0: 742, x1: 826 }, MARK = 704, DEST = 868;
+  function ravine(g) {
+    const { y, h } = WS, edge = (x0, sd) => { const pts = []; for (let k = 0; k <= 16; k++) pts.push([x0 + sd * (Math.sin(k * 2.3 + x0) * 5 + Math.sin(k * .9) * 3), y + k * h / 16]); return pts; };
+    const L = edge(GAP.x0, 1), R = edge(GAP.x1, -1);
+    g.beginPath(); L.forEach(([px, py], i) => i ? g.lineTo(px, py) : g.moveTo(px, py)); R.slice().reverse().forEach(([px, py]) => g.lineTo(px, py)); g.closePath();
+    const gr = g.createLinearGradient(GAP.x0, 0, GAP.x1, 0); gr.addColorStop(0, '#120804'); gr.addColorStop(.5, '#2a0f04'); gr.addColorStop(1, '#120804'); g.fillStyle = gr; g.fill();
+    g.save(); g.clip(); const em = g.createRadialGradient((GAP.x0 + GAP.x1) / 2, y + h * .6, 4, (GAP.x0 + GAP.x1) / 2, y + h * .6, 70);
+    em.addColorStop(0, 'rgba(255,120,30,.55)'); em.addColorStop(1, 'rgba(255,80,10,0)'); g.fillStyle = em; g.fillRect(GAP.x0 - 10, y, GAP.x1 - GAP.x0 + 20, h); g.restore();
+    [[L, 1], [R, -1]].forEach(([P]) => { g.strokeStyle = 'rgba(40,24,12,.95)'; g.lineWidth = 5; g.beginPath(); P.forEach(([px, py], i) => i ? g.lineTo(px, py) : g.moveTo(px, py)); g.stroke(); g.strokeStyle = 'rgba(230,200,150,.45)'; g.lineWidth = 1.5; g.stroke(); });
+  }
+  function jumpRing(g, x, y, t, col = '#ffb547') {
+    const a = .55 + .35 * Math.sin(t * 4); g.save(); g.fillStyle = `rgba(255,181,71,${.18 + .12 * a})`; g.beginPath(); g.ellipse(x, y, 34, 16, 0, 0, TAU); g.fill();
+    g.strokeStyle = col; g.lineWidth = 2; g.setLineDash([5, 4]); g.lineDashOffset = -t * 10; g.beginPath(); g.ellipse(x, y, 34, 16, 0, 0, TAU); g.stroke(); g.restore();
+  }
+  function knightTop(g, x, y, q, jumping, tag, tagCol) {
+    const lift = jumping ? Math.sin(Math.PI * q) : 0, sc = 1 + .35 * lift;
+    g.save(); g.fillStyle = `rgba(0,0,0,${.45 - .25 * lift})`; g.beginPath(); g.ellipse(x, y + 4, 28 - 8 * lift, 12 - 4 * lift, 0, 0, TAU); g.fill(); g.restore();
+    // seen from above, height reads as scale and a shadow left behind on the ground
+    g.save(); g.translate(x, y - 16 - 16 * lift); g.rotate(.18 * lift); g.scale(sc, sc); g.shadowColor = tagCol || '#ffe0a8'; g.shadowBlur = 10;
+    fit(g, ART['knight-top-idle'], 0, 0, 76, 62); g.restore();
+    if (tag) pill(g, tag, x, y + 30, tagCol, 'rgba(10,8,6,.85)', 11);
+  }
+  function wickedScene(g, flow, val, t) {
+    const { x, y, w, h } = WS;
+    g.save(); g.beginPath(); g.roundRect(x, y, w, h, 10); g.clip();
+    g.save(); g.filter = 'blur(1.5px) brightness(.78) saturate(.7)'; cover(g, ART['nr-ground'], x - 4, y - 4, w + 8, h + 8); g.restore();
+        g.fillStyle = 'rgba(25,12,4,.32)'; g.fillRect(x, y, w, h);
+    ravine(g);
+    const p1y = y + 82, p2y = y + 180;
+    // the preset jump: a ring on each side and the fixed curve between them
+    jumpRing(g, MARK, p1y, t); jumpRing(g, DEST, p1y, t);
+    g.save(); g.setLineDash([5, 6]); g.strokeStyle = 'rgba(255,236,200,.85)'; g.lineWidth = 2; g.beginPath();
+    for (let i = 0; i <= 20; i++) { const k = i / 20, px = lerp(MARK, DEST, ease(k)), py = p1y - 40 * Math.sin(Math.PI * k) - 14; i ? g.lineTo(px, py) : g.moveTo(px, py); } g.stroke(); g.restore();
+    text(g, 'jump point', MARK - 56, p1y + 2, '700 11px Jost, sans-serif', '#ffe3b0', 'center');
+    // player 1's knight: the View received the jump state, so the preset leap plays
+    const f0 = val.p_vw === 'jump' && landed(flow, 'p_vw', 'jump', t), f = f0 && f0.who !== 'P2' ? f0 : null, q = f ? clamp((t - (f.t + f.dur)) / .9) : 0;
+    const k1 = f ? q : 0, px1 = lerp(MARK, DEST, ease(k1));
+    knightTop(g, px1, p1y, k1, !!f && q < 1, f && f.who === 'AI' && q < 1 ? 'driven by the AI brain' : null, '#ffd29a');
+    // player 2 joins: their own knight in the same simulation
+    const joined = flow.find(z => z.from === 'p_net' && z.t <= t);
+    if (joined) {
+      jumpRing(g, MARK, p2y, t, '#8fd3ff');
+      const f2 = val.p_vw2 === 'jump' && landed(flow, 'p_vw2', 'jump', t), q2 = f2 ? clamp((t - (f2.t + f2.dur)) / .9) : 0;
+      g.save(); g.globalAlpha = clamp((t - joined.t) / .4);
+      knightTop(g, lerp(MARK, DEST, ease(q2)), p2y, q2, !!f2 && q2 < 1, 'P2', '#8fd3ff'); g.restore();
+    }
+    g.restore();
+    sceneFrame(g, x, y, w, h, 'rgba(255,181,71,.7)', 'Top-down camera', WK.ink);
+  }
+
   let archApi;
   canvasDemo('arch', (s, cv, g) => {
     const st = { tour: true, t: 0, held: false, acts: [], flow: [], key: '' };
@@ -595,14 +706,15 @@
       panelBg(g, RP, ART['nr-bg'], ['#1c0d05', 'rgba(20,8,2,.2)', 'rgba(24,10,4,.4)', 'rgba(12,5,2,.82)'], 'rgba(255,181,71,.55)');
       header(g, LP, 'MUPPET', 'Ori and the Blind Forest', ORI, ART.ori, t);
       header(g, RP, 'PUPPET', 'No Rest for the Wicked', WK, ART['knight-idle'], t);
+      oriScene(g, st.flow, val, t); wickedScene(g, st.flow, val, t);
       // the SeinPrefab: everything lives inside one object
       g.save(); g.shadowColor = ORI.glow; g.shadowBlur = 16 + 6 * Math.sin(t * 2);
       g.strokeStyle = 'rgba(143,233,255,.85)'; g.lineWidth = 2.5; g.fillStyle = 'rgba(40,140,190,.12)';
-      g.beginPath(); g.roundRect(14, 56, 484, 388, 16); g.fill(); g.stroke(); g.restore();
+      g.beginPath(); g.roundRect(14, 270, 484, 218, 16); g.fill(); g.stroke(); g.restore();
       g.font = '800 13px Montserrat, sans-serif'; const pw = g.measureText('SeinPrefab: one object').width + 22;
-      g.fillStyle = '#062a3e'; g.strokeStyle = ORI.glow; g.lineWidth = 1.5; g.beginPath(); g.roundRect(30, 45, pw, 24, 12); g.fill(); g.stroke();
-      text(g, 'SeinPrefab: one object', 30 + pw / 2, 57.5, '800 13px Montserrat, sans-serif', ORI.ink, 'center');
-      text(g, 'outside the prefab', 256, 576, 'italic 600 12px Jost, sans-serif', 'rgba(169,227,245,.8)', 'center');
+      g.fillStyle = '#062a3e'; g.strokeStyle = ORI.glow; g.lineWidth = 1.5; g.beginPath(); g.roundRect(30, 258, pw, 24, 12); g.fill(); g.stroke();
+      text(g, 'SeinPrefab: one object', 30 + pw / 2, 270.5, '800 13px Montserrat, sans-serif', ORI.ink, 'center');
+      text(g, 'outside the prefab', 256, 496, 'italic 600 12px Jost, sans-serif', 'rgba(169,227,245,.8)', 'center');
       // Photon Quantum: three visibly separate layers
       const lanes = [
         { x: 534, w: 138, l1: 'UNITY', l2: 'input', fill: 'rgba(28,38,62,.62)', edge: '#8fa8d8', ink: '#cfdcff' },
@@ -612,31 +724,31 @@
       lanes.forEach(L => {
         g.save(); if (L.q) { g.shadowColor = '#ffb547'; g.shadowBlur = 14; }
         g.fillStyle = L.fill; g.strokeStyle = L.edge; g.lineWidth = L.q ? 2.5 : 1.5;
-        g.beginPath(); g.roundRect(L.x, 76, L.w, H - 82, 12); g.fill(); g.stroke(); g.restore();
+        g.beginPath(); g.roundRect(L.x, 276, L.w, H - 282, 12); g.fill(); g.stroke(); g.restore();
         if (L.q) { // a fine hatch marks the simulation as its own layer
-          g.save(); g.beginPath(); g.roundRect(L.x, 76, L.w, H - 82, 12); g.clip(); g.strokeStyle = 'rgba(255,181,71,.07)'; g.lineWidth = 6;
-          for (let k = -H; k < L.w + H; k += 22) { g.beginPath(); g.moveTo(L.x + k, 76); g.lineTo(L.x + k - H, 76 + H); g.stroke(); } g.restore();
+          g.save(); g.beginPath(); g.roundRect(L.x, 276, L.w, H - 282, 12); g.clip(); g.strokeStyle = 'rgba(255,181,71,.07)'; g.lineWidth = 6;
+          for (let k = -H; k < L.w + H; k += 22) { g.beginPath(); g.moveTo(L.x + k, 276); g.lineTo(L.x + k - H, 276 + H); g.stroke(); } g.restore();
         }
-        text(g, L.l1, L.x + L.w / 2, 90, '800 11.5px Montserrat, sans-serif', L.ink, 'center');
-        text(g, L.l2, L.x + L.w / 2, 105, 'italic 600 11.5px Jost, sans-serif', L.ink, 'center');
+        text(g, L.l1, L.x + L.w / 2, 288, '800 11.5px Montserrat, sans-serif', L.ink, 'center');
+        text(g, L.l2, L.x + L.w / 2, 301, 'italic 600 11.5px Jost, sans-serif', L.ink, 'center');
       });
       // the lesson's chain, lit by whichever hop is running
       const live = st.flow.filter(f => f.from && t >= f.t && t <= f.t + f.dur + .25);
       const on = new Set(live.flatMap(f => f.chain || [])), skip = live.some(f => f.skip);
       let cx = 560; g.font = '700 12px Montserrat, sans-serif';
       const widths = CHAIN.map(c => g.measureText(c).width + 18), total = widths.reduce((a, b) => a + b, 0) + 22 * (CHAIN.length - 1);
-      cx = RP.x + RP.w - 12 - total;
+      cx = RP.x + (RP.w - total) / 2;
       CHAIN.forEach((c, i) => {
         const w = widths[i], lit2 = on.has(c), skipped = skip && (c === 'Input' || c === 'Device');
         g.save(); if (lit2) { g.shadowColor = WK.glow; g.shadowBlur = 12; }
         g.fillStyle = lit2 ? WK.glow : 'rgba(30,14,6,.8)'; g.strokeStyle = skipped ? '#ff6b6b' : WK.edge; g.lineWidth = 1.4;
-        g.beginPath(); g.roundRect(cx, 48, w, 20, 10); g.fill(); g.stroke(); g.restore();
-        text(g, c, cx + w / 2, 58.5, '700 12px Montserrat, sans-serif', lit2 ? '#3a1a00' : skipped ? '#ff9b9b' : WK.sub, 'center');
-        if (skipped) { g.strokeStyle = '#ff6b6b'; g.lineWidth = 1.8; g.beginPath(); g.moveTo(cx + 6, 58); g.lineTo(cx + w - 6, 58); g.stroke(); }
-        if (i < CHAIN.length - 1) { g.strokeStyle = WK.sub; g.lineWidth = 1.6; g.beginPath(); g.moveTo(cx + w + 5, 58); g.lineTo(cx + w + 16, 58); g.stroke(); arrowHead(g, [cx + w + 18, 58], 0, WK.sub, 6); }
+        g.beginPath(); g.roundRect(cx, 251, w, 20, 10); g.fill(); g.stroke(); g.restore();
+        text(g, c, cx + w / 2, 261.5, '700 12px Montserrat, sans-serif', lit2 ? '#3a1a00' : skipped ? '#ff9b9b' : WK.sub, 'center');
+        if (skipped) { g.strokeStyle = '#ff6b6b'; g.lineWidth = 1.8; g.beginPath(); g.moveTo(cx + 6, 261); g.lineTo(cx + w - 6, 261); g.stroke(); }
+        if (i < CHAIN.length - 1) { g.strokeStyle = WK.sub; g.lineWidth = 1.6; g.beginPath(); g.moveTo(cx + w + 5, 261); g.lineTo(cx + w + 16, 261); g.stroke(); arrowHead(g, [cx + w + 18, 261], 0, WK.sub, 6); }
         cx += w + 22;
       });
-      if (skip) pill(g, 'AI skips the device', 602, 248, '#ff9b9b', 'rgba(40,8,8,.9)', 12);
+      if (skip) pill(g, 'AI skips the device', 602, 400, '#ff9b9b', 'rgba(40,8,8,.9)', 12);
       // connectors: every hop of the flow, faint until used, glowing while a signal rides it
       const seen = new Set();
       st.flow.forEach(f => {
@@ -658,7 +770,7 @@
       });
       // the muppet's risk: flag the loop while it runs
       const loop = st.flow.find(f => f.loop && t >= f.t - .2 && t <= f.t + f.dur + 1.2);
-      if (loop) pill(g, '⟳ circular feedback', 256, 200, '#ffd0d0', 'rgba(150,20,20,.92)', 13.5);
+      if (loop) pill(g, '⟳ circular feedback', 256, 345, '#ffd0d0', 'rgba(150,20,20,.92)', 13.5);
       // signals in flight
       st.flow.forEach(f => {
         if (!f.from || t < f.t || t > f.t + f.dur) return;
