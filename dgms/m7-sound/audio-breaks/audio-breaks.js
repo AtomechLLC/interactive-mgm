@@ -304,7 +304,7 @@
     }
     txt(g, 'blue: playing', VX + 14, VY + VH - 44, '600 11px Jost, sans-serif', '#2a7fae'); txt(g, 'grey: cut by the limit', VX + 14, VY + VH - 28, '600 11px Jost, sans-serif', C.muted); txt(g, 'red: part of a clipped mix', VX + 14, VY + VH - 12, '600 11px Jost, sans-serif', C.red);
     txt(g, `crystal 1`, VX + 110, VY + 60, '600 10px Jost, sans-serif', C.muted, 'right');
-    const cx = tx(k); if (k >= DASH.start) { g.strokeStyle = C.red; g.lineWidth = 2; g.beginPath(); g.moveTo(cx, VY + 48); g.lineTo(cx, VY + VH - 8); g.stroke(); }
+    const cx = tx(k); if (k >= DASH.start && cx < VX + VW - 8) { g.strokeStyle = C.red; g.lineWidth = 2; g.beginPath(); g.moveTo(cx, VY + 48); g.lineTo(cx, VY + VH - 8); g.stroke(); }
     const nowC = countAt(k, lim);
     T.label(`${nowC} at once`, Math.min(VX + VW - 50, Math.max(VX + 170, cx)), VY + 30, 'center', nowC > 3 ? C.red : C.ink, 13);
 

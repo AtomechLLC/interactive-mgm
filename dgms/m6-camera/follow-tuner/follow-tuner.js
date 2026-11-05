@@ -281,18 +281,18 @@
   const thirdP = { ...VERBS.walk, ...PRESETS.third }, wideP = { ...thirdP, fov: 95 }, retuned = { ...wideP, off: thirdOffset(wideP) };
   const TOUR1 = [
     K(0, { ...VERBS.walk, ...PRESETS.centred }, 0, 'walk', 'Centred (Lies of P style): the hero sits on the sight line to the doorway (119-120)'),
-    K(5, thirdP, .8, 'walk', 'On a third (Gears style): offset the camera right and the doorway clears (121)'),
-    K(10, { ...VERBS.walk, ...PRESETS.far }, 1, 'walk', 'Too far: the hero shrinks, and you watch the hero instead of being the hero (232)'),
-    K(14.5, thirdP, .8, 'walk', 'Back on the third'),
-    K(16.5, wideP, 1.2, 'walk', 'Widen the FOV to 95°: the hero drifts off the third (209)', thirdP),
-    K(19.5, retuned, 1, 'walk', `Re-tune the offset to ${retuned.off.toFixed(2)} m and the hero is back on the third`, thirdP),
-    K(22.5, VERBS.walk, .45, 'walk', 'The Order’s drill as parameter sets, one per verb (229-230). Walk:'),
-    K(24.5, VERBS.sprint, VERBS.sprint.blend, 'sprint', 'Sprint: pull away and widen the FOV to sell speed (137)'),
-    K(27.5, VERBS.cover, VERBS.cover.blend, 'cover', 'Cover: drop the anchor to the crouch, push the hero further left'),
-    K(30, VERBS.blind, VERBS.blind.blend, 'blind', 'Blind fire: rise and swing wider to see over the cover'),
-    K(32.5, VERBS.aim, VERBS.aim.blend, 'aim', 'Aim: tighter FOV, close in, frame the weapon (137)'),
+    K(4, thirdP, .8, 'walk', 'On a third (Gears style): offset the camera right and the doorway clears (121)'),
+    K(8, { ...VERBS.walk, ...PRESETS.far }, 1, 'walk', 'Too far: the hero shrinks, and you watch the hero instead of being the hero (232)'),
+    K(11.5, thirdP, .8, 'walk', 'Back on the third'),
+    K(13, wideP, 1.2, 'walk', 'Widen the FOV to 95°: the hero drifts off the third (209)', thirdP),
+    K(16, retuned, 1, 'walk', `Re-tune the offset to ${retuned.off.toFixed(2)} m and the hero is back on the third`, thirdP),
+    K(18.5, VERBS.walk, .45, 'walk', 'The Order’s drill as parameter sets, one per verb (229-230). Walk:'),
+    K(20, VERBS.sprint, VERBS.sprint.blend, 'sprint', 'Sprint: pull away and widen the FOV to sell speed (137)'),
+    K(22.5, VERBS.cover, VERBS.cover.blend, 'cover', 'Cover: drop the anchor to the crouch, push the hero further left'),
+    K(24.5, VERBS.blind, VERBS.blind.blend, 'blind', 'Blind fire: rise and swing wider to see over the cover'),
+    K(26.5, VERBS.aim, VERBS.aim.blend, 'aim', 'Aim: tighter FOV, close in, frame the weapon (137)'),
   ];
-  const DUR1 = 36;
+  const DUR1 = 29.5;
 
   /* ---------- slide 1: the tuner ---------- */
   function drawTuner(g, F) {

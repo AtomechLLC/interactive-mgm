@@ -88,3 +88,16 @@ From [game-icons.net](https://game-icons.net), licensed [CC BY 3.0](https://crea
 | `blog-posts--hardware-mistake.svg` | [cpu](https://game-icons.net/1x1/delapouite/cpu.html) | Delapouite |
 | `blog-posts--atomech-lesson.svg` | [robot-golem](https://game-icons.net/1x1/lorc/robot-golem.html) | Lorc |
 | `blog--ogre-table.svg` | [ogre](https://game-icons.net/1x1/delapouite/ogre.html) | Delapouite |
+| `dgms--m6-camera--rig-switcher.svg` | [cctv-camera](https://game-icons.net/1x1/delapouite/cctv-camera.html) | Delapouite |
+| `dgms--m6-camera--position-blend.svg` | [position-marker](https://game-icons.net/1x1/delapouite/position-marker.html) | Delapouite |
+| `dgms--m6-camera--lens-ladder.svg` | [photo-camera](https://game-icons.net/1x1/delapouite/photo-camera.html) | Delapouite |
+| `dgms--m6-camera--follow-tuner.svg` | [video-camera](https://game-icons.net/1x1/delapouite/video-camera.html) | Delapouite |
+| `dgms--m6-camera--clipping-lab.svg` | [brick-wall](https://game-icons.net/1x1/delapouite/brick-wall.html) | Delapouite |
+| `dgms--m6-camera--lower-horizon.svg` | [giant](https://game-icons.net/1x1/delapouite/giant.html) | Delapouite |
+| `dgms--m7-sound--faucet.svg` | [tap](https://game-icons.net/1x1/delapouite/tap.html) | Delapouite |
+| `dgms--m7-sound--four-classes.svg` | [sound-on](https://game-icons.net/1x1/delapouite/sound-on.html) | Delapouite |
+| `dgms--m7-sound--four-rules.svg` | [headphones](https://game-icons.net/1x1/delapouite/headphones.html) | Delapouite |
+| `dgms--m7-sound--reactive-music.svg` | [musical-score](https://game-icons.net/1x1/delapouite/musical-score.html) | Delapouite |
+| `dgms--m7-sound--audio-breaks.svg` | [speaker-off](https://game-icons.net/1x1/delapouite/speaker-off.html) | Delapouite |
+| `dgms--m7-sound--consonant-menu.svg` | [piano-keys](https://game-icons.net/1x1/delapouite/piano-keys.html) | Delapouite |
+| `dgms--m7-sound--boss-telegraph.svg` | [dodging](https://game-icons.net/1x1/lorc/dodging.html) | Lorc |
