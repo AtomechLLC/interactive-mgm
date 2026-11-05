@@ -628,9 +628,9 @@
     const [ox, oy] = f ? path(q) : [OA.x1 - 70, OA.y];
     g.save(); g.shadowColor = '#bff8ff'; g.shadowBlur = f && q < 1 ? 18 : 10;
     g.translate(ox, oy - 26 + (f ? 0 : Math.sin(t * 2.4) * 1.5)); g.rotate(f && q < 1 ? Math.sin(q * Math.PI) * .25 : 0);
-    fit(g, ART.ori, 0, 0, 40, 54); g.restore();
+    g.scale(-1, 1); fit(g, ART.ori, 0, 0, 40, 54); g.restore();
     // Sein, the spirit light that follows Ori
-    const sx = ox - 26 + Math.sin(t * 3) * 4, sy = oy - 62 + Math.cos(t * 2.2) * 4, grd = g.createRadialGradient(sx, sy, 0, sx, sy, 12);
+    const sx = ox - 30 + Math.sin(t * 3) * 4, sy = oy - 62 + Math.cos(t * 2.2) * 4, grd = g.createRadialGradient(sx, sy, 0, sx, sy, 12);
     grd.addColorStop(0, '#fff'); grd.addColorStop(.3, '#9ff3ff'); grd.addColorStop(1, 'rgba(120,230,255,0)'); g.fillStyle = grd; g.beginPath(); g.arc(sx, sy, 12, 0, TAU); g.fill();
     g.restore();
     sceneFrame(g, x, y, w, h, 'rgba(143,233,255,.7)', 'Side-on camera', ORI.ink);
