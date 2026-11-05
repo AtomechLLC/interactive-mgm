@@ -23,7 +23,7 @@
 <div class="viewport"><div class="stage">
 
 <section class="slide" data-title="ADR curves" data-demo="adr" data-touch-keys="ArrowLeft:←,ArrowUp:↑,ArrowDown:↓,ArrowRight:→">
-  <div class="kicker">3Cs: controller · slides 190-193, character responsiveness</div>
+  <div class="kicker">3Cs: controller · character responsiveness</div>
   <h2 class="sm">Acceleration, deceleration, <span class="accent">rotation</span></h2>
   <div class="mt-wrap">
     <canvas class="demo" width="1040" height="585" tabindex="0"></canvas>
@@ -34,7 +34,8 @@
       <label class="rng">Deceleration: time to stop <b class="adr-v-d"></b><input type="range" class="adr-d" min="0" max="1.2" step="0.02"></label>
       <label class="rng">Rotation speed <b class="adr-v-r"></b><input type="range" class="adr-r" min="60" max="1800" step="20"></label>
       <div class="row wrap"><button class="btn adr-tour on">▶ Walk-through</button><button class="btn adr-play">Drive it yourself</button></div>
-      <p class="tip">Arrows or WASD to move. PageUp and PageDown change slides.</p>
+      <p class="tip">Arrows or WASD to move, or a controller: left stick (partial tilt asks for partial speed) or d-pad. A restarts, LB and RB switch presets, Start replays the walk-through. PageUp and PageDown change slides.</p>
+      <p class="tip adr-pad" hidden></p>
       <div class="mt-stats adr-stats"></div>
       <p class="mt-out adr-out"></p>
     </div>
