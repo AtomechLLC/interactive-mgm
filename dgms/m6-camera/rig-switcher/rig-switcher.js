@@ -224,7 +224,6 @@
       reset(x, y, face) { buf.length = 0; buf.push({ t: -99, x, y, face }); },
     };
   }
-  const meanFace = (R, span, n = 8) => { let c = 0, s = 0; for (let i = 0; i <= n; i++) { const f = R.past(span * i / n).face; c += Math.cos(f); s += Math.sin(f); } return Math.atan2(s, c); };
 
   /* ================= the spline: dense samples with arc length u ================= */
   const SPL = (() => {
@@ -257,10 +256,54 @@
     for (let s = .3; s <= L; s += .15) { const k = s / L; if (solidAt(anchor[0] + d[0] * k, anchor[1] + d[1] * k, anchor[2] + d[2] * k)) return lerp3(anchor, pos, Math.max(0, (s - .35) / L)); }
     return pos;
   }
-  function followCam(h, yaw, P, fov) {
-    const anchor = [h.x, h.y, P.anchor], f = [Math.cos(yaw), Math.sin(yaw)], r = [-f[1], f[0]];
-    const want = [h.x - f[0] * P.dist + r[0] * P.side, h.y - f[1] * P.dist + r[1] * P.side, P.anchor + P.up];
-    const pos = pullIn(anchor, want);
+  /* Third-person smoothing. A critically damped spring eases the camera's yaw, its anchor and its boom length toward
+     their targets, frame-rate independent (exact update for any step). Every scene must stay a pure function of t (seek,
+     GIFs, the drill), so the spring is replayed over the last SMOOTH.win seconds on a fixed grid each time it is read;
+     the start-up state's influence has decayed to well under a millimetre by the end. Dead zones: heading changes under
+     SMOOTH.yawDZ are absorbed, and the anchor trails the hero by up to SMOOTH.leash, so small steps don't move the camera.
+     Both dead zones are soft (measured against a short running average), so they carry no hidden memory. */
+  const SMOOTH = { win: 3, step: 1 / 60, yawW: 3.2, posW: 9, avgW: 4, boomIn: 22, boomOut: 4, yawDZ: 6 * D2R, leash: .3, dirSpan: .2, dirMin: .12 };
+  function damp(x, v, goal, w, dt, ang) {   // exact critically damped spring step: returns [x, v]
+    const e = ang ? wrapA(x - goal) : x - goal, a = v + w * e, ex = Math.exp(-w * dt);
+    return [goal + (e + a * dt) * ex, (v - w * a * dt) * ex];
+  }
+  function heading(R, t, held) {   // the direction the hero is actually travelling (root motion), or held when it stands still
+    const a = R.past(R.t - t), b = R.past(R.t - t + SMOOTH.dirSpan), dx = a.x - b.x, dy = a.y - b.y;
+    return Math.hypot(dx, dy) > SMOOTH.dirMin ? Math.atan2(dy, dx) : held;
+  }
+  function followState(R, P, yawW = SMOOTH.yawW, boom = true) {
+    const S = SMOOTH, t1 = R.t, t0 = (Math.floor((t1 - S.win) / S.step) + 1) * S.step, h0 = R.past(t1 - t0);
+    let held = heading(R, t0, h0.face), avgYaw = held, yaw = held, vy = 0;
+    let ex = h0.x, ey = h0.y, ax = ex, ay = ey, vx = 0, vyy = 0, k = 1, vk = 0;
+    const times = []; for (let t = t0; t < t1 - 1e-9; t += S.step) times.push(t); times.push(t1);
+    let prev = t0;
+    for (const t of times) {
+      const dt = t - prev, h = R.past(t1 - t); prev = t;
+      const raw = held = heading(R, t, held);
+      if (dt > 0) { const a = 1 - Math.exp(-S.avgW * dt); avgYaw += wrapA(raw - avgYaw) * a; ex += (h.x - ex) * a; ey += (h.y - ey) * a; }
+      const goalYaw = raw - clamp(wrapA(raw - avgYaw), -S.yawDZ, S.yawDZ);   // heading dead zone
+      const lx = h.x - ex, ly = h.y - ey, L = Math.hypot(lx, ly), lk = L > S.leash ? S.leash / L : 1;
+      const gx = h.x - lx * lk, gy = h.y - ly * lk;   // anchor leash (positional dead zone)
+      if (dt <= 0) continue;
+      [yaw, vy] = damp(yaw, vy, goalYaw, yawW, dt, true);
+      [ax, vx] = damp(ax, vx, gx, S.posW, dt); [ay, vyy] = damp(ay, vyy, gy, S.posW, dt);
+      if (boom && P) {
+        const an = [ax, ay, P.anchor], want = boomPos(an, yaw, P), got = pullIn(an, want);
+        const kk = Math.hypot(...sub(got, an)) / (Math.hypot(...sub(want, an)) || 1);
+        [k, vk] = damp(k, vk, kk, kk < k ? S.boomIn : S.boomOut, dt);
+      }
+    }
+    return { yaw: wrapA(yaw), ax, ay, k: clamp(k, 0, 1) };
+  }
+  function boomPos(anchor, yaw, P) {
+    const f = [Math.cos(yaw), Math.sin(yaw)], r = [-f[1], f[0]];
+    return [anchor[0] - f[0] * P.dist + r[0] * P.side, anchor[1] - f[1] * P.dist + r[1] * P.side, P.anchor + P.up];
+  }
+  function followCam(h, yaw, P, fov, S) {   // S: the smoothed state from followState; without it, a hard rig (cover pose)
+    const anchor = S ? [S.ax, S.ay, P.anchor] : [h.x, h.y, P.anchor];
+    if (S) yaw = S.yaw;
+    const want = boomPos(anchor, yaw, P);
+    const pos = S ? lerp3(anchor, want, S.k) : pullIn(anchor, want);
     return { x: pos[0], y: pos[1], z: pos[2], yaw, pitch: P.pitch * D2R, fov, anchor, want };
   }
   function floatPose(t) {
@@ -317,14 +360,14 @@
       const P = floatPose(R.t);
       return aimed(P.pos, P.at, RIGS.floating.fov, { jump: P.cut && P.since < 1.4 ? P.cut : null, flash: P.cut && P.since < .25 });
     },
-    follow(R) { return followCam(R.h, meanFace(R, FOLLOW.lag), FOLLOW, RIGS.follow.fov); },
+    follow(R) { return followCam(R.h, 0, FOLLOW, RIGS.follow.fov, followState(R, FOLLOW)); },
     cover(R) {
-      const w = coverW(R.h), base = followCam(R.h, meanFace(R, FOLLOW.lag), FOLLOW, RIGS.follow.fov);
+      const w = coverW(R.h), base = followCam(R.h, 0, FOLLOW, RIGS.follow.fov, followState(R, FOLLOW));
       if (w <= 0) return { ...base, w, crouch: 0 };
       const v = COVER.vols[0], cov = followCam(R.h, v.face, COVER, RIGS.cover.fov);
       return { x: lerp(base.x, cov.x, w), y: lerp(base.y, cov.y, w), z: lerp(base.z, cov.z, w), yaw: lerpA(base.yaw, cov.yaw, w), pitch: lerp(base.pitch, cov.pitch, w), fov: lerp(base.fov, cov.fov, w), anchor: lerp3(base.anchor, cov.anchor, w), w, crouch: w, heroFace: w > .5 ? v.face : null };
     },
-    first(R) { return { x: R.h.x, y: R.h.y, z: FP.eye, yaw: meanFace(R, FP.lag, 4), pitch: FP.pitch * D2R, fov: RIGS.first.fov, fp: true }; },
+    first(R) { return { x: R.h.x, y: R.h.y, z: FP.eye, yaw: followState(R, null, 9, false).yaw, pitch: FP.pitch * D2R, fov: RIGS.first.fov, fp: true }; },
   };
 
   /* ================= the perspective projector ================= */
@@ -662,7 +705,7 @@
     g.textAlign = 'left'; g.textBaseline = 'alphabetic';
     g.font = disp(17); g.fillStyle = C.ink; g.fillText(`${R.n} · ${R.name} camera`, x, y + 16);
     const tw = g.measureText(`${R.n} · ${R.name} camera`).width;
-    g.font = font(12); g.fillStyle = C.muted; g.fillText(`slides ${R.slides} · seen in ${R.seen}`, x + tw + 12, y + 15);
+    g.font = font(12); g.fillStyle = C.muted; g.fillText(`seen in ${R.seen}`, x + tw + 12, y + 15);
     g.font = font(13, 500); g.fillStyle = C.ink; wrapText(g, R.def, x, y + 36, w, 17, 2);
   }
   function viewBadge(g, lines, V = VIEW) {
@@ -727,7 +770,7 @@
     chips(g, 'Cons', R.cons, 12, Math.max(y + 14, 462), 1016, 'con', 15);
     if (F.cap) { caption(g, F.cap); pill(g, `walk-through ${F.step} / ${TOUR.length}`, VIEW.x + VIEW.w - 8, VIEW.y + 20, 12, '#fff', 'rgba(21,32,68,.8)', 'right'); }
     g.font = font(12, 500); g.fillStyle = C.muted; g.textAlign = 'left'; g.textBaseline = 'alphabetic';
-    g.fillText('Pros and cons from the deck’s lists (slide 103). Grey-box scenes stand in for the games named.', 12, H - 14);
+    g.fillText('Pros and cons from the deck’s lists. Grey-box scenes stand in for the games named.', 12, H - 14);
     return out;
   }
 
@@ -867,7 +910,7 @@
     g.fillStyle = C.red; g.strokeStyle = '#fff'; g.lineWidth = 2; g.beginPath(); g.arc(gx(d), gy(px), 6, 0, TAU); g.fill(); g.stroke();
     // the deck's words
     panel(g, { x: 674, y: 382, w: 354, h: 176 });
-    g.textAlign = 'left'; g.textBaseline = 'alphabetic'; g.font = disp(14); g.fillStyle = C.ink; g.fillText('Slide 66: not for wide rooms', 690, 410);
+    g.textAlign = 'left'; g.textBaseline = 'alphabetic'; g.font = disp(14); g.fillStyle = C.ink; g.fillText('Not for wide rooms', 690, 410);
     g.font = font(13, 500); g.fillStyle = C.ink;
     const n = wrapText(g, 'Spline cameras are best for “tight limited spaces (doorways or hallways)”. In a wide room, walking off the spline “creates a detachment between the camera and the character/hero.”', 690, 432, 322, 18, 6);
     g.font = font(12, 500); g.fillStyle = C.muted;
@@ -944,7 +987,7 @@
       chips(g, 'Cons', R.cons.slice(0, 3), 12, y + 6, 1016, 'con', 12);
     } else {
       g.font = font(13, 500); g.fillStyle = C.muted; g.textAlign = 'left'; g.textBaseline = 'alphabetic';
-      g.fillText('Slide 105: “Develop the skill to identify and classify the type of cameras that exist in video games.”', 12, 498);
+      g.fillText('The goal: “Develop the skill to identify and classify the type of cameras that exist in video games.”', 12, 498);
     }
     if (D.cursor) {   // the walk-through's pointer
       const [x, y] = D.cursor; g.save(); g.translate(x, y); g.fillStyle = '#fff'; g.strokeStyle = C.navy; g.lineWidth = 2;
