@@ -21,20 +21,19 @@
 <body>
 <div class="viewport"><div class="stage">
 
-<!-- 1: slides 235-243 -->
-<section class="slide" data-title="One axe button" data-demo="axe" data-touch-keys="KeyK:Axe">
-  <div class="kicker">3Cs: controller · slides 235-243</div>
+<section class="slide" data-title="One attack key" data-demo="axe" data-touch-keys="KeyK:Attack,Space:Dodge">
+  <div class="kicker">3Cs: controller · No Rest for the Wicked</div>
   <h2 class="sm">Interaction + context = <span class="accent">outcome</span></h2>
   <div class="mt-wrap">
     <canvas class="demo" width="1040" height="585"></canvas>
     <div class="mt-side">
       <h4>Press</h4>
-      <div class="row wrap"><button class="btn ax-press">🪓 Axe (K)</button></div>
-      <h4>Where the hero stands</h4>
-      <div class="seg ax-spot"><button class="btn" data-v="tree">Next to the tree</button><button class="btn" data-v="back">Behind the enemy</button><button class="btn" data-v="front">In front of the enemy</button><button class="btn" data-v="open">Open ground</button></div>
+      <div class="row wrap"><button class="btn ax-press">⚔ Attack (K)</button><button class="btn ax-dodge">Dodge (Space)</button></div>
+      <h4>Walk the hero to</h4>
+      <div class="seg ax-spot"><button class="btn" data-v="open">Open ground</button><button class="btn" data-v="tree">The tree</button><button class="btn" data-v="ledge">The ledge</button></div>
       <div class="row wrap"><button class="btn ax-tour on">▶ Walk-through</button><button class="btn ax-reset">Reset</button></div>
       <p class="mt-out ax-out"></p>
-      <p class="src">Other examples from the deck: Assassin's Creed parkour (239), Forspoken (241), Titanfall wall-running (242), Ori's feather glide and updrafts (243).</p>
+      <p class="src">Animations and frame data: No Rest for the Wicked © Moon Studios, via the Game Animation Library move explorer. The chop plays the axe's Combo B1 swing. Other games built on the same idea: Assassin's Creed parkour, Forspoken, Titanfall wall-running, Ori's feather glide and updrafts.</p>
     </div>
   </div>
 </section>
@@ -45,6 +44,7 @@
 <script src="../../../assets/kit.js"></script>
 <script src="../../shared/topdown.js"></script>
 <script src="../shared/xray.js"></script>
+<script src="../img/nrftw/clips.js"></script>
 <script src="axe-context.js"></script>
 </body>
 </html>
