@@ -1,13 +1,17 @@
-/* ADR curves (Module 5, slides 190-193: character responsiveness). Acceleration (time to top speed), deceleration
+/* ADR curves (Module 5: character responsiveness). Acceleration (time to top speed), deceleration
    (time to stop) and rotation (turn rate) on a top-down runner, with the speed-over-time curve drawn underneath.
-   Presets run from instant direction change (Mega Man X, slide 191) to momentum. Values are illustrative.
+   Presets run from instant direction change (Mega Man X) to momentum. Values are illustrative.
    Model: a heading and a speed. Input sets a target heading; the heading turns toward it at the rotation rate, and the
    speed ramps up while a direction is held and down when it is released. Fixed 60 Hz steps; the walk-through replays one
-   fixed input script per preset, so __seek is a pure function of time. */
+   fixed input script per preset, so __seek is a pure function of time.
+   Gamepad (standard mapping, polled every frame): the left stick's tilt sets a target speed (TOP x magnitude), so a half
+   tilt ramps to half speed at the acceleration rate and easing off the stick slows down at the deceleration rate. The
+   d-pad is digital, like the keys. A restarts the run, LB/RB switch presets, Start replays the walk-through. */
 (function () {
   const { $, $$, canvasDemo, say } = FPF.kit;
   const T = TD, C = TD.C, { clamp } = TD, TAU = Math.PI * 2;
   const W = 1040, H = 585, AH = 352, DT = 1 / 60, TOP = 300;   // arena height, top speed px/s
+  const DZ = .15;                                              // stick deadzone (radial)
   const PRESETS = {
     instant: { name: 'Instant (Mega Man X)', a: 0, d: 0, r: 1800, col: '#2ea3dc' },
     snappy: { name: 'Snappy', a: .1, d: .08, r: 1080, col: '#2fae63' },
@@ -18,17 +22,20 @@
   const angDiff = (a, b) => { let d = (b - a) % TAU; if (d > Math.PI) d -= TAU; if (d < -Math.PI) d += TAU; return d; };
 
   function newRunner() { return { x: 170, y: 230, hd: 0, sp: 0, trail: [], hist: [] }; }
-  function step(p, P, dx, dy, t) {
-    const has = dx || dy;
+  // m: input magnitude 0..1 (keys and d-pad are 1, the stick is its tilt). The target speed is TOP * m: below it the runner
+  // speeds up at the acceleration rate, above it (stick eased off, or released) it slows at the deceleration rate.
+  function step(p, P, dx, dy, t, m = 1) {
+    const has = (dx || dy) && m > 0, tgt = has ? TOP * m : 0;
     if (has) {
       const tg = Math.atan2(dy, dx), d = angDiff(p.hd, tg), max = P.r >= 1800 ? Infinity : P.r * Math.PI / 180 * DT;
       p.hd += clamp(d, -max, max);
-      p.sp = P.a <= 0 ? TOP : Math.min(TOP, p.sp + TOP / P.a * DT);
-    } else p.sp = P.d <= 0 ? 0 : Math.max(0, p.sp - TOP / P.d * DT);
+    }
+    if (p.sp < tgt) p.sp = P.a <= 0 ? tgt : Math.min(tgt, p.sp + TOP / P.a * DT);
+    else if (p.sp > tgt) p.sp = P.d <= 0 ? tgt : Math.max(tgt, p.sp - TOP / P.d * DT);
     p.x += Math.cos(p.hd) * p.sp * DT; p.y += Math.sin(p.hd) * p.sp * DT;
     p.x = (p.x + W) % W; p.y = ((p.y - 20 + AH - 40) % (AH - 40)) + 20;
     p.trail.push([p.x, p.y]); if (p.trail.length > 150) p.trail.shift();
-    p.hist.push({ t, sp: p.sp, dx, dy }); if (p.hist.length > 6 * 60) p.hist.shift();
+    p.hist.push({ t, sp: p.sp, dx, dy, m: has ? m : 0 }); if (p.hist.length > 6 * 60) p.hist.shift();
   }
   // the walk-through's input script: [until (s), dx, dy]
   const SCRIPT = [[.4, 0, 0], [1.6, 1, 0], [2.2, 0, 0], [3.4, -1, 0], [4.0, 0, -1], [4.9, 1, 0], [5.5, -1, 0], [6.4, 0, 0]];
@@ -36,7 +43,8 @@
   const inputAt = t => { const s = SCRIPT.find(r => t < r[0]); return s ? [s[1], s[2]] : [0, 0]; };
   function scripted(P, t) { const p = newRunner(), n = Math.floor(t * 60); for (let i = 0; i < n; i++) { const [dx, dy] = inputAt(i * DT); step(p, P, dx, dy, i * DT); } return p; }
 
-  const ARROW = (dx, dy) => dx > 0 ? '→' : dx < 0 ? '←' : dy < 0 ? '↑' : dy > 0 ? '↓' : '';
+  const ARROWS = ['→', '↘', '↓', '↙', '←', '↖', '↑', '↗'];
+  const ARROW = (dx, dy) => (dx || dy) ? ARROWS[(Math.round(Math.atan2(dy, dx) / (Math.PI / 4)) + 8) % 8] : '';
   function draw(g, st) {
     T.use(g); g.clearRect(0, 0, W, H);
     g.save(); g.beginPath(); g.roundRect(0, 0, W, H, 14); g.clip();
@@ -47,7 +55,17 @@
     T.player(p.x, p.y, p.hd, 1.1);
     // held key
     const [dx, dy] = st.inp;
-    T.label(ARROW(dx, dy) ? `holding ${ARROW(dx, dy)}` : 'no input', 90, 30, 'center', ARROW(dx, dy) ? C.ink : C.muted, 15);
+    if (st.src === 'pad') {
+      // the stick: ring = full tilt, dot = where the stick is, readout = the speed it asks for
+      const cx = 44, cy = 44, R = 26, m = st.mag, a = Math.atan2(dy, dx);
+      g.fillStyle = 'rgba(255,255,255,.75)'; g.strokeStyle = C.muted; g.lineWidth = 2;
+      g.beginPath(); g.arc(cx, cy, R, 0, TAU); g.fill(); g.stroke();
+      g.setLineDash([3, 4]); g.beginPath(); g.arc(cx, cy, R * DZ, 0, TAU); g.stroke(); g.setLineDash([]);
+      const kx = cx + (m ? Math.cos(a) * R * (DZ + (1 - DZ) * m) : 0), ky = cy + (m ? Math.sin(a) * R * (DZ + (1 - DZ) * m) : 0);
+      g.strokeStyle = C.ink; g.beginPath(); g.moveTo(cx, cy); g.lineTo(kx, ky); g.stroke();
+      g.fillStyle = m ? (st.preset ? PRESETS[st.preset].col : C.navy) : C.muted; g.beginPath(); g.arc(kx, ky, 7, 0, TAU); g.fill();
+      T.label(m ? `stick ${Math.round(m * 100)}% → asks for ${(TOP * m / 30).toFixed(1)} tiles/s` : 'stick centred', 82, 44, 'left', m ? C.ink : C.muted, 15);
+    } else T.label(ARROW(dx, dy) ? `holding ${ARROW(dx, dy)}` : 'no input', 90, 30, 'center', ARROW(dx, dy) ? C.ink : C.muted, 15);
     T.label(`speed ${(p.sp / 30).toFixed(1)} tiles/s`, W - 110, 30, 'center', C.ink, 15);
     // graph
     const gx = 60, gy = AH + 24, gw = W - 90, gh = H - AH - 64;
@@ -65,15 +83,20 @@
     // ghost curves of the other presets (walk-through only), then this one
     const curve = (hist, col, w, a) => { g.save(); g.globalAlpha = a; g.strokeStyle = col; g.lineWidth = w; g.lineJoin = 'round'; g.beginPath(); hist.forEach((h, i) => { if (h.t < t0) return; i && hist[i - 1].t >= t0 ? g.lineTo(X(h.t), Y(h.sp)) : g.moveTo(X(h.t), Y(h.sp)); }); g.stroke(); g.restore(); };
     if (st.tour) PK.forEach(k => { if (k !== st.preset) curve(st.ghost[k], PRESETS[k].col, 2.5, .45); });
+    if (!st.tour && p.hist.some(h => h.m > 0 && h.m < 1)) {   // analog input: dashed line = speed the stick asks for
+      g.save(); g.strokeStyle = C.ink; g.globalAlpha = .55; g.lineWidth = 2; g.setLineDash([6, 5]); g.beginPath();
+      p.hist.forEach((h, i) => { if (h.t < t0) return; const y = Y(TOP * h.m); i && p.hist[i - 1].t >= t0 ? (g.lineTo(X(h.t), Y(TOP * p.hist[i - 1].m)), g.lineTo(X(h.t), y)) : g.moveTo(X(h.t), y); });
+      g.stroke(); g.restore();
+    }
     curve(p.hist, st.preset ? PRESETS[st.preset].col : C.navy, 4, 1);
-    g.font = '600 12px Jost, sans-serif'; g.fillStyle = C.muted; g.textAlign = 'right'; g.fillText(st.tour ? 'seconds into the run, all four presets on the same input' : 'the last 6 seconds', gx + gw, gy + gh + 16);
+    g.font = '600 12px Jost, sans-serif'; g.fillStyle = C.muted; g.textAlign = 'right'; g.fillText(st.tour ? 'seconds into the run, all four presets on the same input' : p.hist.some(h => h.m > 0 && h.m < 1) ? 'the last 6 seconds · dashed: the speed the stick asks for' : 'the last 6 seconds', gx + gw, gy + gh + 16);
     if (st.tour) { g.textAlign = 'left'; PK.forEach((k, i) => { g.fillStyle = PRESETS[k].col; g.fillRect(gx + i * 170, gy + gh + 11, 18, 4); g.fillStyle = k === st.preset ? C.ink : C.muted; g.fillText(PRESETS[k].name, gx + 24 + i * 170, gy + gh + 14); }); }
     g.restore();
   }
 
   const scenes = {};
   canvasDemo('adr', (s, cv, g) => {
-    const st = { P: { ...PRESETS.instant }, preset: 'instant', p: newRunner(), inp: [0, 0], tour: true, held: false, t: 0, now: 0, key: '', ghost: {} };
+    const st = { P: { ...PRESETS.instant }, preset: 'instant', p: newRunner(), inp: [0, 0], mag: 0, src: 'keys', tour: true, held: false, t: 0, now: 0, key: '', ghost: {} };
     const sl = { a: $(s, '.adr-a'), d: $(s, '.adr-d'), r: $(s, '.adr-r') }, vl = { a: $(s, '.adr-v-a'), d: $(s, '.adr-v-d'), r: $(s, '.adr-v-r') };
     const tourBtn = $(s, '.adr-tour'), playBtn = $(s, '.adr-play'), pbtn = $$(s, '.adr-presets .btn');
     const keys = { l: 0, r: 0, u: 0, d: 0 };
@@ -98,6 +121,33 @@
       keys[k] = down ? 1 : 0;
     };
     addEventListener('keydown', onKey(true), true); addEventListener('keyup', onKey(false), true);
+    // gamepad: polled each frame while this slide is active
+    const padTip = $(s, '.adr-pad'); let prevBtn = [], padName = '';
+    const pressed = (gp, i) => !!gp.buttons[i]?.pressed;
+    function pollPad() {
+      const gp = [...(navigator.getGamepads?.() || [])].find(q => q && q.connected);
+      if ((gp?.id || '') !== padName) { padName = gp?.id || ''; padTip.hidden = !gp; if (gp) padTip.textContent = `Controller connected: ${gp.id.replace(/\s*\(.*$/, '') || 'gamepad'}.`; }
+      if (!gp) return null;
+      const edge = i => pressed(gp, i) && !prevBtn[i];
+      if (edge(0)) { manual(); restart(); }                                  // A / cross
+      if (edge(4) || edge(5)) {                                              // LB / RB
+        manual(); const i = PK.indexOf(st.preset), n = PK[((i < 0 ? 0 : i) + (edge(5) ? 1 : -1) + PK.length) % PK.length];
+        st.preset = n; st.P = { ...PRESETS[n] }; sync();
+      }
+      if (edge(9) && !st.tour) tourBtn.onclick();                            // Start / options
+      prevBtn = gp.buttons.map(b => b.pressed);
+      const ddx = pressed(gp, 15) - pressed(gp, 14), ddy = pressed(gp, 13) - pressed(gp, 12);
+      if (ddx || ddy) return [ddx, ddy, 1];
+      const ax = gp.axes[0] || 0, ay = gp.axes[1] || 0, r = Math.hypot(ax, ay);
+      if (r < DZ) return [0, 0, 0];
+      return [ax / r, ay / r, Math.min(1, (r - DZ) / (1 - DZ))];          // radial deadzone, rescaled to 0..1
+    }
+    function readInput() {
+      const kx = keys.r - keys.l, ky = keys.d - keys.u, pad = s.classList.contains('active') ? pollPad() : null;
+      if (kx || ky) { st.src = 'keys'; return [kx, ky, 1]; }
+      if (pad && (pad[2] > 0 || st.src === 'pad')) { if (pad[2] > 0) { st.src = 'pad'; if (st.tour) manual(); } return pad; }
+      return [0, 0, 0];
+    }
     function info() {
       const P = st.P, key = [P.a, P.d, P.r].join('|'); if (key === st.key) return; st.key = key; sync();
       const stopDist = TOP * P.d / 2 / 30, turn = P.r >= 1800 ? 0 : 180 / P.r;
@@ -117,8 +167,9 @@
     let acc = 0;
     return dt => {
       if (st.held) return;
+      const [ix, iy, im] = readInput();
       if (st.tour) { st.t += dt; if (st.t >= SEG * PK.length) st.t = 0; tourAt(st.t); }
-      else { acc += dt; while (acc >= DT) { acc -= DT; st.inp = [keys.r - keys.l, keys.d - keys.u]; step(st.p, st.P, st.inp[0], st.inp[1], st.now); st.now += DT; } }
+      else { acc += dt; while (acc >= DT) { acc -= DT; st.inp = [ix, iy]; st.mag = im; step(st.p, st.P, ix, iy, st.now, im || 1); st.now += DT; } }
       draw(g, st); info();
     };
   });
