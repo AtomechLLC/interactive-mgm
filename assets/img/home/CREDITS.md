@@ -115,3 +115,26 @@ From [game-icons.net](https://game-icons.net), licensed [CC BY 3.0](https://crea
 | `dgms--m3-skills--reaction-lab.svg` | [stopwatch](https://game-icons.net/1x1/lorc/stopwatch.html) | Lorc |
 | `dgms--m3-skills--mash-meter.svg` | [button-finger](https://game-icons.net/1x1/delapouite/button-finger.html) | Delapouite |
 | `dgms--m3-skills--async-cycles.svg` | [pendulum-swing](https://game-icons.net/1x1/delapouite/pendulum-swing.html) | Delapouite |
+| `dgms--interview--hiring-funnel.svg` | [shaking-hands](https://game-icons.net/1x1/delapouite/shaking-hands.html) | Delapouite |
+| `dgms--interview--role-map.svg` | [treasure-map](https://game-icons.net/1x1/lorc/treasure-map.html) | Lorc |
+| `dgms--interview--rubric.svg` | [notebook](https://game-icons.net/1x1/lorc/notebook.html) | Lorc |
+| `dgms--interview--five-levels.svg` | [mountain-climbing](https://game-icons.net/1x1/delapouite/mountain-climbing.html) | Delapouite |
+| `dgms--interview--practice.svg` | [archery-target](https://game-icons.net/1x1/lorc/archery-target.html) | Lorc |
+| `dgms--m8-balance--patch-philosophies.svg` | [progression](https://game-icons.net/1x1/delapouite/progression.html) | Delapouite |
+| `dgms--m8-balance--unfair-fairness.svg` | [scales](https://game-icons.net/1x1/lorc/scales.html) | Lorc |
+| `dgms--m8-balance--hits-to-kill.svg` | [broken-heart](https://game-icons.net/1x1/lorc/broken-heart.html) | Lorc |
+| `dgms--m8-balance--toughness.svg` | [checked-shield](https://game-icons.net/1x1/lorc/checked-shield.html) | Lorc |
+| `dgms--m8-balance--dice-variance.svg` | [rolling-dices](https://game-icons.net/1x1/delapouite/rolling-dices.html) | Delapouite |
+| `dgms--m8-balance--murder-bears.svg` | [bear-head](https://game-icons.net/1x1/delapouite/bear-head.html) | Delapouite |
+| `dgms--m8-balance--hammer-time.svg` | [hammer-break](https://game-icons.net/1x1/delapouite/hammer-break.html) | Delapouite |
+| `dgms--m8-balance--comebacks.svg` | [back-forth](https://game-icons.net/1x1/lorc/back-forth.html) | Lorc |
+| `dgms--m9-game-feel--polish-ladder.svg` | [ladder](https://game-icons.net/1x1/delapouite/ladder.html) | Delapouite |
+| `dgms--m9-game-feel--seven-principles.svg` | [radar-sweep](https://game-icons.net/1x1/lorc/radar-sweep.html) | Lorc |
+| `dgms--m9-game-feel--which-attack.svg` | [perspective-dice-six-faces-random](https://game-icons.net/1x1/delapouite/perspective-dice-six-faces-random.html) | Delapouite |
+| `dgms--m9-game-feel--under-match-over.svg` | [scales](https://game-icons.net/1x1/lorc/scales.html) | Lorc |
+| `dgms--m9-game-feel--jump-lab.svg` | [jump-across](https://game-icons.net/1x1/delapouite/jump-across.html) | Delapouite |
+| `dgms--m9-game-feel--feedback-mixer.svg` | [settings-knobs](https://game-icons.net/1x1/delapouite/settings-knobs.html) | Delapouite |
+| `dgms--m9-game-feel--feel-shapes.svg` | [punch-blast](https://game-icons.net/1x1/lorc/punch-blast.html) | Lorc |
+| `dgms--m9-game-feel--pendulum.svg` | [pendulum-swing](https://game-icons.net/1x1/delapouite/pendulum-swing.html) | Delapouite |
+
+Page images in `dgms/m8-balance/` and `dgms/m9-game-feel/`: World of Warcraft icons (Blizzard, via wow.zamimg.com), League of Legends portraits (Riot Data Dragon 14.1.1), Super Mario Bros. small Mario sprite (Nintendo).

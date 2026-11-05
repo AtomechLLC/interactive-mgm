@@ -252,3 +252,30 @@ Module 2, Audience Demographics (`m2-audience/`):
 - `thirteen-percent/`: The 13% Rule. How big a raid tier must be to feel like an upgrade after weeks of waiting, worked back to about 1% per slot; then Thunderfury and transmog (226-237).
 - `gold-items/`: The Gold Item Trap. Gold-over-time items feel rewarding but pay back only 25 minutes after purchase, whatever the stack (260).
 - `time-pressure/`: Time Pressure, Three Ways. One corridor, three chasers (Ori fixed escape, Wisps rubber-band wall, Kirby mist); a speed slider shows only the fixed chaser filters out slower players (276-281).
+
+Module 8, Gameplay Balance (`m8-balance/`):
+- `patch-philosophies/`: Three Patch Philosophies. Rotate the top, buff the rest up, or nerf the top down over ten patches, against a target power line. (slides 17-21).
+- `unfair-fairness/`: Unfair Fairness. Six League champions against six situations, shaded dominant, even or weak; a row with no weak cell gets a "no answer" flag. (slides 91-109).
+- `hits-to-kill/`: Hits-to-Kill Bench. Two attackers with the same DPS reach different hits-to-kill and time-to-kill as enemy HP crosses thresholds. (slides 117-139, 159-162).
+- `toughness/`: Three Ways to Grow Toughness. Damage reduction runs to infinity at 100% while effective health and resistance grow in a straight line. (slides 140-157).
+- `dice-variance/`: Stable Part vs Variance. 1d8+4, 8+1d4 and 10+1d2 rolled 200 times each; the spread tightens as more of the hit is fixed. (slides 185).
+- `murder-bears/`: The Murder Bears. One typo in an attack-speed field turns a once-a-second bear into a thousand-hits-a-second bear; Val'anyr's tenfold shield-cap typo hid instead. (slides 197-199).
+- `hammer-time/`: Hammer Time. Tune a shield and a charged swing one variable at a time until the slow swing earns its place. (slides 204-216, 236-241).
+- `comebacks/`: Comeback Tug-of-War. One seeded match under five comeback rules. (slides 287-324).
+
+Module 9, Game Feel (`m9-game-feel/`):
+- `polish-ladder/`: Polish Ladder. Andre's three before-and-after polish demos rebuilt in grey-box art; number keys add layers and show what each adds and costs. (slides 35-57).
+- `seven-principles/`: Seven Principles Score Sheet. Score any game 0 to 10 on the seven principles on a radar chart. (slides 65-84).
+- `which-attack/`: Which Attack Comes Out?. The stick picks the move vs a random picker. (slides 66-69).
+- `under-match-over/`: Under, Match, Over. Six elements of one action on under/match/over bars with a budget meter. (slides 107).
+- `jump-lab/`: Jump Curve Lab. One jump key, three jumpers that differ only in what happens on release. (slides 164-172).
+- `feedback-mixer/`: Feedback Mixer. One melee hit on a training dummy with eight feedback channels to mix, and a checklist that shows what is missing. (slides 179-208).
+- `feel-shapes/`: Feel Shapes. Rogers' 16 game feel types drawn as intensity-over-time curves you can compare, take apart and invent. (slides 211-271).
+- `pendulum/`: Pendulum and Ball. Disney's 12 principles you can scrub: timing, spacing and easing on a pendulum, squash, stretch and anticipation on a ball, and before/after loops for the other six. (slides 289-296).
+
+Bonus, Getting Hired as a Game Designer (`interview/`):
+- `hiring-funnel/`: The Hiring Funnel. Six funnel bands from application to offer, each with one tip, with webcam tips on the video band. (slides 2-3).
+- `role-map/`: Which Designer Are You?. The deck's role grid shown whole: six domains, each with a systems-leaning and a content-leaning role, plus Carrillo's four designer types. (slides 7-27).
+- `rubric/`: Interview Rubric. A printable card with the four interviewer questions and the 4Cs, each with a "looks like" line and a 1-4 self-score. (slides 29-34, 42-47).
+- `five-levels/`: One Question, Five Levels. One prompt, five answers from Junior to Director, with each level's trait highlighted. (slides 35-41).
+- `practice/`: Interview Practice Card. Draw a prompt for your role, answer against a timer, tick the five tactics, then score yourself on the rubric. (slides 48-52).
