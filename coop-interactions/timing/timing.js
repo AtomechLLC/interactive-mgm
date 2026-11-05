@@ -1,4 +1,4 @@
-/* Teamplay timing (MGM C3 M6, deck slides 147-160). One enemy swing at an ally, and three tools anchored to it:
+/* Teamplay timing (MGM C4 M6, deck slides 147-160). One enemy swing at an ally, and three tools anchored to it:
    a shield before the hit (proactive), an intervention during the swing (coactive) and a heal after it (reactive).
    outcome(use) resolves one cycle and scene(g, t, use) draws it as a pure function of time, so the sandbox, the tour,
    the title loop and window.__seek (for the GIF) all draw the same thing. Slide 3 is slide 153: shields invite risk. */

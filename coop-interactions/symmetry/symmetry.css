@@ -1,0 +1,15 @@
+/* Symmetry spectrum: per-slide layout. The canvas left, the selected game's notes right. */
+.sy-wrap { display: grid; grid-template-columns: 1040px 1fr; gap: 26px; margin-top: -4px; }
+.sy-canvas { width: 1040px; height: 640px; display: block; border-radius: 10px; cursor: pointer; }
+.slide.center canvas.ti-canvas { width: 760px; }
+.sy-side h4 { font-family: var(--display); font-size: 15px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 8px; }
+.sy-name { font-family: var(--display); font-weight: 800; font-size: 24px; line-height: 1.15; color: var(--ink); }
+.sy-name small { font-family: Jost, sans-serif; font-weight: 500; font-size: 16px; color: var(--muted); }
+.sy-zone { margin: 8px 0 4px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.sy-job { font-size: 15px; color: var(--muted); }
+.sy-job b { color: var(--ink); }
+.sy-side p { font-size: 16px; line-height: 1.38; margin: 8px 0 0; color: var(--ink); }
+.sy-side p.sy-diff { min-height: 6.9em; }
+.sy-side p.sy-key { font-size: 14px; color: var(--muted); border-top: 1px solid #cdbf9f; padding-top: 8px; margin-top: 12px; }
+.ctl { margin-top: 12px; }
+.ctl .btn { font-size: 15px; padding: 5px 11px; }

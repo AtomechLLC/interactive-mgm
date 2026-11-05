@@ -1,4 +1,4 @@
-/* Co-op chains (MGM C3 M6, deck slides 186-229 and 288-291). Three players with two keywords each and one enemy.
+/* Co-op chains (MGM C4 M6, deck slides 186-229 and 288-291). Three players with two keywords each and one enemy.
    A plan is a grid of who does what in which beat. simulate(plan) resolves it beat by beat: an ability checks the
    enemy's state at the start of its beat and its effect lands at the end, so a setup always comes before the exploit
    it enables. draw(g, sim, t) is a pure function of time, so the builder, the title loop and window.__seek (the GIF)

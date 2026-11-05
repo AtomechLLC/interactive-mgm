@@ -1,6 +1,6 @@
 # Co-op Interactions: interactive and GIF proposals
 
-Source: "MGM C3 M6 - Engaging Co-op Interaction Design Fundamentals" (Drive 1xBadKm2iOtQxbKC5WrMZ3rgbZq8e6a7cGx2jwtTIf9w, 341 slides, read 2026-10-27 via `/htmlpresent`). Slide numbers below are the `/edit#slide=N` numbers. The deck's own footer counter reads one higher (slide 9 shows "10 of 341"). In this deck the speaker notes are typed onto the slides themselves, so the notes quoted here come from the slide text.
+Source: "MGM C4 M6 - Engaging Co-op Interaction Design Fundamentals" (Drive 1rTdMM4Qdt1hBMdbx03MQR5hUYNZJaHljmZjtzCm2qBA, 341 slides). The slides were first read on 2026-10-27 from the C3 copy (1xBadKm2iOtQxbKC5WrMZ3rgbZq8e6a7cGx2jwtTIf9w) via `/htmlpresent`; C4 was copied from it on 2026-09-13 and is unchanged since, so the numbers match C4. C3 gained about 16 build-step slides on 2026-11-05, so from Part 4 on its numbering no longer matches. Slide numbers below are the `/edit#slide=N` numbers. The deck's own footer counter reads one higher (slide 9 shows "10 of 341"). In this deck the speaker notes are typed onto the slides themselves, so the notes quoted here come from the slide text.
 
 Nothing is built for this deck yet.
 

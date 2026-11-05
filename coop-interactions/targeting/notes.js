@@ -1,4 +1,4 @@
-// Speaker notes per slide. Source: "MGM C3 M6 - Engaging Co-op Interaction Design Fundamentals", slides 116-133 (Teamplay Targeting Matrix) and 161-171 (combining it with timing).
+// Speaker notes per slide. Source: "MGM C4 M6 - Engaging Co-op Interaction Design Fundamentals", slides 116-133 (Teamplay Targeting Matrix) and 161-171 (combining it with timing).
 window.NOTES = [
   { script: 'The four major categories of game entities that interact in a co-op setting: yourself, allies (anything benevolent to you), enemies (anything hostile to you) and the environment, the world itself. Combine them as source and target to inspire new opportunities.' },
   { script: 'Take a simple concept like fire, the mechanic of burning something, and run it through the chart. Self to enemy? That is a fireball. Burning the environment might leave a pool of flames. Which inspires self to self, a self-immolation like Warlock Hellfire, or even cauterizing flames on an ally that remove harmful effects. Continue through every cell and look for mechanics and inspiration. An ally dropping a zone of healing is ally to environment; an enemy buffing another enemy is enemy to enemy.' },

@@ -1,4 +1,4 @@
-/* Top-down drawing kit, copied from pve-interactions/shared/topdown.js so the co-op module stands alone (MGM C3 M6).
+/* Top-down drawing kit, copied from pve-interactions/shared/topdown.js so the co-op module stands alone (MGM C4 M6).
    Same look as the hazard pattern GIFs: parchment floor tiles, navy brick walls, the blue player disc with a white arrow,
    red for anything hostile. Everything draws into whatever context TD.use(g) was given, in that context's units. */
 (function () {

@@ -1,4 +1,4 @@
-/* Interaction count (MGM C3 M6, deck slide 9). One player and three monsters is 3 interactions to design. Three
+/* Interaction count (MGM C4 M6, deck slide 9). One player and three monsters is 3 interactions to design. Three
    players and three monsters is 9 player-monster pairs plus 6 player-player pairs: 15. The deck counts each direction
    between players (A helps B and B helps A are different designs); the toggle shows the undirected count too.
    draw(g, P, M, k) draws the board with lines growing in by k, so the tour and window.__seek (the GIF) match.

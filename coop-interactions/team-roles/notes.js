@@ -1,4 +1,4 @@
-// Speaker notes per slide. Source: "MGM C3 M6 - Engaging Co-op Interaction Design Fundamentals", slides 246-255 (Cross-Class Structure).
+// Speaker notes per slide. Source: "MGM C4 M6 - Engaging Co-op Interaction Design Fundamentals", slides 246-255 (Cross-Class Structure).
 window.NOTES = [
   { script: 'Cross-class structure: the way in which the combination of different classes creates unique ways to solve identical content challenges. Or in simpler terms, how you work together to win. Single player, you have all of the tools. In co-op, you have part of the tools, which raises your interdependence and the potency of each tool you do have.' },
   { script: 'Cross-class structure was first described to me as converting American football into Lord of the Rings: interchangeable parts working together as a functioning unit. The linebackers are fighters, the wide receivers are sneaky rogues and the quarterback is the wizard everyone wants to kill first. Success is measured in distance travelled, with thresholds granting victory points. Take one class out and see what the play loses.' },

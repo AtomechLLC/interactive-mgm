@@ -1,4 +1,4 @@
-/* Shared-screen camera lab (MGM C3 M6, deck slides 68-78). One scripted couch co-op moment: both players walk in
+/* Shared-screen camera lab (MGM C4 M6, deck slides 68-78). One scripted couch co-op moment: both players walk in
    together, P2 wanders off to the far corner while P1 meets an enemy, then P2 comes back. The same 16 s plays under
    five camera rules from the deck: follow P1, frame both equally, a locked scroll (TMNT), split when far apart, and a
    weighted camera (slide 75: P1 must-have, enemy half as important, ally a little less). views(t, mode) decides what

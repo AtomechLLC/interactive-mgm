@@ -10,6 +10,7 @@ GIF_COLORS=96 rec 'camera/index.html#2' lab camera-shared-screen
 rec 'chains/index.html#2' builder chains-setup-exploit-payoff
 rec 'free-gear/index.html#2' plateau free-gear-plateau
 rec 'interactions/index.html#2' count interaction-count
+rec 'symmetry/index.html#2' spectrum symmetry-spectrum
 rec 'keywords/index.html#3' board keywords-need-situations
 wait
 rec 'team-roles/index.html#2' football roles-football-fantasy

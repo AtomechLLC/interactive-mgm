@@ -1,4 +1,4 @@
-/* Free gear plateau (MGM C3 M6, deck slides 316-317). In the WoW alpha, high-level players handed new players quest
+/* Free gear plateau (MGM C4 M6, deck slides 316-317). In the WoW alpha, high-level players handed new players quest
    rewards they couldn't use: no level requirement, not soulbound. The newbie's power spikes at hour one, then every
    quest reward for the next many hours is worse than what they already wear. Two power curves over play time: one
    earning gear by questing, one given a tier-9 weapon at hour one. REWARD_EVERY, GIFT_TIER and GIFT_AT are the model. */
