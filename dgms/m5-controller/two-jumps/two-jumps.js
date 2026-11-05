@@ -378,54 +378,62 @@
     });
   }
 
-  /* ---------- slide 2: muppet vs puppet ---------- */
-  const LX = 0, RX2 = 532;
+  /* ---------- slide 2: muppet vs puppet ----------
+     Two themed panels drawn over real game art: Ori's forest glow on the left (the SeinPrefab, one object), No Rest for the
+     Wicked's painterly firelight on the right (Photon Quantum: Unity input, Quantum simulation, Unity view). The flow is
+     scripted with XR.script and replayed with XR.replay, so every frame is a pure function of t; the drawing is local. */
+  const ART = {};
+  ['ori', 'ori-forest', 'ab-doublejump', 'ab-dash', 'ab-bash', 'nr-bg', 'nr-screen', 'nr-screen2', 'knight-idle', 'knight-jump', 'knight-p2', 'knight-jump-p2']
+    .forEach(n => { const i = new Image(); i.src = 'art/' + n + (/forest|bg|screen/.test(n) ? '.jpg' : '.png'); ART[n] = i; });
+  const ok = i => i && i.complete && i.naturalWidth > 0;
+  const LP = { x: 0, w: 512 }, RP = { x: 528, w: 512 };
+  const ORI = { glow: '#8fe9ff', ink: '#e9fbff', sub: '#a9e3f5', card: 'rgba(6,26,48,.74)', edge: 'rgba(143,233,255,.55)' };
+  const WK = { glow: '#ffb547', ink: '#fff3e0', sub: '#f3c999', card: 'rgba(28,14,8,.76)', edge: 'rgba(255,181,71,.5)' };
   const AR_N = [
-    { id: 'prefab', back: true, x: 8, y: 52, w: 500, h: 420, part: 'entity', title: 'SeinPrefab (one object)' },
-    { id: 'm_in', x: 34, y: 104, w: 190, h: 92, part: 'entity', title: 'Input reading', sub: 'buttons' },
-    { id: 'm_ctl', x: 292, y: 104, w: 190, h: 92, part: 'entity', title: 'Control logic', value: 'Ready' },
-    { id: 'm_ab', x: 292, y: 238, w: 190, h: 92, part: 'entity', title: 'Abilities', sub: 'jump, dash, bash' },
-    { id: 'm_ph', x: 34, y: 238, w: 190, h: 92, part: 'entity', title: 'Physics', sub: 'velocity' },
-    { id: 'm_an', x: 34, y: 368, w: 190, h: 92, part: 'entity', title: 'Animation', sub: 'events' },
-    { id: 'm_vw', x: 292, y: 368, w: 190, h: 92, part: 'entity', title: 'Rendering', sub: 'sprite, effects' },
-    { id: 'm_ai', x: 34, y: 490, w: 200, h: 86, part: 'entity', title: 'AI brain', sub: 'wants to drive' },
-    { id: 'm_net', x: 282, y: 490, w: 200, h: 86, part: 'entity', title: 'Online player', sub: 'wants to join' },
-    { id: 'p_in', x: RX2 + 6, y: 96, w: 140, h: 100, part: 'entity', title: 'Device input', sub: 'keyboard, pad' },
-    { id: 'p_ctl', x: RX2 + 172, y: 96, w: 170, h: 100, part: 'entity', title: 'Controller', value: 'Ready' },
-    { id: 'p_pawn', x: RX2 + 172, y: 252, w: 170, h: 110, part: 'entity', title: 'Pawn', value: 'Idle' },
-    { id: 'p_vw', x: RX2 + 366, y: 252, w: 136, h: 110, part: 'entity', title: 'View', sub: 'sprite, effects' },
-    { id: 'p_ai', x: RX2 + 172, y: 410, w: 170, h: 82, part: 'entity', title: 'AI brain', sub: 'issues commands' },
-    { id: 'p_net', x: RX2 + 6, y: 410, w: 140, h: 82, part: 'entity', title: 'Online input', sub: 'player 2' },
-    { id: 'p_vw2', x: RX2 + 366, y: 410, w: 136, h: 82, part: 'entity', title: 'View, player 2', sub: 'same simulation' },
+    { id: 'm_in', side: 'L', x: 30, y: 96, w: 204, h: 92, title: 'Input reading', sub: 'buttons', icon: 'pad' },
+    { id: 'm_ctl', side: 'L', x: 278, y: 96, w: 204, h: 92, title: 'Control logic', value: 'Ready' },
+    { id: 'm_ab', side: 'L', x: 278, y: 216, w: 204, h: 92, title: 'Abilities', sub: 'jump, dash, bash', icon: 'abilities' },
+    { id: 'm_ph', side: 'L', x: 30, y: 216, w: 204, h: 92, title: 'Physics', sub: 'velocity', icon: 'vel' },
+    { id: 'm_an', side: 'L', x: 30, y: 336, w: 204, h: 92, title: 'Animation', sub: 'events', icon: 'film' },
+    { id: 'm_vw', side: 'L', x: 278, y: 336, w: 204, h: 92, title: 'Rendering', sub: 'sprite, effects', icon: 'ori', value: 'ground' },
+    { id: 'm_ai', side: 'L', x: 30, y: 482, w: 204, h: 84, title: 'AI brain', sub: 'wants to drive', icon: 'brain', ghost: true },
+    { id: 'm_net', side: 'L', x: 278, y: 482, w: 204, h: 84, title: 'Online player', sub: 'wants to join', icon: 'p2', ghost: true },
+    { id: 'p_in', side: 'R', x: 538, y: 122, w: 128, h: 100, title: 'Device', sub: 'keyboard, pad', icon: 'pad' },
+    { id: 'p_ctl', side: 'R', x: 690, y: 122, w: 176, h: 100, title: 'Controller', value: 'Ready' },
+    { id: 'p_pawn', side: 'R', x: 708, y: 270, w: 158, h: 118, title: 'Pawn', value: 'Idle', sub: 'actions: jump, attack' },
+    { id: 'p_vw', side: 'R', x: 884, y: 236, w: 146, h: 178, title: 'View', icon: 'knight', value: 'idle' },
+    { id: 'p_ai', side: 'R', x: 690, y: 452, w: 176, h: 96, title: 'AI brain', sub: 'issues commands', icon: 'brain' },
+    { id: 'p_net', side: 'R', x: 538, y: 452, w: 128, h: 96, title: 'Online input', sub: 'player 2', icon: 'p2' },
+    { id: 'p_vw2', side: 'R', x: 884, y: 434, w: 146, h: 132, title: 'View, player 2', sub: 'same simulation', icon: 'knight2', value: 'idle' },
   ];
   const AR_RULES = {
     jump: () => [
-      { dt: 0, dur: .5, from: 'm_in', to: 'm_ctl', kind: 'command', label: 'Jump' },
-      { dt: .55, dur: .5, from: 'm_ctl', to: 'm_ab', kind: 'command', set: { m_ctl: 'Jumping' } },
-      { dt: 1.1, dur: .5, from: 'm_ab', to: 'm_ph', kind: 'system', label: 'velocity' },
-      { dt: 1.65, dur: .5, from: 'm_ph', to: 'm_an', kind: 'system', label: 'airborne' },
-      { dt: 2.2, dur: .6, from: 'm_an', to: 'm_ab', kind: 'effect', label: 'anim event', via: [258, 360] },
-      { dt: 2.85, dur: .6, from: 'm_ab', to: 'm_ctl', kind: 'effect', label: 'state changed', via: [440, 214] },
-      { dt: 3.5, dur: .5, from: 'm_an', to: 'm_vw', kind: 'system' },
-      { dt: 0, dur: .5, from: 'p_in', to: 'p_ctl', kind: 'command', label: 'Jump' },
-      { dt: .55, dur: .5, from: 'p_ctl', to: 'p_pawn', kind: 'command', label: 'Jump', set: { p_pawn: 'Jumping' } },
-      { dt: 1.1, dur: .5, from: 'p_pawn', to: 'p_vw', kind: 'system', label: 'state' },
-      { dt: 4.4, dur: .01, set: { m_ctl: 'Ready', p_pawn: 'Idle' } },
+      { dt: 0, dur: .5, from: 'm_in', to: 'm_ctl', label: 'Jump' },
+      { dt: .55, dur: .5, from: 'm_ctl', to: 'm_ab', set: { m_ctl: 'Jumping' }, via: [352, 202] },
+      { dt: 1.1, dur: .5, from: 'm_ab', to: 'm_ph', label: 'velocity' },
+      { dt: 1.65, dur: .5, from: 'm_ph', to: 'm_an', label: 'airborne' },
+      { dt: 2.2, dur: .6, from: 'm_an', to: 'm_ab', label: 'anim event', via: [256, 318], loop: true },
+      { dt: 2.85, dur: .6, from: 'm_ab', to: 'm_ctl', label: 'state changed', via: [410, 202], loop: true },
+      { dt: 3.5, dur: .5, from: 'm_an', to: 'm_vw', set: { m_vw: 'air' } },
+      { dt: 0, dur: .5, from: 'p_in', to: 'p_ctl', label: 'Jump', chain: ['Input', 'Device'] },
+      { dt: .55, dur: .5, from: 'p_ctl', to: 'p_pawn', label: 'Jump', set: { p_pawn: 'Jumping' }, chain: ['Controller'] },
+      { dt: 1.1, dur: .5, from: 'p_pawn', to: 'p_vw', label: 'state', set: { p_vw: 'jump' }, chain: ['Pawn', 'Actions'] },
+      { dt: 4.4, dur: .01, set: { m_ctl: 'Ready', p_pawn: 'Idle', m_vw: 'ground', p_vw: 'idle' } },
     ],
     ai: () => [
-      { dt: 0, dur: .9, from: 'm_ai', to: 'm_in', kind: 'command', label: 'Jump', bounce: 'input is wired inside' },
-      { dt: 0, dur: .7, from: 'p_ai', to: 'p_ctl', kind: 'command', label: 'Jump', via: [RX2 + 354, 230] },
-      { dt: .75, dur: .5, from: 'p_ctl', to: 'p_pawn', kind: 'command', label: 'Jump', set: { p_pawn: 'Jumping' } },
-      { dt: 1.3, dur: .5, from: 'p_pawn', to: 'p_vw', kind: 'system', label: 'state' },
-      { dt: 2.6, dur: .01, set: { p_pawn: 'Idle' } },
+      { dt: 0, dur: .9, from: 'm_ai', to: 'm_in', label: 'Jump', bounce: 'input is wired inside', stop: .12 },
+      { dt: 0, dur: .7, from: 'p_ai', to: 'p_ctl', label: 'Jump', via: [690, 340], chain: ['Controller'], skip: true },
+      { dt: .75, dur: .5, from: 'p_ctl', to: 'p_pawn', label: 'Jump', set: { p_pawn: 'Jumping' }, chain: ['Controller'] },
+      { dt: 1.3, dur: .5, from: 'p_pawn', to: 'p_vw', label: 'state', set: { p_vw: 'jump' }, chain: ['Pawn', 'Actions'] },
+      { dt: 2.6, dur: .01, set: { p_pawn: 'Idle', p_vw: 'idle' } },
     ],
     net: () => [
-      { dt: 0, dur: .9, from: 'm_net', to: 'm_vw', kind: 'command', label: 'Join', bounce: 'no seam to sync' },
-      { dt: 0, dur: .6, from: 'p_net', to: 'p_ctl', kind: 'command', label: 'synced input', via: [RX2 + 160, 260] },
-      { dt: .65, dur: .5, from: 'p_ctl', to: 'p_pawn', kind: 'command', set: { p_pawn: 'Jumping' } },
-      { dt: 1.2, dur: .5, from: 'p_pawn', to: 'p_vw', kind: 'system' },
-      { dt: 1.2, dur: .5, from: 'p_pawn', to: 'p_vw2', kind: 'system' },
-      { dt: 2.8, dur: .01, set: { p_pawn: 'Idle' } },
+      { dt: 0, dur: .9, from: 'm_net', to: 'm_vw', label: 'Join', bounce: 'no seam to sync', stop: .45 },
+      { dt: 0, dur: .6, from: 'p_net', to: 'p_ctl', label: 'synced input', via: [640, 300], chain: ['Input'] },
+      { dt: .65, dur: .5, from: 'p_ctl', to: 'p_pawn', set: { p_pawn: 'Jumping' }, chain: ['Controller'] },
+      { dt: 1.2, dur: .5, from: 'p_pawn', to: 'p_vw', set: { p_vw: 'jump' }, chain: ['Pawn', 'Actions'] },
+      { dt: 1.2, dur: .5, from: 'p_pawn', to: 'p_vw2', set: { p_vw2: 'jump' }, chain: ['Pawn', 'Actions'] },
+      { dt: 2.8, dur: .01, set: { p_pawn: 'Idle', p_vw: 'idle', p_vw2: 'idle' } },
     ],
   };
   const AR_TOUR = [{ at: .5, type: 'jump' }, { at: 5.6, type: 'ai' }, { at: 8.6, type: 'net' }];
@@ -433,12 +441,145 @@
   const AR_PH = [
     [0, 'Press Jump on both. Left, Ori\'s SeinPrefab: input, control, abilities, physics and animation live in one object and call each other.'],
     [2.6, 'An animation event reaches back into the abilities, which change the control state: the circular feedback that muppets tend to create.'],
-    [5.5, 'Plug in an AI. The puppet takes it: an AI brain issues commands to the same controller, which drives the same pawn. In the muppet the input is wired inside, so there is no place to plug it.'],
+    [5.5, 'Plug in an AI. The puppet takes it: an AI brain issues commands to the same controller, skipping the device, and drives the same pawn. In the muppet the input is wired inside, so there is no place to plug it.'],
     [8.5, 'Add an online player. With Photon Quantum only inputs travel; every machine runs the same simulation and draws its own view.'],
   ];
+  const CHAIN = ['Input', 'Device', 'Controller', 'Pawn', 'Actions'];
+
+  const nodeOf = id => AR_N.find(n => n.id === id);
+  function edgePt(n, from) {
+    const cx = n.x + n.w / 2, cy = n.y + n.h / 2, dx = from[0] - cx, dy = from[1] - cy;
+    const k = Math.min(Math.abs((n.w / 2 + 3) / (dx || 1e-9)), Math.abs((n.h / 2 + 3) / (dy || 1e-9)));
+    return [cx + dx * k, cy + dy * k];
+  }
+  function hopPath(f) {
+    const a = nodeOf(f.from), b = nodeOf(f.to), ca = [a.x + a.w / 2, a.y + a.h / 2], cb = [b.x + b.w / 2, b.y + b.h / 2];
+    return [edgePt(a, f.via || cb), edgePt(b, f.via || ca), f.via || null];
+  }
+  const at = (p0, p1, via, k) => {
+    if (!via) return [lerp(p0[0], p1[0], k), lerp(p0[1], p1[1], k)];
+    const u = 1 - k; return [u * u * p0[0] + 2 * u * k * via[0] + k * k * p1[0], u * u * p0[1] + 2 * u * k * via[1] + k * k * p1[1]];
+  };
+  function cover(g, img, x, y, w, h) {
+    if (!ok(img)) return;
+    const s = Math.max(w / img.naturalWidth, h / img.naturalHeight), iw = img.naturalWidth * s, ih = img.naturalHeight * s;
+    g.drawImage(img, x + (w - iw) / 2, y + (h - ih) / 2, iw, ih);
+  }
+  function fit(g, img, cx, cy, maxW, maxH, alpha = 1) {
+    if (!ok(img)) return;
+    const s = Math.min(maxW / img.naturalWidth, maxH / img.naturalHeight);
+    g.save(); g.globalAlpha *= alpha; g.drawImage(img, cx - img.naturalWidth * s / 2, cy - img.naturalHeight * s / 2, img.naturalWidth * s, img.naturalHeight * s); g.restore();
+  }
+  function text(g, s, x, y, font, col, align = 'left') { g.font = font; g.fillStyle = col; g.textAlign = align; g.textBaseline = 'middle'; g.fillText(s, x, y); }
+  function chip(g, s, x, y, th, pop = 1) {
+    g.save(); g.translate(x, y); g.scale(pop, pop);
+    g.font = '800 18px Montserrat, sans-serif'; const w = Math.max(70, g.measureText(s).width + 26);
+    g.shadowColor = th.glow; g.shadowBlur = 10 * pop;
+    g.fillStyle = th === ORI ? '#eafcff' : '#fff1d6'; g.strokeStyle = th.glow; g.lineWidth = 2.5;
+    g.beginPath(); g.roundRect(-w / 2, -17, w, 34, 9); g.fill(); g.stroke(); g.shadowBlur = 0;
+    text(g, s, 0, 1, '800 18px Montserrat, sans-serif', th === ORI ? '#063a52' : '#5a2a00', 'center'); g.restore();
+  }
+  function pill(g, s, x, y, col, bg = 'rgba(10,12,24,.88)', size = 12.5) {
+    g.font = `700 ${size}px Jost, sans-serif`; const w = g.measureText(s).width + 16;
+    g.fillStyle = bg; g.strokeStyle = col; g.lineWidth = 1.5; g.beginPath(); g.roundRect(x - w / 2, y - size * .9, w, size * 1.8, size * .9); g.fill(); g.stroke();
+    text(g, s, x, y + 1, `700 ${size}px Jost, sans-serif`, col, 'center');
+  }
+  // small line glyphs, drawn in the panel's glow colour
+  function glyph(g, kind, cx, cy, col, t) {
+    g.save(); g.strokeStyle = col; g.fillStyle = col; g.lineWidth = 2.2; g.lineCap = 'round'; g.lineJoin = 'round';
+    if (kind === 'pad' || kind === 'p2') {
+      g.beginPath(); g.moveTo(cx - 22, cy - 9); g.quadraticCurveTo(cx, cy - 15, cx + 22, cy - 9); g.quadraticCurveTo(cx + 32, cy + 14, cx + 18, cy + 13); g.quadraticCurveTo(cx + 10, cy + 3, cx, cy + 3);
+      g.quadraticCurveTo(cx - 10, cy + 3, cx - 18, cy + 13); g.quadraticCurveTo(cx - 32, cy + 14, cx - 22, cy - 9); g.stroke();
+      g.beginPath(); g.moveTo(cx - 17, cy - 3); g.lineTo(cx - 9, cy - 3); g.moveTo(cx - 13, cy - 7); g.lineTo(cx - 13, cy + 1); g.stroke();
+      [[12, -6], [17, -2], [12, 2], [7, -2]].forEach(([dx, dy]) => { g.beginPath(); g.arc(cx + dx, cy + dy, 1.8, 0, TAU); g.fill(); });
+      if (kind === 'p2') text(g, 'P2', cx + 40, cy + 2, '800 11px Montserrat, sans-serif', col, 'center');
+    } else if (kind === 'brain') {
+      g.beginPath(); g.roundRect(cx - 15, cy - 13, 30, 26, 6); g.stroke();
+      [-8, 0, 8].forEach(d => { g.beginPath(); g.moveTo(cx + d, cy - 13); g.lineTo(cx + d, cy - 19); g.moveTo(cx + d, cy + 13); g.lineTo(cx + d, cy + 19); g.moveTo(cx - 15, cy + d * .8); g.lineTo(cx - 21, cy + d * .8); g.moveTo(cx + 15, cy + d * .8); g.lineTo(cx + 21, cy + d * .8); g.stroke(); });
+      text(g, 'AI', cx, cy + 1, '800 12px Montserrat, sans-serif', col, 'center');
+    } else if (kind === 'vel') {
+      g.beginPath(); g.moveTo(cx - 24, cy + 12); g.quadraticCurveTo(cx - 4, cy - 26, cx + 22, cy - 2); g.stroke();
+      g.beginPath(); g.moveTo(cx + 22, cy - 2); g.lineTo(cx + 12, cy - 4); g.lineTo(cx + 19, cy - 11); g.closePath(); g.fill();
+      g.beginPath(); g.arc(cx - 24, cy + 12, 3, 0, TAU); g.fill();
+    } else if (kind === 'film') {
+      g.beginPath(); g.roundRect(cx - 34, cy - 14, 68, 28, 4); g.stroke();
+      for (let i = 0; i < 3; i++) { const fx = cx - 22 + i * 22; fit(g, ART.ori, fx, cy, 16, 22, .55 + .15 * i); }
+    }
+    g.restore();
+  }
+  function card(g, n, th, v, glow, t, dim) {
+    const { x, y, w, h } = n;
+    g.save(); g.globalAlpha = dim ? .55 : 1;
+    if (glow > 0) { g.shadowColor = th.glow; g.shadowBlur = 26 * glow; }
+    g.fillStyle = th.card; g.strokeStyle = glow > 0 ? th.glow : th.edge; g.lineWidth = 1.6 + 1.6 * glow;
+    if (n.ghost) g.setLineDash([6, 5]);
+    g.beginPath(); g.roundRect(x, y, w, h, 12); g.fill(); g.stroke(); g.setLineDash([]); g.shadowBlur = 0;
+    // header strip
+    text(g, n.title, x + 12, y + 16, '700 13.5px Montserrat, sans-serif', th.ink);
+    g.fillStyle = th.edge; g.fillRect(x + 12, y + 28, w - 24, 1);
+    const cx = x + w / 2, body = y + 30, room = h - 30, my = body + room / 2;
+    const subY = y + h - 13;
+    if (n.icon === 'abilities') {
+      ['ab-doublejump', 'ab-dash', 'ab-bash'].forEach((k, i) => fit(g, ART[k], x + w / 2 + (i - 1) * 50, my - 7, 44, 44));
+      text(g, n.sub, cx, subY, 'italic 500 12px Jost, sans-serif', th.sub, 'center');
+    } else if (n.icon === 'ori') {
+      const air = v === 'air', bob = Math.sin(t * 2.4) * 2 - (air ? 10 : 0);
+      if (air) { g.save(); g.shadowColor = th.glow; g.shadowBlur = 18; }
+      fit(g, ART.ori, cx - 34, my - 4 + bob, 40, 52);
+      if (air) g.restore();
+      text(g, n.sub, cx + 28, my - 4, 'italic 500 12px Jost, sans-serif', th.sub, 'center');
+      text(g, air ? 'airborne' : 'grounded', cx + 28, my + 14, '700 11px Jost, sans-serif', air ? th.glow : th.sub, 'center');
+    } else if (n.icon === 'knight' || n.icon === 'knight2') {
+      const sx = x + 8, sy = body + 4, sw = w - 16, sh = room - (n.sub ? 30 : 12);
+      g.save(); g.beginPath(); g.roundRect(sx, sy, sw, sh, 6); g.clip();
+      cover(g, n.icon === 'knight' ? ART['nr-screen'] : ART['nr-screen2'], sx, sy, sw, sh);
+      g.fillStyle = 'rgba(10,5,0,.35)'; g.fillRect(sx, sy, sw, sh);
+      const jump = v === 'jump', img = n.icon === 'knight' ? (jump ? ART['knight-jump'] : ART['knight-idle']) : (jump ? ART['knight-jump-p2'] : ART['knight-p2']);
+      fit(g, img, sx + sw / 2, sy + sh / 2 + (jump ? -6 : 4), sw - 10, sh - 10);
+      g.restore();
+      g.strokeStyle = th.edge; g.lineWidth = 1.2; g.beginPath(); g.roundRect(sx, sy, sw, sh, 6); g.stroke();
+      if (n.sub) text(g, n.sub, cx, subY, 'italic 500 12px Jost, sans-serif', th.sub, 'center');
+    } else if (n.value != null && v != null) {
+      const pop = 1 + .18 * glow;
+      chip(g, v, cx, n.sub ? my - 8 : my, th, pop);
+      if (n.sub) text(g, n.sub, cx, subY, 'italic 500 12px Jost, sans-serif', th.sub, 'center');
+    } else if (n.icon) {
+      glyph(g, n.icon, cx, my - 8, th.glow, t);
+      text(g, n.sub, cx, subY, 'italic 500 12px Jost, sans-serif', th.sub, 'center');
+    }
+    g.restore();
+  }
+  function orb(g, p, col, t) {
+    g.save(); const r = 7 + Math.sin(t * 18) * 1.2;
+    const grd = g.createRadialGradient(p[0], p[1], 0, p[0], p[1], r * 3.2); grd.addColorStop(0, '#fff'); grd.addColorStop(.25, col); grd.addColorStop(1, 'rgba(0,0,0,0)');
+    g.fillStyle = grd; g.beginPath(); g.arc(p[0], p[1], r * 3.2, 0, TAU); g.fill(); g.restore();
+  }
+  function arrowHead(g, p, ang, col, s = 10) {
+    g.fillStyle = col; g.beginPath(); g.moveTo(p[0], p[1]); g.lineTo(p[0] - s * Math.cos(ang - .42), p[1] - s * Math.sin(ang - .42)); g.lineTo(p[0] - s * Math.cos(ang + .42), p[1] - s * Math.sin(ang + .42)); g.closePath(); g.fill();
+  }
+  function panelBg(g, P, img, tint, ring) {
+    g.save(); g.beginPath(); g.roundRect(P.x, 0, P.w, H, 16); g.clip();
+    g.fillStyle = tint[0]; g.fillRect(P.x, 0, P.w, H);
+    cover(g, img, P.x, 0, P.w, H);
+    const gr = g.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, tint[1]); gr.addColorStop(.45, tint[2]); gr.addColorStop(1, tint[3]);
+    g.fillStyle = gr; g.fillRect(P.x, 0, P.w, H);
+    g.restore();
+    g.strokeStyle = ring; g.lineWidth = 2; g.beginPath(); g.roundRect(P.x + 1, 1, P.w - 2, H - 2, 16); g.stroke();
+  }
+  function header(g, P, tag, name, th, portrait, t) {
+    g.save(); g.beginPath(); g.arc(P.x + 30, 26, 19, 0, TAU); g.fillStyle = 'rgba(0,0,0,.45)'; g.fill(); g.strokeStyle = th.glow; g.lineWidth = 2; g.stroke(); g.clip();
+    fit(g, portrait, P.x + 30, portrait === ART.ori ? 33 : 40, portrait === ART.ori ? 34 : 44, portrait === ART.ori ? 48 : 62); g.restore();
+    g.font = '800 12px Montserrat, sans-serif'; const tw = g.measureText(tag).width + 18;
+    g.fillStyle = th.glow; g.beginPath(); g.roundRect(P.x + 58, 14, tw, 24, 12); g.fill();
+    text(g, tag, P.x + 58 + tw / 2, 27, '800 12px Montserrat, sans-serif', th === ORI ? '#052a3c' : '#3a1a00', 'center');
+    text(g, name, P.x + 66 + tw, 27, '800 19px Montserrat, sans-serif', '#fff');
+  }
+
   let archApi;
   canvasDemo('arch', (s, cv, g) => {
     const st = { tour: true, t: 0, held: false, acts: [], flow: [], key: '' };
+    // a 2x backing store keeps the art crisp; the GIF recorder brings its own (cv.__hidpi), so it is skipped there
+    const K = cv.__hidpi ? 1 : 2; if (K > 1) { cv.width = W * K; cv.height = H * K; }
     const tourBtn = $(s, '.ar-tour');
     const rebuild = () => { st.flow = XR.script(AR_N, st.tour ? AR_TOUR : st.acts, AR_RULES); };
     const free = () => { st.held = false; if (!st.tour) return; st.tour = false; tourBtn.classList.remove('on'); st.t = 0; st.acts = []; rebuild(); };
@@ -447,24 +588,97 @@
     $(s, '.ar-reset').onclick = () => { st.tour = true; free(); };
     rebuild();
     function render() {
-      const t = st.t; T.use(g); g.clearRect(0, 0, W, H);
-      g.fillStyle = 'rgba(255,252,244,.8)'; g.beginPath(); g.roundRect(0, 0, 516, H, 14); g.fill();
-      // puppet lanes: Unity input, Quantum simulation, Unity view
-      [[RX2, 160, 'Unity: input', '#dfe6fb'], [RX2 + 160, 194, 'Quantum: simulation', '#d9d2e9'], [RX2 + 354, 154, 'Unity: view', '#dfe6fb']].forEach(([x, w, l, c]) => {
-        g.fillStyle = c; g.strokeStyle = '#8ea2e6'; g.lineWidth = 2; g.beginPath(); g.roundRect(x, 46, w - 6, H - 50, 12); g.fill(); g.stroke();
-        g.font = '700 13px Montserrat, sans-serif'; g.fillStyle = '#23306e'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(l, x + (w - 6) / 2, 64);
+      const t = st.t; g.setTransform(K, 0, 0, K, 0, 0); g.clearRect(0, 0, W, H);
+      const { val, lit } = XR.replay(AR_N, st.flow, t);
+      // panels: Ori's forest glow, No Rest's firelit grit
+      panelBg(g, LP, ART['ori-forest'], ['#06223a', 'rgba(3,18,36,.18)', 'rgba(4,26,46,.34)', 'rgba(2,12,26,.8)'], 'rgba(143,233,255,.6)');
+      panelBg(g, RP, ART['nr-bg'], ['#1c0d05', 'rgba(20,8,2,.2)', 'rgba(24,10,4,.4)', 'rgba(12,5,2,.82)'], 'rgba(255,181,71,.55)');
+      header(g, LP, 'MUPPET', 'Ori and the Blind Forest', ORI, ART.ori, t);
+      header(g, RP, 'PUPPET', 'No Rest for the Wicked', WK, ART['knight-idle'], t);
+      // the SeinPrefab: everything lives inside one object
+      g.save(); g.shadowColor = ORI.glow; g.shadowBlur = 16 + 6 * Math.sin(t * 2);
+      g.strokeStyle = 'rgba(143,233,255,.85)'; g.lineWidth = 2.5; g.fillStyle = 'rgba(40,140,190,.12)';
+      g.beginPath(); g.roundRect(14, 56, 484, 388, 16); g.fill(); g.stroke(); g.restore();
+      g.font = '800 13px Montserrat, sans-serif'; const pw = g.measureText('SeinPrefab: one object').width + 22;
+      g.fillStyle = '#062a3e'; g.strokeStyle = ORI.glow; g.lineWidth = 1.5; g.beginPath(); g.roundRect(30, 45, pw, 24, 12); g.fill(); g.stroke();
+      text(g, 'SeinPrefab: one object', 30 + pw / 2, 57.5, '800 13px Montserrat, sans-serif', ORI.ink, 'center');
+      text(g, 'outside the prefab', 256, 576, 'italic 600 12px Jost, sans-serif', 'rgba(169,227,245,.8)', 'center');
+      // Photon Quantum: three visibly separate layers
+      const lanes = [
+        { x: 534, w: 138, l1: 'UNITY', l2: 'input', fill: 'rgba(28,38,62,.62)', edge: '#8fa8d8', ink: '#cfdcff' },
+        { x: 680, w: 196, l1: 'PHOTON QUANTUM', l2: 'deterministic simulation', fill: 'rgba(90,40,8,.50)', edge: '#ffb547', ink: '#ffd89a', q: true },
+        { x: 880, w: 154, l1: 'UNITY', l2: 'view', fill: 'rgba(28,38,62,.62)', edge: '#8fa8d8', ink: '#cfdcff' },
+      ];
+      lanes.forEach(L => {
+        g.save(); if (L.q) { g.shadowColor = '#ffb547'; g.shadowBlur = 14; }
+        g.fillStyle = L.fill; g.strokeStyle = L.edge; g.lineWidth = L.q ? 2.5 : 1.5;
+        g.beginPath(); g.roundRect(L.x, 76, L.w, H - 82, 12); g.fill(); g.stroke(); g.restore();
+        if (L.q) { // a fine hatch marks the simulation as its own layer
+          g.save(); g.beginPath(); g.roundRect(L.x, 76, L.w, H - 82, 12); g.clip(); g.strokeStyle = 'rgba(255,181,71,.07)'; g.lineWidth = 6;
+          for (let k = -H; k < L.w + H; k += 22) { g.beginPath(); g.moveTo(L.x + k, 76); g.lineTo(L.x + k - H, 76 + H); g.stroke(); } g.restore();
+        }
+        text(g, L.l1, L.x + L.w / 2, 90, '800 11.5px Montserrat, sans-serif', L.ink, 'center');
+        text(g, L.l2, L.x + L.w / 2, 105, 'italic 600 11.5px Jost, sans-serif', L.ink, 'center');
       });
-      g.font = '800 20px Montserrat, sans-serif'; g.textAlign = 'left'; g.fillStyle = C.ink;
-      g.fillText('Muppet: Ori', 14, 24); g.fillText('Puppet: No Rest for the Wicked', RX2 + 4, 24);
-      const { val } = XR.draw(g, AR_N, st.flow, t, { hideEdges: false });
-      // the loop is the muppet's risk: flag it while the feedback signal runs
-      const loop = st.flow.find(f => f.from === 'm_ab' && f.to === 'm_ctl' && t >= f.t - .6 && t <= f.t + 1.6);
-      if (loop) T.label('⟳ circular feedback', 258, 216, 'center', '#fff', 14, '#cc0000');
+      // the lesson's chain, lit by whichever hop is running
+      const live = st.flow.filter(f => f.from && t >= f.t && t <= f.t + f.dur + .25);
+      const on = new Set(live.flatMap(f => f.chain || [])), skip = live.some(f => f.skip);
+      let cx = 560; g.font = '700 12px Montserrat, sans-serif';
+      const widths = CHAIN.map(c => g.measureText(c).width + 18), total = widths.reduce((a, b) => a + b, 0) + 22 * (CHAIN.length - 1);
+      cx = RP.x + RP.w - 12 - total;
+      CHAIN.forEach((c, i) => {
+        const w = widths[i], lit2 = on.has(c), skipped = skip && (c === 'Input' || c === 'Device');
+        g.save(); if (lit2) { g.shadowColor = WK.glow; g.shadowBlur = 12; }
+        g.fillStyle = lit2 ? WK.glow : 'rgba(30,14,6,.8)'; g.strokeStyle = skipped ? '#ff6b6b' : WK.edge; g.lineWidth = 1.4;
+        g.beginPath(); g.roundRect(cx, 48, w, 20, 10); g.fill(); g.stroke(); g.restore();
+        text(g, c, cx + w / 2, 58.5, '700 12px Montserrat, sans-serif', lit2 ? '#3a1a00' : skipped ? '#ff9b9b' : WK.sub, 'center');
+        if (skipped) { g.strokeStyle = '#ff6b6b'; g.lineWidth = 1.8; g.beginPath(); g.moveTo(cx + 6, 58); g.lineTo(cx + w - 6, 58); g.stroke(); }
+        if (i < CHAIN.length - 1) { g.strokeStyle = WK.sub; g.lineWidth = 1.6; g.beginPath(); g.moveTo(cx + w + 5, 58); g.lineTo(cx + w + 16, 58); g.stroke(); arrowHead(g, [cx + w + 18, 58], 0, WK.sub, 6); }
+        cx += w + 22;
+      });
+      if (skip) pill(g, 'AI skips the device', 602, 248, '#ff9b9b', 'rgba(40,8,8,.9)', 12);
+      // connectors: every hop of the flow, faint until used, glowing while a signal rides it
+      const seen = new Set();
+      st.flow.forEach(f => {
+        if (!f.from || f.bounce) return;
+        const key = f.from + '>' + f.to; if (seen.has(key)) return; seen.add(key);
+        const th = f.from[0] === 'm' ? ORI : WK, used = st.flow.some(x => x.from === f.from && x.to === f.to && t >= x.t);
+        const active = st.flow.some(x => x.from === f.from && x.to === f.to && t >= x.t && t <= x.t + x.dur + .3);
+        const col = f.loop && used ? '#ff6b6b' : th.glow, [p0, p1, via] = hopPath(f);
+        g.save(); g.globalAlpha = active ? 1 : used ? .75 : .35; g.strokeStyle = col; g.lineWidth = active ? 3.2 : 2.2;
+        if (!used) g.setLineDash([5, 6]); else if (active) { g.setLineDash([10, 6]); g.lineDashOffset = -t * 40; }
+        if (active) { g.shadowColor = col; g.shadowBlur = 10; }
+        g.beginPath(); g.moveTo(p0[0], p0[1]); via ? g.quadraticCurveTo(via[0], via[1], p1[0], p1[1]) : g.lineTo(p1[0], p1[1]); g.stroke(); g.setLineDash([]);
+        const q = at(p0, p1, via, .95); arrowHead(g, p1, Math.atan2(p1[1] - q[1], p1[0] - q[0]), col, 11); g.restore();
+      });
+      // cards
+      AR_N.forEach(n => {
+        const ago = lit[n.id], glow = ago == null ? 0 : clamp(1 - ago / .9);
+        card(g, n, n.side === 'L' ? ORI : WK, val[n.id], glow, t, n.ghost && glow === 0);
+      });
+      // the muppet's risk: flag the loop while it runs
+      const loop = st.flow.find(f => f.loop && t >= f.t - .2 && t <= f.t + f.dur + 1.2);
+      if (loop) pill(g, '⟳ circular feedback', 256, 200, '#ffd0d0', 'rgba(150,20,20,.92)', 13.5);
+      // signals in flight
+      st.flow.forEach(f => {
+        if (!f.from || t < f.t || t > f.t + f.dur) return;
+        const th = f.from[0] === 'm' ? ORI : WK, raw = clamp((t - f.t) / f.dur), k = f.bounce ? (f.stop || .78) * ease(clamp(raw / .7)) : ease(raw);
+        const [p0, p1, via] = hopPath(f), p = at(p0, p1, via, k);
+        if (f.bounce) { g.save(); g.globalAlpha = .6; g.strokeStyle = th.glow; g.setLineDash([4, 5]); g.lineWidth = 2; g.beginPath(); for (let i = 0; i <= 20; i++) { const q = at(p0, p1, via, k * i / 20); i ? g.lineTo(q[0], q[1]) : g.moveTo(q[0], q[1]); } g.stroke(); g.restore(); }
+        for (let i = 4; i >= 1; i--) { const q = at(p0, p1, via, Math.max(0, k - i * .035)); g.save(); g.globalAlpha = .18 * (5 - i) / 4; orb(g, q, th.glow, t); g.restore(); }
+        orb(g, p, th.glow, t);
+        if (f.label && !(f.bounce && raw > .7)) pill(g, f.label, p[0], p[1] - 22, th.ink, 'rgba(8,10,20,.9)');
+        if (f.bounce && raw > .7) {
+          g.save(); g.strokeStyle = '#ff8080'; g.lineWidth = 2.5; g.shadowColor = '#ff4040'; g.shadowBlur = 12; const r = 8 + 10 * clamp((raw - .7) / .3);
+          g.beginPath(); g.arc(p[0], p[1] - 6, r, Math.PI * 1.1, Math.PI * 1.9); g.stroke(); g.restore();
+          pill(g, '✕ ' + f.bounce, p[0], p[1] + 20, '#ffd0d0', 'rgba(150,20,20,.95)', 13);
+        }
+      });
       const key = JSON.stringify(val) + Math.floor(t * 2);
       if (key === st.key) return; st.key = key;
       const ph = st.tour ? AR_PH.filter(q => t >= q[0]).at(-1)[1] : 'Muppets are quick to build and mix everything in one place. Puppets separate input, controller, pawn and view: more thought up front, and trickier to debug, but AI control and multiplayer drop in.';
       say($(s, '.ar-out'), ph);
-      say($(s, '.ar-stats'), `<div class="y"><b>1</b><span>object holds it all in the muppet</span></div><div class="g"><b>3</b><span>layers in the puppet: input, simulation, view</span></div>`);
+      say($(s, '.ar-stats'), `<div class="ori"><b>1</b><span>object holds it all in the muppet</span></div><div class="wk"><b>3</b><span>layers in the puppet: input, simulation, view</span></div>`);
     }
     archApi = { seek(t) { st.held = true; if (!st.tour) { st.tour = true; tourBtn.classList.add('on'); rebuild(); } st.t = t; render(); }, dur: () => AR_DUR };
     return dt => { if (!st.held) st.t += Math.max(0, dt); if (st.tour && st.t > AR_DUR) st.t = 0; render(); };
