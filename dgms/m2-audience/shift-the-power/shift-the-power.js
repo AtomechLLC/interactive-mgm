@@ -184,7 +184,7 @@
           const Wy = WAYS[way], n = Object.keys(WAYS).indexOf(way) + 1;
           g.save(); g.globalAlpha = .35 + .65 * wayA;
           g.fillStyle = 'rgba(138,79,214,.12)'; g.strokeStyle = '#8a4fd6'; g.lineWidth = 2.5; g.beginPath(); g.roundRect(692, 102, 318, 104, 10); g.fill(); g.stroke();
-          txt(g, `Slide 176, way ${n} of 4`, 706, 122, '700 13px Montserrat, Jost, sans-serif', '#6a37b0');
+          txt(g, `Way ${n} of 4`, 706, 122, '700 13px Montserrat, Jost, sans-serif', '#6a37b0');
           wrap(g, Wy.label, 290, '800 17px Montserrat, Jost, sans-serif').forEach((l, i) => txt(g, l, 706, 148 + i * 22, '800 17px Montserrat, Jost, sans-serif', C.ink));
           txt(g, Wy.eff, 706, 192, '600 15px Jost, sans-serif', '#6a37b0');
           g.restore();
@@ -327,7 +327,7 @@
       });
       // the rule, from the notes
       g.fillStyle = '#fffaf0'; g.strokeStyle = '#cdbf9f'; g.lineWidth = 2; g.beginPath(); g.roundRect(30, 400, 980, 164, 12); g.fill(); g.stroke();
-      txt(g, 'The rule of thumb (slide 183)', 52, 428, '800 16px Montserrat, Jost, sans-serif');
+      txt(g, 'The rule of thumb', 52, 428, '800 16px Montserrat, Jost, sans-serif');
       wrap(g, '“If a character didn’t go over a 55% win rate… then it was ‘close enough’ for now. But characters which exceeded 60% win rate were definitely up for review patch-to-patch.”', 930, 'italic 500 17px Jost, sans-serif')
         .forEach((l, i) => txt(g, l, 52, 458 + i * 24, 'italic 500 17px Jost, sans-serif', C.ink));
       const rev = pts.filter(o => o.v > REVIEW_LINE), watch = pts.filter(o => o.v > OK_LINE && o.v <= REVIEW_LINE);

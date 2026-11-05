@@ -29,7 +29,7 @@
     { k: 'rockband', name: 'Rock Band', v: [5, 0.5, 1.5, 2, 1], why: 'Hit the notes on time. Almost nothing to decide.' },
     { k: 'dnd', name: 'Dungeons & Dragons', v: [0, 4, 3, 4, 5], why: 'No hands at all: choices, rules and storytelling at the table.' },
     { k: 'vital', name: 'Vital Signs', v: [0.5, 4, 4, 5, 1], why: 'Triage under pressure: what you know about medicine and what you notice.' },
-    { k: 'rhythm', name: 'A rhythm game for rhythm gamers', v: [5, 0, 1, 1, 0], why: 'Slide 24: rhythm gamers “probably don’t want to deal with physics, calculations, and decision-making”.' },
+    { k: 'rhythm', name: 'A rhythm game for rhythm gamers', v: [5, 0, 1, 1, 0], why: 'The deck: rhythm gamers “probably don’t want to deal with physics, calculations, and decision-making”.' },
   ];
   const DISSO = [
     { k: 'sonic', name: 'Sonic Adventure', a: 'Sonic’s stages', b: 'Big’s fishing', va: [4.5, 2, 3.5, 2, 1], vb: [1.5, 1, 1, 1.5, 0],
@@ -185,7 +185,7 @@
       shape(g, cx, cy, R, v, C.p3, .22);
       txt(g, 'Your game', 40, 36, '800 20px Montserrat, Jost, sans-serif', C.p3);
       txt(g, `dashed: closest preset, ${near[0][0].name}`, 40, 62, '600 15px Jost, sans-serif', C.muted);
-      txt(g, 'Ask yourself (slide 295)', 640, 44, '800 20px Montserrat, Jost, sans-serif', C.ink);
+      txt(g, 'Ask yourself', 640, 44, '800 20px Montserrat, Jost, sans-serif', C.ink);
       ['Which skills does my game test?', 'Which does it test hardest?', 'Is that what my players came for?', 'Does any mode ask for a different shape?'].forEach((q, i) => txt(g, '• ' + q, 640, 80 + i * 28, '600 16px Jost, sans-serif', C.ink));
       txt(g, 'Closest fingerprints', 640, 214, '800 18px Montserrat, Jost, sans-serif', C.ink);
       near.slice(0, 4).forEach(([gm, o], i) => {

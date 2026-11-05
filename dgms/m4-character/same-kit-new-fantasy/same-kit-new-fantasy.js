@@ -30,26 +30,26 @@
 
   /* ---------- the cases (slides 45-48, 102, 127-137) ---------- */
   const CASES = {
-    ziggs: { name: 'Ziggs', at: 'slides 102, 133-134', kit: [['ZiggsPassiveReady.png', 'Short Fuse'], ['ZiggsQ.png', 'Bouncing Bomb'], ['ZiggsW.png', 'Satchel Charge'], ['ZiggsE.png', 'Hexplosive Minefield'], ['ZiggsR.png', 'Mega Inferno Bomb']],
+    ziggs: { name: 'Ziggs', kit: [['ZiggsPassiveReady.png', 'Short Fuse'], ['ZiggsQ.png', 'Bouncing Bomb'], ['ZiggsW.png', 'Satchel Charge'], ['ZiggsE.png', 'Hexplosive Minefield'], ['ZiggsR.png', 'Mega Inferno Bomb']],
       kitLine: 'Bombs that bounce, blast him around and blanket an area in mines.',
       versions: [
         { name: 'A weird human man', sketch: 'bomber', reads: 'Distasteful', fit: 'clash', text: 'The first Ziggs was a weird human man. A grown man throwing bombs read as real-world warfare, and that framing made the same explosions feel distasteful.' },
         { name: 'A Yordle', img: 'Ziggs', reads: 'Chaotic fun', fit: 'fit', text: 'As a small, gleeful Yordle the bombs did not change at all, but the emotional framing did: the same explosions now read as chaotic fun.' },
       ] },
-    trundle: { name: 'Trundle', at: 'slides 136-137', kit: [['Trundle_Passive.png', 'King’s Tribute'], ['TrundleTrollSmash.png', 'Chomp'], ['trundledesecrate.png', 'Frozen Domain'], ['TrundleCircle.png', 'Pillar of Ice'], ['TrundlePain.png', 'Subjugate']],
+    trundle: { name: 'Trundle', kit: [['Trundle_Passive.png', 'King’s Tribute'], ['TrundleTrollSmash.png', 'Chomp'], ['trundledesecrate.png', 'Frozen Domain'], ['TrundleCircle.png', 'Pillar of Ice'], ['TrundlePain.png', 'Subjugate']],
       kitLine: 'Bites that steal strength, an icy zone to fight in and a pillar that cuts off escape.',
       versions: [
         { name: 'A gross troll', sketch: 'troll', reads: 'Repulsive', fit: 'clash', text: 'The first Trundle was a gross troll. The look pushed players away, and nothing about it explained the ice in his kit.' },
         { name: 'A troll with a magic ice club', img: 'Trundle', reads: 'Frozen troll king', fit: 'fit', text: 'The rework gave him a magic ice club, "which worked with all of the existing mechanics." Not one ability had to change.' },
       ] },
-    braum: { name: 'Braum', at: 'slides 37-41', kit: [['Braum_Passive.png', 'Concussive Blows'], ['BraumQ.png', 'Winter’s Bite'], ['BraumW.png', 'Stand Behind Me'], ['BraumE.png', 'Unbreakable'], ['BraumRWrapper.png', 'Glacial Fissure']],
+    braum: { name: 'Braum', kit: [['Braum_Passive.png', 'Concussive Blows'], ['BraumQ.png', 'Winter’s Bite'], ['BraumW.png', 'Stand Behind Me'], ['BraumE.png', 'Unbreakable'], ['BraumRWrapper.png', 'Glacial Fissure']],
       kitLine: 'Leap to an ally, then raise a shield that stops incoming shots.',
       versions: [
         { name: 'A shield', sketch: 'shield', reads: 'Pure mechanic', fit: 'start', text: 'Braum began as a mechanic: a shield that blocks projectiles for your allies. There was no character yet, only the thing he does.' },
         { name: 'A girl from Piltover', sketch: 'pilt', reads: 'Gadget inventor', fit: 'explored', text: 'One iteration was "a girl from Piltover with a big energy shield and trampolines." The same leap and block, read as technology.' },
         { name: 'Braum', img: 'Braum', reads: 'Kind protector', fit: 'fit', text: 'The final Braum is a big-hearted hero of the Freljord with a vault door for a shield. His theme, "Kindness is Strength", makes stepping in front of allies the whole fantasy.' },
       ] },
-    ori: { name: 'Ori', at: 'slide 131', glyph: [['🔥', 'Spirit Flame'], ['🧗', 'Wall Jump'], ['👊', 'Bash'], ['💨', 'Glide']],
+    ori: { name: 'Ori', glyph: [['🔥', 'Spirit Flame'], ['🧗', 'Wall Jump'], ['👊', 'Bash'], ['💨', 'Glide']],
       kitLine: 'A small, fast platforming hero who jumps, climbs, bashes and glides.',
       versions: [
         { name: 'A boy', sketch: 'boy', reads: 'Ordinary child', fit: 'explored', text: 'Ori started as a boy.' },
@@ -57,19 +57,19 @@
         { name: 'A horned demon', sketch: 'demon', reads: 'Menacing', fit: 'explored', text: 'Then a horned demon, which pulled the same moves toward something threatening.' },
         { name: 'A forest spirit', sketch: 'spirit', reads: 'Gentle guardian', fit: 'fit', text: 'Finally a small, glowing forest spirit. The jumps and glides had not changed, and now they read as light and gentle.' },
       ] },
-    caustic: { name: 'Caustic', at: 'slide 45', apex: true, glyph: [['👁', 'Nox Vision'], ['⚠', 'Nox Gas Trap'], ['💣', 'Nox Gas Grenade']],
+    caustic: { name: 'Caustic', apex: true, glyph: [['👁', 'Nox Vision'], ['⚠', 'Nox Gas Trap'], ['💣', 'Nox Gas Grenade']],
       kitLine: 'Place gas traps, then wait for enemies to walk into them.',
       versions: [
         { name: 'An aggressive soldier', reads: 'Charge in', fit: 'clash', text: 'Caustic’s trap-and-wait loop clashed with an aggressive soldier fantasy: the look said charge in, the kit said wait.' },
         { name: 'A mad scientist', reads: 'Patient menace', fit: 'fit', text: 'As a mad scientist, setting traps and watching the gas work is exactly who he is. The kit stayed, the fantasy moved.' },
       ] },
-    revenant: { name: 'Revenant', at: 'slide 47', apex: true, glyph: [['🧗', 'Stalker'], ['🔇', 'Silence'], ['💀', 'Death Totem']],
+    revenant: { name: 'Revenant', apex: true, glyph: [['🧗', 'Stalker'], ['🔇', 'Silence'], ['💀', 'Death Totem']],
       kitLine: 'Climb high, silence a target and ambush from above.',
       versions: [
         { name: 'A skeleton ninja', reads: 'Mixed signals', fit: 'clash', text: 'Revenant’s ambush kit did not fit a skeleton ninja.' },
         { name: 'A horror character', reads: 'Stalking dread', fit: 'fit', text: 'Reframed as a horror character, the ambush became the point: something that stalks you and strikes from the dark.' },
       ] },
-    pathfinder: { name: 'Pathfinder', at: 'slide 48', apex: true, glyph: [['🛰', 'Insider Knowledge'], ['🪢', 'Grappling Hook'], ['🔀', 'Zipline Gun']],
+    pathfinder: { name: 'Pathfinder', apex: true, glyph: [['🛰', 'Insider Knowledge'], ['🪢', 'Grappling Hook'], ['🔀', 'Zipline Gun']],
       kitLine: 'Open routes for the whole team: scan ahead, grapple up, lay a zipline.',
       versions: [
         { name: 'A friendly robot', reads: 'Helpful scout', fit: 'fit', text: 'Pathfinder’s kit is about leading and helping the team.' },

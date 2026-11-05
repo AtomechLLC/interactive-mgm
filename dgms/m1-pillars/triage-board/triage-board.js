@@ -83,7 +83,7 @@
     const nf = st.tour ? clamp(1 + (t - 2) / 1.6, 1, 9) : st.n, n = Math.floor(nf);
     // pillar list
     txt(g, `${n} pillar${n > 1 ? 's' : ''}`, 30, 52, { size: 26, col: n <= 3 ? '#1a8a4c' : n <= 5 ? C.goldInk : '#c0392b' });
-    txt(g, n <= 3 ? 'inside slide 16’s range' : n <= 5 ? 'the most slide 16 allows' : 'more than slide 16’s five', 30, 76, { size: 14, font: 'b', w: 600, col: C.muted });
+    txt(g, n <= 3 ? 'inside the deck’s range' : n <= 5 ? 'the most the deck allows' : 'more than the deck’s five', 30, 76, { size: 14, font: 'b', w: 600, col: C.muted });
     PILLARS.forEach((p, j) => { const on = j < n; box(g, 30, 92 + j * 40, 250, 32, { fill: on ? PCOL[j] : '#efe8da', r: 8 }); txt(g, p, 44, 113 + j * 40, { size: 14, col: on ? '#fff' : '#b5aa90' }); });
     // the backlog as stars
     SUP.forEach(([f], i) => {

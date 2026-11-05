@@ -163,7 +163,7 @@
     // quote
     g.font = 'italic 500 14px Jost, sans-serif'; g.fillStyle = C.ink; g.textAlign = 'left';
     wrap(g, '“Consonant sounds indicate relief from tension… dissonant sounds accentuate tension.”', PX + 14, 528, PW - 28, 19);
-    txt(g, 'Persona 5’s menu · slide 146', PX + PW - 12, 562, '600 11px Jost, sans-serif', C.muted, 'right');
+    txt(g, 'Persona 5’s menu', PX + PW - 12, 562, '600 11px Jost, sans-serif', C.muted, 'right');
     // level meter beside the staff
     const k = clamp((20 * Math.log10(Math.max(lv, 1e-5)) + 40) / 40);
     g.fillStyle = '#e6dcc5'; g.beginPath(); g.roundRect(PX + PW - 30, 110, 14, 90, 4); g.fill();

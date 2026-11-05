@@ -38,7 +38,7 @@
       V: [{ w: 'noise', bp: 700, q: .8, d: 2.4, a: .9, r: 1.2, g: .5 }, { w: 'noise', bp: 1600, q: 6, d: 2.2, a: 1.1, r: .9, g: .25 }] },
     { id: 'confirm', name: 'Menu confirm', desc: 'two bright rising blips', cls: 'ui', take: 0, why: 'Nothing in the world makes it: it guides you through the menu.', game: 'Persona 5: the menu confirm',
       V: [{ w: 'sine', f: [988, 988], d: .12, g: .3 }, { w: 'sine', f: [1480, 1480], t: .07, d: .28, g: .3 }, { w: 'triangle', f: [1976, 1976], t: .07, d: .22, g: .08 }] },
-    { id: 'alert', name: 'Alert theme', desc: 'a stab, then a fast rising riff', cls: 'mus', take: 2, why: 'Slow and suspenseful turns intensely fast: you have been spotted.', game: 'Metal Gear Solid: the alert (slide 170)',
+    { id: 'alert', name: 'Alert theme', desc: 'a stab, then a fast rising riff', cls: 'mus', take: 2, why: 'Slow and suspenseful turns intensely fast: you have been spotted.', game: 'Metal Gear Solid: the alert',
       V: [{ w: 'square', f: [880, 880], d: .3, g: .12 }, { w: 'square', f: [1245, 1245], d: .3, g: .1 }].concat(riff) },
     { id: 'colossus', name: 'Distant footfalls', desc: 'two deep thuds, then a low growl', cls: 'env', take: 0, why: 'You hear it before you see it: the ground warns you.', game: 'Shadow of the Colossus: footsteps and growl',
       V: [{ w: 'sine', f: [70, 32], d: .8, g: .7 }, { w: 'noise', lp: 220, d: .6, g: .5 }, { w: 'sine', f: [70, 32], t: .8, d: .8, g: .7 }, { w: 'noise', lp: 220, t: .8, d: .6, g: .5 },
@@ -52,7 +52,7 @@
       V: [{ w: 'noise', lp: 3500, d: .9, a: .002, g: .8 }, { w: 'sine', f: [220, 45], d: .8, g: .7 }, { w: 'sine', f: [2637, 2637], t: .15, d: 1.3, g: .12 }, { w: 'sine', f: [3951, 3951], t: .15, d: 1.0, g: .06 }] },
     { id: 'gravel', name: 'Footsteps on gravel', desc: 'four crunchy steps', cls: 'env', take: 2, why: 'Terrain footsteps are one of the many layers that build the field.', game: 'Breath of the Wild: footsteps by terrain',
       V: [0, 1, 2, 3].flatMap(steps) },
-    { id: 'guardian', name: 'Sudden stinger', desc: 'three sharp, clashing stabs', cls: 'mus', take: 1, why: 'Dissonance cuts through the calm: you are in danger now.', game: 'Breath of the Wild: the Guardian stinger (slide 168)',
+    { id: 'guardian', name: 'Sudden stinger', desc: 'three sharp, clashing stabs', cls: 'mus', take: 1, why: 'Dissonance cuts through the calm: you are in danger now.', game: 'Breath of the Wild: the Guardian stinger',
       V: stab(0, .1).concat(stab(.22, .12), stab(.44, .15)) },
     { id: 'died', name: 'Failure tone', desc: 'a low, heavy, held chord', cls: 'ui', take: 2, why: 'Heavy and final, against a bright victory fanfare.', game: 'Dark Souls: “You Died”',
       V: [{ w: 'sawtooth', f: [110, 104], d: 2.2, a: .3, r: 1.2, g: .13, lp: 650 }, { w: 'sawtooth', f: [116.5, 110], d: 2.2, a: .3, r: 1.2, g: .11, lp: 650 }, { w: 'sine', f: [55, 52], d: 2.2, a: .3, r: 1.2, g: .35 }] },
@@ -204,7 +204,7 @@
         g.fillStyle = CLASSES[k].col; g.beginPath(); g.roundRect(40 + i * 146, 116, 134, 54, 8); g.fill();
         txt(g, CLASSES[k].name, 52 + i * 146, 138, '700 14px Jost, sans-serif', '#fff'); txt(g, `${got} / ${tot}`, 52 + i * 146, 160, '800 17px Montserrat, Jost, sans-serif', '#fff');
       });
-      txt(g, 'Each class has three takeaways (see the bins). Start over to try again, or tag your own clip on slide 3.', 40, 204, '500 13px Jost, sans-serif', C.muted);
+      txt(g, 'Each class has three takeaways (see the bins). Start over to try again, or tag your own clip in the drill.', 40, 204, '500 13px Jost, sans-serif', C.muted);
     } else {
       const lv = v.playK >= 0 ? levelAt(s.V, v.playK) : 0;
       if (!v.revealed && !v.dragging) txt(g, v.playK >= 0 && v.playK < lenOf(s.V) ? 'playing…' : 'click: play · drag: sort', TOK.x, 222, '600 12px Jost, sans-serif', C.muted, 'center');
@@ -236,7 +236,6 @@
       txt(g, cl.take[s.take], 658, 122, '800 16px Montserrat, Jost, sans-serif', C.ink);
       g.font = '500 13px Jost, sans-serif'; g.fillStyle = C.ink; const nl = wrap(g, s.why, 658, 144, 352, 18);
       txt(g, s.game, 658, 150 + nl * 18, 'italic 600 13px Jost, sans-serif', C.goldInk);
-      txt(g, `deck slides ${cl.slides}`, 658, 168 + nl * 18, '500 12px Jost, sans-serif', C.muted);
       if (v.manual) {
         g.fillStyle = C.navy; g.beginPath(); g.roundRect(NEXT.x, NEXT.y, NEXT.w, NEXT.h, 8); g.fill();
         txt(g, v.i === NS - 1 ? 'Finish ▸' : 'Next sound ▸', NEXT.x + NEXT.w / 2, NEXT.y + 18, '700 13px Jost, sans-serif', '#fff', 'center');
@@ -250,7 +249,6 @@
       g.strokeStyle = cl.col; g.lineWidth = cur || over ? 5 : 2.5; g.stroke();
       g.fillStyle = cl.col; g.beginPath(); g.roundRect(b.x, b.y, b.w, 34, [12, 12, 0, 0]); g.fill();
       txt(g, cl.name, b.x + 14, b.y + 23, '800 16px Montserrat, Jost, sans-serif', '#fff');
-      txt(g, `slides ${cl.slides}`, b.x + b.w - 12, b.y + 22, '600 11px Jost, sans-serif', 'rgba(255,255,255,.85)', 'right');
       const hop = bi === 0 && v.playK >= 0 && v.playK < .5 && SOUNDS[v.i] && SOUNDS[v.i].id === 'jump';
       binIcon(g, bi, b, v.t, hop);
       cl.take.forEach((tk, ti) => {
@@ -437,7 +435,7 @@
     g.restore();
     g.fillStyle = 'rgba(255,252,244,.9)'; g.beginPath(); g.roundRect(12, 12, 330, 52, 10); g.fill();
     txt(g, 'One ambient loop, four layers', 22, 34, '800 17px Montserrat, Jost, sans-serif', C.ink);
-    txt(g, 'Breath of the Wild’s field (slides 137-139)', 22, 54, '500 13px Jost, sans-serif', C.muted);
+    txt(g, 'Breath of the Wild’s field', 22, 54, '500 13px Jost, sans-serif', C.muted);
     if (cap) T.label(cap, 1020, 30, 'right', C.ink, 14);
 
     // lanes: the last six seconds of each layer, newest at the right
@@ -463,7 +461,7 @@
   }
 
   const LSTEPS = [[0, [], 'All layers muted: a silent field'], [3, ['grass'], '+ grass: wind moving through the blades'], [7, ['grass', 'birds'], '+ birds: life, and a sense of space'],
-    [11, ['grass', 'birds', 'steps'], '+ footsteps: the ground changes under you'], [15.5, LKEYS, '+ a boulder: one event on top of the bed'], [20, LKEYS, 'Layers that work together, rather than any one (137)']];
+    [11, ['grass', 'birds', 'steps'], '+ footsteps: the ground changes under you'], [15.5, LKEYS, '+ a boulder: one event on top of the bed'], [20, LKEYS, 'Layers that work together, rather than any one']];
   const LDUR = 27;
   const tourOn = t => { const s = LSTEPS.filter(x => t >= x[0]).at(-1); const on = {}; LKEYS.forEach(k => on[k] = s[1].includes(k)); return { on, cap: s[2] }; };
 
