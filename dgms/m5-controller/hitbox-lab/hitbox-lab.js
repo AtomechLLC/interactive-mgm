@@ -1,232 +1,224 @@
-/* Hitbox lab (Module 5, Part 8: "3 components of well-designed hitboxes", about slides 396-441).
-   One looping overhead swing drives both slides. Slide 1 draws its colliders and relabels them per genre (the naming mess,
-   and the course's verb / adjective / noun fix: Attack, Attackable, Collision), swaps the attack volume between the five
-   shapes, and lets it ride the weapon bone (Elden Ring) or sit in hand-placed keys (Skullgirls). Slide 2 plays the seven
-   placement tips as before / after panels on the same swing. Every frame is a pure function of time and the options,
-   so window.__seek is deterministic. Art is original; sizes are illustrative approximations. */
+/* Hitbox lab (Module 5, "3 components of well-designed hitboxes"), on a real swing seen from above.
+   The swing is No Rest for the Wicked's one-handed axe Combo 1 · A1 (Moon Studios), rendered from the Game Animation
+   Library's 3D preview with the game's own weapon hit box: ../img/nrftw/clips.js carries, per frame, the box's 8 corners
+   and the body joints in world metres, and the game's frame data says the box is live on frames 33-53 of 118 (60 fps).
+   The game is top-down, so every volume is tested where the game tests it: on the ground plane.
+   Slide 1 draws the colliders and relabels them per genre (the naming mess, and the course's verb / adjective / noun fix:
+   Attack, Attackable, Collision), swaps the attack volume between five shapes built on the axe's long axis, and lets it ride
+   the weapon bone or sit in hand-placed keys. Slide 2 plays the seven placement tips as before / after panels on the same
+   swing. Every frame is a pure function of time and the options, so window.__seek is deterministic. */
 (function () {
   const { $, $$, canvasDemo, say } = FPF.kit;
-  const T = TD, C = TD.C, { clamp, lerp, ease, TAU } = TD;
-  const W = 1040, H = 585, PER = 1.6, GREEN = '#1a8a4c';
+  const T = TD, C = TD.C, { clamp, lerp, TAU } = TD;
+  const W = 1040, H = 585, GREEN = '#1a8a4c';
   const K = { atk: '#e5322d', rec: '#2ea3dc', col: '#2fae63', sec: '#8a4fd6' };
   const rgba = (hex, a) => { const n = parseInt(hex.slice(1), 16); return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`; };
-  const add = (a, b) => ({ x: a.x + b.x, y: a.y + b.y });
-  const rot = (v, a) => ({ x: v.x * Math.cos(a) - v.y * Math.sin(a), y: v.x * Math.sin(a) + v.y * Math.cos(a) });
 
-  /* ---------- the swing: an overhead chop, as joint positions in world units (feet at 0,0, facing +x) ---------- */
-  const ACT0 = .32, ACT1 = .45;
-  function rig(f, swing = true) {
-    const A0 = -.55, A1 = -2.55, A2 = .62;
-    let a = A0, lean = 0, crouch = 0;
-    if (swing) {
-      if (f < .30) { const k = ease(f / .30); a = lerp(A0, A1, k); lean = lerp(0, -.12, k); }
-      else if (f < .44) { const k = (f - .30) / .14, kk = 1 - (1 - k) * (1 - k); a = lerp(A1, A2, kk); lean = lerp(-.12, .26, kk); crouch = kk * 14; }
-      else if (f < .70) { a = A2; lean = .26; crouch = 14; }
-      else { const k = ease((f - .70) / .30); a = lerp(A2, A0, k); lean = lerp(.26, 0, k); crouch = lerp(14, 0, k); }
+  /* ---------- the real swing ---------- */
+  const CL = window.NRFTW_CLIPS, SW = CL.combo, ID = CL['idle-r'];
+  const N = SW.n, FPS = 30, PER = N / FPS;                  // one loop of the clip, 59 frames at 30 fps
+  const HIT = [33, 53], TOTAL = 118;                         // the game's frame data for this move, 60 fps frames
+  const gameFrame = i => 2 * i + 1, live = i => gameFrame(i) >= HIT[0] && gameFrame(i) <= HIT[1];
+  const FS = -SW.ux[1] / SW.uz[0], HS = -SW.uy[1] / SW.uz[0];   // ground depth and height foreshortening of the camera
+  const IMG = {};
+  ['combo', 'idle-r'].forEach(k => { const im = new Image(); im.src = `../img/nrftw/${k}.webp`; IMG[k] = im; });
+  const ready = im => im && im.complete && im.naturalWidth > 0;
+  // world (x, y, z) -> ground (u forward, v toward the camera) plus height h
+  const G = p => ({ u: p[2], v: -p[0], h: p[1] });
+  const J = (clip, i) => clip.J[clamp(i, 0, clip.n - 1)].map(G);   // hip, chest, head, elbow, hand, offhand, knees, ankles, toes
+  const frameAt = t => Math.floor(((t % PER) + PER) % PER * FPS) % N;
+  const IDLE_I = ID.n - 1;
+
+  /* ---------- ground-plane geometry ---------- */
+  const sub = (a, b) => ({ u: a.u - b.u, v: a.v - b.v }), len = a => Math.hypot(a.u, a.v);
+  const mix = (a, b, k) => ({ u: lerp(a.u, b.u, k), v: lerp(a.v, b.v, k), h: lerp(a.h || 0, b.h || 0, k) });
+  function hull(pts) {
+    const p = pts.slice().sort((a, b) => a.u - b.u || a.v - b.v), cr = (o, a, b) => (a.u - o.u) * (b.v - o.v) - (a.v - o.v) * (b.u - o.u);
+    const lo = [], up = [];
+    for (const q of p) { while (lo.length > 1 && cr(lo.at(-2), lo.at(-1), q) <= 0) lo.pop(); lo.push(q); }
+    for (const q of p.reverse()) { while (up.length > 1 && cr(up.at(-2), up.at(-1), q) <= 0) up.pop(); up.push(q); }
+    return lo.slice(0, -1).concat(up.slice(0, -1));
+  }
+  function segDist(p, a, b) {
+    const ab = sub(b, a), L2 = ab.u * ab.u + ab.v * ab.v || 1e-9, k = clamp(((p.u - a.u) * ab.u + (p.v - a.v) * ab.v) / L2);
+    return Math.hypot(p.u - a.u - ab.u * k, p.v - a.v - ab.v * k);
+  }
+  function inPoly(poly, p) {
+    let inside = false;
+    for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+      const a = poly[i], b = poly[j];
+      if ((a.v > p.v) !== (b.v > p.v) && p.u < (b.u - a.u) * (p.v - a.v) / (b.v - a.v) + a.u) inside = !inside;
     }
-    const hip = { x: 0, y: -105 + crouch };
-    const sh = add(hip, rot({ x: 0, y: -80 }, lean));
-    const head = add(sh, rot({ x: 4, y: -34 }, lean));
-    const dir = { x: Math.cos(a), y: Math.sin(a) };
-    const hand = { x: sh.x + 58 * dir.x, y: sh.y + 58 * dir.y };
-    const elbow = { x: sh.x + 30 * Math.cos(a + .45), y: sh.y + 30 * Math.sin(a + .45) };
-    const off = add(sh, rot({ x: 20, y: 44 }, lean));
-    return { hip, sh, head, hand, elbow, dir, a, lean, crouch, off, active: swing && f >= ACT0 && f < ACT1,
-      knees: [{ x: 22, y: -52 + crouch * .4 }, { x: -30, y: -50 + crouch * .4 }], feet: [{ x: 36, y: 0 }, { x: -38, y: 0 }] };
+    return inside;
   }
-  const along = (R, d) => ({ x: R.hand.x + R.dir.x * d, y: R.hand.y + R.dir.y * d });
-
-  /* ---------- volumes: a segment A-B with radius r and a kind; contains() is the 2D side-view projection ---------- */
-  function vol(kind, A, B, r) { return { kind, A, B, r }; }
-  function contains(v, p) {
-    const dx = v.B.x - v.A.x, dy = v.B.y - v.A.y, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L;
-    const rx = p.x - v.A.x, ry = p.y - v.A.y, s = rx * ux + ry * uy, q = Math.abs(-rx * uy + ry * ux);
-    if (v.kind === 'sphere') return Math.hypot(p.x - (v.A.x + v.B.x) / 2, p.y - (v.A.y + v.B.y) / 2) <= L * .42 + v.r * .5;
-    if (v.kind === 'capsule') { const c = clamp(s, 0, L); return Math.hypot(rx - ux * c, ry - uy * c) <= v.r; }
-    if (v.kind === 'cone') return s >= 0 && s <= L && q <= v.r * 2.3 * s / L;
-    return s >= 0 && s <= L && q <= v.r;   // box and cylinder project to the same rectangle
+  const polyHits = (poly, c, r) => inPoly(poly, c) || poly.some((a, i) => segDist(c, a, poly[(i + 1) % poly.length]) <= r);
+  // a volume against a round receiver (a capsule seen from above is a circle)
+  function hits(vol, c, r) {
+    if (vol.kind === 'sphere') return len(sub(vol.c, c)) <= vol.r + r;
+    if (vol.kind === 'capsule') return segDist(c, vol.a, vol.b) <= vol.r + r;
+    return polyHits(vol.poly, c, r);
   }
-  function bbox(v) {
-    const R = v.kind === 'sphere' ? Math.hypot(v.B.x - v.A.x, v.B.y - v.A.y) * .42 + v.r * .5 : v.kind === 'cone' ? v.r * 2.3 : v.r;
-    return [Math.min(v.A.x, v.B.x) - R, Math.min(v.A.y, v.B.y) - R, Math.max(v.A.x, v.B.x) + R, Math.max(v.A.y, v.B.y) + R];
-  }
-  function overlaps(v, rc) {   // rc = [x0, y0, x1, y1]
-    const b = bbox(v), x0 = Math.max(b[0], rc[0]), y0 = Math.max(b[1], rc[1]), x1 = Math.min(b[2], rc[2]), y1 = Math.min(b[3], rc[3]);
-    if (x0 > x1 || y0 > y1) return false;
-    for (let x = x0; x <= x1; x += 3) for (let y = y0; y <= y1; y += 3) if (contains(v, { x, y })) return true;
-    return false;
-  }
-  function drawVol(g, v, col, a = 1, dash = false) {
-    const dx = v.B.x - v.A.x, dy = v.B.y - v.A.y, L = Math.hypot(dx, dy) || 1, ang = Math.atan2(dy, dx);
-    g.save(); g.globalAlpha *= a; g.translate(v.A.x, v.A.y); g.rotate(ang);
-    g.fillStyle = rgba(col, .2); g.strokeStyle = col; g.lineWidth = 2.5; if (dash) g.setLineDash([7, 5]);
-    g.beginPath();
-    if (v.kind === 'sphere') { const R = L * .42 + v.r * .5; g.arc(L / 2, 0, R, 0, TAU); g.fill(); g.stroke(); g.beginPath(); g.ellipse(L / 2, 0, R, R * .28, 0, 0, TAU); g.globalAlpha *= .6; g.stroke(); }
-    else if (v.kind === 'capsule') { g.moveTo(0, -v.r); g.lineTo(L, -v.r); g.arc(L, 0, v.r, -Math.PI / 2, Math.PI / 2); g.lineTo(0, v.r); g.arc(0, 0, v.r, Math.PI / 2, Math.PI * 1.5); g.closePath(); g.fill(); g.stroke(); }
-    else if (v.kind === 'cone') { const R = v.r * 2.3; g.moveTo(0, 0); g.lineTo(L, -R); g.lineTo(L, R); g.closePath(); g.fill(); g.stroke(); g.beginPath(); g.ellipse(L, 0, R * .3, R, 0, 0, TAU); g.stroke(); }
-    else if (v.kind === 'cylinder') { g.rect(0, -v.r, L, 2 * v.r); g.fill(); g.stroke(); g.beginPath(); g.ellipse(0, 0, v.r * .35, v.r, 0, 0, TAU); g.stroke(); g.beginPath(); g.ellipse(L, 0, v.r * .35, v.r, 0, 0, TAU); g.stroke(); }
-    else { g.rect(0, -v.r, L, 2 * v.r); g.fill(); g.stroke(); }
-    g.restore();
-  }
-  function drawRect(g, rc, col, a = 1, dash = false) {
-    g.save(); g.globalAlpha *= a; g.fillStyle = rgba(col, .16); g.strokeStyle = col; g.lineWidth = 2.5; if (dash) g.setLineDash([7, 5]);
-    g.beginPath(); g.rect(rc[0], rc[1], rc[2] - rc[0], rc[3] - rc[1]); g.fill(); g.stroke(); g.restore();
+  function rect(a, b, w) {
+    const d = sub(b, a), L = len(d) || 1, n = { u: -d.v / L * w, v: d.u / L * w };
+    return [{ u: a.u + n.u, v: a.v + n.v }, { u: b.u + n.u, v: b.v + n.v }, { u: b.u - n.u, v: b.v - n.v }, { u: a.u - n.u, v: a.v - n.v }];
   }
 
-  /* ---------- the attack volume for a scene at phase f ---------- */
-  // manual keys (Skullgirls style): three hand-placed volumes across the active window, in world units
-  const KEYS = [{ x: 40, y: -258, w: 62 }, { x: 128, y: -170, w: 62 }, { x: 112, y: -78, w: 56 }];
-  function attackVol(sc, R, f) {
-    if (sc.mode === 'manual') {
-      const k = Math.min(2, Math.floor(clamp((f - ACT0) / (ACT1 - ACT0), 0, .999) * 3)), c = KEYS[k];
-      return vol(sc.shape, { x: c.x - c.w, y: c.y }, { x: c.x + c.w, y: c.y }, 30 * (sc.pad || 1));
-    }
-    const s0 = sc.s0 ?? 10, s1 = (sc.s1 ?? 126) * (sc.pad ? 1 + (sc.pad - 1) * .08 : 1);
-    return vol(sc.shape, along(R, s0), along(R, s1), (sc.r ?? 15) * (sc.pad || 1));
+  /* ---------- the attack volume for a scene at clip frame i ---------- */
+  // hand-placed keys (Skullgirls style): the designer keys three poses across the live window and each one holds
+  const KEYS = [17, 20, 23];
+  const keyFrame = i => KEYS[Math.min(2, Math.floor(clamp((gameFrame(i) - HIT[0]) / (HIT[1] - HIT[0] + 1), 0, .999) * 3))];
+  function attackVol(sc, i) {
+    const k = sc.mode === 'manual' ? keyFrame(i) : i, w3 = SW.W[k], P = w3.map(G);
+    let a = P[8], b = P[9];
+    const pad = sc.pad || 1, w = (sc.w ?? .3) * pad;
+    if (sc.s0 === 'mid') a = mix(a, b, .55);
+    if (sc.s0 === 'chest') a = J(SW, k)[1];
+    if (pad !== 1) { const d = sub(b, a), L = len(d) || 1; b = { u: b.u + d.u / L * .18 * (pad - 1), v: b.v + d.v / L * .18 * (pad - 1), h: b.h }; }
+    const hs = w3.slice(0, 8).map(p => p[1]), height = [Math.min(...hs), Math.max(...hs)];
+    let v;
+    if (sc.shape === 'sphere') v = { kind: 'sphere', c: mix(a, b, .5), r: len(sub(b, a)) / 2 + w * .3 };
+    else if (sc.shape === 'capsule') v = { kind: 'capsule', a, b, r: w };
+    else if (sc.shape === 'cylinder') v = { kind: 'cylinder', poly: rect(a, b, w), a, b, r: w };
+    else if (sc.shape === 'cone') { const d = sub(b, a), L = len(d) || 1, n = { u: -d.v / L * w * 2.3, v: d.u / L * w * 2.3 }; v = { kind: 'cone', poly: [a, { u: b.u + n.u, v: b.v + n.v }, { u: b.u - n.u, v: b.v - n.v }], a, b, r: w }; }
+    else v = { kind: 'box', poly: sc.s0 || pad !== 1 || sc.w ? rect(a, b, w) : hull(P.slice(0, 8)), a, b, r: w, corners: sc.s0 || pad !== 1 || sc.w ? null : P.slice(0, 8) };
+    v.height = height;
+    return v;
   }
-  const sweetVol = R => vol('sphere', along(R, 112), along(R, 140), 6);
+  const sweetVol = i => { const P = SW.W[i].map(G); return { kind: 'sphere', c: mix(P[8], P[9], .92), r: .2 }; };
 
-  /* ---------- receivers ---------- */
-  function playerBoxes(R, kind) {
-    const hd = R.head, s = R.sh, hp = R.hip;
-    if (kind === 'core') return [[hd.x - 15, hd.y - 16, hd.x + 15, hd.y + 16], [Math.min(s.x, hp.x) - 16, s.y - 4, Math.max(s.x, hp.x) + 16, hp.y + 4], [-26, hp.y, 26, -6]];
-    if (kind === 'loose') return [[hd.x - 34, hd.y - 36, hd.x + 34, hd.y + 26], [Math.min(s.x, hp.x) - 34, s.y - 10, Math.max(s.x, hp.x) + 34, hp.y + 6], [-52, hp.y, 52, 0]];
-    return [[hd.x - 23, hd.y - 24, hd.x + 23, hd.y + 22], [Math.min(s.x, hp.x) - 24, s.y - 6, Math.max(s.x, hp.x) + 24, hp.y + 6], [-44, hp.y, 44, 0]];
+  /* ---------- receivers: circles on the ground (centre, radius) ---------- */
+  const R_BODY = { normal: .42, core: .27, loose: .68 };
+  function playerRecv(sc, i) {
+    const clip = sc.swing === false ? ID : SW, j = J(clip, sc.swing === false ? IDLE_I : i);
+    if (sc.pRecv === 'limbs') return j.map((p, n) => ({ c: p, r: n === 2 ? .16 : .12 }));
+    return [{ c: { u: j[0].u, v: j[0].v }, r: R_BODY[sc.pRecv || 'normal'] }];
   }
-  // the enemy: a stout figure at feet x; boxes in world units
-  function enemyBoxes(e) {
-    const x = e.x, sz = e.size || 1, h = 236 * sz, w = 36 * sz;
-    if (e.recv === 'limbs') {
-      const L = [];
-      L.push([x - 18 * sz, -h, x + 18 * sz, -h + 34 * sz]);                 // head
-      L.push([x - 26 * sz, -h + 40 * sz, x + 26 * sz, -h + 82 * sz]);       // chest
-      L.push([x - 24 * sz, -h + 84 * sz, x + 24 * sz, -h + 124 * sz]);      // belly
-      L.push([x - 46 * sz, -h + 44 * sz, x - 30 * sz, -h + 92 * sz]);       // upper arm
-      L.push([x - 50 * sz, -h + 96 * sz, x - 34 * sz, -h + 140 * sz]);      // forearm
-      L.push([x + 30 * sz, -h + 44 * sz, x + 46 * sz, -h + 92 * sz]);
-      L.push([x + 34 * sz, -h + 96 * sz, x + 50 * sz, -h + 140 * sz]);
-      L.push([x - 24 * sz, -h + 128 * sz, x - 4 * sz, -h + 180 * sz]);      // thighs
-      L.push([x + 4 * sz, -h + 128 * sz, x + 24 * sz, -h + 180 * sz]);
-      L.push([x - 24 * sz, -h + 184 * sz, x - 6 * sz, -4]);                 // shins
-      L.push([x + 6 * sz, -h + 184 * sz, x + 24 * sz, -4]);
-      return L;
-    }
-    if (e.recv === 'huge') return [[x - w - 70, -h - 40, x + w + 40, 0]];
-    return [[x - w, -h, x + w, 0]];
+  // the enemy: the same knight, facing back toward the player, standing at (u, v)
+  function enemyJ(e) { return J(ID, IDLE_I).map(p => ({ u: e.u - p.u, v: e.v + p.v, h: p.h })); }
+  function enemyRecv(e) {
+    if (e.low) return [{ c: { u: e.u, v: e.v }, r: .4 }];
+    if (e.recv === 'limbs') return enemyJ(e).map((p, n) => ({ c: p, r: n === 2 ? .16 : .12 }));
+    return [{ c: { u: e.u, v: e.v }, r: e.recv === 'huge' ? 1.3 : .45 }];
   }
-  const PLAYER_LIMBS = R => {
-    const b = [], seg = (p, q, r) => b.push([Math.min(p.x, q.x) - r, Math.min(p.y, q.y) - r, Math.max(p.x, q.x) + r, Math.max(p.y, q.y) + r]);
-    seg(R.head, R.head, 18); seg(R.sh, R.hip, 14); seg(R.sh, R.elbow, 8); seg(R.elbow, R.hand, 8); seg(R.sh, R.off, 8);
-    seg(R.hip, R.knees[0], 8); seg(R.knees[0], R.feet[0], 8); seg(R.hip, R.knees[1], 8); seg(R.knees[1], R.feet[1], 8);
-    seg({ x: R.hip.x - 14, y: R.hip.y }, { x: R.hip.x + 14, y: R.hip.y }, 8); seg(R.feet[0], { x: R.feet[0].x + 14, y: 0 }, 5); seg(R.feet[1], { x: R.feet[1].x - 10, y: 0 }, 5);
-    seg(R.hand, R.hand, 7); seg({ x: R.sh.x - 12, y: R.sh.y }, { x: R.sh.x + 12, y: R.sh.y }, 7);
-    return b;
-  };
+  const footOf = j => mix(j[8], j[9], .5);
 
-  /* ---------- art ---------- */
-  function limb(g, p, q, w, col) { g.strokeStyle = col; g.lineWidth = w; g.lineCap = 'round'; g.beginPath(); g.moveTo(p.x, p.y); g.lineTo(q.x, q.y); g.stroke(); }
-  function fighter(g, R, flash = 0) {
-    const body = '#3d4270', dk = '#262c6a', hi = '#5a5f92';
-    T.use(g); g.fillStyle = 'rgba(40,30,20,.18)'; g.beginPath(); g.ellipse(0, 2, 62, 9, 0, 0, TAU); g.fill();
-    limb(g, R.hip, R.knees[1], 15, dk); limb(g, R.knees[1], R.feet[1], 13, dk);
-    limb(g, R.sh, R.off, 11, dk);
-    limb(g, R.hip, R.knees[0], 16, body); limb(g, R.knees[0], R.feet[0], 14, body);
-    g.fillStyle = dk; g.beginPath(); g.roundRect(R.feet[0].x - 10, -9, 28, 10, 4); g.fill(); g.beginPath(); g.roundRect(R.feet[1].x - 18, -9, 26, 10, 4); g.fill();
-    limb(g, R.hip, R.sh, 36, body); limb(g, add(R.hip, { x: 0, y: -10 }), add(R.sh, { x: 0, y: 12 }), 14, hi);
-    g.fillStyle = C.gold; g.beginPath(); g.ellipse(R.hip.x, R.hip.y, 20, 6, R.lean, 0, TAU); g.fill();
-    // head: a helmet with a visor slit
-    g.fillStyle = body; g.beginPath(); g.arc(R.head.x, R.head.y, 21, 0, TAU); g.fill();
-    g.fillStyle = dk; g.beginPath(); g.roundRect(R.head.x + 2, R.head.y - 5, 19, 6, 3); g.fill();
-    g.fillStyle = C.gold; g.beginPath(); g.moveTo(R.head.x - 6, R.head.y - 21); g.lineTo(R.head.x + 2, R.head.y - 31); g.lineTo(R.head.x + 6, R.head.y - 20); g.fill();
-    // sword arm and sword
-    limb(g, R.sh, R.elbow, 12, body); limb(g, R.elbow, R.hand, 11, body);
-    const tip = along(R, 126), gd = along(R, 12), n = { x: -R.dir.y, y: R.dir.x };
-    g.strokeStyle = '#8a8fa8'; g.lineWidth = 9; g.lineCap = 'butt'; g.beginPath(); g.moveTo(gd.x, gd.y); g.lineTo(tip.x, tip.y); g.stroke();
-    g.strokeStyle = '#e8ecf6'; g.lineWidth = 4; g.beginPath(); g.moveTo(gd.x, gd.y); g.lineTo(tip.x, tip.y); g.stroke();
-    limb(g, { x: gd.x + n.x * 13, y: gd.y + n.y * 13 }, { x: gd.x - n.x * 13, y: gd.y - n.y * 13 }, 5, C.gold);
-    g.fillStyle = dk; g.beginPath(); g.arc(R.hand.x, R.hand.y, 8, 0, TAU); g.fill();
-    if (flash > 0) { g.save(); g.globalAlpha = flash; g.fillStyle = '#fff'; g.beginPath(); g.arc(R.head.x, R.head.y, 24, 0, TAU); g.fill(); g.restore(); }
-  }
-  function enemy(g, e, hit = 0) {
-    const x = e.x + hit * 10, sz = e.size || 1, h = 236 * sz, col = '#b5523a', dk = '#7a2f1f';
-    g.fillStyle = 'rgba(40,30,20,.18)'; g.beginPath(); g.ellipse(e.x, 2, 50 * sz, 9, 0, 0, TAU); g.fill();
-    limb(g, { x: x - 12 * sz, y: -h + 130 * sz }, { x: x - 14 * sz, y: -6 }, 18 * sz, dk);
-    limb(g, { x: x + 12 * sz, y: -h + 130 * sz }, { x: x + 14 * sz, y: -6 }, 18 * sz, dk);
-    g.fillStyle = col; g.beginPath(); g.roundRect(x - 30 * sz, -h + 38 * sz, 60 * sz, 98 * sz, 22 * sz); g.fill();
-    limb(g, { x: x - 30 * sz, y: -h + 54 * sz }, { x: x - 40 * sz, y: -h + 132 * sz }, 15 * sz, dk);
-    limb(g, { x: x + 30 * sz, y: -h + 54 * sz }, { x: x + 40 * sz, y: -h + 132 * sz }, 15 * sz, dk);
-    g.fillStyle = col; g.beginPath(); g.arc(x, -h + 18 * sz, 20 * sz, 0, TAU); g.fill();
-    g.fillStyle = '#2a1410'; g.beginPath(); g.arc(x - 8 * sz, -h + 15 * sz, 3 * sz, 0, TAU); g.arc(x + 1 * sz, -h + 15 * sz, 3 * sz, 0, TAU); g.fill();
-    if (hit > 0) { g.save(); g.globalAlpha = hit * .7; g.fillStyle = '#fff'; g.beginPath(); g.roundRect(x - 32 * sz, -h - 2, 64 * sz, h, 20); g.fill(); g.restore(); }
-  }
-  function spark(g, p, k) {
-    if (k <= 0) return;
-    g.save(); g.globalAlpha = k; g.strokeStyle = C.gold; g.lineWidth = 4; g.lineCap = 'round';
-    for (let i = 0; i < 8; i++) { const a = i * TAU / 8, r0 = 8 + (1 - k) * 10, r1 = 22 + (1 - k) * 26; g.beginPath(); g.moveTo(p.x + Math.cos(a) * r0, p.y + Math.sin(a) * r0); g.lineTo(p.x + Math.cos(a) * r1, p.y + Math.sin(a) * r1); g.stroke(); }
-    g.restore();
-  }
-
-  /* ---------- one scene: fighter, enemy, colliders, outcome; ox/oy is the feet position on the canvas, s the scale ---------- */
-  // first phase in the active window at which the attack overlaps a target (cached per scene key)
+  // first clip frame in the live window where the attack touches the enemy (cached per scene)
   const cache = new Map();
-  function firstHit(sc, test) {
-    const key = JSON.stringify(sc) + test; if (cache.has(key)) return cache.get(key);
+  function firstHit(sc, sweet) {
+    const key = JSON.stringify(sc) + sweet; if (cache.has(key)) return cache.get(key);
     let at = -1;
-    for (let i = 0; i <= 60 && at < 0; i++) {
-      const f = lerp(ACT0, ACT1 - 1e-4, i / 60), R = rig(f), v = attackVol(sc, R, f);
-      const boxes = test === 'sweet' ? null : enemyBoxes(sc.enemy);
-      if (sc.depth && !sc.depth.projected && Math.abs(sc.depth.enemy - sc.depth.player) > sc.depth.half * 2) continue;
-      if (test === 'sweet' ? enemyBoxes(sc.enemy).some(b => overlaps(sweetVol(R), b)) : boxes.some(b => overlaps(v, b))) at = f;
+    for (let i = 0; i < N && at < 0; i++) {
+      if (!live(i)) continue;
+      const v = sweet ? sweetVol(i) : attackVol(sc, i);
+      if (sc.enemy.low && !sc.projected && attackVol(sc, i).height[0] > sc.enemy.low) continue;   // the blade passes over it in 3D
+      if (enemyRecv(sc.enemy).some(q => hits(v, q.c, q.r))) at = i;
     }
     cache.set(key, at); return at;
   }
-  function scene(g, sc, f, ox, oy, s, o = {}) {
-    const R = rig(f, sc.swing !== false), P = p => ({ x: ox + p.x * s, y: oy + p.y * s });
-    const hitAt = sc.enemy ? firstHit(sc, 'main') : -1, sweetAt = sc.sweet ? firstHit(sc, 'sweet') : -1;
-    const landed = hitAt >= 0 && f >= hitAt, hk = landed ? clamp(1 - (f - hitAt) / .12) : 0;
-    g.save(); g.translate(ox, oy); g.scale(s, s);
-    // ground
-    g.strokeStyle = '#cdbf9f'; g.lineWidth = 3 / s; g.beginPath(); g.moveTo(-ox / s + 10, 0); g.lineTo((o.w || W) / s, 0); g.stroke();
-    if (sc.enemy) enemy(g, sc.enemy, hk);
-    let bullet = null;
-    if (sc.bullet) {
-      // a bullet crosses from the right at the height of the top of the head, once per swing
-      const bx = lerp(330, -200, clamp((f - .1) / .6)), by = -258;
-      bullet = { x: bx, y: by, r: 6 };
-      g.fillStyle = C.gold; g.strokeStyle = C.goldInk; g.lineWidth = 2; g.beginPath(); g.arc(bx, by, 7, 0, TAU); g.fill(); g.stroke();
-      g.strokeStyle = 'rgba(255,185,81,.5)'; g.lineWidth = 4; g.beginPath(); g.moveTo(bx + 10, by); g.lineTo(bx + 46, by); g.stroke();
-    }
-    fighter(g, R);
-    // colliders
-    if (o.boxes !== false) {
-      if (sc.enemy) enemyBoxes(sc.enemy).forEach(b => drawRect(g, b, K.rec, .9));
-      if (o.collision) { drawRect(g, [-46, -262, 46, 0], K.col, .9, true); if (sc.enemy) drawRect(g, [sc.enemy.x - 44 * (sc.enemy.size || 1), -246 * (sc.enemy.size || 1), sc.enemy.x + 44 * (sc.enemy.size || 1), 0], K.col, .6, true); }
-      (sc.pRecv === 'limbs' ? PLAYER_LIMBS(R) : playerBoxes(R, sc.pRecv)).forEach(b => drawRect(g, b, K.rec, .9));
-      const v = attackVol(sc, R, f);
-      if (R.active) drawVol(g, v, K.atk);
-      else if (o.ghost) drawVol(g, v, K.atk, .28, true);
-      if (sc.sweet) { const sv = sweetVol(R); if (R.active) drawVol(g, sv, K.sec); else if (o.ghost) drawVol(g, sv, K.sec, .28, true); }
-    }
+
+  /* ---------- drawing ---------- */
+  function view(ox, oy, M) { return (p, h = p.h || 0) => [ox + p.u * M, oy + p.v * M * FS - h * M * HS]; }
+  function sprite(g, clip, i, x, y, M, flip, filter) {
+    const im = IMG[clip === SW ? 'combo' : 'idle-r']; if (!ready(im)) return;
+    const s = M / clip.uz[0], sx = (i % clip.cols) * clip.cw, sy = Math.floor(i / clip.cols) * clip.ch;
+    g.save(); g.translate(x, y); if (flip) g.scale(-1, 1); if (filter) g.filter = filter;
+    g.drawImage(im, sx, sy, clip.cw, clip.ch, -clip.ax * s, -clip.ay * s, clip.cw * s, clip.ch * s);
     g.restore();
-    // outcome: a spark on contact, then a stamp until the swing resets
-    const out = { landed, R, P, bulletHit: false, graze: false };
+  }
+  function ground(g, x, y, w, h) {
+    g.fillStyle = '#80915f'; g.fillRect(x, y, w, h);
+    g.strokeStyle = 'rgba(255,255,255,.07)'; g.lineWidth = 1;
+    for (let k = x + 20; k < x + w; k += 40) { g.beginPath(); g.moveTo(k, y); g.lineTo(k, y + h); g.stroke(); }
+    for (let k = y + 20; k < y + h; k += 32) { g.beginPath(); g.moveTo(x, k); g.lineTo(x + w, k); g.stroke(); }
+  }
+  function circle(g, P, M, c, r, col, a = 1, dash = false, fill = true) {
+    const [x, y] = P(c, 0); g.save(); g.globalAlpha *= a; g.strokeStyle = col; g.lineWidth = 2.5; if (dash) g.setLineDash([7, 5]);
+    g.beginPath(); g.ellipse(x, y, r * M, r * M * FS, 0, 0, TAU); if (fill) { g.fillStyle = rgba(col, .2); g.fill(); } g.stroke(); g.restore();
+  }
+  function drawVol(g, P, M, v, col, a = 1, dash = false) {
+    g.save(); g.globalAlpha *= a; g.fillStyle = rgba(col, .26); g.strokeStyle = col; g.lineWidth = 2.5; if (dash) g.setLineDash([7, 5]);
+    g.beginPath();
+    if (v.kind === 'sphere') { const [x, y] = P(v.c, 0); g.ellipse(x, y, v.r * M, v.r * M * FS, 0, 0, TAU); }
+    else if (v.kind === 'capsule') {
+      // the ground outline of a capsule: two end caps joined
+      const d = sub(v.b, v.a), L = len(d) || 1, n = { u: -d.v / L * v.r, v: d.u / L * v.r }, steps = 14, pts = [];
+      const ang0 = Math.atan2(n.v, n.u);
+      for (let s = 0; s <= steps; s++) { const an = ang0 + Math.PI * s / steps; pts.push({ u: v.b.u + Math.cos(an) * v.r, v: v.b.v + Math.sin(an) * v.r }); }
+      for (let s = 0; s <= steps; s++) { const an = ang0 + Math.PI + Math.PI * s / steps; pts.push({ u: v.a.u + Math.cos(an) * v.r, v: v.a.v + Math.sin(an) * v.r }); }
+      pts.forEach((p, k) => { const [x, y] = P(p, 0); k ? g.lineTo(x, y) : g.moveTo(x, y); }); g.closePath();
+    } else v.poly.forEach((p, k) => { const [x, y] = P(p, 0); k ? g.lineTo(x, y) : g.moveTo(x, y); }), g.closePath();
+    g.fill(); g.stroke(); g.restore();
+  }
+  // the real 3D hit box in the air, as a thin wireframe above its footprint
+  const EDGES = [[0, 1], [1, 2], [2, 3], [3, 0], [4, 5], [5, 6], [6, 7], [7, 4], [0, 4], [1, 5], [2, 6], [3, 7]];
+  function wire3d(g, P, corners, col, a) {
+    g.save(); g.globalAlpha *= a; g.strokeStyle = col; g.lineWidth = 1.5;
+    EDGES.forEach(([p, q]) => { const A = P(corners[p]), B = P(corners[q]); g.beginPath(); g.moveTo(...A); g.lineTo(...B); g.stroke(); });
+    g.setLineDash([3, 4]); g.globalAlpha *= .6;
+    [0, 2, 4, 6].forEach(k => { const A = P(corners[k]), B = P(corners[k], 0); g.beginPath(); g.moveTo(...A); g.lineTo(...B); g.stroke(); });
+    g.restore();
+  }
+  function spark(g, x, y, k) {
+    if (k <= 0) return;
+    g.save(); g.globalAlpha = k; g.strokeStyle = C.gold; g.lineWidth = 4; g.lineCap = 'round';
+    for (let n = 0; n < 8; n++) { const a = n * TAU / 8, r0 = 8 + (1 - k) * 10, r1 = 22 + (1 - k) * 26; g.beginPath(); g.moveTo(x + Math.cos(a) * r0, y + Math.sin(a) * r0); g.lineTo(x + Math.cos(a) * r1, y + Math.sin(a) * r1); g.stroke(); }
+    g.restore();
+  }
+  function blob(g, P, M, e, flash) {
+    const [x, y] = P({ u: e.u, v: e.v }, 0), r = .4 * M, hh = e.low * M * HS;
+    g.fillStyle = 'rgba(30,25,15,.3)'; g.beginPath(); g.ellipse(x, y, r, r * FS, 0, 0, TAU); g.fill();
+    g.fillStyle = flash ? '#f2c6b4' : '#7d4a8f'; g.beginPath(); g.ellipse(x, y - hh / 2, r * .9, hh / 2 + r * FS * .6, 0, 0, TAU); g.fill();
+    g.fillStyle = '#fff'; g.beginPath(); g.arc(x - 10, y - hh * .7, 5, 0, TAU); g.arc(x + 8, y - hh * .7, 5, 0, TAU); g.fill();
+    g.fillStyle = '#20124d'; g.beginPath(); g.arc(x - 11, y - hh * .7, 2.4, 0, TAU); g.arc(x + 7, y - hh * .7, 2.4, 0, TAU); g.fill();
+  }
+
+  /* ---------- one scene: knight, enemy, colliders, outcome; (ox, oy) is the knight's feet on the canvas, M px per metre ---------- */
+  function scene(g, sc, i, ox, oy, M, o = {}) {
+    const P = view(ox, oy, M), swing = sc.swing !== false, act = swing && live(i);
+    const hitAt = sc.enemy ? firstHit(sc, false) : -1, sweetAt = sc.sweet ? firstHit(sc, true) : -1;
+    const landed = hitAt >= 0 && i >= hitAt, hk = landed ? clamp(1 - (i - hitAt) / 6) : 0;
+    const v = swing ? attackVol(sc, i) : null;
+    // on the ground: receivers, collision, the attack footprint
+    const pj = J(swing ? SW : ID, swing ? i : IDLE_I);
+    if (o.boxes !== false) {
+      if (o.collision) { circle(g, P, M, footOf(pj), .34, K.col, .9, true, false); if (sc.enemy && !sc.enemy.low) circle(g, P, M, footOf(enemyJ(sc.enemy)), .34, K.col, .7, true, false); }
+      if (v && act) drawVol(g, P, M, v, K.atk);
+      else if (v && o.ghost) drawVol(g, P, M, v, K.atk, .3, true);
+      if (sc.sweet && swing) { const sv = sweetVol(i); if (act) drawVol(g, P, M, sv, K.sec); else if (o.ghost) drawVol(g, P, M, sv, K.sec, .3, true); }
+    }
+    // the knights, back to front
+    const drawEnemy = () => {
+      if (!sc.enemy) return;
+      if (sc.enemy.low) return blob(g, P, M, sc.enemy, hk > 0);
+      const [x, y] = P({ u: sc.enemy.u, v: sc.enemy.v }, 0);
+      sprite(g, ID, IDLE_I, x + hk * 8, y, M, true, hk > 0 ? 'brightness(1.5) sepia(.7) hue-rotate(-35deg) saturate(2.2)' : 'sepia(.7) hue-rotate(-35deg) saturate(2.2) brightness(.8)');
+    };
+    const drawHero = () => sprite(g, swing ? SW : ID, swing ? i : IDLE_I, ox, oy, M, false);
+    if (sc.enemy && sc.enemy.v < 0) { drawEnemy(); drawHero(); } else { drawHero(); drawEnemy(); }
+    // outlines over the art, so the volumes read on top of the bodies
+    if (o.boxes !== false) {
+      if (sc.enemy) enemyRecv(sc.enemy).forEach(q => circle(g, P, M, q.c, q.r, K.rec, .95, false, false));
+      playerRecv(sc, i).forEach(q => circle(g, P, M, q.c, q.r, K.rec, .95, false, false));
+      if (v && act) { drawVol(g, P, M, v, K.atk, .9); if (o.wire && v.corners) wire3d(g, P, SW.W[sc.mode === 'manual' ? keyFrame(i) : i].map(G), K.atk, .8); }
+    }
+    let bulletHit = false;
+    if (sc.bullet) {
+      // an arrow crosses at shoulder height, just past the knight's far shoulder
+      const k = clamp((i - 6) / 40), b = { u: lerp(3.2, -2.4, k), v: -.5 }, [bx, by] = P(b, 1.4);
+      const recv = playerRecv(sc, i)[0], hitK = (() => { for (let n = 6; n <= i; n++) { const bb = { u: lerp(3.2, -2.4, clamp((n - 6) / 40)), v: -.5 }; if (len(sub(bb, recv.c)) <= recv.r + .04) return n; } return -1; })();
+      if (hitK < 0 || i - hitK < 2) { g.strokeStyle = '#5b3a1e'; g.lineWidth = 3; g.beginPath(); g.moveTo(bx, by); g.lineTo(bx + 34, by); g.stroke(); g.fillStyle = '#c8ccd8'; g.beginPath(); g.moveTo(bx - 8, by); g.lineTo(bx + 2, by - 5); g.lineTo(bx + 2, by + 5); g.fill(); }
+      const [sx, sy] = P(b, 0); g.fillStyle = 'rgba(30,25,15,.25)'; g.beginPath(); g.ellipse(sx, sy, 14, 4, 0, 0, TAU); g.fill();
+      if (hitK >= 0) { const [hx, hy] = P(recv.c, 1.4); spark(g, hx, hy, clamp(1 - (i - hitK) / 6)); if (i < N - 3) T.stamp(o.hitText || 'Hit', hx, hy - 70, C.red, clamp((i - hitK) / 3), 22); bulletHit = true; }
+      else if (b.u < recv.c.u - .5 && i < N - 3) T.stamp(o.missText || 'Graze', ox, oy - 2.2 * M * HS - 20, GREEN, 1, 22);
+    }
     if (sc.enemy) {
-      const sz = sc.enemy.size || 1, ep = P({ x: sc.enemy.x - 10, y: -150 * sz });
-      if (landed) spark(g, ep, hk);
-      const sweet = sweetAt >= 0 && landed;
-      if (landed && f < .95) T.stamp(sweet ? (o.sweetText || 'Sweet spot') : (o.hitText || 'Hit'), ox + (sc.enemy.x) * s, oy - 262 * sz * s, sweet ? K.sec : C.red, clamp((f - hitAt) * 12), 22);
-      if (!landed && f > ACT1 && f < .95) T.stamp(o.missText || 'Miss', ox + (sc.enemy.x) * s, oy - 262 * sz * s, C.muted, clamp((f - ACT1) * 12), 22);
+      const [ex, ey] = P({ u: sc.enemy.u, v: sc.enemy.v }, sc.enemy.low ? sc.enemy.low * .6 : 1.1), sweet = sweetAt >= 0 && landed;
+      if (landed) spark(g, ex, ey, hk);
+      const sy = ey - (sc.enemy.low ? 46 : 92);
+      if (landed && i < N - 4) T.stamp(sweet ? (o.sweetText || 'Sweet spot') : (o.hitText || 'Hit'), ex, sy, sweet ? K.sec : C.red, clamp((i - hitAt) / 3), 22);
+      if (!landed && gameFrame(i) > HIT[1] && i < N - 4) T.stamp(o.missText || 'Miss', ex, sy, C.muted, clamp((gameFrame(i) - HIT[1]) / 6), 22);
     }
-    if (bullet) {
-      const boxes = sc.pRecv === 'limbs' ? PLAYER_LIMBS(R) : playerBoxes(R, sc.pRecv);
-      // has the bullet touched a receiver yet this swing?
-      let hitF = -1;
-      for (let i = 0; i <= 80; i++) { const ff = lerp(.1, .7, i / 80); if (ff > f) break; const bx = lerp(330, -200, clamp((ff - .1) / .6)); if (boxes.some(b => bx + 6 > b[0] && bx - 6 < b[2] && -258 + 6 > b[1] && -258 - 6 < b[3])) { hitF = ff; break; } }
-      const passed = f > .1 + .6 * (330 - (R.head.x - 30)) / 530;
-      if (hitF >= 0 && f < .95) { spark(g, P({ x: lerp(330, -200, clamp((hitF - .1) / .6)), y: -258 }), clamp(1 - (f - hitF) / .1)); T.stamp(o.hitText || 'Hit', ox + R.head.x * s, oy - 330 * s, C.red, clamp((f - hitF) * 12), 22); out.bulletHit = true; }
-      else if (passed && f < .95) { T.stamp(o.missText || 'Graze', ox + R.head.x * s, oy - 330 * s, GREEN, 1, 22); out.graze = true; }
-    }
-    return out;
+    return { landed, P, v, pj, bulletHit };
   }
 
   /* ---------- tiny 3D wireframe preview of the attack shape ---------- */
@@ -252,6 +244,15 @@
     words.forEach(wd => { const t = line ? line + ' ' + wd : wd; if (g.measureText(t).width > maxW && line) { text(g, line, x, yy, o); line = wd; yy += lh; } else line = t; });
     if (line) text(g, line, x, yy, o); return yy;
   }
+  function credit(g, x, y, align = 'left') { text(g, 'No Rest for the Wicked © Moon Studios · via Game Animation Library', x, y, { size: 11, w: 600, col: 'rgba(255,255,255,.92)', align }); }
+  // the move's frame bar: startup, live window, recovery, and the frame on show
+  function frameBar(g, x, y, w, i) {
+    const sx = f => x + w * f / TOTAL;
+    g.fillStyle = '#e6dcc5'; g.fillRect(x, y, w, 10); g.fillStyle = rgba(K.atk, .85); g.fillRect(sx(HIT[0]), y, sx(HIT[1] + 1) - sx(HIT[0]), 10);
+    g.fillStyle = C.navy; g.fillRect(sx(gameFrame(i)) - 2, y - 5, 4, 20);
+    text(g, 'startup', x, y - 6, { size: 12, col: C.muted }); text(g, `live: frames ${HIT[0]}–${HIT[1]}`, sx(HIT[0]), y - 6, { size: 12, col: K.atk, w: 700 });
+    text(g, `frame ${gameFrame(i)} of ${TOTAL}`, x + w, y - 6, { size: 12, col: C.muted, align: 'right' });
+  }
 
   /* ---------- slide 1: the lab ---------- */
   const GENRES = {
@@ -262,42 +263,40 @@
   };
   const SHAPES = { box: 'Box', sphere: 'Sphere', capsule: 'Capsule', cylinder: 'Cylinder', cone: 'Cone' };
   const SHAPE_NOTE = {
-    box: 'Boxes are the default in 2D: cheap, and easy to read on a frame.',
-    sphere: 'Spheres are the cheapest test of all, but a blade is long and thin.',
+    box: 'The box is the game’s own: No Rest for the Wicked puts one box on the axe’s hand socket.',
+    sphere: 'Spheres are the cheapest test of all, but an axe is long and thin.',
     capsule: 'Capsules fit limbs and blades, and are the default for 3D bodies.',
     cylinder: 'Cylinders have flat ends: useful for columns and area attacks.',
     cone: 'Cones suit breath, shotgun spread and sweeping arcs from a point.',
   };
+  const LAB = { ox: 250, oy: 318, M: 112, enemy: { u: 1.5, v: .1 } };
   function drawLab(g, st, t) {
     T.use(g); g.clearRect(0, 0, W, H); panel(g, 0, 0, W, H);
-    const f = (t % PER) / PER, gn = GENRES[st.genre];
-    const sc = { mode: st.bone ? 'bone' : 'manual', shape: st.shape, enemy: { x: 172 }, pRecv: 'normal' };
-    const ox = 270, oy = 528, s = 1.55;
-    const o = scene(g, sc, f, ox, oy, s, { collision: true, ghost: true, w: 680 });
+    const i = frameAt(t), gn = GENRES[st.genre];
+    const sc = { mode: st.bone ? 'bone' : 'manual', shape: st.shape, enemy: LAB.enemy, pRecv: 'normal' };
+    g.save(); g.beginPath(); g.roundRect(12, 40, 666, 486, 12); g.clip(); ground(g, 12, 40, 666, 486);
+    const o = scene(g, sc, i, LAB.ox, LAB.oy, LAB.M, { collision: true, ghost: true, wire: true });
     // labels on the three kinds of collider
-    const R = o.R, P = o.P, v = attackVol(sc, R, f), mid = P({ x: (v.A.x + v.B.x) / 2, y: (v.A.y + v.B.y) / 2 });
-    const lab = (s1, x, y, col, lx, ly) => { g.strokeStyle = col; g.lineWidth = 2; g.beginPath(); g.moveTo(lx, ly); g.lineTo(x, y); g.stroke(); T.label(s1, x, y, 'center', col, 15); };
-    lab(gn.atk, Math.min(mid.x + 60, 600), Math.max(mid.y - 70, 60), K.atk, mid.x, mid.y);
-    const hd = P(R.head); lab(gn.rec, hd.x - 150, hd.y - 30, K.rec, hd.x - 36, hd.y);
-    const ft = P({ x: -46, y: -60 }); lab(gn.col, ft.x - 100, ft.y + 30, K.col, ft.x, ft.y);
-    const eh = P({ x: 172 + 36, y: -120 }); lab(gn.rec, eh.x + 40, eh.y - 30, K.rec, eh.x, eh.y);
-    // the active-window bar under the scene
-    text(g, st.bone ? 'Rides the weapon bone (Elden Ring style)' : 'Hand-placed keys per frame (Skullgirls style)', 24, 30, { size: 15, w: 700 });
-    const bx = 24, by = 556, bw = 600;
-    g.fillStyle = '#e6dcc5'; g.fillRect(bx, by, bw, 10); g.fillStyle = rgba(K.atk, .8); g.fillRect(bx + bw * ACT0, by, bw * (ACT1 - ACT0), 10);
-    g.fillStyle = C.navy; g.fillRect(bx + bw * f - 2, by - 5, 4, 20);
-    text(g, 'wind-up', bx, by - 6, { size: 12, col: C.muted }); text(g, 'active', bx + bw * ACT0, by - 6, { size: 12, col: K.atk, w: 700 }); text(g, 'recovery', bx + bw * .6, by - 6, { size: 12, col: C.muted });
+    const P = o.P, lab = (s1, x, y, col, lx, ly) => { g.strokeStyle = col; g.lineWidth = 2; g.beginPath(); g.moveTo(lx, ly); g.lineTo(x, y); g.stroke(); T.label(s1, x, y, 'center', col, 15); };
+    if (o.v && live(i)) { const c = o.v.kind === 'sphere' ? o.v.c : mix(o.v.a, o.v.b, .6), [x, y] = P(c, 0); lab(gn.atk, clamp(x + 40, 90, 600), clamp(y + 70, 80, 500), K.atk, x, y); }
+    const pr = playerRecv(sc, i)[0], [px, py] = P({ u: pr.c.u - pr.r, v: pr.c.v }, 0); lab(gn.rec, px - 86, py + 14, K.rec, px, py);
+    const [fx, fy] = P(mix(footOf(o.pj), { u: 0, v: .34 }, 1), 0); lab(gn.col, fx + 10, fy + 74, K.col, fx, fy);
+    const [ex, ey] = P({ u: LAB.enemy.u + .45, v: LAB.enemy.v }, 0); lab(gn.rec, ex + 70, ey + 60, K.rec, ex, ey);
+    credit(g, 24, 516);
+    g.restore();
+    text(g, st.bone ? 'Rides the weapon bone, frame by frame (the game’s own way)' : 'Hand-placed keys: three poses, each held (Skullgirls style)', 24, 28, { size: 15, w: 700 });
+    frameBar(g, 24, 556, 640, i);
     // right column: 3D preview and the naming table
     const rx = 700, rw = 324;
     panel(g, rx, 16, rw, 214, '#efe6d2');
     text(g, `${SHAPES[st.shape]} in 3D`, rx + 14, 40, { size: 15, w: 800, font: 'Montserrat' });
-    text(g, 'Drawn as its side-view outline on the left', rx + 14, 58, { size: 12, col: C.muted });
+    text(g, 'Tested by its outline on the ground', rx + 14, 58, { size: 12, col: C.muted });
     wire(g, st.shape, rx + rw / 2, 142, 88, t);
     panel(g, rx, 244, rw, 325, '#efe6d2');
     text(g, 'The naming mess', rx + 14, 268, { size: 15, w: 800, font: 'Montserrat' });
     const cols = ['fps', 'fight', 'action', 'course'], cw = 64, c0 = rx + 66;
-    cols.forEach((k, i) => {
-      const x = c0 + i * cw;
+    cols.forEach((k, n) => {
+      const x = c0 + n * cw;
       if (k === st.genre) { g.fillStyle = 'rgba(255,185,81,.45)'; g.beginPath(); g.roundRect(x - 2, 280, cw - 2, 228, 8); g.fill(); }
       text(g, GENRES[k].name, x + cw / 2 - 2, 298, { size: 12, w: 700, align: 'center' });
     });
@@ -305,18 +304,20 @@
       const y = 330 + j * 62;
       g.fillStyle = col; g.beginPath(); g.roundRect(rx + 12, y - 12, 14, 14, 3); g.fill();
       text(g, verb, rx + 32, y, { size: 12, col: C.muted, w: 700 });
-      cols.forEach((k, i) => { const words = GENRES[k][r].split(' '); words.forEach((wd, n) => text(g, wd, c0 + i * cw + cw / 2 - 2, y + n * 15, { size: 12, w: k === st.genre ? 700 : 500, align: 'center', col: k === st.genre ? C.ink : C.muted })); });
+      cols.forEach((k, n) => { const words = GENRES[k][r].split(' '); words.forEach((wd, m) => text(g, wd, c0 + n * cw + cw / 2 - 2, y + m * 15, { size: 12, w: k === st.genre ? 700 : 500, align: 'center', col: k === st.genre ? C.ink : C.muted })); });
     });
     wrap(g, gn.note, rx + 14, 528, rw - 28, 17, { size: 13, w: 600 });
     return o;
   }
-  // walk-through: genres, then shapes on the bone, then manual keys vs the bone
-  const LAB_DUR = 25.6;
+  // walk-through: genres, then shapes on the bone, then hand-placed keys against the bone, each over whole swings
+  const LAB_STEPS = [['fps', 'box', true], ['fight', 'box', true], ['action', 'box', true], ['course', 'box', true],
+    ['course', 'sphere', true], ['course', 'capsule', true], ['course', 'cylinder', true], ['course', 'cone', true], ['course', 'box', false], ['course', 'box', true]];
+  const LAB_DUR = PER * LAB_STEPS.length;
   function labTour(st, t) {
-    if (t < 10) { st.genre = ['fps', 'fight', 'action', 'course'][Math.floor(t / 2.5)]; st.shape = 'box'; st.bone = false; return 'The same red box, four names: watch the word hitbox change sides.'; }
-    if (t < 19.6) { st.genre = 'course'; st.shape = ['box', 'sphere', 'capsule', 'cylinder', 'cone'][Math.min(4, Math.floor((t - 10) / 1.92))]; st.bone = true; return 'Five shapes on the same weapon bone.'; }
-    st.genre = 'course'; st.shape = 'capsule'; st.bone = t >= 22.6;
-    return st.bone ? 'Bone-follow: the volume rides the blade, frame by frame.' : 'Hand-placed: one volume per key, positioned by a designer.';
+    const k = Math.min(LAB_STEPS.length - 1, Math.floor(t / PER)); [st.genre, st.shape, st.bone] = LAB_STEPS[k];
+    if (k < 4) return 'The same red box, four names: watch the word hitbox change sides.';
+    if (k < 8) return 'Five shapes on the same axe: each one is tested by its outline on the ground.';
+    return st.bone ? 'Riding the bone: the box follows the axe on every frame.' : 'Hand-placed: three keyed poses, each held until the next.';
   }
 
   const scenes = {};
@@ -332,7 +333,7 @@
       let cap = null;
       if (st.tour) cap = labTour(st, t);
       const o = drawLab(g, st, t);
-      if (cap) T.label(cap, 350, 72, 'center', '#fff', 15, C.navy);
+      if (cap) T.label(cap, 345, 64, 'center', '#fff', 15, C.navy);
       const key = [st.genre, st.shape, st.bone, o.landed].join();
       if (key === st.key) return; st.key = key;
       $$(s, '.hb-genre .btn').forEach(b => b.classList.toggle('on', b.dataset.g === st.genre));
@@ -341,7 +342,7 @@
       const gn = GENRES[st.genre];
       say($(s, '.hb-stats'), `<div class="r"><b style="font-size:20px;min-width:0">${gn.atk}</b><span>the red volume, in ${gn.name === 'Course' ? 'the course' : gn.name + ' games'}</span></div>`
         + `<div><b style="font-size:20px;min-width:0">${gn.rec}</b><span>the blue receivers</span></div>`);
-      say($(s, '.hb-out'), `${SHAPE_NOTE[st.shape]} ${st.bone ? 'On the bone it follows the blade exactly, with no authoring per frame (Elden Ring).' : 'Hand-placed keys jump between poses but give exact control of each frame (Skullgirls).'}`);
+      say($(s, '.hb-out'), `${SHAPE_NOTE[st.shape]} ${st.bone ? 'On the bone it follows the axe exactly, with no authoring per frame.' : 'Hand-placed keys jump between poses but give exact control of each frame (Skullgirls).'}`);
     }
     scenes.lab = { seek(t) { st.held = true; st.tour = true; frame(t); }, dur: () => LAB_DUR };
     return dt => { if (st.held) return; st.t += Math.max(0, dt); if (st.tour && st.t >= LAB_DUR) st.t = 0; frame(st.t); };
@@ -351,60 +352,61 @@
   const base = { mode: 'bone', shape: 'capsule', pRecv: 'normal' };
   const TIPS = [
     { name: 'Extend attacks inside the character',
-      before: { ...base, s0: 96, enemy: { x: 90 } }, after: { ...base, s0: -58, enemy: { x: 90 } },
-      bt: 'The volume starts halfway up the blade. An enemy standing in the gap is missed.',
+      before: { ...base, s0: 'mid', enemy: { u: .95, v: .2 } }, after: { ...base, s0: 'chest', enemy: { u: .95, v: .2 } },
+      bt: 'The volume starts halfway up the axe. An enemy standing in close is missed.',
       at: 'The volume reaches back inside the body, so there is no gap to stand in.' },
     { name: 'Make player-favourable volumes a bit too big',
-      before: { ...base, r: 5, enemy: { x: 244 } }, after: { ...base, r: 5, pad: 2.6, enemy: { x: 244 } },
-      bt: 'An exact blade-sized volume. The swing looked like it connected, and missed by a hair.',
-      at: 'The player’s attack is a little bigger than the blade, so near misses land.' },
-    { name: 'Make attackable areas smaller (bullet grazing)',
+      before: { ...base, w: .1, enemy: { u: 3.0, v: 0 } }, after: { ...base, w: .1, pad: 2.6, enemy: { u: 3.0, v: 0 } },
+      bt: 'A volume the exact size of the axe. The swing looked like it connected, and missed by a hair.',
+      at: 'The player’s attack is a little bigger than the axe, so near misses land.' },
+    { name: 'Make attackable areas smaller (arrow grazing)',
       before: { ...base, swing: false, pRecv: 'loose', bullet: true }, after: { ...base, swing: false, pRecv: 'core', bullet: true },
-      bt: 'The receiver covers more than the silhouette. A bullet that visibly missed still hits.',
-      at: 'A smaller receiver lets the bullet graze past, and the near miss feels earned.', hitText: 'Hit', missText: 'Graze' },
+      bt: 'The receiver covers more than the body. An arrow that visibly missed still hits.',
+      at: 'A smaller receiver lets the arrow graze past, and the near miss feels earned.', hitText: 'Hit', missText: 'Graze' },
     { name: 'Use secondary boxes for special interactions',
-      before: { ...base, enemy: { x: 205 } }, after: { ...base, sweet: true, enemy: { x: 205 } },
+      before: { ...base, enemy: { u: 2.2, v: 0 } }, after: { ...base, sweet: true, enemy: { u: 2.2, v: 0 } },
       bt: 'One attack volume, so every hit is the same hit.',
-      at: 'A secondary box at the tip marks a sweet spot. Throws, grabs and parries get their own boxes too.' },
+      at: 'A secondary volume on the axe head marks a sweet spot. Throws, grabs and parries get their own volumes too.' },
     { name: 'Keep attacks and receivers proportional',
-      before: { ...base, enemy: { x: 262, recv: 'huge' } }, after: { ...base, enemy: { x: 262 } },
+      before: { ...base, enemy: { u: 3.2, v: 0, recv: 'huge' } }, after: { ...base, enemy: { u: 3.2, v: 0 } },
       bt: 'The receiver is far bigger than the body, so a swing that visibly falls short still connects.',
       at: 'Sized to the body and the weapon, the result matches what the player sees.', missText: 'Out of reach' },
     { name: 'Keep it simple',
-      before: { ...base, pRecv: 'limbs', enemy: { x: 178, recv: 'limbs' } }, after: { ...base, shape: 'box', enemy: { x: 178 } },
-      bt: 'Twenty-six colliders to author and keep in sync, for the same hit.',
+      before: { ...base, pRecv: 'limbs', enemy: { u: 1.5, v: 0, recv: 'limbs' } }, after: { ...base, shape: 'box', enemy: { u: 1.5, v: 0 } },
+      bt: 'Two dozen colliders to author and keep in sync, for the same hit.',
       at: 'Boxes in 2D, capsules in 3D: one per body, and the same predictable hit.' },
-    { name: 'Project 3D boxes to the plane in 2.5D',
-      before: { ...base, enemy: { x: 178 }, depth: { player: 0, enemy: 42, half: 14, projected: false } }, after: { ...base, enemy: { x: 178 }, depth: { player: 0, enemy: 42, half: 14, projected: true } },
-      bt: 'On screen the swing overlaps, but the enemy stands a step deeper, so the volume passes in front of it.',
-      at: 'Projected to the gameplay plane, depth stops mattering, and what you see is what hits.' },
+    { name: 'Project 3D volumes to the ground plane',
+      before: { ...base, shape: 'box', enemy: { u: 1.45, v: .1, low: .35 }, projected: false }, after: { ...base, shape: 'box', enemy: { u: 1.45, v: .1, low: .35 }, projected: true },
+      bt: 'Seen from above the swing covers the low enemy, but in 3D the axe passes over its head.',
+      at: 'Tested on the ground plane, height stops mattering, and what you see from above is what hits.' },
   ];
-  const TIP_LEN = PER * 3, TIP_DUR = TIP_LEN * TIPS.length;
-  function depthStrip(g, sc, x, y, w, ox, s, f) {
-    const d = sc.depth, R = rig(f), v = attackVol(sc, R, f), zs = .8;
-    g.fillStyle = '#e6dcc5'; g.beginPath(); g.roundRect(x, y, w, 70, 8); g.fill();
-    text(g, 'Seen from above (depth)', x + 10, y + 16, { size: 11, col: C.muted, w: 700 });
-    const zy = z => y + 32 + z * zs * .5;
-    g.strokeStyle = C.navy; g.setLineDash([4, 4]); g.lineWidth = 1.5; g.beginPath(); g.moveTo(x + 8, zy(0)); g.lineTo(x + w - 8, zy(0)); g.stroke(); g.setLineDash([]);
-    if (d.projected) { g.fillStyle = rgba(K.atk, .12); g.fillRect(x + 4, y + 20, w - 8, 42); text(g, 'flattened: depth ignored', x + w - 10, y + 16, { size: 11, col: K.atk, w: 700, align: 'right' }); }
-    g.fillStyle = rgba(K.rec, .3); g.fillRect(ox + (sc.enemy.x - 36) * s, zy(d.enemy - d.half), 72 * s, d.half * zs);
-    if (R.active) { const b = bbox(v); g.fillStyle = rgba(K.atk, .35); g.strokeStyle = K.atk; g.lineWidth = 2; g.beginPath(); g.rect(ox + b[0] * s, zy(-d.half), (b[2] - b[0]) * s, d.half * zs); g.fill(); g.stroke(); }
-    g.fillStyle = C.player; g.beginPath(); g.arc(ox, zy(d.player), 8, 0, TAU); g.fill();
-    g.fillStyle = '#b5523a'; g.beginPath(); g.arc(ox + sc.enemy.x * s, zy(d.enemy), 10, 0, TAU); g.fill();
+  const TIP_LEN = PER * 2, TIP_DUR = TIP_LEN * TIPS.length;
+  function heightStrip(g, sc, i, x, y, w) {
+    const v = attackVol(sc, i), hm = 2.2, sy = h => y + 62 - h / hm * 52;
+    g.fillStyle = '#e6dcc5'; g.beginPath(); g.roundRect(x, y, w, 72, 8); g.fill();
+    text(g, 'Seen from the side (height)', x + 10, y + 15, { size: 11, col: C.muted, w: 700 });
+    g.strokeStyle = C.navy; g.lineWidth = 1.5; g.beginPath(); g.moveTo(x + 8, sy(0)); g.lineTo(x + w - 8, sy(0)); g.stroke();
+    g.fillStyle = rgba(K.rec, .45); g.fillRect(x + w * .62, sy(sc.enemy.low), 40, sy(0) - sy(sc.enemy.low));
+    text(g, `enemy ${sc.enemy.low} m`, x + w * .62 + 46, sy(sc.enemy.low / 2) + 4, { size: 11, w: 700, col: '#0f4f73' });
+    if (live(i)) { g.fillStyle = rgba(K.atk, .45); g.strokeStyle = K.atk; g.lineWidth = 2; g.beginPath(); g.rect(x + w * .3, sy(v.height[1]), w * .4, sy(v.height[0]) - sy(v.height[1])); g.fill(); g.stroke();
+      text(g, `axe ${v.height[0].toFixed(2)}–${v.height[1].toFixed(2)} m`, x + w * .3 - 6, sy((v.height[0] + v.height[1]) / 2) + 4, { size: 11, w: 700, col: K.atk, align: 'right' }); }
+    if (sc.projected) { g.fillStyle = rgba(K.atk, .1); g.fillRect(x + 4, y + 20, w - 8, 46); text(g, 'flattened: height ignored', x + w - 10, y + 15, { size: 11, col: K.atk, w: 700, align: 'right' }); }
   }
   function drawTips(g, k, t) {
     T.use(g); g.clearRect(0, 0, W, H);
-    const tip = TIPS[k], f = (t % PER) / PER, pw = 512, ph = 490;
-    [['Before', tip.before, tip.bt], ['After', tip.after, tip.at]].forEach(([nm, sc, cap], i) => {
-      const x = i * (pw + 16);
+    const tip = TIPS[k], i = frameAt(t), pw = 512, ph = 490;
+    [['Before', tip.before, tip.bt], ['After', tip.after, tip.at]].forEach(([nm, sc, cap], n) => {
+      const x = n * (pw + 16);
       panel(g, x, 0, pw, ph);
       g.save(); g.beginPath(); g.roundRect(x, 0, pw, ph, 14); g.clip();
-      const oy = sc.depth ? 386 : 452, s = sc.depth ? 1.04 : 1.2, ox = x + (sc.enemy && sc.enemy.x > 230 ? 95 : 130);
-      const o = scene(g, sc, f, ox, oy, s, { hitText: tip.hitText, missText: tip.missText, w: pw - (ox - x) + x, ghost: true });
-      if (sc.depth) depthStrip(g, sc, x + 12, 404, pw - 24, ox, s, f);
-      if (k === 5) text(g, `${(sc.pRecv === 'limbs' ? PLAYER_LIMBS(o.R).length : 3) + enemyBoxes(sc.enemy).length + 1} colliders`, x + pw - 16, 66, { size: 20, w: 800, align: 'right', font: 'Montserrat', col: i ? GREEN : C.red });
+      ground(g, x, 44, pw, ph - 44);
+      const M = sc.enemy && sc.enemy.u > 2.5 ? 74 : 96, ox = x + (sc.enemy && sc.enemy.u > 2.5 ? 150 : 200), oy = sc.enemy && sc.enemy.low ? 250 : 288;
+      scene(g, sc, i, ox, oy, M, { hitText: tip.hitText, missText: tip.missText, ghost: true });
+      if (sc.enemy && sc.enemy.low) heightStrip(g, sc, i, x + 12, 392, pw - 24);
+      if (k === 5) text(g, `${playerRecv(sc, i).length + (sc.enemy ? enemyRecv(sc.enemy).length : 0) + 1} colliders`, x + pw - 16, 76, { size: 20, w: 800, align: 'right', font: 'Montserrat', col: n ? GREEN : C.red });
+      credit(g, x + pw - 12, ph - 10, 'right');
       g.restore();
-      text(g, nm, x + 16, 32, { size: 20, w: 800, font: 'Montserrat', col: i ? GREEN : C.red });
+      text(g, nm, x + 16, 32, { size: 20, w: 800, font: 'Montserrat', col: n ? GREEN : C.red });
       wrap(g, cap, x + 16, ph + 26, pw - 32, 20, { size: 16, w: 600 });
     });
   }
@@ -419,12 +421,15 @@
       if (st.key === st.k) return; st.key = st.k;
       btns.forEach(b => b.classList.toggle('on', +b.dataset.k === st.k));
       const tp = TIPS[st.k];
-      say($(s, '.hb-tout'), `<b>${tp.name}.</b> Left: ${tp.bt} Right: ${tp.at}`);
+      say($(s, '.hb-tout'), `<b>${tp.name}.</b> Before: ${tp.bt} After: ${tp.at}`);
     }
     scenes.tips = { seek(t) { st.held = true; st.tour = true; frame(t); }, dur: () => TIP_DUR };
     return dt => { if (st.held) return; st.t += Math.max(0, dt); if (st.tour && st.t >= TIP_DUR) st.t = 0; frame(st.t); };
   });
 
+  // for checks: which tip panels land
+  window.__hbCheck = () => TIPS.map(tp => [tp.name, tp.before.enemy ? firstHit(tp.before, false) : null, tp.after.enemy ? firstHit(tp.after, false) : null, tp.after.sweet ? firstHit(tp.after, true) : null]);
+  window.__hbHit = (sc, sweet = false) => firstHit(sc, sweet);
   window.__seek = (t, which = 'lab') => scenes[which].seek(t);
   window.__dur = (which = 'lab') => scenes[which].dur();
 })();

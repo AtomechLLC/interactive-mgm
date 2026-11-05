@@ -288,7 +288,7 @@ Module 5, 3Cs: Controllers (`m5-controller/`):
 - `axe-context/`: Interaction + Context = Outcome. A No Rest for the Wicked hero (real animations and frame data, Moon Studios) seen from above: one Attack key runs Input → Device → Controller → Pawn → Actions, and the Controller reads the Pawn's state and surroundings to pick a combo swing, a tree chop, a roll attack or a plunge off a ledge.
 - `attack-windows/`: Attack Window Editor. Drag the windows of a looping strike (queue, interrupt, hit, iFrames, motion, VFX, sound and shake), compare a dagger with a greatsword, and read plus, even or minus on block. (slides 248-323).
 - `cancel-playground/`: Cancel Playground. Press keys mid-attack to see which of the seventeen cancels lets you out, and watch an anti-pattern detector flag free-cancel loops and option selects. (slides 329-392).
-- `hitbox-lab/`: Hitbox Lab. One looping sword swing with its colliders drawn: switch genres to watch "hitbox" change sides, swap the five attack shapes, ride the weapon bone, and replay seven placement tips before and after. (slides 396-441).
+- `hitbox-lab/`: Hitbox Lab. One looping No Rest for the Wicked axe swing (real Combo A1 frames, seen top-down) with its colliders drawn: switch genres to watch "hitbox" change sides, swap the five attack shapes, ride the weapon bone, and replay seven placement tips before and after. (slides 396-441).
 
 Module 4, 3Cs: Character (`m4-character/`):
 - `same-button/`: Same Button, Five Meanings. One jump key, five character states: follow the signal from input through the controller to the character and see five different results. (slides 9-20, 30-31).
