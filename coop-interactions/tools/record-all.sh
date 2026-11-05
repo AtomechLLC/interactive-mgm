@@ -22,3 +22,15 @@ rec 'timing/index.html#4' revive timing-revive
 rec 'timing/index.html#5' souls timing-souls
 rec 'timing/index.html#6' stack timing-stack
 wait
+wait
+rec 'sequencing/index.html#2' tabs sequencing-hook-tabs
+rec 'sequencing/index.html#3' hands sequencing-one-vs-three
+rec 'sequencing/index.html#4' window sequencing-payoff-window
+wait
+rec 'sequencing/index.html#5' converge sequencing-two-setups
+rec 'sequencing/index.html#6' sandbox sequencing-sandbox
+wait
+rec 'sequencing-games/index.html#2' mario sequencing-games-mario
+rec 'sequencing-games/index.html#3' pokemon sequencing-games-pokemon
+rec 'sequencing-games/index.html#4' wow sequencing-games-wow
+wait
