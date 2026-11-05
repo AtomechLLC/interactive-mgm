@@ -30,3 +30,7 @@ wait
 rec 'sequencing/index.html#5' converge sequencing-two-setups
 rec 'sequencing/index.html#6' sandbox sequencing-sandbox
 wait
+rec 'sequencing-games/index.html#2' mario sequencing-games-mario
+rec 'sequencing-games/index.html#3' pokemon sequencing-games-pokemon
+rec 'sequencing-games/index.html#4' wow sequencing-games-wow
+wait

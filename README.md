@@ -89,6 +89,16 @@ Part 8 of *MGM C4 M6 - Engaging Co-op Interaction Design Fundamentals (Update)*,
   6. Sandbox: four players, two abilities each, eight beats; presets and a "one player does it all" mode.
   The rules are `RULES` (timed scenes) and `BRULE` (sandbox beats) in `sequencing.js`. GIFs: `coop-interactions/gifs/sequencing-*.gif`, recorded by `coop-interactions/tools/record-all.sh`.
 
+## Co-op Interactions: Sequencing in Real Games (`coop-interactions/sequencing-games/`)
+
+The appendix to Sequencing with Tokens, with real game art.
+  1. Title
+  2. Luigi stomps, Mario kicks (one-two combo): a walking Koopa hurts; a stomp leaves a shell, and the kick clears five Goombas. Luigi is a palette swap of the SMB Mario sprites.
+  3. Rain makes Thunder never miss (Pokémon doubles): ten Thunders at 70% vs ten after Rain Dance.
+  4. Three debuffs, then the payoff (Classic WoW): Sunder Armor ×5, Faerie Fire and Curse of Recklessness take Onyxia from 3731 armor to 336; Eviscerate goes from 894 to 1414 (armor formula and values from Classic, 1500 damage before armor is illustrative). Icons from wow.zamimg.com in `img/`.
+  5. A click-to-play wall of 13 YouTube clips grouped as hand-offs, setup → payoff, exploits and full team chains (ids checked against YouTube oEmbed).
+  GIFs: `coop-interactions/gifs/sequencing-games-*.gif`.
+
 ## Layout
 
 - `index.html`: the course home. One section per module in module number order (M1 to M8), each listing that module's interactive pages in deck order with their part and slide range. Add a line here when you add a page to a module.
