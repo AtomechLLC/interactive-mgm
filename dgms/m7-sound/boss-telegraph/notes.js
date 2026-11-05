@@ -1,0 +1,4 @@
+// Speaker notes. Source: Noah Taublieb's sound design deck (workshop version), slide 23, with Emmanuel Lagumbay's Guild Wars 2 notes.
+window.NOTES = [
+  { script: 'Rule one of immersive game audio is to focus on what is important. Emmanuel’s example comes from a Guild Wars 2 raid boss that fires a shot at a player. The boss shows where the shot is going, but players still need to know exactly when to dodge, and that is the sound’s job: the sound gives them an audio timer based on when that shot is exactly going to happen. This boss is an original grey box. The arrow says where. The wind-up is a different length every round, so the arrow alone cannot say when. The tone rises and stops the instant the shot fires, so you dodge as it tops out. Play a few rounds with the tone, then mute it and compare the two scores, and where your dodges land on the timing chart.' },
+];

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Camera Rig Switcher · Directing Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/deck.css">
+<link rel="stylesheet" href="../../../assets/kit.css">
+<link rel="stylesheet" href="../../shared/dgms.css">
+<link rel="stylesheet" href="rig-switcher.css">
+<script>
+  window.DECK = { title: 'Directing Game Mechanics · Module 6 · Camera Rig Switcher', home: '../../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<section class="slide" data-title="Camera rig switcher" data-demo="switch">
+  <div class="kicker">11 common game camera types · slides 21-103</div>
+  <h2 class="sm">One level, <span class="accent">eleven camera rigs</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Camera rig</h4>
+      <div class="seg rs-rig">
+        <button class="btn" data-r="fixed">1 Fixed</button><button class="btn" data-r="dolly">2 Dolly</button><button class="btn" data-r="blend">3 Position blend</button><button class="btn" data-r="vector">4 Vector</button><button class="btn" data-r="spline">5 Spline</button><button class="btn" data-r="animated">6 Animated</button><button class="btn" data-r="scrolling">7 Scrolling</button><button class="btn" data-r="floating">8 Floating</button><button class="btn on" data-r="follow">9 Follow</button><button class="btn" data-r="cover">10 Cover</button><button class="btn" data-r="first">11 First-person</button>
+      </div>
+      <div class="row wrap"><button class="btn rs-tour on">▶ Walk-through</button><button class="btn rs-demo">Replay demo walk</button></div>
+      <div class="rs-opt" data-for="fixed"><h4>Arena activation volumes</h4><div class="seg rs-vol"><button class="btn on" data-v="split">Split through the fight</button><button class="btn" data-v="tidy">One volume per room</button></div></div>
+      <div class="rs-opt" data-for="floating"><h4>Floating camera</h4><div class="seg rs-jump"><button class="btn" data-j="corridor">Jump: corridor</button><button class="btn" data-j="courtyard">Courtyard</button><button class="btn" data-j="arena">Arena</button></div>
+        <label class="rng">Height <input type="range" class="rs-h" min="3" max="26" step="0.5" value="17"></label></div>
+      <p class="tip">Pick a rig to watch its demo walk. Drag on the map to walk the hero yourself (for floating, drag the camera).</p>
+      <div class="mt-stats rs-stats"></div>
+      <p class="mt-out rs-out"></p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Off the spline" data-demo="offspline">
+  <div class="kicker">spline cameras · slide 66</div>
+  <h2 class="sm">Walk <span class="accent">off the spline</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Courtyard</h4>
+      <div class="row wrap"><button class="btn os-tour on">▶ Walk-through</button></div>
+      <div class="seg"><button class="btn os-jump" data-p="24,15.7">On the spline</button><button class="btn os-jump" data-p="24,3.4">Far side of the courtyard</button></div>
+      <label class="chk"><input type="checkbox" class="os-pip"> Follow camera inset</label>
+      <p class="tip">Drag the hero on the map. The camera only knows the hero’s closest point on the rail.</p>
+      <div class="mt-stats os-stats"></div>
+      <p class="mt-out os-out">A spline suits a corridor or a doorway, where the hero can’t stray far from the rail. In the open courtyard, every step sideways is a step away from the camera.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Classify the camera" data-demo="drill">
+  <div class="kicker">drill · slides 105-107</div>
+  <h2 class="sm">Classify <span class="accent">the camera</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Drill</h4>
+      <div class="row wrap"><button class="btn dr-tour on">▶ Walk-through</button><button class="btn dr-next">Next rig</button></div>
+      <p class="tip">A rig plays without its name and with its rails and volumes hidden. Click the type you think it is, under the view.</p>
+      <div class="mt-stats dr-stats"></div>
+      <p class="mt-out dr-out"></p>
+      <p class="src">Then the deck’s question (slide 106): what are two of your favourite games, and which camera types do they use?</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../../assets/deck.js"></script>
+<script src="../../../assets/kit.js"></script>
+<script src="../../shared/topdown.js"></script>
+<script src="rig-switcher.js"></script>
+</body>
+</html>

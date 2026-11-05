@@ -1,0 +1,4 @@
+/* Music that reacts: page-only styles. */
+.mt-side .rm-snd.on { background: #2fae63; border-color: #2fae63; color: #fff; }
+.mt-side .rm-acts { margin-bottom: 10px; }
+.mt-side .rm-acts[hidden] { display: none; }

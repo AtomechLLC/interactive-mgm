@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hear the Boss Coming · Directing Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/deck.css">
+<link rel="stylesheet" href="../../../assets/kit.css">
+<link rel="stylesheet" href="../../shared/dgms.css">
+<style>
+  .mt-side .btn.bt-snd.on { background: #2fae63; border-color: #2fae63; color: #fff; }
+  .mt-side .btn.bt-dodge { font-size: 20px; padding: 10px 18px; background: #e5322d; border-color: #a8201c; color: #fff; }
+  .mt-side .btn.bt-dodge:active { transform: translateY(1px); }
+</style>
+<script>
+  window.DECK = { title: 'Directing Game Mechanics · Module 7 · Hear the Boss Coming', home: '../../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<section class="slide" data-title="Hear the boss coming" data-demo="bt-boss" data-touch-keys="Space:Dodge">
+  <div class="kicker">rule 1, focus on what's important · slide 23</div>
+  <h2 class="sm">An arrow says where; <span class="accent">a tone says when</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <div class="row wrap"><button class="btn bt-tour on">▶ Walk-through</button><button class="btn bt-snd">♪ Sound: off</button></div>
+      <p class="tip">The boss aims an arrow at you and charges a shot. Dodge just before it lands: <b>Space</b>, <b>D</b> or the button.</p>
+      <button class="btn bt-dodge">Dodge</button>
+      <h4>Telegraph</h4>
+      <div class="seg bt-mode"><button class="btn on" data-m="1">Arrow + tone</button><button class="btn" data-m="0">Arrow alone (tone muted)</button></div>
+      <button class="btn bt-reset">Reset score</button>
+      <div class="mt-stats bt-stats"></div>
+      <p class="mt-out bt-out"></p>
+      <p class="src">Original grey-box boss, after Emmanuel Lagumbay's Guild Wars 2 raid example. Sounds synthesised live (Web Audio API).</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../../assets/deck.js"></script>
+<script src="../../../assets/kit.js"></script>
+<script src="../../shared/topdown.js"></script>
+<script src="boss-telegraph.js"></script>
+</body>
+</html>

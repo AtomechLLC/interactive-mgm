@@ -1,0 +1,7 @@
+/* Camera rig switcher: page-only styles. Rig-specific controls show only while their rig is picked. */
+.rs-opt { display: none; }
+.rs-opt.on { display: block; }
+.mt-side .rs-rig .btn { font-size: 14px; padding: 4px 9px; }
+.mt-side .rs-opt .seg .btn { font-size: 14px; padding: 4px 9px; }
+.mt-side .rs-out, .mt-side .dr-out, .mt-side .os-out { font-size: 16px; }
+.mt-side .mt-stats b { font-size: 24px; }
