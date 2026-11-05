@@ -169,3 +169,14 @@ Page images in `dgms/m8-balance/` and `dgms/m9-game-feel/`: World of Warcraft ic
 | `dgms--m7-sound--boss-telegraph.svg` | [dodging](https://game-icons.net/1x1/lorc/dodging.html) | Lorc |
 
 Page images in `dgms/m4-character/` and `dgms/m5-controller/`: see each page's `img/SOURCES.txt` (Riot Data Dragon, League wiki renders, mariowiki sprites, WoW icons).
+| `dgms--m0-power-of-polish.svg` | [gem-pendant](https://game-icons.net/1x1/lorc/gem-pendant.html) | Lorc |
+| `dgms--m1-pillars.svg` | [greek-temple](https://game-icons.net/1x1/delapouite/greek-temple.html) | Delapouite |
+| `dgms--m2-audience.svg` | [crowned-heart](https://game-icons.net/1x1/lorc/crowned-heart.html) | Lorc |
+| `dgms--m3-skills.svg` | [skills](https://game-icons.net/1x1/delapouite/skills.html) | Delapouite |
+| `dgms--m4-character.svg` | [character](https://game-icons.net/1x1/delapouite/character.html) | Delapouite |
+| `dgms--m5-controller.svg` | [game-console](https://game-icons.net/1x1/delapouite/game-console.html) | Delapouite |
+| `dgms--m6-camera.svg` | [clapperboard](https://game-icons.net/1x1/delapouite/clapperboard.html) | Delapouite |
+| `dgms--m7-sound.svg` | [speaker](https://game-icons.net/1x1/delapouite/speaker.html) | Delapouite |
+| `dgms--m8-balance.svg` | [weight-scale](https://game-icons.net/1x1/delapouite/weight-scale.html) | Delapouite |
+| `dgms--m9-game-feel.svg` | [spark-spirit](https://game-icons.net/1x1/lorc/spark-spirit.html) | Lorc |
+| `dgms--interview.svg` | [briefcase](https://game-icons.net/1x1/delapouite/briefcase.html) | Delapouite |
