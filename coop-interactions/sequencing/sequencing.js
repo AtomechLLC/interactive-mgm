@@ -215,7 +215,7 @@
         if (e.r.burst && v < .6) { g.save(); g.globalAlpha = 1 - v / .6; g.strokeStyle = '#9fdcff'; g.lineWidth = 6; g.beginPath(); g.arc(ex, ey, 40 + v / .6 * (BURST_R - 40), 0, TAU); g.stroke(); g.restore(); }
         if (e.r.fail && v < .5) { const s = Math.sin(v * 40) * 8 * (1 - v * 2); g.strokeStyle = C.red; g.lineWidth = 5; g.beginPath(); g.moveTo(ex - 14 + s, ey - 14); g.lineTo(ex + 14 + s, ey + 14); g.moveTo(ex + 14 + s, ey - 14); g.lineTo(ex - 14 + s, ey + 14); g.stroke(); }
         const n = e.splash ? e.splash.length : 0;
-        T.popText(n ? `Shattered! 80 + ${n} × ${SHARD}` : e.r.word, ex, ey - S.en.r - 30 - v * 18, e.r.big ? C.goldInk : e.r.fail ? '#7a7f9e' : STAGE[e.stage] || C.blue, 1 - v * .7);
+        T.popText(n ? `Shattered! 80 + ${n} × ${SHARD} = ${80 + n * SHARD}` : e.r.word, ex, ey - S.en.r - 30 - v * 18, e.r.big ? C.goldInk : e.r.fail ? '#7a7f9e' : STAGE[e.stage] || C.blue, 1 - v * .7);
       }
     });
     return [ex, ey];
@@ -224,7 +224,12 @@
   const take = (takes, t) => { const tot = takes.reduce((s, x) => s + x.dur, 0); let u = ((t % tot) + tot) % tot; for (const k of takes) { if (u < k.dur) return { k, t: u }; u -= k.dur; } return { k: takes[0], t: 0 }; };
   const totalDur = takes => takes.reduce((s, x) => s + x.dur, 0);
   function caption(g, text, x, y, w) { T.label(text, x, y, 'left', '#fff', 18, 'rgba(21,32,68,.92)'); }
-  function damage(g, S, t, x, y) { T.label(`Damage: ${S.total(t)}`, x, y, 'right', C.ink, 20); }
+  function damage(g, S, t, x, y) {
+    const b = S.ev.find(e => e.r.burst && e.splash.length && t >= e.th), tot = S.total(t);
+    if (!b) return T.label(`Damage: ${tot}`, x, y, 'right', C.ink, 20);
+    const sh = b.r.dmg + b.splash.length * SHARD;
+    T.label(`Damage: ${tot - sh} from setups + ${sh} shatter = ${tot}`, x, y, 'right', C.ink, 20);
+  }
 
   /* =====================================================================
      Slide 2: hooks as puzzle tabs (deck slides 209-213)
