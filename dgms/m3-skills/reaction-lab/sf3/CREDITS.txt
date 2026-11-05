@@ -1,0 +1,8 @@
+Street Fighter III: 3rd Strike sprites © Capcom. Used for educational course material.
+Sprite sheets and frame data from the Game Animation Library move explorer
+(https://gameanimationlibrary.net/move-explorer.html#g=street-fighter-3-third-strike),
+which takes them from Baston by ensabahnur (http://ensabahnur.free.fr/BastonNew/).
+  ryu.normal.028.webp  Ryu, Towards + Strong (overhead): startup 15, active 15-26, recovery 9, total 35
+  ryu.normal.020.webp  Ryu, Crouching Forward (low): startup 8
+  ken.normal.001.webp  Ken, Jab (frame 1 used as the standing pose)
+  ken.normal.007.webp  Ken, Crouching Jab (frame 1 used as the crouching pose)

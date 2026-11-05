@@ -1,12 +1,13 @@
-/* AND vs OR (DGMS C2 M3 "Leveraging Player Skills", deck slides 53-70).
+/* AND vs OR (DGMS C2 M3 "Leveraging Player Skills", deck section on skill tests).
    gate: twelve players, five skill bars each. Build a test from skill requirements and join them with AND (complementary:
          "it expects you to do this, and this, and this", slide 56) or OR (supplementary: "you don't have to be as precise
          at timing if you can button mash quickly", slide 62). Presets: Sky Diver (jump aim AND chute timing AND
          steering) and Overwatch (aim OR strategy OR positioning, one hero per route).
-   slam: Dark Souls III's teleport slam (slides 66-67): on first sight only reaction gets you out; from the second
+   slam: Dark Souls III's teleport slam: on first sight only reaction gets you out; from the second
          attempt, knowledge of the timing substitutes for it. The pass rule is Reaction OR Knowledge.
    All player numbers, reaction times and the 60-point bar are illustrative; they live in PLAYERS and SLAM below.
-   Images: Overwatch hero portraits (Ana, Torbjörn, Mercy, Reinhardt) from Blizzard's CDN via the OverFast API hero list,
+   Images: Elden Ring player animations (FromSoftware) from the Game Animation Library, in ../img/and-or/{tarnished,boss}.webp
+   (see SPR in the slam demo); Overwatch hero portraits (Ana, Torbjörn, Mercy, Reinhardt) from Blizzard's CDN via the OverFast API hero list,
    resized to 128 px, in ../img/and-or/. Everything else is drawn in code. */
 (function () {
   const { $, $$, canvasDemo, say } = FPF.kit;
@@ -151,23 +152,33 @@
     };
     const FEAT = PLAYERS.findIndex(p => p.name === 'Gus');   // slow hands, quick study
 
-    function knight(g, x, y, s, rot = 0, col = '#5d618c') {
-      g.save(); g.translate(x, y); g.rotate(rot); g.scale(s, s);
-      g.fillStyle = col; g.beginPath(); g.roundRect(-11, -38, 22, 32, 6); g.fill();
-      g.fillStyle = '#c9cbd6'; g.beginPath(); g.arc(0, -46, 10, 0, Math.PI * 2); g.fill();
-      g.fillStyle = '#262c6a'; g.fillRect(-7, -48, 14, 3);
-      g.fillStyle = '#8b6f47'; g.beginPath(); g.ellipse(-12, -22, 7, 11, 0, 0, Math.PI * 2); g.fill();
-      g.fillStyle = col; g.fillRect(-10, -6, 7, 8); g.fillRect(3, -6, 7, 8);
-      g.restore();
-    }
-    function boss(g, x, y, s, a, slamK) {
-      if (a <= 0) return;
-      g.save(); g.globalAlpha = a; g.translate(x, y); g.scale(s, s);
-      g.fillStyle = '#1b1530'; g.beginPath(); g.moveTo(-34, 0); g.lineTo(-24, -92); g.lineTo(24, -92); g.lineTo(34, 0); g.closePath(); g.fill();
-      g.fillStyle = '#2d2448'; g.beginPath(); g.arc(0, -104, 16, 0, Math.PI * 2); g.fill();
-      g.fillStyle = '#ffb951'; g.beginPath(); g.arc(-5, -106, 2.5, 0, Math.PI * 2); g.arc(5, -106, 2.5, 0, Math.PI * 2); g.fill();
-      g.strokeStyle = '#c9cbd6'; g.lineWidth = 7; g.beginPath();
-      const ang = lerp(-2.4, -.2, slamK); g.moveTo(16, -70); g.lineTo(16 + Math.cos(ang) * 110, -70 + Math.sin(ang) * 110); g.stroke();
+    // Real animation frames: Elden Ring player animations (FromSoftware) rendered from the Game Animation Library's
+    // 3D preview (gameanimationlibrary.net/move-explorer.html) with a fixed side camera, 15 frames per second for moves
+    // and 10 for idles. The library has no boss rigs, so the boss is the same Haligtree Knight, darkened, swinging the
+    // Anvil Hammer's two-handed Colossal Weapon heavy (a031_032505), whose hammer meets the ground on tab frame 23 (sheet frame 11).
+    const SPR = {
+      tarnished: { src: '../img/and-or/tarnished.webp', w: 191, h: 190, cols: 10, ox: 85, oy: 134, clips: { idle: [0, 30, 10], roll: [30, 25, 15], hit: [55, 30, 15] } },
+      boss: { src: '../img/and-or/boss.webp', w: 294, h: 244, cols: 10, ox: 132, oy: 204, clips: { idle: [0, 30, 10], slam: [30, 40, 15] } },
+    };
+    const SLAM_HIT = 11;  // sheet frame where the hammer meets the ground
+    Object.values(SPR).forEach(o => { o.img = new Image(); o.img.src = o.src; });
+    const tint = document.createElement('canvas'), tg = tint.getContext('2d');
+    // draw clip frame `t` seconds in (or frame index `i`), feet on (x, y), scale s, optional colour flash
+    function sprite(g, o, clip, t, x, y, s, { a = 1, i = null, loop = false, flash = 0 } = {}) {
+      if (!o.img.complete || !o.img.naturalWidth || a <= 0) return;
+      const [k0, n, fps] = o.clips[clip];
+      let k = i != null ? Math.round(i) : Math.floor(Math.max(0, t) * fps);
+      k = loop ? ((k % n) + n) % n : clamp(k, 0, n - 1);
+      const f = k0 + k, sx = (f % o.cols) * o.w, sy = Math.floor(f / o.cols) * o.h;
+      let src = o.img, ssx = sx, ssy = sy;
+      if (flash > 0) {
+        tint.width = o.w; tint.height = o.h; tg.clearRect(0, 0, o.w, o.h); tg.globalCompositeOperation = 'source-over';
+        tg.drawImage(o.img, sx, sy, o.w, o.h, 0, 0, o.w, o.h);
+        tg.globalCompositeOperation = 'source-atop'; tg.fillStyle = `rgba(229,50,45,${.6 * flash})`; tg.fillRect(0, 0, o.w, o.h);
+        src = tint; ssx = ssy = 0;
+      }
+      g.save(); g.globalAlpha = a;
+      g.drawImage(src, ssx, ssy, o.w, o.h, x - o.ox * s, y - o.oy * s, o.w * s, o.h * s);
       g.restore();
     }
 
@@ -183,20 +194,25 @@
       g.fillStyle = grd; g.beginPath(); g.roundRect(14, AY, 560, AH, 12); g.fill();
       g.fillStyle = '#4a4560'; g.fillRect(14, floorY, 560, AY + AH - floorY - 6);
       const px = 200, f = R[FEAT];
-      // boss: idle at the right, vanishes, reappears over the player, slams
+      // boss: idle at the right, vanishes, reappears over the player mid-leap, slams
       const away = u < tTel ? 1 : u < tTel + .25 ? 1 - (u - tTel) / .25 : 0;
       const over = u < tCue ? 0 : u < tCue + .06 ? (u - tCue) / .06 : u < tSlam + .7 ? 1 : 1 - (u - tSlam - .7) / .3;
-      const slamK = clamp((u - (tSlam - .12)) / .12);
-      boss(g, 470, floorY, 1, away, 0);
-      if (u > tTel && u < tTel + .35) T.poof?.(470, floorY - 60, (u - tTel) / .35);
-      boss(g, px + 40, floorY, 1, clamp(over), slamK);
+      const BX = 470, BS = .9, PS = .68;
+      sprite(g, SPR.boss, 'idle', st.t, BX, floorY, BS, { a: away, loop: true });
+      if (u > tTel && u < tTel + .35) T.poof?.(BX, floorY - 60, (u - tTel) / .35);
+      // the slam is timed so its hit frame lands on tSlam: it shows up `warn` ms before, already in the air
+      sprite(g, SPR.boss, 'slam', 0, px + 95, floorY, BS, { a: clamp(over), i: SLAM_HIT + (u - tSlam) * 15 });
       // the featured player: rolls away if they pass, takes the hit if not
       const dodgeAt = f.byR ? tCue + f.rt / 1000 : f.byK ? tSlam - .25 : Infinity;
-      const roll = clamp((u - dodgeAt) / .35), hit = !f.pass && u > tSlam;
-      knight(g, px - roll * 120, floorY, 1.15, roll * Math.PI * 2, hit && u < tSlam + .4 ? '#e5322d' : '#2ea3dc');
-      if (u > tSlam && u < tSlam + .4) { g.strokeStyle = `rgba(255,185,81,${1 - (u - tSlam) / .4})`; g.lineWidth = 5; g.beginPath(); g.ellipse(px + 40, floorY, 40 + (u - tSlam) * 300, 10, 0, 0, Math.PI * 2); g.stroke(); }
+      const roll = clamp((u - dodgeAt) / .9), hit = !f.pass && u > tSlam;
+      const pX = px - Math.sin(roll * Math.PI / 2) * 120;
+      if (u >= dodgeAt) sprite(g, SPR.tarnished, 'roll', u - dodgeAt, pX, floorY, PS);
+      else if (hit) sprite(g, SPR.tarnished, 'hit', u - tSlam, pX, floorY, PS, { flash: u < tSlam + .4 ? 1 - (u - tSlam) / .4 : 0 });
+      else sprite(g, SPR.tarnished, 'idle', st.t, pX, floorY, PS, { loop: true });
+      if (u > tSlam && u < tSlam + .4) { g.strokeStyle = `rgba(255,185,81,${1 - (u - tSlam) / .4})`; g.lineWidth = 5; g.beginPath(); g.ellipse(px + 20, floorY, 40 + (u - tSlam) * 300, 10, 0, 0, Math.PI * 2); g.stroke(); }
       if (u > tSlam + .1 && u < LOOP - .2) T.label(f.pass ? (f.byR ? 'Gus reacts in time' : 'Gus dodges on rhythm') : 'Gus is too slow to react', 300, AY + 28, 'center', f.pass ? '#1a8a4c' : C.red, 15);
       txt(g, `Gus · reaction ${f.rt} ms · knowledge ${f.kn}`, 30, AY + AH - 18, BODY(14, 600), '#fffaf0');
+      txt(g, 'Animations: Elden Ring © FromSoftware', 560, AY + AH - 18, BODY(11, 500), 'rgba(255,250,240,.7)', 'right');
       // timeline
       const LX = 600, LW = 410, ly = 90, sx = tt => LX + LW * tt / LOOP;
       txt(g, 'One cycle of the attack', LX, AY + 18, HEAD(16));

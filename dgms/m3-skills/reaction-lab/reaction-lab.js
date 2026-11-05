@@ -31,7 +31,9 @@
     tries: 20,                                 // proposal: hit rate after 20 tries
     avgF: 15, avgMs: 250, unseeable: 18,       // deck slide 104
     moves: {                                   // deck slides 104 and 107
-      sf3: { name: 'Street Fighter III overhead', short: 'SF3 overhead', f: 14 },
+      // sf3 is Ryu's Towards + Strong from the Game Animation Library move explorer (Baston data): its first active
+      // frame is 15, so 14 frames come before the hit, then 12 active and 9 recovery (35 total). f counts frames before the hit.
+      sf3: { name: 'SF3: 3rd Strike · Ryu, Towards + Strong overhead', short: 'SF3 overhead', f: 14, data: { startup: 15, active: 12, recovery: 9, total: 35 } },
       sf6: { name: 'Street Fighter 6 overhead', short: 'SF6 overhead', f: 20 },
       ds2: { name: 'Dark Souls 2 knight', short: 'DS2 knight swing', f: 48 },
     },
@@ -440,8 +442,24 @@
     judge(c) { judgeRT(c); c.res = c.early ? 'early' : c.rf != null && c.rf < c.S ? 'block' : 'hit'; },
     after(c) { const r = slot(`oh.${c.mode}.${c.move}`, [0, 0]); r[1]++; if (c.res === 'block') r[0]++; if (c.rf != null) pushKeep(slot(`ohrf.${c.mode}`, []), c.rf); save(); },
   });
-  const OH_SCRIPT = [['sf6', 17, 1000], ['sf6', 16, 900], ['sf3', 16, 1100], ['sf3', 15, 950], ['ds2', 18, 1000]]
+  const OH_SCRIPT = [['sf3', 16, 1100], ['sf3', 15, 950], ['sf3', -22, 1200], ['sf6', 17, 1000], ['sf6', 16, 900], ['ds2', 18, 1000]]
     .map(([move, rf, wait]) => ({ move, S: N.moves[move].f, rf, wait, key: 'KeyJ', mode: 'sight' }));
+  // Street Fighter III: 3rd Strike sprites (© Capcom) from the Game Animation Library move explorer, which takes them
+  // from Baston by ensabahnur; see sf3/CREDITS.txt. One cell per game frame; ax, ay is the frame-1 pushbox foot centre.
+  const SPR = {
+    oh:     { src: 'ryu.normal.028.webp', w: 142, h: 121, cols: 28, n: 35, ax: 61, ay: 113 },   // Ryu, Towards + Strong
+    low:    { src: 'ryu.normal.020.webp', w: 184, h: 88, cols: 22, n: 28, ax: 59, ay: 79 },    // Ryu, Crouching Forward
+    stand:  { src: 'ken.normal.001.webp', w: 108, h: 117, cols: 11, n: 11, ax: 44, ay: 109 },  // Ken, frame 1 of Jab
+    crouch: { src: 'ken.normal.007.webp', w: 123, h: 81, cols: 12, n: 12, ax: 44, ay: 72 },    // Ken, frame 1 of Crouching Jab
+  };
+  Object.values(SPR).forEach(sp => { sp.img = new Image(); sp.img.src = 'sf3/' + sp.src; });
+  const sprReady = () => Object.values(SPR).every(sp => sp.img.complete && sp.img.naturalWidth);
+  function sprite(g, sp, i, x, fy, dir, sc = 1.5) {
+    i = clamp(Math.floor(i), 0, sp.n - 1);
+    g.save(); g.imageSmoothingEnabled = false; g.translate(Math.round(x), fy); g.scale(dir * sc, sc);
+    g.drawImage(sp.img, (i % sp.cols) * sp.w, Math.floor(i / sp.cols) * sp.h, sp.w, sp.h, -sp.ax, -sp.ay, sp.w, sp.h);
+    g.restore();
+  }
   function fighter(g, x, fy, dir, col, o) {
     // o: { crouch 0..1, arm angle (rad, 0 = forward), kick 0..1, sword }
     const hgt = lerp(150, 92, o.crouch || 0), hipY = fy - lerp(70, 40, o.crouch || 0), shY = fy - hgt + 34;
@@ -469,7 +487,7 @@
     g.restore();
   }
   lab('overhead', {
-    state: { move: 'sf6' },
+    state: { move: 'sf3' },
     keys: ['KeyJ'],
     script: OH_SCRIPT,
     opts: ohOpts,
@@ -486,12 +504,15 @@
       box(g, 28, 22, 984, 318, 16, '#2a3160', C.navy, 3);
       g.fillStyle = '#3d4270'; g.fillRect(31, 270, 978, 67);
       g.fillStyle = 'rgba(255,255,255,.06)'; for (let i = 0; i < 12; i++) g.fillRect(31 + i * 84, 270, 42, 67);
-      tx(g, mv.name + ` · ${S} startup frames (${ms(S)} ms)`, 48, 48, HF(19), '#fff');
+      const D = mv.data, real = !!D && sprReady();
+      tx(g, D ? `${mv.name} · first active frame ${D.startup}` : mv.name + ` · ${S} startup frames (${ms(S)} ms)`, 48, 48, HF(19), '#fff');
       ghostTag(g, v, 996, 48);
-      const fy = 300, px = 440, ox = 548;
+      const fy = 300, px = real ? 432 : 440, ox = real ? 578 : 548;
       // player: crouch-blocks until the press
       const stood = pressed;
-      fighter(g, px, fy, 1, SIGHT, { crouch: stood ? 0 : 1, arm: stood ? -1.25 : -.75 });
+      const shake = c && (c.res === 'hit' && !c.early && now >= imp && now < imp + 160 || c.early && pressed && now > c.press + 240 && now < c.press + 400) ? (Math.floor(now / 33) % 2 ? 3 : -3) : 0;
+      if (real) sprite(g, stood ? SPR.stand : SPR.crouch, 0, px + shake, fy, 1);
+      else fighter(g, px, fy, 1, SIGHT, { crouch: stood ? 0 : 1, arm: stood ? -1.25 : -.75 });
       // opponent wind-up
       let p = 0;
       if (cued) p = clamp((now - c.cue) / (S * FR));
@@ -504,32 +525,48 @@
         else if (p < 1) arm = -2.1;
         if (landed) arm = lerp(-2.1, mv.f > 30 ? -.25 : .05, clamp((now - imp) / 70));
       }
-      fighter(g, ox, fy, -1, C.red, { crouch: 0, arm, sword: v.cfg.move === 'ds2', kick });
-      if (cued && !landed && !early && (mode !== 'sound' || v.tour)) tx(g, `startup frame ${Math.min(S, Math.floor((now - c.cue) / FR) + 1)} / ${S}`, ox + 30, 120, BF(16, 700), C.gold, 'left');
+      // real frames: game frame k (1-based) is on screen from cue + (k - 1) frames, so the first active frame lands at the hit
+      const fr = cued ? Math.floor((now - c.cue) / FR + 1e-6) : 0, hide = mode === 'sound' && !v.tour && !landed;
+      if (real) {
+        const lowAt = early ? c.press + 120 : Infinity;
+        if (now >= lowAt) sprite(g, SPR.low, (now - lowAt) / FR, ox, fy, -1);
+        else sprite(g, SPR.oh, hide || early ? 0 : fr, ox, fy, -1);
+      } else fighter(g, ox, fy, -1, C.red, { crouch: 0, arm, sword: v.cfg.move === 'ds2', kick });
+      if (real && cued && !early && !hide && fr < D.total) {
+        const k = fr + 1, ph = k < D.startup ? 'startup' : k < D.startup + D.active ? 'active' : 'recovery';
+        tx(g, `frame ${k} / ${D.total} · ${ph}`, ox + 62, 120, BF(16, 700), ph === 'active' ? '#ff8a80' : C.gold, 'left');
+      } else if (!real && cued && !landed && !early && (mode !== 'sound' || v.tour)) tx(g, `startup frame ${Math.min(S, Math.floor((now - c.cue) / FR) + 1)} / ${S}`, ox + 30, 120, BF(16, 700), C.gold, 'left');
+      if (real) tx(g, 'Street Fighter III: 3rd Strike sprites © Capcom · frames and frame data: Baston (ensabahnur) via Game Animation Library', 44, 326, BF(12, 600), 'rgba(255,255,255,.72)', 'left');
       if (mode === 'sound' && c && !pressed && !landed) waves(g, 110, 160, cued && v.tour ? 1 : .35, cued && v.tour ? C.gold : 'rgba(255,255,255,.45)');
       // outcome
       if (early && now > c.press + 240) { tx(g, 'Stood too early: the low hits', W / 2, 92, HF(28), '#ffb06b', 'center'); }
       else if (c && landed && !c.early) {
         const k = clamp((now - imp) / 400);
         if (c.res === 'block') { g.strokeStyle = C.shield; g.lineWidth = 6; g.globalAlpha = 1 - k * .6; g.beginPath(); g.arc(px + 40, fy - 135, 26 + k * 20, 0, Math.PI * 2); g.stroke(); g.globalAlpha = 1; tx(g, 'BLOCKED', W / 2, 92, HF(34), C.shield, 'center'); }
-        else { g.fillStyle = `rgba(229,50,45,${.8 - k * .5})`; g.beginPath(); for (let i = 0; i < 16; i++) { const r = i % 2 ? 14 : 38, a = i * Math.PI / 8; g.lineTo(px + 20 + Math.cos(a) * r, fy - 130 + Math.sin(a) * r); } g.closePath(); g.fill(); tx(g, c.press != null ? 'HIT · too late' : 'HIT', W / 2, 92, HF(34), '#ff8a80', 'center'); }
+        else { g.fillStyle = `rgba(229,50,45,${.8 - k * .5})`; const hy = real && !stood ? fy - 100 : fy - 130; g.beginPath(); for (let i = 0; i < 16; i++) { const r = i % 2 ? 14 : 38, a = i * Math.PI / 8; g.lineTo(px + 20 + Math.cos(a) * r, hy + Math.sin(a) * r); } g.closePath(); g.fill(); tx(g, c.press != null ? 'HIT · too late' : 'HIT', W / 2, 92, HF(34), '#ff8a80', 'center'); }
       }
       keycap(g, 960, 300, 'J', c && recent(now, c.press, 180), SIGHT);
       // frame strip
-      const n = Math.max(S + 2, 24), sx = 40, sw = 960, cw = sw / n, sy = 390;
-      tx(g, 'startup frames: block before the hit lands', 28, 364, HF(16), C.ink);
+      // cell i is game frame i + 1; with real data the strip is the whole move: startup, active, recovery
+      const n = D ? D.total : Math.max(S + 2, 24), sx = 40, sw = 960, cw = sw / n, sy = 390;
+      const A0 = D ? D.startup - 1 : S, A1 = D ? A0 + D.active : S + 1;
+      tx(g, D ? `frames 1-${A0} startup · ${A0 + 1}-${A1} active · ${A1 + 1}-${n} recovery: block before frame ${A0 + 1}` : 'startup frames: block before the hit lands', 28, D ? 356 : 364, HF(16), C.ink);
       for (let i = 0; i < n; i++) {
-        const col = i < S ? '#fde9b8' : i === S ? C.red : '#e8dfcd';
-        box(g, sx + i * cw + 1, sy, cw - 2, 34, 4, col, i < S ? '#e0a92d' : '#cdbf9f', 1.5);
+        const col = i < A0 ? '#fde9b8' : i < A1 ? (D && i > A0 ? '#ef8f88' : C.red) : D ? '#cfd8ea' : '#e8dfcd';
+        box(g, sx + i * cw + 1, sy, cw - 2, 34, 4, col, i < A0 ? '#e0a92d' : i < A1 && D ? '#b8322c' : D ? '#93a3c4' : '#cdbf9f', 1.5);
       }
       tx(g, 'hit', sx + S * cw + cw / 2, sy + 17, BF(12, 800), '#fff', 'center');
+      if (D) {
+        tx(g, `active · ${D.active} f`, sx + (A0 + 1 + (A1 - A0 - 1) / 2) * cw, sy + 17, BF(13, 800), '#fff', 'center');
+        tx(g, `recovery · ${D.recovery} f`, sx + (A1 + D.recovery / 2) * cw, sy + 17, BF(13, 800), '#33416e', 'center');
+      }
       const XL = f => sx + f * cw;
       g.setLineDash([6, 5]); g.lineWidth = 2.5;
       g.strokeStyle = C.red; g.beginPath(); g.moveTo(XL(N.unseeable), sy - 8); g.lineTo(XL(N.unseeable), sy + 46); g.stroke();
       g.strokeStyle = '#2ea3dc'; g.beginPath(); g.moveTo(XL(N.avgF), sy - 8); g.lineTo(XL(N.avgF), sy + 46); g.stroke(); g.setLineDash([]);
       tx(g, '18 f line', XL(N.unseeable) + 4, sy + 58, BF(13, 700), C.redDk, 'left');
       tx(g, 'avg 15 f', XL(N.avgF) - 4, sy + 58, BF(13, 700), '#1b6f9a', 'right');
-      if (cued && !landed && !(mode === 'sound' && !v.tour)) { const f = (now - c.cue) / FR; g.fillStyle = C.navy; g.fillRect(XL(f) - 2, sy - 6, 4, 46); }
+      if (cued && !hide && !(mode === 'sound' && !v.tour) && (D ? !early && fr < n : !landed)) { const f = (now - c.cue) / FR; g.fillStyle = C.navy; g.fillRect(XL(f) - 2, sy - 6, 4, 46); }
       if (pressed && c.rf != null) { const x = XL(Math.min(c.rf, n - 1)); box(g, x - 1, sy - 5, cw + 2, 44, 5, null, C.navy, 3.5); tx(g, `you: ${c.rf} f`, x + cw / 2, sy - 16, BF(15, 800), C.navy, 'center'); }
       // history
       const hist = (v.tour ? v.done : v.done.slice(-12)).filter(x => x.move === v.cfg.move || v.tour).slice(-12);
