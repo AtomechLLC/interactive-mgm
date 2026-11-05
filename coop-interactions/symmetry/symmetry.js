@@ -1,4 +1,4 @@
-/* Symmetry spectrum (MGM C3 M6, deck Part 2, slides 19-45, mainly 27 and 37-41). Twelve real co-op games placed
+/* Symmetry spectrum (MGM C4 M6, deck Part 2, slides 19-45, mainly 27 and 37-41). Twelve real co-op games placed
    from identical kits to different experiences. For each one the two players' verbs are split into "only P1",
    "both" and "only P2", and two circles overlap by the share of verbs they have in common.
    draw(g, i, from, k) draws game i, easing in from game `from` by k, so the page, the tour and window.__seek

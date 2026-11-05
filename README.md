@@ -6,7 +6,7 @@ Open `index.html` in a browser (no build step, works straight off disk). It list
 
 - `pvp/`: **PvP Interactions** (`pvp/index.html`), from *MGM C4 M4 - Fundamentals for Designing Engaging PvP Interactions*.
 - `pve-interactions/`: **PvE Interactions** (`pve-interactions/index.html`), from *MGM C4 M5 - Fundamentals for Designing Engaging PvE Interactions*.
-- `coop-interactions/`: **Co-op Interactions** (`coop-interactions/index.html`), from *MGM C3 M6 - Engaging Co-op Interaction Design Fundamentals*.
+- `coop-interactions/`: **Co-op Interactions** (`coop-interactions/index.html`), from *MGM C4 M6 - Engaging Co-op Interaction Design Fundamentals*.
 - `mechanics-tools/`: **Mechanics Design Tools** (`mechanics-tools/index.html`), from *MGM C4 M3 - Mechanics Design Optimizations and Tools*.
 - `understand-mechanics/`: **Understand Mechanics** (`understand-mechanics/index.html`), from *MGM C4 M2 - Understand, Analyze and Plan Mechanics*.
 - `depth/`: **The Goal: Depth** (`depth/index.html`), from *MGM C4 M1 - The Goal of Mechanics Design - Depth*.

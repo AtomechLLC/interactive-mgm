@@ -1,4 +1,4 @@
-/* Cross-class structure (MGM C3 M6, deck slides 246-255): three scenes of one idea, each class holds part of the toolkit.
+/* Cross-class structure (MGM C4 M6, deck slides 246-255): three scenes of one idea, each class holds part of the toolkit.
    Slide 2 is slide 248, the football play with fantasy classes (fighters hold the line, the wizard throws, a rogue runs).
    Slide 3 is slide 249, the holy trinity as an HP tug-of-war (tank square, healer circle, DPS triangle, skull boss).
    Slide 4 is slides 250-253, League of Legends laning into a teamfight, with slide 251's class shapes and slide 253's comps.

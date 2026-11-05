@@ -1,4 +1,4 @@
-/* Keywords need situations (MGM C3 M6, deck slides 270-285). Slide 2 is the deck's keyword sheets for three WoW tanks
+/* Keywords need situations (MGM C4 M6, deck slides 270-285). Slide 2 is the deck's keyword sheets for three WoW tanks
    (slides 275-280), sorted into role, class and spec layers, with Blizzard's class and spec icons. Slide 3 gives four original classes keyword cards and lets
    you build an encounter with sliders (role badges are League of Legends class icons): each keyword's meter shows how much the content asks for it (slide 283: area
    damage needs clustered enemies, taunt needs allies under threat, durability needs dangerous damage, self healing

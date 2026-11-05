@@ -1,4 +1,4 @@
-/* Teamplay targeting matrix (MGM C3 M6, deck slides 116-133 and 161-171). Pick a mechanic and walk it through every
+/* Teamplay targeting matrix (MGM C4 M6, deck slides 116-133 and 161-171). Pick a mechanic and walk it through every
    source (who does it) and target (to whom): each cell becomes a concrete ability, drawn as a tiny scene. The deck's
    own fire walkthrough (fireball, pool of flames, Hellfire, cauterize, slides 120-124) comes first, then the other
    twelve cells. Abilities live in IDEAS; card(g, t, ...) draws one as a pure function of time, so the walkthrough,

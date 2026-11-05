@@ -179,7 +179,7 @@ window.COURSE = [
 {
 "href": "coop-interactions/index.html",
 "img": "assets/img/home/disc/coop-interactions.svg",
-"code": "MGM C3 M6",
+"code": "MGM C4 M6",
 "name": "Co-op Interactions",
 "pages": [
 [

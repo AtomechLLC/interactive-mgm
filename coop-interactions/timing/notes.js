@@ -1,4 +1,4 @@
-// Speaker notes per slide. Source: "MGM C3 M6 - Engaging Co-op Interaction Design Fundamentals", slides 147-160 (Teamplay Timing Framework).
+// Speaker notes per slide. Source: "MGM C4 M6 - Engaging Co-op Interaction Design Fundamentals", slides 147-160 (Teamplay Timing Framework).
 window.NOTES = [
   { script: 'Teamplay timing: proactive, coactive and reactive. These are oriented around an event in time. Before the event, proactive. During the event, coactive. After the event, reactive. Shift the temporal frame of reference and you get dramatically different tools for a similar result.' },
   { script: 'Healing has a condition: before it is useful, an enemy must hit the ally. Shielding has the opposite sequencing: it prevents future damage for a period of time. And between them sits a third category, rescue or intervention, which happens during the attack itself, like Braum or a Warcraft warrior leaping in to block. In Dark Souls terms: Iron Flesh before the punch, a shield block during it, Estus after it. Combine all three and you have a rich toolkit for handling enemy attacks.' },
