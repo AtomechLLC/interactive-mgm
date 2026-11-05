@@ -232,3 +232,23 @@ Module 1, Game Pillars and Values (`m1-pillars/`):
 - `triage-board/`: mark which pillars each feature of a deep-sea survival game supports and the backlog sorts itself (26-30); then nine pillars and the spreading priority star (16, 33). Features and supports in `SUP`.
 - `pull-a-pillar/`: features resting on pillars; pull one early or late (24-25, 34-35); and "The game must have combos" against "Controlled Power" on twelve moves (36-37).
 - `pillar-or-value/`: a sorting drill with a rules round (40-61), Master Chef's values from word to self-explanatory (49-56), and Subnautica's values as before and after scenes (44-46).
+
+Module 3, Leveraging Player Skills (`m3-skills/`):
+- `flea-juggle/`: Build the Flea Juggle. Start from one flea on a fixed arc, then add asynchrony, input sensitivity, multi-threading and input RNG in any order; playable (17-19, 250-278).
+- `skill-fingerprints/`: Five-Skill Fingerprints. Five-axis radar of physical, decisions, processing, knowledge, freeform; game presets, skill dissonance morphs, your-game sliders (23-33, 89, 295-330).
+- `three-dials/`: Three Difficulty Dials. A corridor of jumps with gap width, lives and checkpoint spacing; three ghost players run it 20 times each; then the Savage Beastfly's real numbers (46-52, 81).
+- `and-or/`: AND vs OR. Twelve player cards with five skill bars; build a test, flip the joiner between AND and OR and see who gets through (Sky Diver, Overwatch, Dark Souls III teleport slam) (53-70).
+- `best-answer/`: Is There a Clear Best Answer?. Half court shaded by shot choice; 2-and-3 scoring empties the midrange as teams optimise, graded payoffs spread shots back out (76).
+- `reaction-lab/`: Frame Window and Reaction Lab. A 60 fps test bench (timing windows, red/green, overheads, choice reaction, holding an angle) that measures you against the deck's frame numbers, by sight or sound (91-110, 141-143).
+- `mash-meter/`: Mash Meter. Mash for five seconds against the deck's marks (8, 16, 30, 31 per second), then feel Smash's tech lockout punish early mashing (111-115).
+- `async-cycles/`: Asynchronous Cycles. Five loops start in phase and drift apart; dressed as lava bubbles, lifts and a Hammer Bro, the drift becomes a castle level (256).
+
+Module 2, Audience Demographics (`m2-audience/`):
+- `quantic-radar/`: The Skyrim Radar. Score a game on Quantic Foundry's 12 motivations by averaging designers' votes on how present each one is; regroup inward vs outward (38-40, 49-50).
+- `skill-curves/`: Five Skill Curves. Six games' skill curves on one chart of skill vs hours with floor and ceiling markers, a flow channel toggle, and two curves inside one game (Garen vs Ryze, Warrior vs Warlock) (67-89).
+- `shift-the-power/`: Shift the Power. A champion kit as reliable and niche power blocks; move power and watch the Iron floor and Challenger ceiling move (Aphelios, Master Yi before and after); floor/ceiling elements and the 55%/60% review lines (88-89, 174-178, 183).
+- `affordance-grid/`: The Affordance Grid. Play a short Super Mario World level; each pipe, false ledge and hidden 1-Up you find lands in the affordance grid as intended, misleading or secret; then the Ooblets word swap (102-111).
+- `hard-check/`: Hard Check vs Soft Check. Raynor kites a Zergling cluster vs Firebats burn it; God of War's ice-coated enemy as effectively a hard check (132-135).
+- `thirteen-percent/`: The 13% Rule. How big a raid tier must be to feel like an upgrade after weeks of waiting, worked back to about 1% per slot; then Thunderfury and transmog (226-237).
+- `gold-items/`: The Gold Item Trap. Gold-over-time items feel rewarding but pay back only 25 minutes after purchase, whatever the stack (260).
+- `time-pressure/`: Time Pressure, Three Ways. One corridor, three chasers (Ori fixed escape, Wisps rubber-band wall, Kirby mist); a speed slider shows only the fixed chaser filters out slower players (276-281).
