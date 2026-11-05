@@ -254,7 +254,7 @@ Module 2, Audience Demographics (`m2-audience/`):
 - `time-pressure/`: Time Pressure, Three Ways. One corridor, three chasers (Ori fixed escape, Wisps rubber-band wall, Kirby mist); a speed slider shows only the fixed chaser filters out slower players (276-281).
 
 Module 8, Gameplay Balance (`m8-balance/`):
-- `patch-philosophies/`: Three Patch Philosophies. Rotate the top, buff the rest up, or nerf the top down over ten patches, against a target power line. (slides 17-21).
+- `patch-philosophies/`: Three Patch Philosophies. Same roster, same goal, three patch plans: normalize (Riot), hit DPS targets while content slips the class order (Blizzard), raise to a ceiling (Valve). Each prints its own patch notes.
 - `unfair-fairness/`: Unfair Fairness. Six League champions against six situations, shaded dominant, even or weak; a row with no weak cell gets a "no answer" flag. (slides 91-109).
 - `hits-to-kill/`: Hits-to-Kill Bench. Two attackers with the same DPS reach different hits-to-kill and time-to-kill as enemy HP crosses thresholds. (slides 117-139, 159-162).
 - `toughness/`: Three Ways to Grow Toughness. Damage reduction runs to infinity at 100% while effective health and resistance grow in a straight line. (slides 140-157).
