@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Three Difficulty Dials · Directing Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/deck.css">
+<link rel="stylesheet" href="../../../assets/kit.css">
+<link rel="stylesheet" href="../../shared/dgms.css">
+<script>
+  window.DECK = { title: 'Directing Game Mechanics · Module 3 · Three Difficulty Dials', home: '../../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1: slides 46-52 -->
+<section class="slide" data-title="Three difficulty dials" data-demo="dials">
+  <div class="kicker">the skill testing framework · slides 46-52</div>
+  <h2 class="sm">One corridor, <span class="accent">three dials</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <label class="rng">Intensity: gap width <b class="dl-gv"></b><input type="range" class="dl-gap" min="1" max="6" step="0.5" value="3"></label>
+      <label class="rng">Fault tolerance: lives <b class="dl-lv"></b><input type="range" class="dl-lives" min="1" max="10" step="1" value="3"></label>
+      <label class="rng">Required successes: jumps per checkpoint <b class="dl-cv"></b><input type="range" class="dl-cp" min="1" max="12" step="1" value="4"></label>
+      <div class="seg dl-pre"><button class="btn" data-p="gentle">Gentle</button><button class="btn" data-p="tight">Tight jumps</button><button class="btn" data-p="marathon">Marathon</button></div>
+      <div class="row wrap"><button class="btn dl-tour on">▶ Walk-through</button></div>
+      <div class="mt-stats dl-stats"></div>
+      <p class="mt-out dl-out"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 2: slide 81 -->
+<section class="slide" data-title="Savage Beastfly" data-demo="beast">
+  <div class="kicker">the skill testing framework · slide 81</div>
+  <h2 class="sm">Savage Beastfly: <span class="accent">110 hits or 37?</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Weapon (required successes)</h4>
+      <div class="seg bf-wpn"><button class="btn on" data-w="needle">Needle · 5</button><button class="btn" data-w="spear">Silk Spear · 15</button></div>
+      <h4>Ghost shown in the arena</h4>
+      <div class="seg bf-gh"><button class="btn" data-g="0">Newcomer</button><button class="btn on" data-g="1">Regular</button><button class="btn" data-g="2">Expert</button></div>
+      <label class="rng">Fault tolerance: Hornet’s masks <b class="bf-mv"></b><input type="range" class="bf-masks" min="3" max="10" step="1" value="5"></label>
+      <div class="row wrap"><button class="btn bf-tour on">▶ Walk-through</button></div>
+      <div class="mt-stats bf-stats"></div>
+      <p class="mt-out bf-out"></p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../../assets/deck.js"></script>
+<script src="../../../assets/kit.js"></script>
+<script src="../../shared/topdown.js"></script>
+<script src="three-dials.js"></script>
+</body>
+</html>

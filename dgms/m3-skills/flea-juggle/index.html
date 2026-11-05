@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Build the Flea Juggle · Directing Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/deck.css">
+<link rel="stylesheet" href="../../../assets/kit.css">
+<link rel="stylesheet" href="../../shared/dgms.css">
+<script>
+  window.DECK = { title: 'Directing Game Mechanics · Module 3 · Build the Flea Juggle', home: '../../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1: slides 17-19, 250-278 -->
+<section class="slide" data-title="Build the flea juggle" data-demo="juggle">
+  <div class="kicker">building dynamic skill tests · slides 17-19, 250-278</div>
+  <h2 class="sm">From a simple test to <span class="accent">a flea juggle</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo fj-cv" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4 style="margin-top:0">Tools (any order)</h4>
+      <label class="chk"><input type="checkbox" class="fj-t" data-k="async"> Asynchrony</label>
+      <label class="chk"><input type="checkbox" class="fj-t" data-k="sens"> Input sensitivity</label>
+      <label class="chk"><input type="checkbox" class="fj-t" data-k="threads"> Multi-threading</label>
+      <label class="chk"><input type="checkbox" class="fj-t" data-k="rng"> Input RNG</label>
+      <label class="chk"><input type="checkbox" class="fj-auto" checked> Auto-player</label>
+      <p class="tip">Play it yourself: move with the mouse over the arena (or A / D), hit with a click or J.</p>
+      <div class="row wrap"><button class="btn fj-tour on">▶ Walk-through</button><button class="btn fj-reset">Restart</button></div>
+      <div class="mt-stats fj-stats"></div>
+      <p class="mt-out fj-out"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 2: slides 255-276 -->
+<section class="slide" data-title="The four tools in the deck" data-demo="tools">
+  <div class="kicker">building dynamic skill tests · slides 255-276</div>
+  <h2 class="sm">Four tools, <span class="accent">four deck examples</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4 style="margin-top:0">Tool</h4>
+      <div class="seg tl-tab"><button class="btn on" data-k="async">Asynchrony</button><button class="btn" data-k="sens">Input sensitivity</button><button class="btn" data-k="threads">Multi-threading</button><button class="btn" data-k="rng">Input RNG</button></div>
+      <div class="row wrap"><button class="btn tl-tour on">▶ Walk-through</button></div>
+      <div class="mt-stats tl-stats"></div>
+      <p class="mt-out tl-out"></p>
+      <p class="src">All art is original, drawn in code after the deck’s examples.</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../../assets/deck.js"></script>
+<script src="../../../assets/kit.js"></script>
+<script src="../../shared/topdown.js"></script>
+<script src="flea-juggle.js"></script>
+</body>
+</html>

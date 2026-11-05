@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Skyrim Radar · Directing Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/deck.css">
+<link rel="stylesheet" href="../../../assets/kit.css">
+<link rel="stylesheet" href="../../shared/dgms.css">
+<script>
+  window.DECK = { title: 'Directing Game Mechanics · Module 2 · The Skyrim Radar', home: '../../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+<style>
+  .mt-stats b { flex: none; }
+  .qr-edit { display: grid; grid-template-columns: 1fr auto; gap: 6px 10px; align-items: center; font-size: 16px; color: var(--ink); }
+  .qr-edit select { font: inherit; font-size: 15px; padding: 3px 6px; border-radius: 6px; border: 2px solid #cdbf9f; background: #fffaf0; color: var(--ink); }
+  .qr-edit input { grid-column: 1 / -1; width: 100%; }
+</style>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1: slides 38-40, 49-50 -->
+<section class="slide" data-title="Score a game: the Skyrim radar" data-demo="radar">
+  <div class="kicker">player psychology models · slides 38-40, 49-50</div>
+  <h2 class="sm">Score a game with <span class="accent">Quantic Foundry</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Group the axes</h4>
+      <div class="seg qr-group"><button class="btn on" data-g="0">6 families</button><button class="btn" data-g="1">Inward vs outward</button></div>
+      <h4>Designers voting on Skyrim</h4>
+      <div class="seg qr-des"><button class="btn on" data-d="0">D1</button><button class="btn on" data-d="1">D2</button><button class="btn on" data-d="2">D3</button><button class="btn on" data-d="3">D4</button></div>
+      <label class="chk"><input type="checkbox" class="qr-mine" checked> Overlay my game</label>
+      <div class="qr-edit"><select class="qr-axis"></select><b class="qr-av"></b><input type="range" class="qr-val" min="0" max="10" step="1" value="5"></div>
+      <div class="row wrap" style="margin-top:8px"><button class="btn qr-tour on">▶ Walk-through</button></div>
+      <div class="mt-stats qr-stats"></div>
+      <p class="mt-out qr-out"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 2: slide 50 notes -->
+<section class="slide" data-title="Vote how present, not how much you like it" data-demo="vote">
+  <div class="kicker">player psychology models · slide 50</div>
+  <h2 class="sm">Vote how <span class="accent">present</span>, not how liked</h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Each designer votes on</h4>
+      <div class="seg vt-mode"><button class="btn on" data-m="0">How present it is</button><button class="btn" data-m="1">How much I like it</button></div>
+      <h4>Game being scored</h4>
+      <div class="seg vt-game"><button class="btn on" data-g="0">Skyrim</button><button class="btn" data-g="1">League of Legends</button></div>
+      <div class="row wrap"><button class="btn vt-tour on">▶ Walk-through</button></div>
+      <div class="mt-stats vt-stats"></div>
+      <p class="mt-out vt-out"></p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../../assets/deck.js"></script>
+<script src="../../../assets/kit.js"></script>
+<script src="../../shared/topdown.js"></script>
+<script src="quantic-radar.js"></script>
+</body>
+</html>
