@@ -1,6 +1,6 @@
-/* Two jumps, two philosophies (RGF C2 M5, deck slides 69-115). Slide 1: one shared input drives two jumpers on the same
+/* Two jumps, two philosophies (RGF C2 M5). Slide 1: one shared input drives two jumpers on the same
    terrain. Left, an Ori-style jump stacked from small pieces (each one a toggle); right, a No Rest for the Wicked-style
-   contextual jump that only fires at a ledge marker and plays one fixed root-motion curve. A fixed-step simulation turns an
+   contextual jump on a top-down map that only fires at a ledge marker and plays one fixed root-motion curve. A fixed-step simulation turns an
    input timeline into both bodies plus timed events, and the events light the component diagrams under each side
    (../shared/xray.js). Seeking re-simulates from 0, so GIFs are a pure function of time. Slide 2: muppet vs puppet. */
 (function () {
@@ -174,18 +174,6 @@
     if (air) { g.moveTo(-4, -2); g.lineTo(-8, 4); g.moveTo(4, -2); g.lineTo(6, 4); } else { g.moveTo(-4, -2); g.lineTo(-5, 0); g.moveTo(4, -2); g.lineTo(5, 0); }
     g.stroke(); g.restore();
   }
-  function wanderer(g, x, y, face, crouch) {
-    // a hooded wanderer with a sword on the back
-    g.save(); g.translate(x, y); g.scale(face, 1 - crouch * .18);
-    g.strokeStyle = '#3a2a18'; g.lineWidth = 5; g.lineCap = 'round'; g.beginPath(); g.moveTo(-4, -16); g.lineTo(-6, 0); g.moveTo(4, -16); g.lineTo(6, 0); g.stroke();
-    g.strokeStyle = '#b9bccb'; g.lineWidth = 3; g.beginPath(); g.moveTo(-12, -46); g.lineTo(6, -12); g.stroke();
-    g.fillStyle = '#8a4b28'; g.strokeStyle = '#3a2a18'; g.lineWidth = 2;
-    g.beginPath(); g.moveTo(-11, -14); g.lineTo(-9, -40); g.quadraticCurveTo(0, -46, 9, -40); g.lineTo(12, -14); g.closePath(); g.fill(); g.stroke();
-    g.fillStyle = '#5a3216'; g.beginPath(); g.arc(0, -46, 10, 0, TAU); g.fill(); g.stroke();
-    g.fillStyle = '#f2c9a0'; g.beginPath(); g.arc(3, -45, 5.5, -1.2, 1.4); g.fill();
-    g.fillStyle = '#d6a64a'; g.fillRect(-11, -24, 23, 4);
-    g.restore();
-  }
   function terrain(g, x0, warm, t) {
     g.save(); g.translate(x0, 0);
     g.beginPath(); g.roundRect(0, 0, PW, 336, 14); g.clip();
@@ -234,7 +222,7 @@
     function render() {
       const S = st.sim, t = S.t, inp = st.tour ? tourInput(t) : st.keys;
       T.use(g); g.clearRect(0, 0, W, H);
-      terrain(g, 0, false, t); terrain(g, RX, true, t);
+      terrain(g, 0, false, t); topMap(g, RX, t);
       // left: the spirit, its trail, and what just happened
       g.save(); g.beginPath(); g.roundRect(0, 0, PW, 336, 14); g.clip();
       trail(g, S.trO.filter(q => !q[3]), t, '#d9f1ff');
@@ -245,14 +233,17 @@
       g.restore();
       // right: markers, the preset curve, the wanderer
       g.save(); g.translate(RX, 0); g.beginPath(); g.roundRect(0, 0, PW, 336, 14); g.clip();
-      marker(g, MARK_A, AY, 'Ledge jump', t); marker(g, MARK_B, BY, 'Drop down', t);
+      marker(g, MARK_A, AY, 'Ledge jump', 1, t); marker(g, MARK_B, BY, 'Drop down', -1, t);
       ghost(g, MARK_A, AY, DEST_B, BY, 60); ghost(g, MARK_B, BY, DEST_A, AY, 30);
-      trail(g, S.trN, t, '#7a4a00');
+      footprints(g, S.trN, t);
       const n = S.nr, k = n.act ? t - n.act.t0 : 9, crouch = n.act ? (k < ACT.prep ? k / ACT.prep : k > ACT.prep + ACT.move ? 1 - (k - ACT.prep - ACT.move) / ACT.rec : 0) : 0;
-      wanderer(g, n.x, n.y, n.face, clamp(crouch));
+      // top-down: the shadow stays on the ground, the body lifts off it during the jump
+      let lift = 0, gy = n.y;
+      if (n.act && k >= ACT.prep && k < ACT.prep + ACT.move) { const q = (k - ACT.prep) / ACT.move; lift = n.act.arc * Math.sin(Math.PI * q); gy = n.y + lift; }
+      wandererTop(g, n.x, gy, lift, n.face, clamp(crouch), t, !n.act && (inp.left || inp.right));
       pops(g, S, t, 1);
       g.restore();
-      [0, RX].forEach((x, i) => { g.strokeStyle = '#cdbf9f'; g.lineWidth = 2; g.beginPath(); g.roundRect(x + 1, 1, PW - 2, 334, 14); g.stroke(); T.label(i ? 'No Rest-style: contextual, one action' : 'Ori-style: on demand, many pieces', x + PW / 2, 22, 'center', '#fff', 15, i ? '#7a4a00' : C.navy); });
+      [0, RX].forEach((x, i) => { g.strokeStyle = '#cdbf9f'; g.lineWidth = 2; g.beginPath(); g.roundRect(x + 1, 1, PW - 2, 334, 14); g.stroke(); T.label(i ? 'No Rest-style (top-down): contextual, one action' : 'Ori-style: on demand, many pieces', x + PW / 2, 22, 'center', '#fff', 15, i ? '#7a4a00' : C.navy); });
       // the shared keys, drawn on both sides: the same input reaches both
       [0, RX].forEach(x => [['A', inp.left], ['D', inp.right], ['J', inp.jump]].forEach(([l, on], i) => {
         const kx = x + PW - 104 + i * 32;
@@ -295,17 +286,84 @@
     pts.forEach(([x, y, ts]) => { const a = clamp(1 - (t - ts) / 1.5); if (a <= 0) return; g.globalAlpha = a * .7; g.beginPath(); g.arc(x, y - 14, 2.4, 0, TAU); g.fill(); });
     g.restore();
   }
-  function marker(g, x, y, label, t) {
+  // a contextual jump point painted on the top-down map: a glowing ring on the ground with an arrow across the ravine
+  function marker(g, x, y, label, dir, t) {
     const a = .6 + .4 * Math.sin(t * 4);
-    g.save(); g.fillStyle = `rgba(255,185,81,${.25 + .2 * a})`; g.beginPath(); g.ellipse(x, y + 2, REACH, 7, 0, 0, TAU); g.fill();
-    g.fillStyle = '#ffb951'; g.strokeStyle = '#7a4a00'; g.lineWidth = 2; g.beginPath(); g.moveTo(x, y - 74); g.lineTo(x + 8, y - 64); g.lineTo(x, y - 54); g.lineTo(x - 8, y - 64); g.closePath(); g.fill(); g.stroke();
+    g.save();
+    g.fillStyle = `rgba(255,185,81,${.22 + .2 * a})`; g.beginPath(); g.ellipse(x, y, REACH, REACH * .55, 0, 0, TAU); g.fill();
+    g.strokeStyle = '#ffb951'; g.lineWidth = 2.5; g.setLineDash([6, 5]); g.lineDashOffset = -t * 12; g.beginPath(); g.ellipse(x, y, REACH, REACH * .55, 0, 0, TAU); g.stroke(); g.setLineDash([]);
+    g.translate(x + dir * 6, y); g.scale(dir, 1);
+    g.fillStyle = '#ffb951'; g.strokeStyle = '#7a4a00'; g.lineWidth = 2;
+    g.beginPath(); g.moveTo(-8, -7); g.lineTo(6, -7); g.lineTo(6, -13); g.lineTo(18, 0); g.lineTo(6, 13); g.lineTo(6, 7); g.lineTo(-8, 7); g.closePath(); g.fill(); g.stroke();
     g.restore();
-    g.font = '700 11px Jost, sans-serif'; g.fillStyle = '#7a4a00'; g.textAlign = 'center'; g.fillText(label, x, y - 84);
+    T.label(label, x, y - 34, 'center', '#7a4a00', 12, 'rgba(255,248,230,.92)');
   }
+  // the preset curve: a dotted ground line for the shadow and a dashed arc for the body
   function ghost(g, x0, y0, x1, y1, arc) {
-    g.save(); g.setLineDash([4, 6]); g.strokeStyle = 'rgba(122,74,0,.55)'; g.lineWidth = 2; g.beginPath();
-    for (let i = 0; i <= 20; i++) { const q = i / 20, x = lerp(x0, x1, ease(q)), y = lerp(y0, y1, ease(q)) - arc * Math.sin(Math.PI * q) - 14; i ? g.lineTo(x, y) : g.moveTo(x, y); }
-    g.stroke(); g.setLineDash([]); g.fillStyle = 'rgba(122,74,0,.5)'; g.beginPath(); g.arc(x1, y1 - 3, 4, 0, TAU); g.fill(); g.restore();
+    g.save(); g.lineWidth = 2;
+    g.setLineDash([2, 6]); g.strokeStyle = 'rgba(40,30,10,.45)'; g.beginPath(); g.moveTo(x0, y0); g.lineTo(x1, y1); g.stroke();
+    g.setLineDash([5, 6]); g.strokeStyle = 'rgba(255,240,200,.85)'; g.beginPath();
+    for (let i = 0; i <= 20; i++) { const q = i / 20, x = lerp(x0, x1, ease(q)), y = lerp(y0, y1, ease(q)) - arc * Math.sin(Math.PI * q) - 10; i ? g.lineTo(x, y) : g.moveTo(x, y); }
+    g.stroke(); g.setLineDash([]);
+    g.strokeStyle = 'rgba(255,240,200,.9)'; g.beginPath(); g.ellipse(x1, y1, 9, 5, 0, 0, TAU); g.stroke(); g.restore();
+  }
+  function footprints(g, pts, t) {
+    g.save(); g.fillStyle = 'rgba(60,40,15,.55)';
+    pts.forEach(([x, y, ts], i) => { const a = clamp(1 - (t - ts) / 1.5); if (a <= 0 || i % 2) return; g.globalAlpha = a; g.beginPath(); g.ellipse(x, y + (i % 4 ? 4 : -4), 2.6, 1.6, 0, 0, TAU); g.fill(); });
+    g.restore();
+  }
+  // a top-down map in the oblique style of an overhead action RPG: a low meadow, a ravine, a raised plateau with its cliff face
+  const RISE = BY - AY; // the plateau sits higher, so it is drawn further up the screen
+  function topMap(g, x0, t) {
+    g.save(); g.translate(x0, 0);
+    g.beginPath(); g.roundRect(0, 0, PW, 336, 14); g.clip();
+    // low meadow
+    g.fillStyle = '#86a84f'; g.fillRect(0, 0, PW, 336);
+    for (let i = 0; i < 70; i++) { const px = (i * 97) % A_END, py = (i * 61) % 336; g.fillStyle = i % 3 ? 'rgba(60,90,30,.35)' : 'rgba(200,220,120,.35)'; g.fillRect(px, py, 3, 6); }
+    // ravine running north to south, with a stream at the bottom
+    g.fillStyle = '#4a3622'; g.fillRect(A_END, 0, B_START - A_END, 336);
+    g.fillStyle = '#3c6f8e'; g.fillRect(A_END + 22, 0, B_START - A_END - 40, 336);
+    g.strokeStyle = 'rgba(220,240,255,.5)'; g.lineWidth = 2;
+    for (let i = 0; i < 9; i++) { const yy = ((i * 41 + t * 40) % 360) - 12; g.beginPath(); g.moveTo(A_END + 30, yy); g.quadraticCurveTo(A_END + 40, yy + 6, A_END + 50, yy); g.stroke(); }
+    // low bank edge: rocks
+    g.fillStyle = '#6d6252'; for (let yy = 4; yy < 336; yy += 18) { g.beginPath(); g.ellipse(A_END + 3, yy, 7, 9, 0, 0, TAU); g.fill(); }
+    // raised plateau: top surface, then its west cliff face dropping into the ravine and its south cliff face
+    const top = '#a3bf62';
+    g.fillStyle = '#6b5236'; g.fillRect(B_START - 14, 0, 14, 336);
+    g.fillStyle = 'rgba(0,0,0,.25)'; g.fillRect(B_START - 30, 0, 16, 336);
+    g.fillStyle = top; g.fillRect(B_START, 0, PW - B_START, 336 + RISE);
+    g.fillStyle = '#7a5c3a'; g.fillRect(B_START - 14, 336 + RISE, PW, -RISE);
+    g.strokeStyle = 'rgba(40,25,10,.4)'; g.lineWidth = 1.5;
+    for (let xx = B_START - 8; xx < PW; xx += 16) { g.beginPath(); g.moveTo(xx, 336 + RISE + 6); g.lineTo(xx + 5, 330); g.stroke(); }
+    for (let yy = 8; yy < 336 + RISE; yy += 16) { g.beginPath(); g.moveTo(B_START - 12, yy); g.lineTo(B_START - 3, yy + 8); g.stroke(); }
+    for (let i = 0; i < 40; i++) { const px = B_START + 6 + (i * 53) % (PW - B_START - 10), py = (i * 47) % (330 + RISE); g.fillStyle = i % 3 ? 'rgba(70,100,30,.3)' : 'rgba(230,240,150,.4)'; g.fillRect(px, py, 3, 6); }
+    // dirt paths leading to each jump point
+    g.fillStyle = 'rgba(170,130,80,.55)';
+    g.beginPath(); g.roundRect(-10, AY - 14, A_END + 6, 28, 14); g.fill();
+    g.beginPath(); g.roundRect(B_START + 4, BY - 14, PW, 28, 14); g.fill();
+    // trees seen from above and a few stones, away from the paths
+    const tree = (x, y, r) => { g.fillStyle = 'rgba(0,0,0,.22)'; g.beginPath(); g.ellipse(x + 6, y + 8, r, r * .8, 0, 0, TAU); g.fill(); g.fillStyle = '#3e6b2c'; g.beginPath(); g.arc(x, y, r, 0, TAU); g.fill(); g.fillStyle = '#5a8a3a'; g.beginPath(); g.arc(x - r * .3, y - r * .3, r * .6, 0, TAU); g.fill(); };
+    [[40, 92, 26], [120, 136, 20], [196, 70, 24], [70, 182, 14], [380, 78, 22], [460, 128, 26], [470, 250, 16]].forEach(q => tree(...q));
+    T.label('Low ground', 70, 236, 'center', '#3b4a1c', 12, 'rgba(240,248,220,.85)'); T.label('High ledge', 450, 176, 'center', '#3b4a1c', 12, 'rgba(240,248,220,.85)');
+    g.fillStyle = '#9a9384'; [[170, 316, 8], [24, 318, 6], [480, 40, 7]].forEach(([x, y, r]) => { g.beginPath(); g.ellipse(x, y, r, r * .7, 0, 0, TAU); g.fill(); });
+    g.restore();
+  }
+  // the wanderer seen from above: shadow on the ground, body raised by the jump
+  function wandererTop(g, x, gy, lift, face, crouch, t, walking) {
+    const sh = 1 - Math.min(.5, lift / 120);
+    g.save(); g.fillStyle = 'rgba(0,0,0,.35)'; g.beginPath(); g.ellipse(x, gy + 2, 15 * sh, 7 * sh, 0, 0, TAU); g.fill(); g.restore();
+    const y = gy - lift, step = walking ? Math.sin(t * 14) * 3 : 0;
+    g.save(); g.translate(x, y); g.scale(face * (1 + crouch * .1), 1 - crouch * .12);
+    g.fillStyle = '#3a2a18';
+    g.beginPath(); g.ellipse(-3 + step, 2, 4, 3, 0, 0, TAU); g.fill(); g.beginPath(); g.ellipse(3 - step, 2, 4, 3, 0, 0, TAU); g.fill();
+    // cloak from above, sword across the back
+    g.fillStyle = '#8a4b28'; g.strokeStyle = '#3a2a18'; g.lineWidth = 2;
+    g.beginPath(); g.ellipse(-2, -10, 13, 11, 0, 0, TAU); g.fill(); g.stroke();
+    g.strokeStyle = '#c9ccd8'; g.lineWidth = 3; g.beginPath(); g.moveTo(-16, -20); g.lineTo(8, -2); g.stroke();
+    g.fillStyle = '#d6a64a'; g.fillRect(-12, -22, 5, 4);
+    g.fillStyle = '#5a3216'; g.strokeStyle = '#3a2a18'; g.lineWidth = 2; g.beginPath(); g.arc(3, -16, 8, 0, TAU); g.fill(); g.stroke();
+    g.fillStyle = '#f2c9a0'; g.beginPath(); g.arc(8, -15, 3.5, -1.3, 1.3); g.fill();
+    g.restore();
   }
   const POP = { jump: ['Jump', '#ffffff'], double: ['Double jump', '#ffe599'], cut: ['Cut short', '#ffb951'], 'nr-jump': ['Ledge jump', '#7a4a00'], 'nr-refuse': ['✕ No jump point here', '#cc0000'], 'nr-ignored': ['Ignored: action running', '#8a1c15'] };
   function pops(g, S, t, side) {
