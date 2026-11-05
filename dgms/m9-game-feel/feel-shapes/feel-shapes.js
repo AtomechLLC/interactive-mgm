@@ -40,10 +40,12 @@
       flash(g, tx, 50, 4 + 14 * v, v * .8);
     },
     swish(g, t, v) {
-      const px = 50, py = 58, a0 = -2.9, k = sstep(.18, .65, t), a = lerp(a0, -.25, k);
-      g.strokeStyle = `rgba(46,163,220,${.15 + .5 * v})`; g.lineWidth = 10; g.beginPath(); g.arc(px, py, 38, Math.max(a0, a - .9 * v - .05), a); g.stroke();
-      g.strokeStyle = C.ink; g.lineWidth = 4; g.beginPath(); g.moveTo(px, py); g.lineTo(px + Math.cos(a) * 44, py + Math.sin(a) * 44); g.stroke();
-      blk(g, px - 6, py - 2, 12, 10, C.player);
+      // one tap, then a long sweep that plays out on its own; the padlock shows control is taken away
+      const px = 50, py = 62, a0 = -3.0, k = sstep(.12, 1.7, t), a = lerp(a0, -.15, k);
+      if (v > .03) { g.strokeStyle = `rgba(46,163,220,${.15 + .55 * v})`; g.lineWidth = 12; g.beginPath(); g.arc(px, py, 40, Math.max(a0, a - 1.4 * v), a); g.stroke(); }
+      g.strokeStyle = C.ink; g.lineWidth = 4; g.beginPath(); g.moveTo(px, py); g.lineTo(px + Math.cos(a) * 46, py + Math.sin(a) * 46); g.stroke();
+      blk(g, px - 6, py - 4, 12, 10, C.player);
+      if (v > .2) { g.globalAlpha = clamp((v - .2) * 3); g.strokeStyle = C.muted; g.lineWidth = 2; g.beginPath(); g.arc(12, 11, 4, Math.PI, 0); g.stroke(); blk(g, 6, 11, 12, 9, C.muted); g.globalAlpha = 1; }
     },
     chunk(g, t, v) {
       floorL(g); const st = clamp(Math.floor((t - .1) / .25) + 1, 0, 7), x = 8 + st * 8;
@@ -59,13 +61,15 @@
       g.restore();
     },
     velcro(g, t, v) {
-      blk(g, 6, 14, 8, 48, C.wall);
-      let x = 14, w = 18;
-      if (t < 1) w = 18 + 10 * sstep(.7, 1, t);
-      else { x = 14 + 30 * (1 - Math.exp(-(t - 1) / .12) * Math.cos(22 * (t - 1))); }
-      if (t < 1) { g.strokeStyle = C.gold; g.lineWidth = 1; g.beginPath(); for (let i = 0; i < 5; i++) { g.moveTo(14, 24 + i * 6); g.lineTo(14 + (w - 18) + 3, 24 + i * 6); } g.stroke(); }
-      blk(g, x + (t < 1 ? w - 18 : 0), 22, 18, 28, C.player);
-      if (t < 1 && t > .7) { g.strokeStyle = C.ink; g.lineWidth = 2; g.beginPath(); g.moveTo(x + w, 36); g.lineTo(x + w + 22, 36); g.stroke(); }
+      // the charger never slows; the target snaps into a frozen pose and is carried until the wall
+      floorL(g); blk(g, 92, 10, 6, 50, C.wall);
+      const cx = Math.min(64, 4 + 50 * Math.max(0, t - .1)), pinned = t >= .46;
+      const ex = pinned ? cx + 18 : 40;
+      blk(g, cx, 36, 18, 24, C.player);
+      g.save(); g.translate(ex + 5, 53); if (pinned) g.rotate(-.5); blk(g, -5, -13, 10, 14, C.red); g.restore();
+      if (pinned && t < 1.3) speedLines(g, cx, 34, 14, .7);
+      if (t >= 1.3) flash(g, 90, 46, 6 + 10 * v, v);
+      if (t >= .46 && t < .54) flash(g, ex, 46, 9, .8);
     },
     juice(g, t, v) {
       const cx = 50, cy = 36, s = 1 + .45 * (v - (t > .1 ? Math.exp(-(t - .1) / .35) * .65 : 0)) * 1.6;
@@ -77,29 +81,40 @@
       const z = 14 * Math.max(.6, s); blk(g, cx - z / 2, cy - z / 2, z, z, C.p3);
     },
     grease(g, t, v) {
+      // constant speed on a slick floor, the hit target is shoved aside, and control returns quickly
       g.fillStyle = '#d6e9f3'; g.fillRect(4, 52, 92, 8);
-      const x = lerp(6, 74, sstep(.1, 1.9, t));
-      speedLines(g, x, 36, 26 * v / .35, v / .35 * .8); blk(g, x, 36, 20, 16, C.player);
+      const x = t < .1 ? 6 : t < .7 ? 6 + (t - .1) / .6 * 64 : 70, ex = Math.min(86, Math.max(56, x + 20) + (t > .5 ? (t - .5) * 30 : 0));
+      if (t > .1 && t < .7) speedLines(g, x, 36, 22, .8);
+      blk(g, ex, 40, 10, 12, C.red); blk(g, x, 36, 20, 16, C.player);
+      if (t >= .7 && t < 1) { g.globalAlpha = clamp(1 - (t - .7) * 3.3); g.font = font(700, 9); g.fillStyle = C.ink; g.textAlign = 'center'; g.fillText('control', 80, 18); g.globalAlpha = 1; }
     },
     snap(g, t, v) {
-      floorL(g); const on = t >= .2 && t < 2;
-      g.strokeStyle = '#cdbf9f'; g.setLineDash([3, 3]); g.lineWidth = 1.5; g.strokeRect(on ? 14 : 62, 36, 22, 22); g.setLineDash([]);
-      blk(g, on ? 62 : 14, 36, 22, 22, C.ink);
-      if (t >= .2 && t < .28) flash(g, 73, 47, 16, .6);
+      // an explosive barrel: the blast is instant, the debris and flames come right after
+      floorL(g); const cx = 50, b = t >= .2;
+      if (!b) { blk(g, cx - 9, 38, 18, 22, C.red); g.fillStyle = C.gold; g.fillRect(cx - 9, 44, 18, 3); g.fillRect(cx - 9, 52, 18, 3); }
+      if (b) {
+        const p = t - .2; flash(g, cx, 46, 8 + 40 * Math.exp(-p / .05), Math.exp(-p / .06));
+        for (let i = 0; i < 7; i++) { const vx = [-38, -24, -10, 6, 20, 34, 46][i], q = Math.min(p, .6), y = Math.min(58, 44 - 70 * q + 120 * q * q); blk(g, cx + vx * q - 2, y, 4, 4, C.stoneDk); }
+        if (p > .05 && p < 1.6) for (let i = 0; i < 4; i++) { const h = (6 + 5 * Math.abs(Math.sin(p * 9 + i * 2))) * clamp(1.6 - p); g.fillStyle = i % 2 ? C.gold : C.red; g.beginPath(); g.moveTo(cx - 12 + i * 8, 60); g.lineTo(cx - 8 + i * 8, 60 - h); g.lineTo(cx - 4 + i * 8, 60); g.fill(); }
+      }
     },
     meaty(g, t, v) {
-      const dip = v * 3; g.save(); g.translate(0, dip); floorL(g);
-      const y = t < .22 ? lerp(-30, 32, Math.pow(t / .22, 2)) : 32, sq = t >= .22 ? v * .35 : 0;
-      const w = 30 * (1 + sq), h = 28 * (1 - sq);
-      blk(g, 50 - w / 2, 60 - h - (32 - y), w, h, C.redDk);
-      if (t >= .22) { const p = t - .22; g.fillStyle = `rgba(139,143,168,${clamp(.8 - p)})`; [-1, 1].forEach(s => { g.beginPath(); g.arc(50 + s * (20 + p * 30), 56, 4 + p * 8, 0, TAU); g.fill(); }); }
-      g.restore();
+      // a small hit lands on a big brute; it wobbles where it was struck and keeps walking
+      floorL(g); const bx = 46 + 6 * t;
+      const hx = t < .2 ? lerp(4, bx - 8, t / .2) : bx - 8 - 40 * (t - .2);
+      if (hx > -10) blk(g, hx, 40, 8, 8, C.player);
+      g.save(); g.translate(bx + 17, 60); g.transform(1, 0, -v * .5, 1, 0, 0); blk(g, -17, -40, 34, 40, C.redDk); g.restore();
+      if (t >= .2 && t < .3) flash(g, bx, 44, 6, .8);
     },
     crisp(g, t, v) {
-      floorL(g); const sep = t > .15 ? Math.min(4, (t - .15) * 30) : 0;
-      blk(g, 38, 30 - sep, 24, 14, C.stone); blk(g, 38, 44 + 0, 24, 16, C.stone);
-      g.strokeStyle = `rgba(255,255,255,${clamp(v * 1.3)})`; g.lineWidth = 3; g.beginPath(); g.moveTo(18, 44); g.lineTo(82, 44); g.stroke();
-      g.strokeStyle = `rgba(255,185,81,${clamp(v)})`; g.lineWidth = 1; g.stroke();
+      // one jump button, a different small response for each context: floor, wall, enemy head, floor
+      floorL(g); blk(g, 92, 8, 6, 52, C.wall); blk(g, 43, 48, 14, 12, C.red);
+      const K = [[.15, 20, 60], [.6, 86, 34], [1.05, 50, 48], [1.5, 18, 60]];
+      let x = K[0][1], y = K[0][2];
+      if (t >= K[3][0]) { x = K[3][1]; y = K[3][2]; }
+      else for (let i = 0; i < 3; i++) if (t >= K[i][0] && t < K[i + 1][0]) { const u = (t - K[i][0]) / (K[i + 1][0] - K[i][0]); x = lerp(K[i][1], K[i + 1][1], u); y = lerp(K[i][2], K[i + 1][2], u) - 26 * Math.sin(Math.PI * u); }
+      blk(g, x - 5, y - 10, 10, 10, C.player);
+      K.forEach(([k, kx, ky]) => { const a = 1 - Math.abs(t - k) / .08; if (a > 0) flash(g, kx, ky - 2, 3 + 5 * a, a * .9); });
     },
     electricity(g, t, v) {
       const ox = 18, oy = 36, ch = t < 1.2 ? clamp((t - .1) / 1.1) : 0;
@@ -114,11 +129,16 @@
       blk(g, 4, 30, 8, 12, C.ink);
     },
     grip(g, t, v) {
-      floorL(g, 58); const x = lerp(12, 62, sstep(.1, 1.85, t)), r = 12, rot = (x - 12) / r, jy = Math.sin(t * 90) * v * 1.2;
-      g.strokeStyle = C.muted; g.lineWidth = 1; g.beginPath(); for (let i = 0; i < 12; i++) { const tx = 6 + i * 8; g.moveTo(tx, 58); g.lineTo(tx - 3, 63); } g.stroke();
-      g.save(); g.translate(x + r, 46 + jy); g.rotate(rot); g.fillStyle = C.ink; g.beginPath(); g.arc(0, 0, r, 0, TAU); g.fill();
-      g.strokeStyle = '#fff'; g.lineWidth = 2; g.beginPath(); for (let i = 0; i < 3; i++) { g.moveTo(0, 0); g.lineTo(Math.cos(i * 2.1) * (r - 3), Math.sin(i * 2.1) * (r - 3)); } g.stroke(); g.restore();
-      if (v > .1) { g.fillStyle = `rgba(139,143,168,${v})`; g.beginPath(); g.arc(x + r - 14, 56, 2 + v * 3, 0, TAU); g.fill(); }
+      // a jump that is stopped dead on a ledge; the pose freezes while the world keeps scrolling
+      const off = (t * 24) % 12; g.strokeStyle = '#d3c7ab'; g.lineWidth = 1; g.beginPath(); for (let i = -1; i < 10; i++) { const x = i * 12 - off; g.moveTo(x, 0); g.lineTo(x, 70); } g.stroke();
+      blk(g, 64, 30, 18, 40, C.wall);
+      let x, y;
+      if (t < .3) { const u = t / .3; x = lerp(12, 52, u); y = lerp(56, 28, u) - 10 * Math.sin(Math.PI * u); }
+      else if (t < 1.4) { x = 52; y = 28; }
+      else { const u = clamp((t - 1.4) / .25); x = lerp(52, 66, u); y = lerp(28, 20, u) - 4 * Math.sin(Math.PI * u); }
+      blk(g, x, y - 2, 12, 16, C.player);
+      if (t >= .3 && t < 1.4) { g.strokeStyle = '#fff'; g.lineWidth = 1.5; g.strokeRect(x - 1, y - 3, 14, 18); }
+      if (t >= .3 && t < .45) { g.fillStyle = `rgba(139,143,168,${clamp(1 - (t - .3) / .15)})`; g.beginPath(); g.arc(64, 30, 3 + (t - .3) * 40, 0, TAU); g.fill(); }
     },
     jerk(g, t, v) {
       floorL(g); const p = clamp((t - .1) / 1), x = 14 + 52 * Math.sin(Math.PI * p);
@@ -132,8 +152,56 @@
       if (v > .05) { g.strokeStyle = `rgba(38,44,106,${clamp(v * 2.4)})`; g.lineWidth = 1.5; g.beginPath(); [[-1, -1], [1, -1], [0, -1.4]].forEach(([a, b]) => { g.moveTo(63 + a * 9, 37 + b * 9); g.lineTo(63 + a * 14, 37 + b * 14); }); g.stroke(); }
     },
     spurt(g, t, v) {
-      floorL(g); const x = 6 + (t < .1 ? 0 : 62 * (1 - Math.exp(-(t - .1) / .28)));
-      speedLines(g, x, 40, 40 * v, v); blk(g, x, 40, 20, 18, C.p2);
+      // a held stream: steady flow from a nozzle, droplets arcing under gravity and splashing on the wall
+      blk(g, 92, 8, 6, 52, C.wall); blk(g, 4, 26, 12, 10, C.ink);
+      const on0 = .15, on1 = 1.7;
+      for (let b = on0; b <= Math.min(t, on1); b += .03) {
+        const a = t - b, x = 16 + 140 * a, y = 31 + 50 * a * a;
+        if (x < 92) { g.fillStyle = C.player; g.beginPath(); g.arc(x, y, 2.2, 0, TAU); g.fill(); }
+        else if (x < 100) flash(g, 92, y, 4, .6, '46,163,220');
+      }
+      if (t >= on0 && t < on1) flash(g, 17, 31, 4 + 3 * v, .7, '46,163,220');
+    },
+    soupy(g, t, v) {
+      // one tap, a twirl, and a whole crowd tips over with no reaction of its own
+      floorL(g); const a = t < .1 ? 0 : (t - .1) * 9, cx = 50, cy = 40;
+      g.strokeStyle = C.ink; g.lineWidth = 3; g.beginPath(); g.moveTo(cx - Math.cos(a) * 24, cy - Math.sin(a) * 6); g.lineTo(cx + Math.cos(a) * 24, cy + Math.sin(a) * 6); g.stroke();
+      blk(g, cx - 6, cy - 6, 12, 20, C.player);
+      [10, 22, 34, 66, 78, 90].forEach((ex, i) => {
+        const hitT = .2 + i % 3 * .05, k = sstep(hitT, hitT + .25, t);
+        g.save(); g.translate(ex, 60); g.rotate((ex < 50 ? -1 : 1) * k * Math.PI / 2); blk(g, -3, -14, 6, 14, `rgba(229,50,45,${1 - .6 * k})`); g.restore();
+      });
+    },
+    esnap(g, t, v) {
+      // a two-second charge, then the kick lands and sends the target flying at once
+      floorL(g); const kx = 30, ch = t < 1.2 ? clamp((t - .1) / 1.1) : 0;
+      if (t < 1.2) { flash(g, kx + 8, 46, 4 + 12 * ch, .3 + .5 * ch, '138,79,214'); if (ch > .2) { g.strokeStyle = `rgba(255,185,81,${ch})`; g.lineWidth = 1.5; g.beginPath(); for (let i = 0; i < 3; i++) { const a = i * 2.1 + Math.floor(t * 20) * 1.7; g.moveTo(kx + 8, 46); g.lineTo(kx + 8 + Math.cos(a) * 14 * ch, 46 + Math.sin(a) * 14 * ch); } g.stroke(); } }
+      blk(g, kx, 36 + (t < 1.2 ? 2 * ch : 0), 16, 24 - (t < 1.2 ? 2 * ch : 0), C.player);
+      if (t >= 1.2 && t < 1.35) blk(g, kx + 16, 44, 14, 5, C.player);
+      const p = Math.max(0, t - 1.2), ex = 48 + 260 * p, ey = 44 - 40 * p;
+      if (ex < 110) { g.save(); g.translate(ex + 6, ey + 8); g.rotate(p * 14); blk(g, -6, -8, 12, 16, C.red); g.restore(); }
+      if (p > 0) { speedLines(g, ex, ey, 16, clamp(1 - p * 2)); flash(g, 48, 46, 6 + 14 * v, v); }
+    },
+    slidejump(g, t, v) {
+      // a crouched slide that seems to float for an instant, then a long boomerang jump
+      floorL(g); let x, y, h = 10;
+      if (t < .1) { x = 6; y = 60; h = 18; }
+      else if (t < .6) { x = 6 + (t - .1) * 70; y = 60; }
+      else { const u = clamp((t - .6) / .7); x = 41 + 46 * u; y = 60 - 40 * Math.sin(Math.PI * u); h = 18; }
+      if (t >= .1 && t < .6) { g.fillStyle = 'rgba(139,143,168,.6)'; for (let i = 1; i < 4; i++) { g.beginPath(); g.arc(x - i * 5, 59, 1.5, 0, TAU); g.fill(); } }
+      blk(g, x, y - h, 16, h, C.player);
+      if (t >= .6 && t < .9) speedLines(g, x, y - 16, 14, 1 - (t - .6) * 3);
+    },
+    reflect(g, t, v) {
+      // a projectile comes in, the sword meets it, time holds, and it flies back into the shooter
+      floorL(g); blk(g, 82, 34, 14, 26, C.red); blk(g, 10, 38, 12, 22, C.player);
+      const sw = t < .1 ? -2.4 : t < .35 ? lerp(-2.4, -.6, (t - .1) / .25) : -.6;
+      g.strokeStyle = C.ink; g.lineWidth = 3; g.beginPath(); g.moveTo(22, 46); g.lineTo(22 + Math.cos(sw) * 18, 46 + Math.sin(sw) * 18); g.stroke();
+      if (t > .1 && t < .4) { g.strokeStyle = 'rgba(46,163,220,.5)'; g.lineWidth = 6; g.beginPath(); g.arc(22, 46, 16, -2.4, sw); g.stroke(); }
+      let px; if (t < .35) px = 80 - (t / .35) * 44; else if (t < .5) px = 36; else px = 36 + (t - .5) * 64;
+      if (t < 1.2 && px < 84) { g.fillStyle = t < .5 ? C.p3 : C.gold; g.beginPath(); g.arc(px, 38, 4, 0, TAU); g.fill(); }
+      if (t >= .35 && t < .5) { g.strokeStyle = '#fff'; g.lineWidth = 1.5; g.strokeRect(8, 36, 16, 26); flash(g, 36, 38, 9, .7); }
+      if (t >= 1.2) flash(g, 88, 42, 6 + 18 * v, v);
     },
     woosh(g, t, v) {
       g.strokeStyle = C.red; g.lineWidth = 7; g.beginPath(); g.arc(82, 36, 11, Math.PI / 2, Math.PI * 1.5, true); g.stroke();
@@ -150,37 +218,37 @@
 
   /* ---------- the sixteen types ---------- */
   const TYPES = [
-    ['crunch', 'one shot', 'short', 'snap', ['VFX', 'audio', 'camera', 'haptics'], 'One big impact at first, followed by various little secondary elements.',
+    ['crunch', 'one shot', 'short', 'snap', ['VFX', 'animation', 'audio', 'time'], 'Things collide and hold long enough for a burst of small feedback to sell the impact: one big impact, then little secondary elements.',
       t => hit(t, .1, .07) + .34 * gauss(t, .38, .03) + .24 * gauss(t, .58, .03) + .14 * gauss(t, .8, .03)],
-    ['swish', 'one shot', 'short', 'ease', ['animation', 'audio', 'VFX'], 'A light sweep through the air that rises and fades with no hard edge.',
-      t => .6 * gauss(t, .4, .12)],
-    ['chunk', 'held', 'long', 'snap', ['audio', 'animation', 'haptics'], 'Small peaks of feedback, repeated over a longer stretch of time.',
+    ['swish', 'one shot', 'long', 'ease', ['animation', 'audio', 'VFX', 'camera'], 'A long feedback that lasts over time before disappearing, often starting with one input.',
+      t => t < .1 ? 0 : .8 * sstep(.1, .3, t) * (1 - sstep(1.2, 1.85, t)) * (1 - .25 * sstep(.3, 1.2, t))],
+    ['chunk', 'held', 'long', 'snap', ['audio', 'animation', 'VFX'], 'Small peaks of feedback, repeated over longer periods of time. Less about the single moment, more about an experience.',
       t => { let s = 0; for (let k = 0; k < 7; k++) s += .45 * hit(t, .1 + .25 * k, .05) * (t < .1 + .25 * (k + 1) ? 1 : 0); return s; }],
-    ['sticky', 'one shot', 'short', 'snap', ['time', 'camera'], 'A hit stop to show the impact of an attack, with a camera shake added.',
+    ['sticky', 'one shot', 'short', 'snap', ['time', 'camera'], 'One big impact that lasts just a few instants: a hit stop, with a camera shake added.',
       t => t < .1 ? 0 : t < .4 ? .95 : .55 * Math.exp(-(t - .4) / .25) * Math.abs(Math.sin(40 * (t - .4)))],
-    ['velcro', 'held', 'medium', 'spring', ['animation', 'haptics', 'audio'], 'Contact that catches and holds, builds tension as you pull, then lets go with a springy tug.',
-      t => t < 1 ? .5 * sstep(.1, .22, t) + .4 * sstep(.7, 1, t) : Math.max(-.25, .9 * Math.exp(-(t - 1) / .14) * Math.cos(22 * (t - 1)))],
-    ['juice', 'one shot', 'medium', 'spring', ['VFX', 'audio', 'animation', 'camera'], 'One impact layered with many reactions that bounce and settle together.',
+    ['velcro', 'one shot', 'medium', 'snap', ['animation', 'audio', 'VFX'], 'An instantaneous blend: the other force is ignored and forced to follow the stronger one, which keeps moving.',
+      t => t < .46 ? 0 : t < 1.3 ? .75 : .95 * hit(t, 1.3, .1)],
+    ['juice', 'one shot', 'medium', 'spring', ['VFX', 'audio', 'animation', 'camera'], 'More energy comes out than you put in: an exaggerated reaction when two things impact.',
       t => t < .1 ? 0 : Math.exp(-(t - .1) / .35) * (.65 + .35 * Math.cos(28 * (t - .1)))],
-    ['grease', 'held', 'long', 'ease', ['animation', 'audio'], 'Low, smooth, continuous motion with almost no resistance.',
-      t => .35 * sstep(.1, .45, t) * (1 - sstep(1.45, 1.9, t))],
-    ['snap', 'one shot', 'instant', 'snap', ['animation'], 'An instant change to a new state, with no in-between frames.',
-      t => t >= .2 ? .7 : 0],
-    ['meaty', 'one shot', 'medium', 'ease', ['animation', 'audio', 'camera', 'time'], 'A heavy blow that takes a moment to land and a long time to settle.',
-      t => t < .22 ? sstep(.05, .22, t) : Math.exp(-(t - .22) / .45)],
-    ['crisp', 'one shot', 'instant', 'snap', ['audio', 'VFX'], 'A short, clean, sharp peak with nothing trailing after it.',
-      t => .9 * gauss(t, .15, .02)],
-    ['electricity', 'held', 'long', 'ease', ['VFX', 'audio', 'haptics'], 'Energy builds up while held, and then it is released in a bigger outcome (Mega Man X).',
+    ['grease', 'one shot', 'short', 'snap', ['animation', 'audio'], 'Like swish on a smaller time frame: no friction, the attacker continues uninhibited, and control comes back fast.',
+      t => t < .1 ? 0 : t < .7 ? .5 : 0],
+    ['snap', 'one shot', 'short', 'snap', ['VFX', 'audio', 'camera'], 'The first action is strong and instant, while the secondary feedback comes right after.',
+      t => t < .2 ? 0 : Math.exp(-(t - .2) / .04) + .38 * sstep(.24, .34, t) * Math.exp(-Math.max(0, t - .34) / .5)],
+    ['meaty', 'one shot', 'short', 'spring', ['animation', 'audio'], 'A heavy impact absorbed into the receiver: the reaction is small and resolves fast, because the receiver is bigger and stronger.',
+      t => t < .2 ? 0 : .45 * Math.exp(-(t - .2) / .15) * Math.cos(30 * (t - .2))],
+    ['crisp', 'one shot', 'instant', 'snap', ['VFX', 'audio', 'animation'], 'A small satisfying feedback, repeated over time, with a distinct response for each context.',
+      t => [.15, .6, 1.05, 1.5].reduce((s, c) => s + .38 * gauss(t, c, .02), 0)],
+    ['electricity', 'held', 'long', 'ease', ['VFX', 'audio', 'haptics'], 'Energy builds up, and then it is released in a bigger outcome (Mega Man X). It can often be held indefinitely.',
       t => t < .1 ? 0 : t < 1.2 ? .62 * Math.pow((t - .1) / 1.1, 2) + .05 * Math.sin(70 * t) * (t - .1) : hit(t, 1.2, .14)],
-    ['grip', 'held', 'long', 'ease', ['animation', 'haptics', 'camera'], 'Steady traction while held, with a fine texture of contact underneath.',
-      t => sstep(.1, .45, t) * (1 - sstep(1.6, 1.9, t)) * (.62 + .05 * Math.sin(55 * t))],
+    ['grip', 'one shot', 'medium', 'snap', ['animation', 'camera', 'time'], 'A fast interruption of movement. Like velcro, but the movement is forced into a stop while the world keeps moving.',
+      t => t < .3 ? 0 : t < 1.4 ? .55 + .4 * Math.exp(-(t - .3) / .06) : .55 * (1 - sstep(1.4, 1.6, t))],
     ['jerk', 'one shot', 'medium', 'ease', ['animation', 'camera'], 'The movement blends into a stop, then blends into the other direction.',
       t => t < .1 || t > 1.1 ? 0 : .7 * Math.abs(Math.cos(Math.PI * (t - .1)))],
-    ['click', 'one shot', 'instant', 'snap', ['audio', 'haptics'], 'A tiny, precise tick that confirms an input.',
+    ['click', 'one shot', 'instant', 'snap', ['audio', 'VFX', 'animation'], 'Immediate feedback when you press an input. No delay: the feedback is low but instantaneous.',
       t => .4 * gauss(t, .1, .012) + .2 * gauss(t, .16, .01)],
-    ['spurt', 'one shot', 'short', 'ease', ['VFX', 'animation', 'camera'], 'A sudden burst that starts at full strength and tapers off.',
-      t => .95 * hit(t, .1, .28)],
-    ['woosh', 'one shot', 'short', 'snap', ['animation', 'VFX', 'audio'], 'An object sucked in, with a small anticipation and a clear snap.',
+    ['spurt', 'held', 'long', 'snap', ['VFX', 'audio'], 'A steady flow of power from a source, with stable intensity or small variations over time.',
+      t => t < .15 || t >= 1.7 ? 0 : sstep(.15, .2, t) * (.55 + .05 * Math.sin(23 * t) + .03 * Math.sin(51 * t))],
+    ['woosh', 'one shot', 'short', 'snap', ['animation', 'VFX', 'audio'], 'The object gets sucked in, with a small anticipation and a clear snap.',
       t => t < .08 ? 0 : t < .25 ? -.22 * Math.sin(Math.PI * (t - .08) / .17) : t < .55 ? Math.pow((t - .25) / .3, 3) : 0],
   ].map(([k, trig, dur, mo, ch, def, f]) => ({ k, name: k[0].toUpperCase() + k.slice(1), trig, dur, mo, ch, def, f, s: sample(f) }));
   function sample(f) { const a = new Float32Array(N); for (let i = 0; i < N; i++) a[i] = f(i * WIN / (N - 1)); return a; }
@@ -330,13 +398,16 @@
   /* =================== slide 2: the grid of sixteen =================== */
   const GX = 8, GY = 8, CW = 250, CH_ = 134, GAP = 8;
   const cardXY = i => ({ x: GX + (i % 4) * (CW + GAP), y: GY + Math.floor(i / 4) * (CH_ + 9) });
-  function drawCard(g, i, t, selA, selB, dim) {
-    const ty = TYPES[i], { x, y } = cardXY(i), tl = t % LOOP;
+  function drawCard(g, i, t, selA, selB, dim) { const { x, y } = cardXY(i); drawCardAt(g, TYPES[i], x, y, t, selA, selB, dim); }
+  function drawCardAt(g, ty, x, y, t, selA, selB, dim) {
+    const tl = t % LOOP;
     g.globalAlpha = dim ? .45 : 1;
     g.fillStyle = CARD; g.beginPath(); g.roundRect(x, y, CW, CH_, 10); g.fill();
     if (selA || selB) { g.strokeStyle = selA ? COL_A : COL_B; g.lineWidth = 4; g.beginPath(); g.roundRect(x + 1, y + 1, CW - 2, CH_ - 2, 10); g.stroke(); }
-    g.textAlign = 'left'; g.font = font(800, 15, 'M'); g.fillStyle = C.ink; g.fillText(ty.name, x + 10, y + 20);
-    g.textAlign = 'right'; g.font = font(600, 11); g.fillStyle = C.muted; g.fillText(`${ty.trig} · ${ty.dur} · ${ty.mo}`, x + CW - 10, y + 19);
+    const meta = `${ty.trig} · ${ty.dur} · ${ty.mo}`; g.font = font(600, 11); const mw = g.measureText(meta).width;
+    let fs = 15; g.font = font(800, fs, 'M'); while (fs > 10 && g.measureText(ty.name).width > CW - 28 - mw) { fs--; g.font = font(800, fs, 'M'); }
+    g.textAlign = 'left'; g.fillStyle = C.ink; g.fillText(ty.name, x + 10, y + 20);
+    g.textAlign = 'right'; g.font = font(600, 11); g.fillStyle = C.muted; g.fillText(meta, x + CW - 10, y + 19);
     const cx = x + 10, cy = y + 28, cw = 124, chh = 72;
     axes(g, cx, cy, cw, chh, { bg: '#fffaf0' });
     const col = selA ? COL_A : selB ? COL_B : C.ink, c = curve(g, cx, cy, cw, chh, ty.s, col, 2, .12);
@@ -351,19 +422,20 @@
     TYPES.forEach((_, i) => drawCard(g, i, t, i === a, i === b, st.sel.length === 2 && i !== a && i !== b));
     if (st.hover >= 0 && !st.sel.includes(st.hover)) { const { x, y } = cardXY(st.hover); g.strokeStyle = C.navy; g.lineWidth = 2; g.beginPath(); g.roundRect(x + 1, y + 1, CW - 2, CH_ - 2, 10); g.stroke(); }
   }
-  function drawCmp(g, st, t) {
+  function drawCmp(g, st, t) { drawCmpOf(g, st.sel.map(i => TYPES[i]), t, 'Click two cards to overlay them'); }
+  function drawCmpOf(g, tys, t, empty) {
     g.setTransform(2, 0, 0, 2, 0, 0); g.clearRect(0, 0, 340, 180);
     const x = 30, y = 12, w = 296, h = 140, tl = t % LOOP;
     axes(g, x, y, w, h, { grid: true, labels: true, fs: 10 });
-    if (!st.sel.length) { g.font = font(600, 13); g.fillStyle = C.muted; g.textAlign = 'center'; g.fillText('Click two cards to overlay them', x + w / 2, y + h / 2 - 10); return; }
-    st.sel.forEach((i, k) => { const col = k ? COL_B : COL_A, c = curve(g, x, y, w, h, TYPES[i].s, col, 2.5, .12); playhead(g, x, y, w, h, tl, c.val, col); });
+    if (!tys.length) { g.font = font(600, 13); g.fillStyle = C.muted; g.textAlign = 'center'; g.fillText(empty, x + w / 2, y + h / 2 - 10); return; }
+    tys.forEach((ty, k) => { const col = k ? COL_B : COL_A, c = curve(g, x, y, w, h, ty.s, col, 2.5, .12); playhead(g, x, y, w, h, tl, c.val, col); });
     g.font = font(800, 12, 'M'); g.textAlign = 'right';
-    st.sel.forEach((i, k) => { g.fillStyle = k ? COL_B : COL_A; g.fillText(TYPES[i].name, x + w - 4, y + 16 + k * 16); });
+    tys.forEach((ty, k) => { g.fillStyle = k ? COL_B : COL_A; g.fillText(ty.name, x + w - 4, y + 16 + k * 16); });
   }
   const PAIRS = [['velcro', 'grip'], ['swish', 'grease'], ['crunch', 'sticky'], ['electricity', 'woosh']];
   const PAIR_SAY = {
-    'velcro+grip': 'Both hold while you hold. Grip stays steady with a fine texture under it. Velcro builds tension as you pull, then lets go with a springy tug.',
-    'swish+grease': 'Both are smooth with no hard edge. Swish is a short sweep that comes and goes. Grease is a low glide that keeps going.',
+    'velcro+grip': 'Both snap on contact. In velcro the stronger force keeps moving and drags the other along. In grip the movement is forced into a stop while the world keeps going.',
+    'swish+grease': 'Both run on without resistance. Swish is long and takes control away. Grease is the same idea on a smaller time frame, so control comes back fast.',
     'crunch+sticky': 'Both open on one impact. Crunch breaks into small secondary bits. Sticky freezes time first, then shakes.',
     'electricity+woosh': 'Both build before they release. Electricity charges for over a second while held. Woosh is a quick pull back and a snap.',
   };
@@ -403,7 +475,61 @@
     };
   });
 
-  /* =================== slide 3: the builder =================== */
+  /* =================== slide 3: names from Rogers' article that the deck leaves out =================== */
+  const EXTRAS = [
+    ['soupy', 'Soupy', 'swish', 'one shot', 'long', 'ease', ['animation'], 'Swish with all the resistance removed: one press twirls the spear and a dozen enemies fall at once. Rogers: "frictionless, and therefore lifeless". He names chunky as the remedy.', 'From Rogers\' article',
+      t => t < .1 ? 0 : .26 * sstep(.1, .3, t) * (1 - sstep(1.5, 1.9, t))],
+    ['esnap', 'Electric snappy', 'electricity', 'held', 'long', 'snap', ['VFX', 'audio', 'animation', 'haptics'], 'Electricity that releases into a snap. A charge that takes two breathless seconds, then the kick lands and the enemy flies at once (God Hand\'s mule kick).', 'From Rogers\' article',
+      t => t < .1 ? 0 : t < 1.2 ? .55 * Math.pow((t - .1) / 1.1, 2) + .04 * Math.sin(70 * t) * (t - .1) : 1.05 * hit(t, 1.2, .07)],
+    ['slidejump', 'Slide jump', 'velcro', 'held', 'medium', 'ease', ['animation', 'audio'], 'A compound friction (Super Mario 64): the slide floats for an instant with an element of velcro, then the jump is a clean, boomerang-shaped jerk with an airy swoosh.', 'Compound: velcro + jerk + swish',
+      t => t < .1 ? 0 : t < .6 ? .45 - .1 * (t - .1) : t < 1.3 ? .85 * Math.sin(Math.PI * clamp((t - .6) / .7)) * (1 - .3 * clamp((t - .6) / .7)) + .1 * hit(t, .6, .05) : 0],
+    ['reflect', 'Sword reflect', 'crunch', 'one shot', 'medium', 'snap', ['VFX', 'audio', 'camera', 'time'], 'A compound friction (Sin and Punishment 2): reflecting a shot with your sword is chunky, sticky, jerky and swishy at once, and crunchy on the hit.', 'Compound: chunk + sticky + jerk + swish + crunch',
+      t => t < .1 ? 0 : t < .35 ? .4 * sstep(.1, .35, t) : t < .5 ? .9 : t < 1.2 ? .3 * Math.exp(-(t - .5) / .4) : hit(t, 1.2, .08) + .3 * gauss(t, 1.45, .04)],
+  ].map(([k, name, rel, trig, dur, mo, ch, def, tag, f]) => ({ k, name, rel, trig, dur, mo, ch, def, tag, f, s: sample(f) }));
+  const XS = 2.0, XCW = CW * XS, XCH = CH_ * XS;
+  const xXY = i => ({ x: 8 + (i % 2) * (XCW + 8), y: 8 + Math.floor(i / 2) * (XCH + 10) });
+  function drawExtras(g, st, t) {
+    T.use(g); bg(g);
+    EXTRAS.forEach((ty, i) => {
+      const { x, y } = xXY(i); g.save(); g.translate(x, y); g.scale(XS, XS);
+      drawCardAt(g, ty, 0, 0, t, i === st.sel, false, st.sel >= 0 && i !== st.sel);
+      g.globalAlpha = st.sel >= 0 && i !== st.sel ? .45 : 1; g.font = font(600, 9); g.fillStyle = C.goldInk; g.textAlign = 'right'; g.fillText(ty.tag, CW - 10, CH_ - 26); g.globalAlpha = 1;
+      g.restore();
+    });
+    if (st.hover >= 0 && st.hover !== st.sel) { const { x, y } = xXY(st.hover); g.strokeStyle = C.navy; g.lineWidth = 2; g.beginPath(); g.roundRect(x + 1, y + 1, XCW - 2, XCH - 2, 14); g.stroke(); }
+  }
+  const XSTEP = 6, XDUR = EXTRAS.length * XSTEP;
+  canvasDemo('extras', (s, cv, g) => {
+    const st = { sel: -1, hover: -1, tour: true, held: false, t: 0, key: '' };
+    const cmp = $(s, '.fs-cmp'), cg = cmp.getContext('2d'), tourBtn = $(s, '.fx-tour');
+    tourBtn.onclick = () => { st.tour = true; st.t = 0; tourBtn.classList.add('on'); };
+    const atPt = e => { const r = cv.getBoundingClientRect(), x = (e.clientX - r.left) * W / r.width, y = (e.clientY - r.top) * H / r.height; return EXTRAS.findIndex((_, i) => { const c = xXY(i); return x >= c.x && x < c.x + XCW && y >= c.y && y < c.y + XCH; }); };
+    cv.addEventListener('mousemove', e => { st.hover = atPt(e); cv.style.cursor = st.hover >= 0 ? 'pointer' : ''; });
+    cv.addEventListener('mouseleave', () => { st.hover = -1; });
+    cv.addEventListener('click', e => { const i = atPt(e); if (i < 0) return; st.tour = false; tourBtn.classList.remove('on'); st.sel = i; });
+    const apply = t => { st.sel = Math.floor(t / XSTEP) % EXTRAS.length; return t % XSTEP; };
+    function info() {
+      if (String(st.sel) === st.key) return; st.key = String(st.sel);
+      if (st.sel < 0) { say($(s, '.fx-info'), ''); say($(s, '.fx-out'), 'Click a card to lay its curve over its nearest type in the deck.'); return; }
+      const A = EXTRAS[st.sel], B = TYPES[byK(A.rel)];
+      say($(s, '.fx-info'), `<p class="fs-def"><b class="a">${A.name}.</b> ${A.def}</p>${chipsHTML(A, 'a')}<p class="fs-def"><b class="b">${B.name}</b> (in the deck). ${B.def}</p>`);
+      say($(s, '.fx-out'), XSAY[A.k]);
+    }
+    const draw = f => { info(); drawExtras(g, st, f); drawCmpOf(cg, st.sel >= 0 ? [EXTRAS[st.sel], TYPES[byK(EXTRAS[st.sel].rel)]] : [], f, 'Click a card to compare it'); };
+    scenes.extras = { seek(t) { st.held = true; st.tour = true; draw(apply(t)); }, dur: () => XDUR };
+    return dt => {
+      if (st.held) return; st.t += Math.max(0, dt); let f = st.t;
+      if (st.tour) { if (st.t >= XDUR) st.t = 0; f = apply(st.t); }
+      draw(f);
+    };
+  });
+  const XSAY = {
+    soupy: 'Same trigger and length as swish, but the curve never rises: the crowd falls without any reaction of its own, so nothing pushes back.',
+    esnap: 'Electricity eases out of its release. Electric snappy ends on an instant spike: the charge pays off in a single frame.',
+    slidejump: 'The flat start is the velcro float of the slide. The arch after it is the jump, a jerk with a swish on top.',
+    reflect: 'One action, several deck shapes in a row: a swish up to the hit, a sticky hold on contact, a jerk as the shot turns around, then a crunch when it comes home.',
+  };
+  /* =================== slide 4: the builder =================== */
   // distance: RMS gap between curves at the best small time shift (up to 0.1 s), plus a penalty per mismatched chip
   function dist(arr, chips, ty) {
     let best = 1e9;
@@ -418,7 +544,7 @@
   const BUILD_SHOTS = [
     { f: TYPES[byK('crunch')].f, trig: 'one shot', dur: 'short', mo: 'snap', ch: ['VFX', 'audio', 'camera'], say: 'One spike, then three smaller bumps, as a snap one shot: the closest named shape is crunch.' },
     { f: t => t < .15 ? 0 : t < 1.1 ? .65 * Math.pow((t - .15) / .95, 1.7) : hit(t, 1.1, .16), trig: 'held', dur: 'long', mo: 'ease', ch: ['VFX', 'audio', 'haptics'], say: 'A long charge while held, then a release: this reads as electricity, the Mega Man X charge shot.' },
-    { f: t => .55 * gauss(t, .35, .1) + .8 * gauss(t, 1.0, .05) + .3 * sstep(1.3, 1.8, t), trig: 'one shot', dur: 'medium', mo: 'spring', ch: ['animation', 'time'], say: 'A soft swell, a sharp hit, then a slow rise that holds: no type sits close. Slide 270: "What matters is the shape underneath." Name it yourself.' },
+    { f: t => .55 * gauss(t, .35, .1) + .8 * gauss(t, 1.0, .05) + .3 * sstep(1.3, 1.8, t), trig: 'one shot', dur: 'medium', mo: 'spring', ch: ['animation', 'time'], say: 'A soft swell, a sharp hit, then a slow rise that holds: no type sits close. "What matters is the shape underneath." Name it yourself.' },
   ];
   const BSTEP = 7, BUILD_DUR = BUILD_SHOTS.length * BSTEP;
   function drawBuild(g, st, t) {
@@ -439,7 +565,7 @@
     g.font = font(600, 13); g.fillStyle = C.muted; g.fillText(named ? 'Closest named type' : 'No named type is close', vx + 18, vy + 16);
     g.font = font(800, 30, 'M'); g.fillStyle = named ? C.ink : C.redDk; g.fillText(named ? ty.name : 'Unnamed shape', vx + 18, vy + 52);
     g.font = font(500, 13); g.fillStyle = C.ink;
-    wrap(g, named ? ty.def : `Nearest is ${ty.name}, but the gap is wide. Slide 270: "None of these terms are official, they're just names for shapes." Give this one a name.`, vx + 18, vy + 78, 334, 18);
+    wrap(g, named ? ty.def : `Nearest is ${ty.name}, but the gap is wide. "None of these terms are official, they're just names for shapes." Give this one a name.`, vx + 18, vy + 78, 334, 18);
     demoBox(g, named ? ty : { k: ty.k, f: ty.f }, vx + 35, vy + 128, 3, tl);
     if (!named) { g.fillStyle = 'rgba(239,230,210,.7)'; g.fillRect(vx + 35, vy + 128, 300, 210); g.font = font(700, 14); g.fillStyle = C.muted; g.textAlign = 'center'; g.fillText(`(${ty.name}, for reference)`, vx + 185, vy + 240); g.textAlign = 'left'; }
     g.font = font(700, 13); g.fillStyle = C.ink; g.fillText('Ranking', vx + 18, vy + 368);
@@ -495,5 +621,5 @@
 
   window.__seek = (t, which = 'grid') => scenes[which].seek(t);
   window.__dur = (which = 'grid') => scenes[which].dur();
-  window.__fs = { TYPES, rank, dist };   // for checking the matcher
+  window.__fs = { TYPES, EXTRAS, rank, dist };   // for checking the matcher
 })();
