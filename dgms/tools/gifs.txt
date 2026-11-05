@@ -28,6 +28,7 @@ m3-skills/reaction-lab 2 redgreen m3-skills--reaction-lab
 m3-skills/three-dials 1 dials m3-skills--three-dials
 m3-skills/three-dials 2 beast m3-skills--three-dials-beastfly
 m3-skills/and-or 1 gate m3-skills--and-or
+m3-skills/and-or 2 slam m3-skills--and-or-slam
 m3-skills/flea-juggle 1 juggle m3-skills--flea-juggle
 m3-skills/skill-fingerprints 2 disso m3-skills--skill-fingerprints
 m3-skills/mash-meter 1 mash m3-skills--mash-meter
