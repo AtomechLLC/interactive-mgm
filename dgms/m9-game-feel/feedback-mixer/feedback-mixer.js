@@ -9,6 +9,7 @@
    rumble only fire from the live loop. Slide 2 is a checklist in the shape of Jacopo's feedback tool that reads the live
    slot and downloads as text or JSON. */
 import * as THREE from '../../../assets/vendor/three/three.module.min.js';
+import { GLTFLoader } from '../../../assets/vendor/three/addons/loaders/GLTFLoader.js';
 
 const { $, $$, canvasDemo, say, store } = FPF.kit;
 const C = TD.C, TAU = Math.PI * 2;
@@ -297,6 +298,66 @@ function build3D(canvas) {
 }
 
 const KX = -.95;   // the knight's rest position
+
+/* ---------- an imported character (optional): when MODEL.url loads, it replaces the grey-box knight ----------
+   The clip is driven by the hit's action time, not by a clock, so hit stop freezes it and __seek stays deterministic.
+   marks are seconds in the clip: start (idle pose), windEnd (top of the wind-up), impact (blade meets the target), end.
+   hand is the bone the sword hangs from (or the weapon bone, if the model has its own blade), tip the blade's length. */
+const MODEL = {
+  url: new URLSearchParams(location.search).get('model'), clip: new URLSearchParams(location.search).get('clip'), height: 1.85, x: 0, facing: 0,
+  marks: { start: 0, windEnd: .45, impact: .62, end: 1.4 },
+  hand: null, sword: true, swordOffset: [0, .05, 0], swordRot: [0, 0, 0], tip: 1.0,
+};
+let modelReady = Promise.resolve(false);
+function loadModel(R) {
+  modelReady = new Promise(done => {
+    new GLTFLoader().load(MODEL.url, gl => {
+      try {
+        const root = gl.scene; root.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; o.frustumCulled = false; } });
+        const clip0 = (MODEL.clip && gl.animations.find(a => a.name === MODEL.clip)) || gl.animations[0];
+        if (clip0) { const mx = new THREE.AnimationMixer(root), ac = mx.clipAction(clip0); ac.play(); ac.time = MODEL.marks.start; mx.update(0); }
+        root.updateMatrixWorld(true); root.traverse(o => { if (o.isSkinnedMesh) o.computeBoundingBox(); });
+        const box = new THREE.Box3().setFromObject(root), h = box.max.y - box.min.y || 1, k = MODEL.height / h;
+        const wrap = new THREE.Group(); wrap.add(root); root.scale.setScalar(k); root.position.y = -box.min.y * k;
+        wrap.rotation.y = MODEL.facing; wrap.position.x = MODEL.x;
+        R.knight.children.forEach(c => { c.visible = false; }); R.knight.add(wrap);
+        const clip = (MODEL.clip && gl.animations.find(a => a.name === MODEL.clip)) || gl.animations[0];
+        const M = { wrap, root, clip, mixer: null, action: null, hand: null, sword: null };
+        if (clip) { M.mixer = new THREE.AnimationMixer(root); M.action = M.mixer.clipAction(clip); M.action.play(); M.action.paused = true; }
+        if (MODEL.hand) root.traverse(o => { if (o.name === MODEL.hand) M.hand = o; });
+        if (M.hand && MODEL.sword) {   // our blade, hung from the hand bone; its scale undoes the model's
+          const sw = new THREE.Group(); sw.position.set(...MODEL.swordOffset); sw.rotation.set(...MODEL.swordRot); sw.scale.setScalar(1 / k);
+          R.arm.children.forEach(c => { if (c.position.x > .44) sw.add(c.clone()); });
+          sw.children.forEach(c => { c.position.x -= .47; }); M.hand.add(sw); M.sword = sw;
+        }
+        R.model = M; done(true);
+      } catch (e) { console.warn('model setup failed', e); done(false); }
+    }, undefined, () => done(false));
+  });
+  return modelReady;
+}
+// the clip time for action time a: the anim channel's poses come from the clip; with the channel off the swing skips
+// its wind-up and follow-through, so the body snaps from the idle pose to the hit and back
+function clipTime(st, a, TL) {
+  const m = MODEL.marks, animOn = st.ch.anim.on;
+  if (a < TL.press) return m.start;
+  if (!animOn) {
+    if (a < TL.wEnd) return m.start;
+    if (a < TL.imp) return lerp(m.start, m.impact, (a - TL.wEnd) / (TL.imp - TL.wEnd));
+    return lerp(m.impact, m.start, clamp((a - TL.imp) / .5));
+  }
+  if (a < TL.wEnd) { const k = (a - TL.press) / TL.wind; return lerp(st.cut ? lerp(m.start, m.windEnd, .75) : m.start, m.windEnd, k); }
+  if (a < TL.imp) return lerp(m.windEnd, m.impact, (a - TL.wEnd) / (TL.imp - TL.wEnd));
+  const d = a - TL.imp, span = m.end - m.impact;
+  return has(st, 'anim', 1) ? Math.min(m.end, m.impact + d * span / 1.0) : lerp(m.impact, m.start, clamp(d / .5));
+}
+function poseModel(R, st, a, TL) { const M = R.model; if (!M || !M.action) return; M.action.time = clipTime(st, a, TL); M.mixer.update(0); }
+// world position of a point on the imported character's blade
+function modelBladePoint(R, d, out) {
+  const M = R.model, o = M.sword || M.hand; o.updateWorldMatrix(true, false);
+  return o.localToWorld(out.set(M.sword ? d : d / o.getWorldScale(tmpS).x, 0, 0));
+}
+const tmpS = new THREE.Vector3();
 const tmpO = new THREE.Object3D(), tmpV = new V3(), tmpV2 = new V3();
 // a point on the blade (d metres from the shoulder) at a pose, in world space, without touching the scene graph
 function bladePoint(p, d, out) {
@@ -317,6 +378,7 @@ function render3D(R, st, t) {
   R.arm.rotation.z = -p.ang;
   R.legs[0].rotation.z = -p.lunge * .9 - p.crouch * 1.5; R.legs[1].rotation.z = p.lunge * .7 + p.crouch;
   R.capeP.rotation.z = p.lean * 1.4 - p.lunge * .6; R.plume.rotation.z = 1.0 + p.lean * 1.5;
+  if (R.model) poseModel(R, st, a, TL);
   R.bladeMat.emissiveIntensity = has(st, 'vfx', 0) && a > TL.wEnd && a < TL.imp + .12 ? .8 * (.4 + vfx) : 0;
   // dummy: recoil (animation), wobble while frozen (time), hit flash (materials)
   const wob = has(st, 'time', 1) && A.stopping ? Math.sin(A.stopFor * 90) * .035 * (.5 + tm) : 0;
@@ -385,9 +447,11 @@ function render3D(R, st, t) {
     const fade = a > TL.imp ? 1 - (a - TL.imp) / .2 : 1;
     for (let i = 0; i < TS; i++) {
       const aa = Math.max(TL.wEnd, a - i * .007), pp = pose(st, aa, TL), k = Math.pow(1 - i / (TS - 1), 2) * fade * (.3 + .5 * vfx);
-      bladePoint(pp, 1.15, tmpV).toArray(R.tPos, i * 6); bladePoint(pp, 1.55, tmpV).toArray(R.tPos, i * 6 + 3);
+      if (R.model && R.model.hand) { R.knight.position.x = KX + pp.lunge; poseModel(R, st, aa, TL); modelBladePoint(R, MODEL.tip * .6, tmpV).toArray(R.tPos, i * 6); modelBladePoint(R, MODEL.tip, tmpV).toArray(R.tPos, i * 6 + 3); }
+      else { bladePoint(pp, 1.15, tmpV).toArray(R.tPos, i * 6); bladePoint(pp, 1.55, tmpV).toArray(R.tPos, i * 6 + 3); }
       R.tCol.set([.25 * k, .55 * k, .8 * k, .75 * k, .95 * k, 1 * k], i * 6);
     }
+    if (R.model) { R.knight.position.x = KX + p.lunge; poseModel(R, st, a, TL); }
     R.trailGeo.attributes.position.needsUpdate = true; R.trailGeo.attributes.color.needsUpdate = true; R.trailGeo.computeBoundingSphere();
   }
   // braziers flicker on the clock, so a frozen hit still feels alive around it (held still for the GIF, which stays smaller)
@@ -623,6 +687,7 @@ canvasDemo('mixer', (s, cv, g) => {
   const view = $(s, '.fmx-view'), glc = $(s, 'canvas.gl'), desk = $(s, '.fmx-desk'), out = $(s, '.fm-out'), tourBtn = $(s, '.fm-tour');
   const trackCv = $(s, '.fm-track'), tg = trackCv.getContext('2d');
   let R = null; try { R = build3D(glc); } catch (e) { R = null; }
+  if (R) loadModel(R);
   const L = { tour: true, held: false, t: 0, focus: null, prevA: -1, prevT: 0 };
 
   // the desk
@@ -873,4 +938,4 @@ const W = 1040, H = 585;
 }
 
 window.__seek = (t, which = 'mixer') => scenes[which].seek(t);
-window.__dur = (which = 'mixer') => scenes[which].dur();
+window.__dur = (which = 'mixer') => modelReady.then(() => scenes[which].dur());   // waits for an imported model, if there is one
