@@ -9,6 +9,24 @@
 <link rel="stylesheet" href="../../../assets/deck.css">
 <link rel="stylesheet" href="../../../assets/kit.css">
 <link rel="stylesheet" href="../../shared/dgms.css">
+<style>
+  .mt-side .keys { font-size: 15px; color: var(--muted); margin: 8px 0 0; line-height: 1.35; }
+  .mt-side .keys kbd { display: inline-block; font-family: var(--display); font-weight: 800; font-size: 14px; color: var(--ink); background: #fffaf0; border: 2px solid #cdbf9f; border-bottom-width: 4px; border-radius: 6px; padding: 0 7px; }
+  .bt-mode { flex-wrap: wrap; }
+  .ba-three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 26px; }
+  .ba-card { background: rgba(255,252,244,.92); border: 2px solid #cdbf9f; border-radius: 18px; padding: 22px 24px 20px; display: flex; flex-direction: column; gap: 10px; }
+  .ba-card.one { border-color: #e5322d; } .ba-card.know { border-color: #ffb951; } .ba-card.dec { border-color: #1a8a4c; }
+  .ba-card .lab { font-family: var(--display); font-weight: 800; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; }
+  .ba-card.one .lab { color: #a8201c; } .ba-card.know .lab { color: #9a5a06; } .ba-card.dec .lab { color: #1a8a4c; }
+  .ba-card h3 { margin: 0; font-size: 26px; line-height: 1.15; color: var(--ink); }
+  .ba-card .mons { display: flex; gap: 0; height: 104px; align-items: center; margin: -8px 0 -6px -22px; }
+  .ba-card .mons img { width: 136px; height: 136px; margin-right: -26px; image-rendering: pixelated; }
+  .ba-card .mons .sw { font: 800 34px var(--display); color: #e5322d; margin: 0 26px 0 8px; }
+  .ba-card p { margin: 0; font-size: 18px; line-height: 1.4; color: var(--ink); }
+  .ba-card .eg { font-size: 15px; color: var(--muted); }
+  .ba-ask { margin-top: 26px; font-size: 22px; color: var(--ink); background: rgba(255,252,244,.92); border-left: 6px solid #ffb951; border-radius: 10px; padding: 16px 22px; }
+  .ba-ask b { font-family: var(--display); }
+</style>
 <script>
   window.DECK = { title: 'Directing Game Mechanics · Module 3 · Is There a Clear Best Answer?', home: '../../index.html', audio: false, cues: null };
 </script>
@@ -17,10 +35,27 @@
 <body>
 <div class="viewport"><div class="stage">
 
-<!-- 1: slide 76 -->
-<section class="slide" data-title="Is there a clear best answer?" data-demo="court">
-  <div class="kicker">the skill testing framework · slide 76</div>
+<!-- 1: a Pokemon battle -->
+<section class="slide" data-title="Four buttons, one answer?" data-demo="battle" data-touch-keys="Digit1:1,Digit2:2,Digit3:3,Digit4:4">
+  <div class="kicker">the skill testing framework · where are the choices?</div>
   <h2 class="sm">Is there a <span class="accent">clear best answer?</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4 style="margin-top:0">Opponent</h4>
+      <div class="seg bt-mode"><button class="btn on" data-m="one">Gyarados every turn</button><button class="btn" data-m="team">Water team</button><button class="btn" data-m="reads">Team that reads you</button></div>
+      <div class="row wrap"><button class="btn bt-reset">New round</button><button class="btn bt-tour on">▶ Walk-through</button></div>
+      <div class="mt-stats bt-stats"></div>
+      <p class="mt-out bt-out"></p>
+      <p class="keys">Click a move or press <kbd>1</kbd>–<kbd>4</kbd>. Eight turns a round. Each move shows its expected damage before you pick.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 2: the NBA shot chart -->
+<section class="slide" data-title="The shot chart collapses" data-demo="court">
+  <div class="kicker">the same question, off the screen · basketball</div>
+  <h2 class="sm">Players <span class="accent">will find it</span></h2>
   <div class="mt-wrap">
     <canvas class="demo" width="1040" height="585"></canvas>
     <div class="mt-side">
@@ -34,10 +69,41 @@
   </div>
 </section>
 
+<!-- 3: takeaway -->
+<section class="slide" data-title="Ask it of every skill test">
+  <div class="kicker">the skill testing framework · takeaway</div>
+  <h2 class="sm">What a <span class="accent">clear best answer</span> tests</h2>
+  <div class="ba-three">
+    <div class="ba-card one">
+      <span class="lab">one answer, every time</span>
+      <h3>Nothing to decide</h3>
+      <div class="mons"><img src="../img/best-answer/gyarados.png" alt="Gyarados"></div>
+      <p>One option wins in every situation. Players find it, then stop deciding: the other options are decoration.</p>
+      <p class="eg">Thunderbolt into Gyarados. The 2025 shot chart: rim and arc, empty midrange.</p>
+    </div>
+    <div class="ba-card know">
+      <span class="lab">one answer per situation</span>
+      <h3>A knowledge test</h3>
+      <div class="mons"><img src="../img/best-answer/gyarados.png" alt="Gyarados"><img src="../img/best-answer/quagsire.png" alt="Quagsire"><img src="../img/best-answer/lapras.png" alt="Lapras"></div>
+      <p>The answer changes, but each situation still has one. The skill is reading the situation and recalling the answer.</p>
+      <p class="eg">A water team: know that Quagsire is Ground and takes nothing from Thunderbolt.</p>
+    </div>
+    <div class="ba-card dec">
+      <span class="lab">the answer depends on the other side</span>
+      <h3>A decision test</h3>
+      <div class="mons"><img src="../img/best-answer/gyarados.png" alt="Gyarados"><span class="sw">⇄</span><img src="../img/best-answer/quagsire.png" alt="Quagsire"></div>
+      <p>Two or more options stay worth considering, and the best one moves when the opponent or the defence moves.</p>
+      <p class="eg">A trainer who switches to counter your obvious move. Graded payoffs: shoot where the defence is not.</p>
+    </div>
+  </div>
+  <div class="ba-ask"><b>Ask yourself:</b> am I making something with a clear best answer? Sometimes that is the test you want. If you meant to test decisions, make the payoff depend on the situation, or on what the other side does.</div>
+</section>
+
 </div></div>
 <script src="../../../assets/deck.js"></script>
 <script src="../../../assets/kit.js"></script>
 <script src="../../shared/topdown.js"></script>
+<script src="battle.js"></script>
 <script src="best-answer.js"></script>
 </body>
 </html>

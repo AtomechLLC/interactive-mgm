@@ -1,4 +1,4 @@
-/* Is there a clear best answer? (DGMS Module 3, Leveraging Player Skills; deck slide 76).
+/* Is there a clear best answer? Slide 2: the NBA shot chart (DGMS Module 3, Leveraging Player Skills).
    A top-down half court. Every spot within 28 ft has an expected value: make chance (falls with distance, and near a
    defender) times the points the spot is worth. Teams pick shots in proportion to exp(EV / tau): a low tau is a league
    that optimises hard (the analytics era), a high tau one that shoots by feel. The slider runs tau from "2005" to "2025".
@@ -165,7 +165,6 @@
     api = { seek(t) { st.held = st.tour = true; st.t = t; st.key = ''; render(); }, dur: () => P.DUR };
     return dt => { if (!st.held) st.t += Math.max(0, dt); if (st.tour && st.t > P.DUR) st.t = 0; render(Math.max(0, dt)); };
   });
-  window.__seek = t => api.seek(t);
-  window.__dur = () => api.dur();
+  (window.BA_APIS = window.BA_APIS || {}).court = { seek: t => api.seek(t), dur: () => api.dur() };
   window.__baModel = (rule, year) => { const k = (year - 2005) / 20, tau = Math.exp(lerp(Math.log(P.TAU[0]), Math.log(P.TAU[1]), k)); const m = model(rule, tau, P.DEF[0]); return { rim: m.rim.toFixed(2), mid: m.mid.toFixed(2), three: m.three.toFixed(2), spots: Math.round(m.spots), n: CELLS.length }; };
 })();

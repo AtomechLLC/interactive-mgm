@@ -35,7 +35,8 @@ m3-skills/flea-juggle 2 tools m3-skills--four-tools
 m3-skills/skill-fingerprints 2 disso m3-skills--skill-fingerprints
 m3-skills/mash-meter 1 mash m3-skills--mash-meter
 m3-skills/async-cycles 1 cycles m3-skills--async-cycles
-m3-skills/best-answer 1 court m3-skills--best-answer
+m3-skills/best-answer 1 battle m3-skills--best-answer
+m3-skills/best-answer 2 court m3-skills--best-answer-court
 m8-balance/hits-to-kill 1 bench m8-balance--hits-to-kill
 m8-balance/hits-to-kill 2 eff m8-balance--hits-to-kill-eff
 m8-balance/hammer-time 1 hammer m8-balance--hammer-time

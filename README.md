@@ -238,7 +238,7 @@ Module 3, Leveraging Player Skills (`m3-skills/`):
 - `skill-fingerprints/`: Five-Skill Fingerprints. Five-axis radar of physical, decisions, processing, knowledge, freeform; game presets, skill dissonance morphs, your-game sliders (23-33, 89, 295-330).
 - `three-dials/`: Three Difficulty Dials. A corridor of jumps with gap width, lives and checkpoint spacing; three ghost players run it 20 times each; then the Savage Beastfly's real numbers (46-52, 81).
 - `and-or/`: AND vs OR. Twelve player cards with five skill bars; build a test, flip the joiner between AND and OR and see who gets through (Sky Diver, Overwatch, Dark Souls III teleport slam) (53-70).
-- `best-answer/`: Is There a Clear Best Answer?. Half court shaded by shot choice; 2-and-3 scoring empties the midrange as teams optimise, graded payoffs spread shots back out (76).
+- `best-answer/`: Is There a Clear Best Answer?. Pikachu against Gyarados, a water team and a trainer who switches to counter you: one answer, then a knowledge test, then a decision. Then the NBA shot chart collapsing onto the rim and the arc, and a takeaway slide.
 - `reaction-lab/`: Frame Window and Reaction Lab. A 60 fps test bench (timing windows, red/green, overheads, choice reaction, holding an angle) that measures you against the deck's frame numbers, by sight or sound (91-110, 141-143).
 - `mash-meter/`: Mash Meter. Mash for five seconds against the deck's marks (8, 16, 30, 31 per second), then feel Smash's tech lockout punish early mashing (111-115).
 - `async-cycles/`: Asynchronous Cycles. Five loops start in phase and drift apart; dressed as lava bubbles, lifts and a Hammer Bro, the drift becomes a castle level (256).
