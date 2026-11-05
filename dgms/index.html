@@ -66,6 +66,12 @@
   // Each module folder (m0-power-of-polish/, …) holds one folder per page: <module>/<slug>/index.html.
   // [path, title, blurb, module]; the card icon is ../assets/img/home/dgms--<module>--<slug>.svg
   const PAGES = [
+    ['m0-power-of-polish/course-map', 'The Course Map', 'Seven building blocks around game mechanics and experience, regrouped into the three phases and numbered in build order; plus the toolbox and what the course leaves out', 'm0-power-of-polish'],
+    ['m0-power-of-polish/designer-to-director', 'From Designer to Director', 'Six studio roles connect to one designer, collapse onto one person on a small team, and direction grows with seniority', 'm0-power-of-polish'],
+    ['m0-power-of-polish/it-depends', 'It Depends', 'Permadeath, auto-aim, fall damage and fast travel, each in three games: guess whether it fits or fights the pillars', 'm0-power-of-polish'],
+    ['m0-power-of-polish/audience-dials', 'Target Audience Dials', 'Theme, pace and combat dials: Stardew Valley, Dark Souls and Hades from audience to insight to fantasy, with neighbouring games', 'm0-power-of-polish'],
+    ['m0-power-of-polish/controller-preview', 'Puppets and Wall-Runs', 'One button press through Controller, Pawn, Model and Actions; then Titanfall 2’s wall-run assist at three thresholds', 'm0-power-of-polish'],
+    ['m0-power-of-polish/polish-layers', 'Same Strike, Polish Layered On', 'One melee strike with eight layers of feel switched on one at a time, then raw and polished side by side', 'm0-power-of-polish'],
   ];
   // [file in gifs/, title, caption]
   const GIFS = [
@@ -80,7 +86,7 @@
     `<a class="mod" href="${p}/index.html"><img src="../assets/img/home/dgms--${p.replace('/', '--')}.svg" alt=""><span><b>${t}</b><small>${b}</small></span></a>`;
   document.getElementById('cards').innerHTML = PARTS.map(([k, pt]) => {
     const here = PAGES.filter(p => p[3] === k);
-    return here.length ? `<div class="part" style="--n:${here.length}"><h3>${pt}</h3><div class="row">${here.map(card).join('')}</div></div>` : '';
+    return here.length ? `<div class="part" id="${k}" style="--n:${here.length}"><h3>${pt}</h3><div class="row">${here.map(card).join('')}</div></div>` : '';
   }).join('') || '<p>Pages are on the way.</p>';
   document.getElementById('gifs').innerHTML = GIFS.map(([f, t, c]) =>
     `<figure><a href="gifs/${f}"><img src="gifs/${f}" alt="${t}" loading="lazy"></a><figcaption><b>${t}</b>${c}</figcaption></figure>`).join('');
