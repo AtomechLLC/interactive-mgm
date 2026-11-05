@@ -8,8 +8,10 @@
    3. Panning and attenuation (186-188, 234-236): drag the listener; the sink pans left/right and falls off with distance
       along an editable curve (linear or logarithmic, min and max distance).
    4. Start at -20 dB (189, 232-233): a faucet loop over a quiet room bed, with a fader that starts at -20 dB.
-   Every sound is synthesised with the Web Audio API (no files). The AudioContext is created on the first click of a
-   "Sound" button. Everything audible is also drawn (rings from the source, meters, timeline, scope), and every canvas is
+   The faucet itself (turn on, running water, shut off) is the recording from Noah's course materials, sink.mp3: the
+   steady middle is cut into a seamless loop and the two ends play as the static start and stop. The cup fill, the handle
+   screech and the room bed are synthesised (Web Audio API), and so is everything if the file can't load. The AudioContext
+   is created on the first click of a "Sound" button, or on the first click of the handle, the cup or a card. Everything audible is also drawn (rings from the source, meters, timeline, scope), and every canvas is
    a pure function of time plus the learner's inputs, so window.__seek(t, which) is deterministic and never plays audio.
    Tunable rules live in R (timings, distances, levels) and the tour tables (TL_TOUR, FO_TOUR, LV_TOUR) below. */
 (function () {
@@ -46,7 +48,11 @@
   }
 
   /* ---------------- audio: one context for the page, made on the first "Sound" click ---------------- */
-  const AU = { ctx: null, master: null, on: false, buf: {} };
+  const AU = { ctx: null, master: null, on: false, userOff: false, buf: {}, rec: null, recP: null };
+  // the deck's faucet recording: 0-0.45 s the handle turns and the water bursts on, ~0.3-6.1 s steady running water,
+  // 6.05 s to the end the handle shuts it off and the basin drains. Fetched at load; decoded once the context exists.
+  const REC = { url: 'sink.mp3', ON_END: .45, LOOP_AT: 1.2, OFF_AT: 6.05, LP: 9000 };
+  const REC_BYTES = fetch(REC.url).then(r => r.ok ? r.arrayBuffer() : null).catch(() => null);
   function mkLoop(c, len, gen, fade = .12) {
     // generate len + fade seconds, then crossfade the tail into the head so the loop point is seamless
     const sr = c.sampleRate, L = Math.round(len * sr), F = Math.round(fade * sr), x = gen(L + F, sr, L);
@@ -68,19 +74,43 @@
       }
       return x;
     });
-    // broken: the loop is cut early (a gap) and restarts with a hard step, which clicks at every reset
-    const broken = water.slice(), sr = c.sampleRate, gap = Math.round(.09 * sr);
-    for (let i = broken.length - gap; i < broken.length; i++) broken[i] = 0;
-    for (let i = 0; i < 60; i++) broken[i] = .95 * (1 - i / 60) * (i % 2 ? -1 : 1) + broken[i] * (i / 60);
+    AU.waterRms = rms(water);
     // room bed: soft brown noise
     const bed = mkLoop(c, 2.4, N => { const r = rng(3), x = new Float32Array(N); let a = 0; for (let i = 0; i < N; i++) { a = (a + (r() * 2 - 1) * .02) * .995; x[i] = a; } return x; }, .3);
-    AU.buf = { water: toBuf(water), broken: toBuf(broken), bed: toBuf(bed) };
+    AU.buf = { water: toBuf(water), broken: toBuf(breakLoop(water, c.sampleRate)), bed: toBuf(bed) };
+  }
+  const rms = a => { let p = 0; for (let i = 0; i < a.length; i++) p += a[i] * a[i]; return Math.sqrt(p / a.length); };
+  // broken: the loop is cut early (a gap) and restarts with a hard step, which clicks at every reset
+  function breakLoop(water, sr) {
+    const broken = water.slice(), gap = Math.round(.09 * sr);
+    for (let i = broken.length - gap; i < broken.length; i++) broken[i] = 0;
+    for (let i = 0; i < 60; i++) broken[i] = .95 * (1 - i / 60) * (i % 2 ? -1 : 1) + broken[i] * (i / 60);
+    return broken;
+  }
+  // decode the recording and replace the synthesised water with it; resolves to null (keep the synth) on any failure
+  async function loadRec(c) {
+    try {
+      const bytes = await REC_BYTES; if (!bytes) return null;
+      const b = await new Promise((ok, no) => c.decodeAudioData(bytes.slice(0), ok, no));
+      const x = b.getChannelData(0), sr = b.sampleRate, at = s => Math.round(s * sr);
+      // a seamless loop of R.LOOP seconds from the steady water: crossfade the tail into the head, like mkLoop
+      const L = at(R.LOOP), F = at(.12), a0 = at(REC.LOOP_AT), water = new Float32Array(L);
+      for (let i = 0; i < L; i++) water[i] = i < F ? x[a0 + i] * Math.sqrt(i / F) + x[a0 + L + i] * Math.sqrt(1 - i / F) : x[a0 + i];
+      let pk = 0; water.forEach(v => { pk = Math.max(pk, Math.abs(v)); });
+      const k = Math.min(AU.waterRms / rms(water), .98 / pk);   // same loudness as the synth loop, never clipping
+      const shape = (arr, fin, fout) => { const n = arr.length, a = at(fin), z = at(fout); for (let i = 0; i < n; i++) arr[i] *= k * Math.min(1, a ? i / a : 1, z ? (n - i) / z : 1); return arr; };
+      for (let i = 0; i < L; i++) water[i] *= k;
+      const start = shape(x.slice(0, at(REC.ON_END)), 0, .2), stop = shape(x.slice(at(REC.OFF_AT)), .02, .05);
+      const toBuf = arr => { const bb = c.createBuffer(1, arr.length, sr); bb.copyToChannel(arr, 0); return bb; };
+      AU.buf.water = toBuf(water); AU.buf.broken = toBuf(breakLoop(water, sr));
+      return (AU.rec = { start: toBuf(start), stop: toBuf(stop) });
+    } catch (e) { return null; }
   }
   function ensure() {
     if (!AU.ctx) {
       const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null;
       const c = AU.ctx = new AC(); AU.master = c.createGain(); AU.master.gain.value = 0; AU.master.connect(c.destination);
-      buildBuffers(c);
+      buildBuffers(c); AU.recP = loadRec(c);
     }
     if (AU.ctx.state === 'suspended') AU.ctx.resume();
     return AU.ctx;
@@ -92,7 +122,10 @@
     if (AU.ctx) AU.master.gain.setTargetAtTime(on ? 1 : 0, AU.ctx.currentTime, .03);
     $$(document, '.fc-snd').forEach(b => { b.classList.toggle('on', on); b.textContent = on ? '♪ Sound: on' : '♪ Sound: off'; });
   }
-  document.addEventListener('click', e => { if (e.target.closest('.fc-snd')) setSound(!AU.on); });
+  document.addEventListener('click', e => { if (e.target.closest('.fc-snd')) { AU.userOff = AU.on; setSound(!AU.on); } });
+  // the first click on the faucet itself turns sound on (a click is what browsers need before audio can play),
+  // unless the learner has already switched it off
+  const wake = () => { if (!AU.on && !AU.userOff) setSound(true); };
   // a channel strip: input -> fader -> distance -> pan -> master
   function strip() {
     const c = AU.ctx, s = { in: c.createGain(), fader: c.createGain(), dist: c.createGain(), pan: c.createStereoPanner ? c.createStereoPanner() : null };
@@ -102,8 +135,17 @@
   }
   function noiseSrc(buf, loop = true, off = 0, when = AU.ctx.currentTime) { const s = AU.ctx.createBufferSource(); s.buffer = buf; s.loop = loop; s.start(when, off % buf.duration); return s; }
   function env(param, when, pts) { param.setValueAtTime(pts[0][1], when); pts.slice(1).forEach(([dt, v]) => param.linearRampToValueAtTime(v, when + dt)); }
-  // the handle: a metal squeak (rising when it opens, falling when it closes) plus a clunk, and the gush on start
+  // the handle: the recorded turn-on (with its burst of water) or shut-off; the synth below stands in when the
+  // recording is unavailable, and always for the bare handle screech (up without the gush), which the recording lacks
   function sndHandle(dst, up, gush = up) {
+    if ((up && !gush) || !AU.recP) return sndSynth(dst, up, gush);
+    AU.recP.then(r => {
+      if (!live()) return; if (!r) return sndSynth(dst, up, gush);
+      const s = AU.ctx.createBufferSource(); s.buffer = up ? r.start : r.stop; s.connect(dst); s.start();
+    });
+  }
+  // synthesised handle: a metal squeak (rising when it opens, falling when it closes) plus a clunk, and the gush on start
+  function sndSynth(dst, up, gush = up) {
     const c = AU.ctx, now = c.currentTime, f0 = up ? 620 : 1250, f1 = up ? 1300 : 560;
     const o = c.createOscillator(); o.type = 'sawtooth'; o.frequency.setValueAtTime(f0, now); o.frequency.exponentialRampToValueAtTime(f1, now + .42);
     const vib = c.createOscillator(), vg = c.createGain(); vib.frequency.value = 26; vg.gain.value = 40; vib.connect(vg); vg.connect(o.frequency);
@@ -129,14 +171,14 @@
   }
   // the water loop for one strip: start / stop to match the model; restarts with the other buffer when "broken" flips
   function loopVoice() {
-    const v = { src: null, g: null, broken: null };
+    const v = { src: null, g: null, broken: null, buf: null };
     v.sync = (dst, want, broken, phase) => {
-      const c = AU.ctx;
-      if (want && (!v.src || v.broken !== broken)) {
+      const c = AU.ctx, buf = broken ? AU.buf.broken : AU.buf.water;   // buf changes once, when the recording arrives
+      if (want && (!v.src || v.broken !== broken || v.buf !== buf)) {
         v.stop(.01);
-        const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2600;
+        const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = AU.rec ? REC.LP : 2600;
         v.g = c.createGain(); v.g.gain.value = 0; v.g.gain.setTargetAtTime(1, c.currentTime, .06);
-        v.src = noiseSrc(broken ? AU.buf.broken : AU.buf.water, true, Math.max(0, phase)); v.src.connect(lp); lp.connect(v.g); v.g.connect(dst); v.broken = broken;
+        v.src = noiseSrc(buf, true, Math.max(0, phase)); v.src.connect(lp); lp.connect(v.g); v.g.connect(dst); v.broken = broken; v.buf = buf;
       } else if (!want && v.src) v.stop(R.TAIL / 3);
     };
     v.stop = (tc = .05) => { if (!v.src) return; const c = AU.ctx; v.g.gain.setTargetAtTime(0, c.currentTime, tc); v.src.stop(c.currentTime + tc * 6 + .05); v.src = null; };
@@ -421,9 +463,9 @@
         if (brk) brk.checked = st.broken;
       }
       const push = e => { e.t = st.t; st.events.push(e); fire(e); };
-      const toggleHandle = () => { manual(); const m = model(st.events, st.t); if (m.squeak(st.t)) return; push({ k: m.running ? 'stop' : 'start' }); };
+      const toggleHandle = () => { wake(); manual(); const m = model(st.events, st.t); if (m.squeak(st.t)) return; push({ k: m.running ? 'stop' : 'start' }); };
       if (handleBtn) handleBtn.onclick = toggleHandle;
-      if (fillBtn) fillBtn.onclick = () => { manual(); const m = model(st.events, st.t); if (!m.running || m.filling(st.t) != null) return; push({ k: 'fill' }); };
+      if (fillBtn) fillBtn.onclick = () => { wake(); manual(); const m = model(st.events, st.t); if (!m.running || m.filling(st.t) != null) return; push({ k: 'fill' }); };
       if (brk) brk.onchange = () => { const v = brk.checked; manual(); st.broken = v; brk.checked = v; push({ k: 'broken', v: st.broken }); };
       if (fad) fad.oninput = () => { const v = +fad.value; manual(); st.fader = v; fv.textContent = `${st.fader} dB`; };
       if (mn) mn.oninput = () => { const v = +mn.value; manual(); st.minD = Math.min(v, st.maxD - .5); syncInputs(); };
@@ -600,7 +642,7 @@
     cv.addEventListener('pointermove', e => { st.hover = cardHit(pt(e)); cv.style.cursor = st.hover >= 0 && view().revealed ? 'pointer' : ''; });
     cv.addEventListener('pointerdown', e => {
       const i = cardHit(pt(e)); if (i < 0) return;
-      manual(); st.revealed = true; st.demo = { i, at: st.t }; play(i);
+      wake(); manual(); st.revealed = true; st.demo = { i, at: st.t }; play(i);
     });
     function render() {
       const v = view(), t = v.t;
