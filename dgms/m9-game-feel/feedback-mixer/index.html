@@ -5,24 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Feedback Mixer · Directing Game Mechanics</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../../assets/deck.css">
 <link rel="stylesheet" href="../../../assets/kit.css">
 <link rel="stylesheet" href="../../shared/dgms.css">
-<style>
-  .fm-ch { display: grid; grid-template-columns: 22px 118px 1fr 34px; align-items: center; gap: 2px 6px; margin: 2px 0 6px; }
-  .fm-ch input[type=checkbox] { width: 17px; height: 17px; margin: 0; }
-  .fm-ch label { font-size: 15px; font-weight: 600; color: var(--ink); white-space: nowrap; cursor: pointer; }
-  .fm-ch input[type=range] { width: 100%; margin: 0; }
-  .fm-ch b { font-size: 13px; color: var(--muted); text-align: right; font-weight: 600; }
-  .mt-side .fm-extra .btn, .mt-side .fm-fov .btn { font-size: 14px; padding: 4px 9px; transition: none; }
-  .mt-side .fm-fov { margin: 2px 0 6px; gap: 5px; }
-  .mt-side label.chk.fm-cut { font-size: 15px; margin: 4px 0; }
-  .mt-side label.chk.fm-cut input { width: 17px; height: 17px; }
-  .slide .mt-out.fm-out { font-size: 16px; line-height: 1.35; margin-top: 6px; }
-  .mt-side h4.tight { margin: 4px 0 4px; }
-  .fm-name { width: 100%; font: 500 16px Jost, sans-serif; padding: 5px 8px; border: 2px solid #cdbf9f; border-radius: 8px; background: #fffaf0; color: var(--ink); box-sizing: border-box; }
-</style>
+<link rel="stylesheet" href="feedback-mixer.css">
 <script>
   window.DECK = { title: 'Directing Game Mechanics · Module 9 · Feedback Mixer', home: '../index.html', audio: false, cues: null };
 </script>
@@ -32,21 +19,52 @@
 <div class="viewport"><div class="stage">
 
 <!-- deck slides 179-202 -->
-<section class="slide" data-title="Feedback channel mixer" data-demo="mixer">
-  <div class="kicker">feedback techniques</div>
-  <h2 class="sm">One hit, <span class="accent">eight channels</span></h2>
-  <div class="mt-wrap">
-    <canvas class="demo" width="1040" height="585"></canvas>
-    <div class="mt-side">
-      <div class="row wrap"><button class="btn fm-tour on">▶ Walk-through</button><button class="btn fm-all">All on</button><button class="btn fm-none">All off</button></div>
-      <h4 class="tight">Channels and strength</h4>
-      <div class="fm-ch"></div>
-      <div class="row wrap fm-extra"><button class="btn fm-green">Paint the UI green</button><button class="btn fm-sion">Sion’s ultimate</button></div>
-      <label class="chk fm-cut"><input type="checkbox" class="fm-cutbox"> Cut the first frames of the swing</label>
-      <h4 class="tight">Field of view</h4>
-      <div class="seg fm-fov"></div>
-      <p class="mt-out fm-out"></p>
-      <p class="src">Sion portrait: League of Legends, Riot Games (Data Dragon). Sound plays after your first click or key press.</p>
+<section class="slide dk no-head fmx" data-title="Feedback channel mixer" data-demo="mixer">
+  <div class="fmx-top">
+    <div class="fmx-title">
+      <div class="fmx-kicker">feedback techniques · the mixer desk</div>
+      <h2>One hit, <span class="accent">eight channels</span></h2>
+    </div>
+    <div class="fmx-transport">
+      <button class="fx-btn fm-tour on" title="Play the walk-through">▶ Walk-through</button>
+      <div class="fx-seg fm-speed" aria-label="Playback speed"></div>
+      <span class="fmx-keys">keys: <b>1</b>–<b>8</b> channels · <b>A</b>/<b>B</b> compare · drag the scene to orbit</span>
+    </div>
+  </div>
+  <div class="fmx-main">
+    <div class="fmx-left">
+      <div class="fmx-view">
+        <canvas class="gl" aria-hidden="true"></canvas>
+        <canvas class="demo" width="1080" height="486" aria-label="A knight strikes a training dummy. The feedback channels set on the desk below change how the hit reads."></canvas>
+      </div>
+      <div class="fmx-desk"></div>
+    </div>
+    <div class="fmx-master">
+      <div class="fx-panel">
+        <h4>A / B compare</h4>
+        <div class="fm-ab">
+          <button class="fm-slot" data-slot="A"><b>A</b><span></span></button>
+          <button class="fm-slot" data-slot="B"><b>B</b><span></span></button>
+        </div>
+        <div class="fx-row">
+          <button class="fx-btn fm-flip" title="Play A, then B, then A…">⇄ Flip every hit</button>
+          <button class="fx-btn fm-copy" title="Copy the live mix into the other slot">Copy to other slot</button>
+        </div>
+      </div>
+      <div class="fx-panel">
+        <h4>Presets <small>load into the live slot</small></h4>
+        <div class="fx-row fm-presets"></div>
+      </div>
+      <div class="fx-panel">
+        <h4>Multitrack <small>one hit, channel by channel</small></h4>
+        <canvas class="fm-track" width="430" height="150"></canvas>
+      </div>
+      <div class="fx-panel">
+        <h4>Lens <small>the deck’s FOV table, with a dolly so the dummy stays the same size</small></h4>
+        <div class="fx-row fm-fov"></div>
+      </div>
+      <p class="fm-out"></p>
+      <p class="fm-src">Sion portrait: League of Legends, Riot Games (Data Dragon). 3D: three.js (MIT). Sound is synthesised in the browser and plays after your first click or key press.</p>
     </div>
   </div>
 </section>
@@ -61,10 +79,10 @@
       <div class="row wrap"><button class="btn sh-tour on">▶ Walk-through</button></div>
       <h4>Event</h4>
       <input class="fm-name" type="text" value="Melee hit on a training dummy" maxlength="60" aria-label="Event name">
-      <p class="tip" style="margin-top:8px">The sheet fills in from the mixer on the last slide. Click a priority to change it.</p>
+      <p class="tip" style="margin-top:8px">The sheet fills in from the live slot of the mixer on the last slide. Click a priority to change it.</p>
       <div class="row wrap"><button class="btn sh-txt">Download .txt</button><button class="btn sh-json">Download .json</button></div>
       <p class="mt-out sh-out"></p>
-      <p class="src">A checklist in the shape of Jacopo’s feedback tool from the deck (slide 208). Sion portrait: League of Legends, Riot Games (Data Dragon).</p>
+      <p class="src">A checklist in the shape of Jacopo’s feedback tool from the deck. Sion portrait: League of Legends, Riot Games (Data Dragon).</p>
     </div>
   </div>
 </section>
@@ -73,6 +91,6 @@
 <script src="../../../assets/deck.js"></script>
 <script src="../../../assets/kit.js"></script>
 <script src="../../shared/topdown.js"></script>
-<script src="feedback-mixer.js"></script>
+<script type="module" src="feedback-mixer.js"></script>
 </body>
 </html>

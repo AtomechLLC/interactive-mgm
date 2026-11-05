@@ -1,0 +1,91 @@
+/* Feedback mixer, slide 1: a dark studio with the 3D hit on top and a mixing desk below. Slide 2 keeps the course look. */
+.slide.fmx::after { display: none; }
+.slide.dk.fmx { padding: 18px 24px 16px; justify-content: flex-start; color: #e8eefc;
+  background: radial-gradient(1200px 500px at 30% -10%, #1d2f63 0%, rgba(29,47,99,0) 70%), linear-gradient(180deg, #0d1531, #070b1a); }
+.fmx * { box-sizing: border-box; }
+.fmx-top { display: flex; align-items: flex-end; justify-content: space-between; height: 58px; margin-bottom: 8px; }
+.fmx-kicker { font: 600 15px Jost, sans-serif; letter-spacing: .12em; text-transform: uppercase; color: #ffb951; }
+.slide.fmx h2 { font: 800 34px Montserrat, Jost, sans-serif; margin: 0; letter-spacing: .01em; text-transform: none; color: #fff; }
+.slide.fmx h2 .accent { color: #ffb951; }
+.fmx-transport { display: flex; align-items: center; gap: 10px; }
+.fmx-keys { font: 500 13px Jost, sans-serif; color: #8d9cc4; }
+.fmx-keys b { display: inline-block; min-width: 18px; padding: 0 4px; border: 1px solid #3a4c82; border-radius: 4px; color: #dfe7f8; text-align: center; font-weight: 600; }
+
+.fmx-main { display: grid; grid-template-columns: 1080px 1fr; gap: 16px; }
+.fmx-view { position: relative; width: 1080px; height: 486px; border-radius: 12px; overflow: hidden; background: #0a1022;
+  box-shadow: 0 0 0 1px #2a3a6e, 0 14px 40px rgba(0,0,0,.45); cursor: grab; touch-action: none; }
+.fmx-view.drag { cursor: grabbing; }
+.fmx-view canvas { position: absolute; left: 0; top: 0; width: 1080px; height: 486px; display: block; }
+.slide.fmx .fmx-view canvas.demo { background: none; border: 0; border-radius: 0; pointer-events: none; }
+
+/* buttons */
+.fx-btn { font: 600 14px Jost, sans-serif; color: #dfe7f8; background: #17244a; border: 1px solid #34467d; border-radius: 7px; padding: 5px 11px; cursor: pointer; line-height: 1.2; }
+.fx-btn:hover { border-color: #6d82c4; }
+.slide .fx-btn.on { background: #ffb951; border-color: #ffb951; color: #1a1300 !important; }
+.fx-seg { display: flex; border: 1px solid #34467d; border-radius: 7px; overflow: hidden; }
+.fx-seg button { font: 600 13px Jost, sans-serif; color: #b9c6e6; background: #121c3b; border: 0; padding: 5px 9px; cursor: pointer; }
+.fx-seg button + button { border-left: 1px solid #34467d; }
+.fx-seg button.on { background: #2f7bff; color: #fff; }
+.fx-row { display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* the desk */
+.fmx-desk { display: grid; grid-template-columns: repeat(8, 1fr); gap: 7px; margin-top: 10px; height: 284px; padding: 8px; border-radius: 12px;
+  background: linear-gradient(180deg, #1a2140, #10152b); box-shadow: inset 0 1px 0 #2e3a68, 0 10px 30px rgba(0,0,0,.4); }
+.fm-strip { --c: #ffb951; --v: 0; position: relative; display: flex; flex-direction: column; border-radius: 8px; padding: 0 6px 6px;
+  background: linear-gradient(180deg, #232c52, #171e3c); border: 1px solid #2c3866; overflow: hidden; transition: opacity .15s; }
+.fm-strip.off { opacity: .62; }
+.fm-strip.dim { opacity: .3; }
+.fm-strip.focus { border-color: var(--c); box-shadow: 0 0 0 1px var(--c), 0 0 16px color-mix(in srgb, var(--c) 40%, transparent); }
+.fm-strip .hd { margin: 0 -6px 6px; padding: 5px 6px 4px; background: color-mix(in srgb, var(--c) 22%, #10162e); border-bottom: 2px solid var(--c);
+  font: 800 11.5px Montserrat, Jost, sans-serif; text-transform: uppercase; letter-spacing: .05em; color: #fff; white-space: nowrap; display: flex; justify-content: space-between; }
+.fm-strip .hd i { font-style: normal; color: var(--c); font-family: 'JetBrains Mono', monospace; }
+.fm-strip .btns { display: flex; gap: 4px; }
+.fm-strip .btns button { flex: 1; font: 700 11px Jost, sans-serif; letter-spacing: .06em; padding: 3px 0; border-radius: 5px; cursor: pointer;
+  border: 1px solid #3a4a80; background: #10162e; color: #8d9cc4; }
+.fm-strip .btns .on-b.on { background: var(--c); border-color: var(--c); color: #111; box-shadow: 0 0 10px color-mix(in srgb, var(--c) 60%, transparent); }
+.fm-strip .btns .solo-b.on { background: #ffe14a; border-color: #ffe14a; color: #111; }
+.fm-strip .body { display: grid; grid-template-columns: 12px 1fr 30px; gap: 6px; height: 112px; margin: 7px 0 4px; }
+.fm-strip .meter { position: relative; border-radius: 3px; background: #0a0e1e; overflow: hidden; }
+.fm-strip .meter::before { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: calc(var(--v) * 100%);
+  background: linear-gradient(0deg, #3ee08a 0%, #3ee08a 55%, #ffd34a 75%, #ff5a4a 100%) bottom / 100% 112px; }
+.fm-strip .meter::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, transparent 0 6px, #0a0e1e 6px 8px); }
+.fm-strip .fader { position: relative; cursor: ns-resize; outline: none; }
+.fm-strip .fader::before { content: ''; position: absolute; left: 50%; top: 8px; bottom: 8px; width: 4px; margin-left: -2px; border-radius: 2px; background: #070a17; box-shadow: inset 0 0 0 1px #2c3866; }
+.fm-strip .fader .lit { position: absolute; left: 50%; bottom: 8px; width: 4px; margin-left: -2px; border-radius: 2px; background: var(--c); }
+.fm-strip .fader .cap { position: absolute; left: 50%; width: 38px; height: 18px; margin: 0 0 -9px -19px; border-radius: 4px;
+  background: linear-gradient(180deg, #e9edf7, #9aa3bd 48%, #5a6380 52%, #c9cfe0); box-shadow: 0 3px 6px rgba(0,0,0,.5); }
+.fm-strip .fader .cap::after { content: ''; position: absolute; left: 4px; right: 4px; top: 8px; height: 2px; background: var(--c); }
+.fm-strip .fader:focus-visible .cap { outline: 2px solid #fff; }
+.fm-strip .scale { display: flex; flex-direction: column; justify-content: space-between; padding: 2px 0; font: 500 9.5px 'JetBrains Mono', monospace; color: #6c7aa6; text-align: right; }
+.fm-strip .val { font: 700 12px 'JetBrains Mono', monospace; color: #dfe7f8; text-align: center; }
+.fm-strip ul { list-style: none; margin: 4px 0 0; padding: 0; }
+.slide .fm-strip li { font: 500 11px/1.25 Jost, sans-serif; color: #6c7aa6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-left: 12px; position: relative; margin: 0; }
+.fm-strip li::before { content: ''; position: absolute; left: 1px; top: 4px; width: 6px; height: 6px; border-radius: 50%; background: #2c3866; }
+.slide .fm-strip li.got { color: #dfe7f8; }
+.fm-strip li.got::before { background: var(--c); box-shadow: 0 0 6px var(--c); }
+.fm-strip .xtra { margin-top: auto; font: 600 11px Jost, sans-serif; color: #b9c6e6; background: #10162e; border: 1px solid #3a4a80; border-radius: 5px; padding: 3px 4px; cursor: pointer; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fm-strip .xtra.on { background: var(--c); border-color: var(--c); color: #111; }
+.fm-strip .xtra.ro { cursor: default; border-style: dashed; color: #8d9cc4; }
+
+/* master section */
+.fmx-master { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.fx-panel { background: linear-gradient(180deg, #1a2244, #121931); border: 1px solid #2c3866; border-radius: 10px; padding: 8px 10px 10px; }
+.slide.fmx .fx-panel h4 { font: 800 12px Montserrat, Jost, sans-serif; text-transform: uppercase; letter-spacing: .08em; color: #8d9cc4; margin: 0 0 7px; }
+.fx-panel h4 small { font: 500 11px Jost, sans-serif; text-transform: none; letter-spacing: 0; color: #6c7aa6; margin-left: 6px; }
+.fm-ab { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+.fm-slot { display: flex; align-items: center; gap: 10px; padding: 6px 10px; border-radius: 9px; cursor: pointer; text-align: left;
+  background: #10162e; border: 2px solid #34467d; color: #b9c6e6; font: 600 13px Jost, sans-serif; min-width: 0; }
+.fm-slot b { font: 800 26px Montserrat, sans-serif; color: #6c7aa6; }
+.fm-slot span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fm-slot[data-slot=A].on { border-color: #4fb3ff; background: #12305a; color: #fff; }
+.fm-slot[data-slot=A].on b { color: #4fb3ff; }
+.fm-slot[data-slot=B].on { border-color: #ffb951; background: #4a3412; color: #fff; }
+.fm-slot[data-slot=B].on b { color: #ffb951; }
+.fm-presets .fx-btn, .fm-fov .fx-btn { font-size: 13px; padding: 4px 9px; }
+.fm-track { display: block; width: 430px; height: 150px; }
+.slide.fmx p.fm-out { font: 400 15px/1.36 Jost, sans-serif; color: #dfe7f8; margin: 2px 2px 0; min-height: 6.8em; }
+.slide.fmx p.fm-out b { color: #ffb951; }
+.slide.fmx p.fm-src { font: 400 11.5px/1.35 Jost, sans-serif; color: #6c7aa6; margin: auto 2px 0; }
+
+/* slide 2 */
+.fm-name { width: 100%; font: 500 16px Jost, sans-serif; padding: 5px 8px; border: 2px solid #cdbf9f; border-radius: 8px; background: #fffaf0; color: var(--ink); box-sizing: border-box; }
