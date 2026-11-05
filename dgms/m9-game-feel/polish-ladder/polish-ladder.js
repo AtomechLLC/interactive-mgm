@@ -69,7 +69,7 @@
 
   /* ============ 1. slasher: five cumulative stages, plus hit stop ============ */
   const SL = [
-    { name: 'Blockout', cost: '$ · hours', adds: 'Basic shapes and active hitbox outlines, made as quickly and dirtily as possible.' },
+    { name: 'Basic blockout', cost: '$ · hours', adds: 'Basic shapes and active hitbox outlines, made as quickly and dirtily as possible.' },
     { name: 'Essential communication', cost: '$ · a day', adds: 'Yes, you hit the target. It flashes and moves back a tiny bit.' },
     { name: 'Preparation for tuning', cost: '$$ · days', adds: 'Fast swings get short animations. The heavy hit gets heavier visuals.' },
     { name: 'Vertical exploration', cost: '$$$$ · 1 attack', adds: 'Every effect turned all the way up, on one combo and one dummy, to see the bill.' },
@@ -236,22 +236,22 @@
 
   /* ============ 2. first-person shooter: seven separable layers ============ */
   const FP = [
-    { name: 'Blockout', cost: '$ · hours', adds: 'Grey boxes, a crosshair dot and shots that land.' },
-    { name: 'Smoothed movement', cost: '$ · a day', adds: 'Eased turns and a gentle bob, to reduce nausea.' },
-    { name: 'Shot recoil', cost: '$ · a day', adds: 'The gun kicks back and the view climbs, then settles.' },
-    { name: 'Enemy flash, VFX, sound', cost: '$$ · days', adds: 'The enemy flashes, sparks fly and a hit sound plays.' },
-    { name: 'Charge attack, FOV', cost: '$$ · days', adds: 'Hold to charge: the view narrows, then widens on release.' },
+    { name: 'Basic blockout', cost: '$ · hours', adds: 'Grey boxes, a crosshair dot and shots that land.' },
+    { name: 'Improved movement', cost: '$ · a day', adds: 'Eased turns and a gentle bob, to reduce nausea.' },
+    { name: 'Improved shot feedback', cost: '$ · a day', adds: 'The gun kicks back and the view climbs, then settles.' },
+    { name: 'Enemy impact', cost: '$$ · days', adds: 'The enemy flashes, sparks fly and a hit sound plays.' },
+    { name: 'Charge attack feedback', cost: '$$ · days', adds: 'Hold to charge: the view narrows, then widens on release.' },
     { name: 'Essential UI', cost: '$$ · days', adds: 'Health, ammo, a charge meter and a hit marker.' },
-    { name: 'Diegetic visor UI', cost: '$$$ · weeks', adds: 'The UI moves onto the helmet visor, inside the world.' },
+    { name: 'Diegetic UI', cost: '$$$ · weeks', adds: 'The UI moves onto the helmet visor, inside the world.' },
   ];
   const FP_NOTE = [
-    '<b>Blockout.</b> Grey boxes and shots that land. Everything else on this slide is separable: turn layers on in any order.',
-    '<b>Smoothed movement.</b> Without it the view snaps in steps and the bob jolts. Smoothing is cheap and it is the layer that reduces nausea.',
-    '<b>Shot recoil.</b> The gun kicks back and the view climbs, then settles. Each shot now has a weight of its own.',
-    '<b>Enemy flash, hit VFX and sound.</b> The target answers: it flashes, sparks fly, a sound confirms it. The shot now reads as a hit.',
-    '<b>Charge attack with an FOV change.</b> Holding narrows the view to build tension; the release widens it in a burst.',
+    '<b>Basic blockout.</b> Grey boxes and shots that land. Everything else on this slide is separable: turn layers on in any order.',
+    '<b>Improved movement.</b> Without it the view snaps in steps and the bob jolts. Smoothing is cheap and it is the layer that reduces nausea.',
+    '<b>Improved shot feedback: recoil.</b> The gun kicks back and the view climbs, then settles. Each shot now has a weight of its own.',
+    '<b>Enemy impact: flash, hit VFX and sound.</b> The target answers: it flashes, sparks fly, a sound confirms it. The shot now reads as a hit.',
+    '<b>Charge attack feedback: a unique visual and an FOV change.</b> Holding narrows the view to build tension; the release widens it in a burst.',
     '<b>Essential UI.</b> Health, ammo, a charge meter and a hit marker: the information a player needs, in the corners.',
-    '<b>Diegetic visor UI.</b> The same information moves onto the helmet’s visor, so it sits inside the fiction. It costs the most of the seven.',
+    '<b>Diegetic UI: the visor.</b> The same information moves onto the helmet’s visor, so it sits inside the fiction. It costs the most of the seven.',
   ];
   const FPS_LEN = 5;
   const FPS_SHOTS = [1.4, 1.9];
@@ -373,22 +373,22 @@
 
   /* ============ 3. rail shooter: seven separable layers ============ */
   const RL = [
-    { name: 'Blockout', cost: '$ · hours', adds: 'Ship, rail, targets and straight shots.' },
+    { name: 'Basic blockout', cost: '$ · hours', adds: 'Ship, rail, targets and straight shots.' },
     { name: '10% better polish', cost: '$ · hours', adds: 'Cheap banks and tilts get past the uncanny weirdness.' },
-    { name: 'Aim indicators, assist', cost: '$$ · days', adds: 'Two reticles show where shots go; shots bend to targets.' },
-    { name: 'Impact and death', cost: '$$ · days', adds: 'Targets flash and burst, so you know each one is done.' },
-    { name: 'Start, hold, release charge', cost: '$$ · days', adds: 'A charge builds, holds, then lets go as a homing blast.' },
-    { name: 'Thrusters and trails', cost: '$$ · days', adds: 'Engine flames and wingtip trails sell speed and turns.' },
-    { name: 'Sprint sound and FOV', cost: '$ · a day', adds: 'The view widens and a roar plays as the ship boosts.' },
+    { name: 'Support gameplay', cost: '$$ · days', adds: 'Two reticles show where shots go; shots bend to targets.' },
+    { name: 'Mechanic confirmation', cost: '$$ · days', adds: 'Targets flash and burst, so you know each one is done.' },
+    { name: 'Rich player actions', cost: '$$ · days', adds: 'A charge builds, holds, then lets go as a homing blast.' },
+    { name: 'Better quality', cost: '$$ · days', adds: 'Engine flames and wingtip trails sell speed and turns.' },
+    { name: 'Push the limits', cost: '$ · a day', adds: 'The view widens and a roar plays as the ship boosts.' },
   ];
   const RL_NOTE = [
-    '<b>Blockout.</b> A ship on a rail, targets and straight shots. The ship slides like a cardboard cut-out.',
+    '<b>Basic blockout.</b> A ship on a rail, targets and straight shots. The ship slides like a cardboard cut-out.',
     '<b>10% better polish.</b> Cheap rotations: the ship banks into turns and tilts as it climbs, “to get past the uncanny weirdness.” Almost free, and it changes everything.',
-    '<b>Aim indicators and assist.</b> Two reticles show the line a shot will take, and shots bend toward targets. Without it the first shot misses.',
-    '<b>Impact and death confirmation.</b> A flash, a burst of debris and a score: the player knows the target is done and can move on.',
-    '<b>Start, hold, release charge.</b> Three beats: a start you can feel, a hold that builds, and a release that pays off.',
-    '<b>Thrusters and trails.</b> Engine flames and wingtip trails trace every turn and sell the speed.',
-    '<b>Sprint sound and FOV.</b> During the boost the ship moves twice as fast either way. Only the wider view, the speed lines and the roar make it feel fast.',
+    '<b>Support gameplay: aim indicators and assist.</b> Two reticles show the line a shot will take, and shots bend toward targets. Without it the first shot misses.',
+    '<b>Mechanic confirmation: impact, pushback and death.</b> A flash, a burst of debris and a score: the player knows the target is done and can move on.',
+    '<b>Rich player actions: start, hold, release.</b> Three beats: a start you can feel, a hold that builds, and a release that pays off.',
+    '<b>Better quality: thrusters and trails.</b> Engine flames and wingtip trails trace every turn and sell the speed.',
+    '<b>Push the limits: sprint sound and FOV.</b> During the boost the ship moves twice as fast either way. Only the wider view, the speed lines and the roar make it feel fast.',
   ];
   const RLEN = 6, ENEMY = [{ t0: .1, hit: 1.25, dx: 2.8, assist: true }, { t0: 1.2, hit: 2.25, dx: 0 }, { t0: 2.3, hit: 3.6, dx: -.6, charge: true }];
   const shipX = t => 3.2 * Math.sin(t * TAU / RLEN * 2), shipY = t => 2.4 + .5 * Math.sin(t * TAU / RLEN * 3);
@@ -471,18 +471,63 @@
   }
 
   /* ============ shared slide wiring ============ */
+  // recordings of Andre's real builds, by layer index; a layer with no entry falls back to the rebuild
+  const CLIP = 'clips/';
+  // Recorded from Andre's WebGL build, number keys 1-7. Its presets are cumulative: each includes the ones before it.
+  const cl = (src, k, title) => [{ src, cap: `Andre’s build · preset ${k} of 7, “${title}”` }];
+  const CLIPS = {
+    // the build has seven presets for the slasher; the deck groups them into five stages
+    slasher: {
+      0: cl('slasher-1.mp4', 1, 'no polish'),
+      1: cl('slasher-3.mp4', 3, 'enemy reaction'),
+      2: cl('slasher-4.mp4', 4, 'camera reaction'),
+      3: [{ src: 'impact-reel-a.mp4', cap: 'Impact exploration reel · every effect turned up' }, { src: 'impact-reel-b.mp4', cap: 'Impact exploration reel · every effect turned up' }],
+      4: cl('slasher-7.mp4', 7, 'dolly camera'),
+    },
+    fps: Object.fromEntries(['no polish', 'smooth move', 'shoot feedback', 'enemy feedback', 'charge feedback', 'simple UI', 'diegetic UI'].map((t, i) => [i, cl(`fps-${i + 1}.mp4`, i + 1, t)])),
+    rail: Object.fromEntries(['no polish', 'better rotation', 'better aim', 'enemy feedback', 'charge feedback', 'better ship', 'boost feedback'].map((t, i) => [i, cl(`rail-${i + 1}.mp4`, i + 1, t)])),
+  };
   const scenes = {};
+  function film(s, name, st) {
+    const clips = CLIPS[name] || {}, have = Object.keys(clips).map(Number);
+    const btn = $(s, '.pl-film'), box = $(s, '.pl-real'), vid = $(s, '.pl-real video'), cap = $(s, '.pl-cap');
+    const f = { on: false, have, cur: -1, k: 0 };
+    if (!have.length) { btn.remove(); box.remove(); f.sync = () => {}; return f; }
+    const play = () => {
+      const list = clips[st.cur];
+      box.classList.add('show'); box.classList.toggle('empty', !list);
+      if (!list) { vid.pause(); cap.textContent = `No recording of stage ${st.cur + 1} yet · showing the rebuild`; return; }
+      const c = list[f.k % list.length];
+      if (!vid.src.endsWith(c.src)) { vid.src = CLIP + c.src; }
+      vid.loop = list.length === 1; cap.textContent = c.cap;
+      vid.play().catch(() => {});
+    };
+    vid.onended = () => { f.k++; play(); };
+    f.sync = () => {
+      if (!f.on) return;
+      if (st.cur !== f.cur) { f.cur = st.cur; f.k = 0; play(); }
+    };
+    f.toggle = on => {
+      f.on = on; btn.classList.toggle('on', on);
+      if (!on) { vid.pause(); box.classList.remove('show'); f.cur = -1; return; }
+      f.cur = -1; f.sync();
+    };
+    f.btn = btn;
+    return f;
+  }
   function slide(name, L, NOTE, opts) {
     canvasDemo(name, (s, cv, g) => {
       const n = L.length, st = { on: L.map((_, i) => i === 0), cur: 0, tour: true, held: false, t: 0, hs: 4, active: false };
       const keys = $(s, '.pl-keys'), tourBtn = $(s, '.pl-tour'), out = $(s, '.pl-out');
       keys.innerHTML = L.map((l, i) => `<button class="btn" data-i="${i}"><kbd>${i + 1}</kbd><span>${l.name}</span><b class="chip">${l.cost.split(' · ')[0]}</b></button>`).join('');
+      const fl = film(s, name, st);
       const btns = $$(keys, '.btn');
       const hs = $(s, '.pl-hs'), hsv = $(s, '.pl-hsv');
       const hsText = v => v === 0 ? '0 frames: none' : v < 7 ? `${v} frames: crisp` : v < 15 ? `${v} frames: heavy` : v < 24 ? `${v} frames: starts to halt` : `${v} frames: brakes every 10 feet`;
       let lastKey = '';
       function sync() {
         btns.forEach((b, i) => b.classList.toggle('on', st.on[i]));
+        fl.sync();
         if (hs) { hs.value = st.hs; hsv.textContent = hsText(st.hs); }
         const key = st.cur + '|' + (opts.cumulative ? '' : st.on.join()) + '|' + (st.hs >= 24);
         if (key !== lastKey) { lastKey = key; say(out, NOTE[st.cur] + (hs && st.hs >= 24 ? ' <b class="accent">Hit stop this long feels like “a rollercoaster that brakes every 10 feet.”</b>' : '')); }
@@ -490,13 +535,19 @@
       const manual = () => { if (st.tour) { st.tour = false; tourBtn.classList.remove('on'); } st.held = false; };
       const press = i => {
         manual();
-        if (opts.cumulative) st.on = L.map((_, j) => j <= i);
+        // the build's presets are cumulative, so with the footage on every tab stacks its layers like the slasher
+        if (opts.cumulative || fl.on) st.on = L.map((_, j) => j <= i);
         else if (i === 0) st.on = L.map((_, j) => j === 0);
         else st.on[i] = !st.on[i];
         st.cur = i; st.t = 0; sync();
       };
       btns.forEach((b, i) => b.onclick = () => press(i));
-      tourBtn.onclick = () => { st.tour = true; st.held = false; st.t = 0; tourBtn.classList.add('on'); };
+      tourBtn.onclick = () => { st.tour = true; st.held = false; st.t = 0; tourBtn.classList.add('on'); fl.on && fl.toggle(false); };
+      if (fl.btn) fl.btn.onclick = () => {
+        if (fl.on) return fl.toggle(false);
+        // the clips run longer than a walk-through step, so the footage takes manual control, from the first recorded stage
+        manual(); fl.toggle(true); press(fl.have.includes(st.cur) ? st.cur : fl.have[0]);
+      };
       if (hs) hs.oninput = () => { manual(); st.hs = +hs.value; sync(); };
       addEventListener('keydown', e => {
         if (!s.classList.contains('active') || e.altKey || e.ctrlKey || e.metaKey || e.target.closest?.('input, textarea')) return;
