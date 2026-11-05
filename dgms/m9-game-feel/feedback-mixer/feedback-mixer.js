@@ -70,7 +70,7 @@ const gain = (st, id) => st.ch[id].on ? .35 + .65 * st.ch[id].str : 0;
 /* ---------- the hit as a timeline: real time maps to action time, so hit stop freezes it and slow motion stretches it ---------- */
 const stopFrames = st => has(st, 'time', 0) ? Math.round(2 + 14 * Math.pow(lvl(st, 'time'), 1.4)) : 0;
 function timeline(st) {
-  const wind = st.cut ? .08 : .3, strike = .07, stopF = stopFrames(st), slow = has(st, 'time', 2);
+  const wind = st.cut ? .08 : .3, strike = .1, stopF = stopFrames(st), slow = has(st, 'time', 2);
   const press = .45, imp = press + wind + strike, seg = [];   // [real a, real b, action a, action b, kind]
   let r = 0, a = 0;
   const add = (dr, da, k) => { seg.push([r, r + dr, a, a + da, k]); r += dr; a += da; };
@@ -78,7 +78,7 @@ function timeline(st) {
   if (stopF) add(stopF / 60, 0, 'stop');
   if (slow) add(.55, .16, 'slow');
   add(1.25 - (slow ? .16 : 0), 1.25 - (slow ? .16 : 0), 'play');
-  return { seg, len: r, press, wind, wEnd: press + wind, imp, stopF, slow };
+  return { seg, len: r, press, wind, strike, wEnd: press + wind, imp, stopF, slow };
 }
 function actionAt(TL, t) {
   t = ((t % TL.len) + TL.len) % TL.len;
@@ -303,10 +303,10 @@ const KX = -.95;   // the knight's rest position
    attack. Files come from the Move Explorer export (GameCombatAnimationLibrary, tools/frame_data/export_er_models.py):
    the armor glb is skinned to the c0000 skeleton, er/a023_030000.bin is the move baked to one pose per frame at 30 fps
    (FDA2: smallest-three quaternions and millimetre translations per bone, then root motion). The move's own hit
-   frames are 14 to 16. The clip is driven by the hit's action time, never by a clock, so hit stop freezes it and
+   frames are 14 to 16 (counted from 0), so the blade lands on clip frame 16 here. The clip is driven by the hit's action time, never by a clock, so hit stop freezes it and
    window.__seek stays deterministic. If the files fail to load, the grey-box knight stays. ---------- */
 const ER = { dir: 'er/', armor: 'armor-haligtree-knight.glb', weapon: 'weapon-wp_a_0200.glb', anim: 'a023_030000.bin', fps: 30,
-  windTop: 10, impact: 14, end: 26, height: 1.85 };
+  windTop: 13, impact: 16, end: 63, height: 1.85 };
 let modelReady = Promise.resolve(false);
 function decodeAnim(buf, names) {
   const dv = new DataView(buf), B = dv.getUint16(4, true), N = dv.getUint16(6, true), hasRoot = dv.getUint8(8);
@@ -334,9 +334,9 @@ function loadModel(R) {
   const get = url => fetch(ER.dir + url).then(r => { if (!r.ok) throw new Error(url); return url.endsWith('.json') ? r.json() : r.arrayBuffer(); });
   modelReady = Promise.all([gl(ER.armor), gl(ER.weapon), get(ER.anim), get('skeleton.json')]).then(([ag, wg, ab, sk]) => {
     const anim = decodeAnim(ab, sk.bones);
-    // game space is left-handed: mirror X once; the character faces +z there, the scene wants +x
+    // game space is left-handed: mirror X once; the character faces -z there (his root motion steps that way), the scene wants +x
     const wrap = new THREE.Group(), mirror = new THREE.Group(), motion = new THREE.Group();
-    wrap.rotation.y = Math.PI / 2; mirror.scale.x = -1; wrap.add(mirror); mirror.add(motion);
+    wrap.rotation.y = -Math.PI / 2; mirror.scale.x = -1; wrap.add(mirror); mirror.add(motion);
     const body = ag.scene; motion.add(body);
     body.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; o.frustumCulled = false; } });
     const tracks = anim.bones.map(b => body.getObjectByName(b.name));
@@ -363,34 +363,44 @@ function loadModel(R) {
   }).catch(e => { console.warn('Elden Ring model not loaded; keeping the grey-box knight', e); return false; });
   return modelReady;
 }
-// one pose per clip frame (1-based, fractional frames blend the two around them)
-const qa = [0, 0, 0, 1], pv = new V3();
-function poseFrame(M, f) {
+// one pose per clip frame (1-based, fractional frames blend the two around them); back (0..1) eases the whole pose,
+// root motion included, back to the idle frame so the loop closes without a pop
+const qa = [0, 0, 0, 1], qb = [0, 0, 0, 1], pv = new V3(), pw = new V3();
+function poseFrame(M, f, back = 0) {
   const A = M.anim, u = clamp(f - 1, 0, A.frames - 1), k0 = Math.floor(u), k1 = Math.min(k0 + 1, A.frames - 1), t = u - k0;
   A.bones.forEach((b, i) => {
     const o = M.tracks[i]; if (!o) return;
-    if (b.nr > 1) { THREE.Quaternion.slerpFlat(qa, 0, b.rot, k0 * 4, b.rot, k1 * 4, t); o.quaternion.fromArray(qa); } else o.quaternion.fromArray(b.rot, 0);
-    if (b.np > 1) { o.position.fromArray(b.pos, k0 * 3).lerp(pv.fromArray(b.pos, k1 * 3), t); } else o.position.fromArray(b.pos, 0);
+    if (b.nr > 1) {
+      THREE.Quaternion.slerpFlat(qa, 0, b.rot, k0 * 4, b.rot, k1 * 4, t);
+      if (back > 0) { qb[0] = qa[0]; qb[1] = qa[1]; qb[2] = qa[2]; qb[3] = qa[3]; THREE.Quaternion.slerpFlat(qa, 0, qb, 0, b.rot, 0, back); }
+      o.quaternion.fromArray(qa);
+    } else o.quaternion.fromArray(b.rot, 0);
+    if (b.np > 1) { o.position.fromArray(b.pos, k0 * 3).lerp(pv.fromArray(b.pos, k1 * 3), t); if (back > 0) o.position.lerp(pw.fromArray(b.pos, 0), back); }
+    else o.position.fromArray(b.pos, 0);
   });
-  // root motion: the step into the swing, stopped a few frames after the hit so he doesn't walk through the dummy
-  if (A.root) { const r0 = Math.min(k0, ER.impact + 3), r1 = Math.min(k1, ER.impact + 3); M.motion.position.fromArray(A.root, r0 * 3).lerp(pv.fromArray(A.root, r1 * 3), t); M.motion.position.z *= -1; }
+  // root motion: the move's own step forward, all of it, eased back to the start mark as the loop closes
+  if (A.root) { M.motion.position.fromArray(A.root, k0 * 3).lerp(pv.fromArray(A.root, k1 * 3), t); if (back > 0) M.motion.position.lerp(pw.fromArray(A.root, 0), back); }
 }
 // the clip frame for action time a: the swing's three phases map onto the move's own wind-up, strike and recovery.
 // With the animation channel off the knight snaps from his idle pose to the hit frame and back, no anticipation.
+// After the hit he plays the move's real recovery at 30 fps, then blends back to idle before the next swing.
+const eIOs = k => k * k * (3 - 2 * k);
 function clipFrame(st, a, TL) {
   const animOn = st.ch.anim.on;
-  if (a < TL.press) return 1;
+  if (a < TL.press) return [1, 0];
   if (!animOn) {
-    if (a < TL.wEnd) return 1;
-    if (a < TL.imp) return lerp(1, ER.impact, (a - TL.wEnd) / (TL.imp - TL.wEnd));
-    return lerp(ER.impact, 1, clamp((a - TL.imp) / .4));
+    if (a < TL.wEnd) return [1, 0];
+    if (a < TL.imp) return [lerp(1, ER.impact, (a - TL.wEnd) / (TL.imp - TL.wEnd)), 0];
+    return [ER.impact, clamp((a - TL.imp) / .4)];
   }
-  if (a < TL.wEnd) { const k = (a - TL.press) / TL.wind; return lerp(st.cut ? lerp(1, ER.windTop, .7) : 1, ER.windTop, k); }
-  if (a < TL.imp) return lerp(ER.windTop, ER.impact, (a - TL.wEnd) / (TL.imp - TL.wEnd));
+  if (a < TL.wEnd) { const k = (a - TL.press) / TL.wind; return [lerp(st.cut ? lerp(1, ER.windTop, .7) : 1, ER.windTop, k), 0]; }
+  if (a < TL.imp) return [lerp(ER.windTop, ER.impact, (a - TL.wEnd) / (TL.imp - TL.wEnd)), 0];
   const d = a - TL.imp;
-  return has(st, 'anim', 1) ? Math.min(ER.end, ER.impact + d * ER.fps) : lerp(ER.impact, 1, clamp(d / .5));
+  if (!has(st, 'anim', 1)) return [Math.min(ER.end, ER.impact + d * ER.fps), eIOs(clamp(d / .55))];
+  // the full follow-through (1.25 s of action after the hit), then a half-second blend home that ends just before the loop restarts
+  return [Math.min(ER.end, ER.impact + d * ER.fps), eIOs(clamp((d - .7) / .5))];
 }
-function poseModel(R, st, a, TL) { if (R.model) poseFrame(R.model, clipFrame(st, a, TL)); }
+function poseModel(R, st, a, TL) { if (R.model) { const [f, back] = clipFrame(st, a, TL); poseFrame(R.model, f, back); } }
 // world position of a point on the Longsword, d = 0 at the grip to 1 at the tip
 function modelBladePoint(R, d, out) {
   const M = R.model; M.sword.updateWorldMatrix(true, false);
@@ -602,7 +612,7 @@ function drawOverlay(g, R, st, t, fr) {
   // lens and frames readout
   const F = FOV.reduce((b, f) => Math.abs(f.v - st.fov) < Math.abs(b.v - st.fov) ? f : b);
   pill(g, `FOV ${Math.round(st.fov)}° · ${F.game} · ${F.why}`, 24, VH - 52, { col: '#b9c6e6', size: 12, weight: 600 });
-  const frames = Math.round((TL.wind + .07) * 60);
+  const frames = Math.round((TL.wind + TL.strike) * 60);
   pill(g, `press to impact: ${frames} frames${st.cut ? ' (first frames cut)' : ''}${TL.stopF ? ` · hit stop ${TL.stopF} frames` : ''}`, 24, VH - 22, { col: st.cut ? '#7ee081' : '#dfe7f8', size: 12, weight: 600 });
   if (TL.stopF >= 12) pill(g, '“A rollercoaster that brakes every 10 feet”', VW / 2, 96, { col: '#fff', bg: 'rgba(229,50,45,.88)', align: 'center', size: 15 });
   if (!IDS.some(id => st.ch[id].on)) pill(g, 'Every channel off: the hit happens, and nothing tells you', VW / 2, 96, { col: '#fff', bg: 'rgba(229,50,45,.88)', align: 'center', size: 16 });
