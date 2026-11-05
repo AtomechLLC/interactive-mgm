@@ -22,18 +22,25 @@
   section { max-width: 1180px; margin: 0 auto; padding: 24px 24px 0; }
   h2 { font-family: Montserrat, sans-serif; font-weight: 800; font-size: 26px; margin: 10px 0 4px; }
   h2 + p { color: var(--muted); margin: 0 0 16px; font-size: 17px; }
-  /* cards: one per interactive page in this module, grouped under the deck part (PARTS) it comes from */
-  /* parts flow side by side when they have few pages: each .part is as wide as its --n cards */
-  #cards { display: flex; flex-wrap: wrap; gap: 26px 18px; }
-  #cards .part { flex: var(--n) 1 calc(var(--n) * 318px - 18px); min-width: 0; }
-  #cards h3 { font-family: Montserrat, sans-serif; font-weight: 700; font-size: 18px; margin: 0 0 10px; }
-  #cards h3 span { color: var(--gold-ink); font-weight: 600; font-size: 14px; margin-left: 6px; white-space: nowrap; }
-  #cards .row { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
-  a.mod { display: grid; grid-template-columns: 72px 1fr; gap: 16px; align-items: center; padding: 18px; border-radius: 12px; background: rgba(255, 252, 244, .82); border: 1px solid var(--line); color: inherit; text-decoration: none; box-shadow: 0 2px 0 rgba(120, 96, 50, .12); transition: transform .15s, border-color .2s; }
-  a.mod:hover { transform: translateY(-4px); border-color: var(--navy); }
-  .mod img { width: 72px; height: 72px; border-radius: 50%; background: var(--navy); padding: 9px; object-fit: contain; }
-  .mod b { font-family: Montserrat, sans-serif; font-weight: 800; font-size: 19px; display: block; }
-  .mod small { color: var(--muted); font-size: 15px; }
+  .lede { color: var(--muted); font-size: 17px; margin: 0 0 22px; max-width: 900px; }
+  /* one section per module: a header card like the course homes on ../index.html, then its page cards, then its GIFs */
+  section.mod { padding: 0; margin: 0 0 40px; scroll-margin-top: 16px; }
+  .head { display: grid; grid-template-columns: 64px 1fr auto; gap: 16px; align-items: center; padding: 14px 18px; border-radius: 12px; background: var(--navy); color: #fff; box-shadow: 0 2px 0 rgba(120, 96, 50, .18); }
+  .head img { width: 64px; height: 64px; border-radius: 50%; background: rgba(255, 255, 255, .08); border: 2px solid var(--gold); padding: 8px; object-fit: contain; }
+  .head .code { color: var(--gold); font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; display: block; }
+  .head b { font-family: Montserrat, sans-serif; font-weight: 800; font-size: 24px; display: block; }
+  .head small { color: #d6dbef; font-size: 15px; }
+  .head .count { color: var(--gold); font-weight: 600; font-size: 15px; white-space: nowrap; }
+  section.mod > .row { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; margin: 14px 0 0 24px; }
+  details.gifs { margin: 14px 0 0 24px; }
+  details.gifs summary { cursor: pointer; color: var(--gold-ink); font-weight: 600; font-size: 15px; padding: 4px 0; }
+  details.gifs .grid { margin-top: 10px; padding-bottom: 0; }
+  @media (max-width: 560px) { .head { grid-template-columns: 52px 1fr; } .head img { width: 52px; height: 52px; } .head .count { display: none; } section.mod > .row, details.gifs { margin-left: 0; } }
+  a.card { display: grid; grid-template-columns: 72px 1fr; gap: 16px; align-items: center; padding: 18px; border-radius: 12px; background: rgba(255, 252, 244, .82); border: 1px solid var(--line); color: inherit; text-decoration: none; box-shadow: 0 2px 0 rgba(120, 96, 50, .12); transition: transform .15s, border-color .2s; }
+  a.card:hover { transform: translateY(-4px); border-color: var(--navy); }
+  .card img { width: 72px; height: 72px; border-radius: 50%; background: var(--navy); padding: 9px; object-fit: contain; }
+  .card b { font-family: Montserrat, sans-serif; font-weight: 800; font-size: 19px; display: block; }
+  .card small { color: var(--muted); font-size: 15px; }
   .tag { display: inline-block; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; font-weight: 600; color: var(--gold-ink); border: 1px solid var(--line); border-radius: 99px; padding: 1px 8px; margin-top: 6px; }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 18px; padding-bottom: 40px; }
   figure { margin: 0; background: rgba(255, 252, 244, .82); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
@@ -51,15 +58,8 @@
 </header></div>
 
 <section>
-  <h2>Interactive Pages</h2>
-  <p>Grouped by module. Open one and use ← → to move through it. Every page has a walk-through; most let you play it yourself.</p>
-  <div id="cards"></div>
-</section>
-
-<section>
-  <h2>GIFs</h2>
-  <p>1920×1080, looping. Right-click a GIF to save it, or open it full size.</p>
-  <div class="grid" id="gifs"></div>
+  <p class="lede">Grouped by module, in course order. Open a page and use ← → to move through it. Every page has a walk-through, and most let you play it yourself. GIFs are 1920×1080 and loop; right-click one to save it.</p>
+  <div id="mods"></div>
 </section>
 
 <script>
@@ -271,20 +271,34 @@
     ['m7-sound--four-classes-layers.gif', 'Build a field from layers', 'The field starts silent, then grass, birds, terrain footsteps and a boulder join one by one until the mix meter fills.'],
     ['m7-sound--consonant-menu.gif', 'Consonant confirm, dissonant back', 'Confirm, back and a locked Save as designed, then the same presses with the sounds swapped and flagged.'],
   ];
+  // [module key, code, title, deck title]; header icon is ../assets/img/home/dgms--<module key>.svg
   const PARTS = [
-    ['m0-power-of-polish', 'Module 0 · The Power of Polish'], ['m1-pillars', 'Module 1 · Design Pillars'], ['m2-audience', 'Module 2 · Audience'],
-    ['m3-skills', 'Module 3 · Player Skills'], ['m4-character', 'Module 4 · Character'], ['m5-controller', 'Module 5 · Controller'],
-    ['m6-camera', 'Module 6 · Camera'], ['m7-sound', 'Module 7 · Sound Design'], ['m8-balance', 'Module 8 · Balance'],
-    ['m9-game-feel', 'Module 9 · Game Feel'], ['interview', 'Bonus · Getting Hired as a Game Designer'],
+    ['m0-power-of-polish', 'DGMS M0', 'The Power of Polish', 'Why polish matters, and the map of the course'],
+    ['m1-pillars', 'DGMS M1', 'Design Pillars', 'Game Pillars and Values'],
+    ['m2-audience', 'DGMS M2', 'Audience', 'Audience Demographics'],
+    ['m3-skills', 'DGMS M3', 'Player Skills', 'Leveraging Player Skills'],
+    ['m4-character', 'DGMS M4', 'Character', '3Cs: Character'],
+    ['m5-controller', 'DGMS M5', 'Controller', '3Cs: Controllers'],
+    ['m6-camera', 'DGMS M6', 'Camera', '3Cs: Camera'],
+    ['m7-sound', 'DGMS M7', 'Sound Design', 'Sound Design'],
+    ['m8-balance', 'DGMS M8', 'Balance', 'Gameplay Balance'],
+    ['m9-game-feel', 'DGMS M9', 'Game Feel', 'Game Feel'],
+    ['interview', 'DGMS Bonus', 'Getting Hired', 'Getting Hired as a Game Designer'],
   ];
   const card = ([p, t, b]) =>
-    `<a class="mod" href="${p}/index.html"><img src="../assets/img/home/dgms--${p.replace('/', '--')}.svg" alt=""><span><b>${t}</b><small>${b}</small></span></a>`;
-  document.getElementById('cards').innerHTML = PARTS.map(([k, pt]) => {
-    const here = PAGES.filter(p => p[3] === k);
-    return here.length ? `<div class="part" id="${k}" style="--n:${here.length}"><h3>${pt}</h3><div class="row">${here.map(card).join('')}</div></div>` : '';
+    `<a class="card" href="${p}/index.html"><img src="../assets/img/home/dgms--${p.replace('/', '--')}.svg" alt=""><span><b>${t}</b><small>${b}</small></span></a>`;
+  const fig = ([f, t, c]) =>
+    `<figure><a href="gifs/${f}"><img src="gifs/${f}" alt="${t}" loading="lazy"></a><figcaption><b>${t}</b>${c}</figcaption></figure>`;
+  const n = (k, w) => `${k} ${w}${k === 1 ? '' : 's'}`;
+  document.getElementById('mods').innerHTML = PARTS.map(([k, code, title, deck]) => {
+    const here = PAGES.filter(p => p[3] === k), gifs = GIFS.filter(g => g[0].startsWith(k + '--'));
+    if (!here.length) return '';
+    return `<section class="mod" id="${k}">
+      <div class="head"><img src="../assets/img/home/dgms--${k}.svg" alt=""><span><span class="code">${code}</span><b>${title}</b><small><i>${deck}</i></small></span><span class="count">${n(here.length, 'page')} · ${n(gifs.length, 'GIF')}</span></div>
+      <div class="row">${here.map(card).join('')}</div>
+      ${gifs.length ? `<details class="gifs"><summary>${n(gifs.length, 'GIF')} from this module</summary><div class="grid">${gifs.map(fig).join('')}</div></details>` : ''}
+    </section>`;
   }).join('') || '<p>Pages are on the way.</p>';
-  document.getElementById('gifs').innerHTML = GIFS.map(([f, t, c]) =>
-    `<figure><a href="gifs/${f}"><img src="gifs/${f}" alt="${t}" loading="lazy"></a><figcaption><b>${t}</b>${c}</figcaption></figure>`).join('');
 </script>
 </body>
 </html>
