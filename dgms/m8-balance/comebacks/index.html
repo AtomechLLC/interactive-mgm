@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Comeback Tug-of-War · Directing Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/deck.css">
+<link rel="stylesheet" href="../../../assets/kit.css">
+<link rel="stylesheet" href="../../shared/dgms.css">
+<style>
+  .cb-side label.rng { margin: 3px 0; font-size: 15px; }
+  .cb-side label.chk { font-size: 15px; margin: 4px 0; }
+  .cb-side .seg { margin: 2px 0 6px; }
+  .cb-side .seg .btn { font-size: 14px; padding: 4px 8px; }
+  .cb-side .mt-out { font-size: 16px; margin-top: 8px; }
+  .cb-side h4 { margin: 4px 0 2px; }
+</style>
+<script>
+  window.DECK = { title: 'Directing Game Mechanics · Module 8 · Comeback Tug-of-War', home: '../../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- slides 287-about 324 -->
+<section class="slide" data-title="Comeback tug-of-war" data-demo="cb-race">
+  <div class="kicker">common balance problems</div>
+  <h2 class="sm">Comeback <span class="accent">Tug-of-War</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side cb-side">
+      <h4 style="margin-top:0">Presets</h4>
+      <div class="seg cb-pre"></div>
+      <h4>Rules</h4>
+      <label class="rng">Snowball: the trailing player loses power <b class="cb-snowv"></b><input type="range" class="cb-snow" min="0" max="100" step="5"></label>
+      <label class="rng">Rubber band: odds bonus for the trailing player <b class="cb-rbv"></b><input type="range" class="cb-rb" min="0" max="100" step="5"></label>
+      <label class="rng">Comeback size <b class="cb-sizev"></b><input type="range" class="cb-size" min="0" max="80" step="1"></label>
+      <div class="seg cb-kind"><button class="btn" data-k="flat">Flat HP</button><button class="btn" data-k="prop">% of the gap</button><button class="btn" data-k="hit">Hits the opponent</button><button class="btn" data-k="heal">Heals you</button></div>
+      <label class="chk"><input type="checkbox" class="cb-gap"> Comeback only while a gap exists</label>
+      <label class="rng">Damage per exchange <b class="cb-dmgv"></b><input type="range" class="cb-dmg" min="0.5" max="5" step="0.5"></label>
+      <label class="rng">Forfeit when the gap reaches <b class="cb-ffv"></b><input type="range" class="cb-ff" min="0" max="90" step="5"></label>
+      <div class="row wrap"><button class="btn cb-tour on">▶ Walk-through</button><button class="btn cb-new">New match</button></div>
+      <p class="mt-out cb-out"></p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../../assets/deck.js"></script>
+<script src="../../../assets/kit.js"></script>
+<script src="../../shared/topdown.js"></script>
+<script src="comebacks.js"></script>
+</body>
+</html>

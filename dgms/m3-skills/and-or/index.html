@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AND vs OR Skill Tests · Directing Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/deck.css">
+<link rel="stylesheet" href="../../../assets/kit.css">
+<link rel="stylesheet" href="../../shared/dgms.css">
+<script>
+  window.DECK = { title: 'Directing Game Mechanics · Module 3 · AND vs OR', home: '../../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1: slides 53-65 -->
+<section class="slide" data-title="AND vs OR" data-demo="gate">
+  <div class="kicker">the skill testing framework · slides 53-65</div>
+  <h2 class="sm">Complementary <span class="accent">AND</span>, supplementary <span class="accent">OR</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Preset</h4>
+      <div class="seg ao-pre"><button class="btn on" data-p="sky">Sky Diver</button><button class="btn" data-p="ow">Overwatch</button><button class="btn" data-p="free">Your own</button></div>
+      <h4>Skills in the test</h4>
+      <div class="kw ao-skills"></div>
+      <h4>Joiner</h4>
+      <div class="seg ao-join"><button class="btn on" data-j="and">AND</button><button class="btn" data-j="or">OR</button></div>
+      <label class="rng">Bar to clear <b class="ao-tv"></b><input type="range" class="ao-th" min="30" max="90" step="5" value="60"></label>
+      <div class="row wrap"><button class="btn ao-tour on">▶ Walk-through</button></div>
+      <div class="mt-stats ao-stats"></div>
+      <p class="mt-out ao-out"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 2: slides 66-67 -->
+<section class="slide" data-title="Knowledge for reaction" data-demo="slam">
+  <div class="kicker">skill supplementation · slides 66-67</div>
+  <h2 class="sm">Dark Souls III: <span class="accent">knowledge for reaction</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Attempt</h4>
+      <div class="seg sl-att"><button class="btn on" data-a="1">1st sight</button><button class="btn" data-a="2">2nd attempt</button><button class="btn" data-a="3">3rd attempt</button></div>
+      <label class="rng">Warning before the slam lands <b class="sl-wv"></b><input type="range" class="sl-warn" min="150" max="400" step="10" value="260"></label>
+      <div class="row wrap"><button class="btn sl-tour on">▶ Walk-through</button></div>
+      <div class="mt-stats sl-stats"></div>
+      <p class="mt-out sl-out"></p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../../assets/deck.js"></script>
+<script src="../../../assets/kit.js"></script>
+<script src="../../shared/topdown.js"></script>
+<script src="and-or.js"></script>
+</body>
+</html>

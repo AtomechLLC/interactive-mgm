@@ -1,0 +1,3 @@
+Super Mario Bros. small Mario sprites (Nintendo), downloaded from the Super Mario Wiki (mariowiki.com, files hosted on mario.wiki.gallery), used for class discussion:
+mario-walk0.png, mario-walk1.png, mario-walk2.png   frames of File:Small Mario Walk SMB.gif
+mario-jump.png                                       File:SMB Small Mario Jumping Sprite.png

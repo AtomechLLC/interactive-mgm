@@ -1,0 +1,4 @@
+// Speaker notes. Source: Module 0 deck, see ../../proposals/m0-power-of-polish.md.
+window.NOTES = [
+  { script: "This is the step many developers skip, rushing directly to the game concept first. Three dials: theme from light to dark, pace from slow to fast, combat from gentle to harsh. Stardew Valley: burned-out adults who loved Harvest Moon as kids, so the fantasy is permission to slow down. Dark Souls: players who felt modern games had become condescending, so you are a nobody in a hostile world that owes you nothing, which is why there are no difficulty settings, the item text is cryptic and bonfires punish carelessness. Hades: players who bounced off roguelikes because permadeath felt punishing, so every death advances the story. Move the dials and watch which games sit near you: neighbouring games share an audience." },
+];

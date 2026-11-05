@@ -1,0 +1,39 @@
+/* Interview deck (bonus: Getting Hired as a Game Designer): card boards shared by the pages in dgms/interview/.
+   A .iv-board takes the place of the 1040x585 canvas in .mt-wrap; everything inside is HTML. */
+.iv-board { position: relative; width: 1040px; height: 585px; box-sizing: border-box; background: rgba(255, 252, 244, .86); border-radius: 14px; padding: 18px 20px; color: #262c6a; font-family: var(--font); overflow: hidden; }
+.iv-board h3 { font-family: var(--display); font-weight: 800; font-size: 18px; margin: 0 0 4px; color: #262c6a; }
+.iv-board .sub { font-size: 14px; color: #5d618c; margin: 0 0 10px; }
+.iv-board button { font-family: var(--font); cursor: pointer; }
+.iv-tag { display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 2px 8px; border-radius: 6px; background: #fde9b8; border: 1.5px dashed #c98a12; color: #7a4a00; vertical-align: middle; }
+.iv-tag.abs { position: absolute; top: 14px; right: 16px; }
+.gi { width: 1em; height: 1em; vertical-align: -.14em; }
+.iv-ico { width: 34px; height: 34px; flex: none; border-radius: 7px; display: grid; place-items: center; background: #262c6a; color: #ffb951; }
+.iv-ico .gi { width: 24px; height: 24px; }
+.iv-ico img { width: 34px; height: 34px; border-radius: 7px; display: block; }
+.iv-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.iv-chips .chip { font-size: 13px; padding: 1px 8px; }
+.chip.sys { background: #d9eefa; border-color: #2ea3dc; color: #0f4e75; }
+.chip.con { background: #fde9b8; border-color: #e0a92d; color: #7a4a00; }
+.iv-card { background: #fffaf0; border: 2px solid #cdbf9f; border-radius: 12px; padding: 12px 14px; box-sizing: border-box; }
+.iv-hl { outline: 3px solid #ffb951; outline-offset: 2px; }
+/* fake pointer for the walk-through, so a recording shows what is being pressed */
+.iv-cursor { position: absolute; left: 0; top: 0; width: 26px; height: 26px; pointer-events: none; z-index: 20; display: none; filter: drop-shadow(0 2px 2px rgba(0,0,0,.35)); }
+.iv-cursor.on { display: block; }
+.iv-cursor::after { content: ""; position: absolute; left: -12px; top: -12px; width: 24px; height: 24px; border-radius: 50%; border: 3px solid #ffb951; opacity: 0; transform: scale(.4); }
+.iv-cursor.press::after { opacity: 1; transform: scale(1.2); transition: none; }
+.mt-side .iv-note { font-size: 15px; color: var(--muted); line-height: 1.4; margin: 8px 0 0; }
+.mt-side .src { font-size: 12.5px; }
+.mt-side textarea, .iv-board textarea { width: 100%; box-sizing: border-box; font: 15px/1.4 var(--font); color: #262c6a; background: #fffaf0; border: 2px solid #cdbf9f; border-radius: 10px; padding: 8px 10px; resize: none; }
+/* print root: a clean copy of a card that only shows up on paper */
+#iv-print-root { display: none; }
+@media print {
+  @page { size: A4 portrait; margin: 14mm; }
+  html, body { background: #fff !important; height: auto !important; overflow: visible !important; }
+  body > *:not(#iv-print-root) { display: none !important; }
+  #iv-print-root { display: block !important; color: #000; font-family: "Jost", system-ui, sans-serif; }
+}
+/* the deck sets .slide p / li to 30px: board text is denser */
+.slide .iv-board p, .slide .iv-board li { font-size: 15.5px; line-height: 1.42; color: #262c6a; margin: 0 0 8px; }
+.slide .iv-board h4 { font-family: var(--display); font-size: 12.5px; text-transform: uppercase; letter-spacing: .06em; color: #5d618c; margin: 10px 0 5px; }
+/* while __seek drives a recording, every frame comes from t alone: no CSS transitions */
+.iv-held *, .iv-held *::before, .iv-held *::after { transition: none !important; }

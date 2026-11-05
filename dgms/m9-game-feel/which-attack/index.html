@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Which Attack Comes Out · Directing Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/deck.css">
+<link rel="stylesheet" href="../../../assets/kit.css">
+<link rel="stylesheet" href="../../shared/dgms.css">
+<script>
+  window.DECK = { title: 'Directing Game Mechanics · Module 9 · Which Attack Comes Out?', home: '../../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+<style>
+  .wa-key { display: inline-block; font-family: var(--display); font-size: 13px; background: #fffaf0; border: 2px solid #cdbf9f; border-bottom-width: 4px; border-radius: 6px; padding: 0 6px; }
+  .mt-side .wa-attack { font-size: 20px; padding: 10px 22px; background: #e5322d; border-color: #a8201c; color: #fff; }
+</style>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- slides 66-69 -->
+<section class="slide" data-title="Which attack comes out?" data-demo="attack" data-touch-keys="KeyS:Neutral,KeyD:Forward,KeyW:Up,KeyX:Attack">
+  <div class="kicker">principle 1: predictable results</div>
+  <h2 class="sm">Which attack <span class="accent">comes out?</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4 style="margin-top:0">Stick direction</h4>
+      <div class="seg wa-dir"><button class="btn on" data-d="neutral">Neutral</button><button class="btn" data-d="forward">Forward →</button><button class="btn" data-d="up">Up ↑</button></div>
+      <div class="row wrap"><button class="btn wa-attack">Attack</button></div>
+      <p class="tip" style="margin-top:8px">Keys: <span class="wa-key">S</span> neutral, <span class="wa-key">D</span> forward, <span class="wa-key">W</span> up, <span class="wa-key">X</span> attack. Aim for the move the enemy calls for; both knights get the same press.</p>
+      <div class="row wrap"><button class="btn wa-tour on">▶ Walk-through</button><button class="btn wa-seed">New random seed</button><button class="btn wa-reset">Reset tally</button></div>
+      <div class="mt-stats wa-stats"></div>
+      <p class="mt-out wa-out"></p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../../assets/deck.js"></script>
+<script src="../../../assets/kit.js"></script>
+<script src="../../shared/topdown.js"></script>
+<script src="which-attack.js"></script>
+</body>
+</html>

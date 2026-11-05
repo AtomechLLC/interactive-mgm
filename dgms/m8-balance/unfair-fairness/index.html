@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unfair Fairness · Directing Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/deck.css">
+<link rel="stylesheet" href="../../../assets/kit.css">
+<link rel="stylesheet" href="../../shared/dgms.css">
+<script>
+  window.DECK = { title: 'Directing Game Mechanics · Module 8 · Unfair Fairness', home: '../../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<section class="slide" data-title="Unfair fairness board" data-demo="board">
+  <div class="kicker">principle 6: contextually overpowered</div>
+  <h2 class="sm">When is a champion <span class="accent">allowed to dominate?</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <div class="row wrap"><button class="btn uf-tour on">▶ Walk-through</button><button class="btn uf-add">+ Add a row</button><button class="btn uf-reset">Reset</button></div>
+      <p class="tip">Click a cell to cycle it: even, dominant, weak. Any row without a weak cell gets flagged.</p>
+      <div class="row wrap"><span class="chip" style="background:#ffb951;border-color:#c98a1e;color:#4a2c00">dominant</span><span class="chip" style="background:#ece3cf;border-color:#cdbf9f;color:#262c6a">even</span><span class="chip" style="background:#a9c4e6;border-color:#5d8fd6;color:#14305e">weak</span><span class="chip red">no answer</span></div>
+      <div class="mt-stats uf-stats"></div>
+      <p class="mt-out uf-out"></p>
+      <p class="src">Portraits: Riot Games, League of Legends (Data Dragon). Cell shading is an illustration of the deck’s Wild Rift examples, not live data.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="The Reckless shard" data-demo="reckless">
+  <div class="kicker">principle 7: purpose = powerful and vulnerable</div>
+  <h2 class="sm">Ori’s <span class="accent">Reckless</span> shard</h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <div class="row wrap"><button class="btn rk-tour on">▶ Walk-through</button></div>
+      <label class="rng">Damage dealt <b class="rk-dv">1.25x</b><input type="range" class="rk-d" min="1.25" max="4" step="0.05" value="1.25"></label>
+      <label class="rng">Damage taken <b class="rk-tv">1.25x</b><input type="range" class="rk-t" min="1.25" max="4" step="0.05" value="1.25"></label>
+      <div class="row wrap"><button class="btn rk-p" data-d="1.25" data-t="1.25">Small bonus</button><button class="btn rk-p" data-d="4" data-t="4">Quadrupled</button></div>
+      <div class="mt-stats rk-stats"></div>
+      <p class="mt-out rk-out"></p>
+      <p class="src">Ori and the Will of the Wisps, Moon Studios. Enemy and Ori health values are illustrative.</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../../assets/deck.js"></script>
+<script src="../../../assets/kit.js"></script>
+<script src="../../shared/topdown.js"></script>
+<script src="unfair-fairness.js"></script>
+</body>
+</html>

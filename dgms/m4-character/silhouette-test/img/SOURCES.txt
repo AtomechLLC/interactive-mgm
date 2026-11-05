@@ -1,0 +1,14 @@
+Super Mario sprites (Nintendo), downloaded from the Super Mario Wiki (mariowiki.com, files hosted on mario.wiki.gallery), used for class discussion:
+mario.png      File:SMB Super Mario Sprite.png (Super Mario Bros.)
+luigi.png      File:SMB Super Luigi Sprite.png (Super Mario Bros.)
+peach.png      File:SMB Princess Toadstool Sprite.png (Super Mario Bros.)
+toad.png       File:ToadSMB3.png (Super Mario Bros. 3)
+goomba.png     File:SMB Goomba Sprite.gif, first frame (Super Mario Bros.)
+koopa.png      File:SMW KoopaTroopa Green.png (Super Mario World)
+boo.png        File:SMWSMA2BooSprite.png (Super Mario World)
+bowser.png     File:SMB Bowser Sprite.png (Super Mario Bros.)
+hammerbro.png  File:SMB Hammer Bro Sprite.png (Super Mario Bros.)
+
+League of Legends champion renders (Riot Games), downloaded from the League of Legends Wiki (leagueoflegends.fandom.com, File:<Champion> Render.png),
+cropped to their alpha and resized to 300 px on the long side:
+lol-jinx.png, lol-braum.png, lol-draven.png, lol-lucian.png, lol-gnar.png, lol-ziggs.png, lol-trundle.png

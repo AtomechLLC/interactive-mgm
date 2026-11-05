@@ -1,0 +1,5 @@
+// Speaker notes. Source: Module 0 deck, see ../../proposals/m0-power-of-polish.md.
+window.NOTES = [
+  { script: "Natural controls start with an architecture. Four pieces: the controller, the pawn, the model and the actions. A press of A travels through all four: the controller reads it, the pawn asks whether it may jump, the model answers by the rules, and the action plays. Now swap the gamepad for an AI brain. The pawn, the model and the actions do not change at all. That is the reason for the split: anything that can drive a controller can drive the same character." },
+  { script: "Respawn iterated on the auto-stick threshold for Titanfall 2’s wall-run for weeks. Too sticky and players felt trapped against walls; too loose and they fell off mid-parkour. Here are three runners with the same stick input: a little drift away from the wall, then a deliberate push off. With no assist, the drift is read literally and the runner peels off. With full assist, even the deliberate push is swallowed. In the middle, the game biases toward what you meant, not the literal stick input." },
+];

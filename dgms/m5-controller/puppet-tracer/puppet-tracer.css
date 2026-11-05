@@ -1,0 +1,6 @@
+/* Puppet signal tracer: page-only tweaks on top of ../../shared/dgms.css. */
+.slide h2.sm { font-size: 40px; }
+.mt-side h4 { margin-top: 10px; }
+.mt-side .tip { font-size: 15px; margin-top: 6px; }
+.slide .mt-out { font-size: 17px; line-height: 1.38; }
+canvas.demo { cursor: pointer; }

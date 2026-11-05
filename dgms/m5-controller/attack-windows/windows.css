@@ -1,0 +1,12 @@
+/* Attack window editor: page-only tweaks on top of dgms.css */
+.aw-side h4 { margin: 4px 0 4px; }
+.aw-side .seg { margin: 2px 0 6px; }
+.aw-side label.chk { margin: 4px 0; font-size: 16px; }
+.aw-side .row.wrap { margin: 4px 0; gap: 6px; }
+.aw-side .btn { font-size: 15px; padding: 5px 10px; }
+.aw-pair { display: grid; grid-template-columns: auto auto; gap: 0 14px; justify-content: start; }
+.aw-side .mt-stats { margin-top: 6px; gap: 6px; }
+.aw-side .mt-stats div { padding: 3px 10px; }
+.aw-side .mt-stats b { font-size: 22px; min-width: 52px; }
+.aw-side .mt-out { font-size: 16px; margin-top: 8px; }
+.aw-side .src { margin-top: 4px; }

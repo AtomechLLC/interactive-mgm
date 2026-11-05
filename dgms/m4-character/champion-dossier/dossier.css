@@ -1,0 +1,15 @@
+/* Champion dossier: page-only styles on top of ../../shared/dgms.css */
+.mt-side .cd-champ .btn { display: inline-flex; align-items: center; gap: 6px; padding: 4px 9px 4px 4px; }
+.mt-side .cd-champ .btn img { width: 26px; height: 26px; border-radius: 5px; display: block; }
+.mt-side .cd-champ .btn .gf { width: 26px; height: 26px; border-radius: 5px; display: grid; place-items: center; background: #e6dcc5; color: #262c6a; font-weight: 700; font-size: 12px; }
+.mt-side .cd-goofy { margin-top: -4px; }
+.mt-side .cd-goofy.off { opacity: .45; }
+.mt-side .cd-cast { display: grid; gap: 6px; }
+.mt-side .cd-cast label { display: grid; grid-template-columns: 14px 1fr; gap: 8px; align-items: center; }
+.mt-side .cd-cast i { width: 14px; height: 14px; border-radius: 50%; display: block; }
+.mt-side .cd-cast input, .mt-side textarea.cd-note { font: 500 16px Jost, sans-serif; color: var(--ink); background: #fffaf0; border: 2px solid #cdbf9f; border-radius: 8px; padding: 4px 8px; width: 100%; box-sizing: border-box; }
+.mt-side textarea.cd-note { resize: none; margin: 0 0 8px; }
+.mt-side .cd-selh { margin-top: 12px; }
+.mt-side .cd-selh b { color: var(--ink); text-transform: none; letter-spacing: 0; font-family: Jost, sans-serif; font-size: 15px; }
+.slide .mt-out.warn { color: #8a1c15; }
+.mt-side .seg .btn { transition: none; }

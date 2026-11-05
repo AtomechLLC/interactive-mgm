@@ -214,3 +214,88 @@ Home page `blog-posts/index.html` (cards from `PAGES`), for the posts in funsmit
   2. What the Dice Allowed: exact 5e odds for the setup (the ogre hits, Thistle is left on 1 to 3 HP, Ansel hits back), about 1 night in 11 with the night's numbers. Sliders for Thistle's AC and HP and Ansel's attack bonus, the 2d8 + 4 damage histogram against her HP, and 40 seeded nights. Model in `odds()`.
 - GIFs in `gifs/`: rebuild them all with `sh blog-posts/tools/record-all.sh` while serving InteractiveMGM on 127.0.0.1:8191. They are 1920×1080 with the side panel hidden.
 - `shared/`: `blog.css` layout, a copy of the top-down kit and `icons.js` (the depth icons plus potion, bomb, chest, heart and dice icons from game-icons.net). `img/`: World of Warcraft spell icons from wow.zamimg.com (sources in `img/sources.json`).
+
+## Directing Game Mechanics module (`dgms/`)
+
+Home page `dgms/index.html` (cards from `PAGES`, grouped by module in `PARTS`; GIFs from `GIFS`), for the eleven decks of *Directing Game Mechanics Satisfaction* (formerly *Refining Gameplay and Feel*): Module 0 to Module 9 and the bonus interview deck. `proposals/<module>.md` holds the proposals per deck; `README.md` in the folder lists the page conventions. Pages live at `dgms/<module>/<page>/` and share `dgms/shared/dgms.css`, `topdown.js` and `scene.js` (a looping walk-through per canvas, plus `window.__seek` / `__dur` for GIF recording). Rebuild the GIFs with `sh dgms/tools/record-all.sh` while serving InteractiveMGM on 127.0.0.1:8177; the list is `dgms/tools/gifs.txt`. Examples and numbers that are not from a deck are marked in each page's header comment and source line.
+
+Module 0, The Power of Polish (`m0-power-of-polish/`, icons in `img/`):
+- `course-map/`: the seven building blocks around "Game Mechanics & Experience" (slides 54-55), recoloured into slide 56's three phases and numbered in the notes' build order; the toolbox filling up one tool per module (22-26); and what the course leaves out (30-34).
+- `designer-to-director/`: six studio roles connect to one designer (6-10), collapse onto one person on a small project (8, 17), and a seniority ladder (16; middle rungs illustrative).
+- `it-depends/`: permadeath, auto-aim, fall damage and fast travel, each in three games, as "fits the pillars" or "fights the pillars" (27-29; verdicts are the page's examples).
+- `audience-dials/`: theme, pace and combat dials with Stardew Valley, Dark Souls and Hades presets, the notes' audience to fantasy chain, and neighbouring games (59-62; positions by eye).
+- `controller-preview/`: one press through Controller, Pawn, Model and Actions with a gamepad or an AI brain (70), and Titanfall 2's wall-run assist at three thresholds (69; stick trace invented).
+- `polish-layers/`: one melee strike with eight layers of feel, and raw against polished (75-78, 81).
+
+Module 1, Game Pillars and Values (`m1-pillars/`):
+- `pillar-linter/`: the four rules as lamps on any pillar, with the deck's examples and God of War's pillars (16-25, 32).
+- `triage-board/`: mark which pillars each feature of a deep-sea survival game supports and the backlog sorts itself (26-30); then nine pillars and the spreading priority star (16, 33). Features and supports in `SUP`.
+- `pull-a-pillar/`: features resting on pillars; pull one early or late (24-25, 34-35); and "The game must have combos" against "Controlled Power" on twelve moves (36-37).
+- `pillar-or-value/`: a sorting drill with a rules round (40-61), Master Chef's values from word to self-explanatory (49-56), and Subnautica's values as before and after scenes (44-46).
+
+Module 3, Leveraging Player Skills (`m3-skills/`):
+- `flea-juggle/`: Build the Flea Juggle. Start from one flea on a fixed arc, then add asynchrony, input sensitivity, multi-threading and input RNG in any order; playable (17-19, 250-278).
+- `skill-fingerprints/`: Five-Skill Fingerprints. Five-axis radar of physical, decisions, processing, knowledge, freeform; game presets, skill dissonance morphs, your-game sliders (23-33, 89, 295-330).
+- `three-dials/`: Three Difficulty Dials. A corridor of jumps with gap width, lives and checkpoint spacing; three ghost players run it 20 times each; then the Savage Beastfly's real numbers (46-52, 81).
+- `and-or/`: AND vs OR. Twelve player cards with five skill bars; build a test, flip the joiner between AND and OR and see who gets through (Sky Diver, Overwatch, Dark Souls III teleport slam) (53-70).
+- `best-answer/`: Is There a Clear Best Answer?. Half court shaded by shot choice; 2-and-3 scoring empties the midrange as teams optimise, graded payoffs spread shots back out (76).
+- `reaction-lab/`: Frame Window and Reaction Lab. A 60 fps test bench (timing windows, red/green, overheads, choice reaction, holding an angle) that measures you against the deck's frame numbers, by sight or sound (91-110, 141-143).
+- `mash-meter/`: Mash Meter. Mash for five seconds against the deck's marks (8, 16, 30, 31 per second), then feel Smash's tech lockout punish early mashing (111-115).
+- `async-cycles/`: Asynchronous Cycles. Five loops start in phase and drift apart; dressed as lava bubbles, lifts and a Hammer Bro, the drift becomes a castle level (256).
+
+Module 2, Audience Demographics (`m2-audience/`):
+- `quantic-radar/`: The Skyrim Radar. Score a game on Quantic Foundry's 12 motivations by averaging designers' votes on how present each one is; regroup inward vs outward (38-40, 49-50).
+- `skill-curves/`: Five Skill Curves. Six games' skill curves on one chart of skill vs hours with floor and ceiling markers, a flow channel toggle, and two curves inside one game (Garen vs Ryze, Warrior vs Warlock) (67-89).
+- `shift-the-power/`: Shift the Power. A champion kit as reliable and niche power blocks; move power and watch the Iron floor and Challenger ceiling move (Aphelios, Master Yi before and after); floor/ceiling elements and the 55%/60% review lines (88-89, 174-178, 183).
+- `affordance-grid/`: The Affordance Grid. Play a short Super Mario World level; each pipe, false ledge and hidden 1-Up you find lands in the affordance grid as intended, misleading or secret; then the Ooblets word swap (102-111).
+- `hard-check/`: Hard Check vs Soft Check. Raynor kites a Zergling cluster vs Firebats burn it; God of War's ice-coated enemy as effectively a hard check (132-135).
+- `thirteen-percent/`: The 13% Rule. How big a raid tier must be to feel like an upgrade after weeks of waiting, worked back to about 1% per slot; then Thunderfury and transmog (226-237).
+- `gold-items/`: The Gold Item Trap. Gold-over-time items feel rewarding but pay back only 25 minutes after purchase, whatever the stack (260).
+- `time-pressure/`: Time Pressure, Three Ways. One corridor, three chasers (Ori fixed escape, Wisps rubber-band wall, Kirby mist); a speed slider shows only the fixed chaser filters out slower players (276-281).
+
+Module 8, Gameplay Balance (`m8-balance/`):
+- `patch-philosophies/`: Three Patch Philosophies. Rotate the top, buff the rest up, or nerf the top down over ten patches, against a target power line. (slides 17-21).
+- `unfair-fairness/`: Unfair Fairness. Six League champions against six situations, shaded dominant, even or weak; a row with no weak cell gets a "no answer" flag. (slides 91-109).
+- `hits-to-kill/`: Hits-to-Kill Bench. Two attackers with the same DPS reach different hits-to-kill and time-to-kill as enemy HP crosses thresholds. (slides 117-139, 159-162).
+- `toughness/`: Three Ways to Grow Toughness. Damage reduction runs to infinity at 100% while effective health and resistance grow in a straight line. (slides 140-157).
+- `dice-variance/`: Stable Part vs Variance. 1d8+4, 8+1d4 and 10+1d2 rolled 200 times each; the spread tightens as more of the hit is fixed. (slides 185).
+- `murder-bears/`: The Murder Bears. One typo in an attack-speed field turns a once-a-second bear into a thousand-hits-a-second bear; Val'anyr's tenfold shield-cap typo hid instead. (slides 197-199).
+- `hammer-time/`: Hammer Time. Tune a shield and a charged swing one variable at a time until the slow swing earns its place. (slides 204-216, 236-241).
+- `comebacks/`: Comeback Tug-of-War. One seeded match under five comeback rules. (slides 287-324).
+
+Module 9, Game Feel (`m9-game-feel/`):
+- `polish-ladder/`: Polish Ladder. Andre's three before-and-after polish demos rebuilt in grey-box art; number keys add layers and show what each adds and costs. (slides 35-57).
+- `seven-principles/`: Seven Principles Score Sheet. Score any game 0 to 10 on the seven principles on a radar chart. (slides 65-84).
+- `which-attack/`: Which Attack Comes Out?. The stick picks the move vs a random picker. (slides 66-69).
+- `under-match-over/`: Under, Match, Over. Six elements of one action on under/match/over bars with a budget meter. (slides 107).
+- `jump-lab/`: Jump Curve Lab. One jump key, three jumpers that differ only in what happens on release. (slides 164-172).
+- `feedback-mixer/`: Feedback Mixer. One melee hit on a training dummy with eight feedback channels to mix, and a checklist that shows what is missing. (slides 179-208).
+- `feel-shapes/`: Feel Shapes. Rogers' 16 game feel types drawn as intensity-over-time curves you can compare, take apart and invent. (slides 211-271).
+- `pendulum/`: Pendulum and Ball. Disney's 12 principles you can scrub: timing, spacing and easing on a pendulum, squash, stretch and anticipation on a ball, and before/after loops for the other six. (slides 289-296).
+
+Bonus, Getting Hired as a Game Designer (`interview/`):
+- `hiring-funnel/`: The Hiring Funnel. Six funnel bands from application to offer, each with one tip, with webcam tips on the video band. (slides 2-3).
+- `role-map/`: Which Designer Are You?. The deck's role grid shown whole: six domains, each with a systems-leaning and a content-leaning role, plus Carrillo's four designer types. (slides 7-27).
+- `rubric/`: Interview Rubric. A printable card with the four interviewer questions and the 4Cs, each with a "looks like" line and a 1-4 self-score. (slides 29-34, 42-47).
+- `five-levels/`: One Question, Five Levels. One prompt, five answers from Junior to Director, with each level's trait highlighted. (slides 35-41).
+- `practice/`: Interview Practice Card. Draw a prompt for your role, answer against a timer, tick the five tactics, then score yourself on the rubric. (slides 48-52).
+
+Module 5, 3Cs: Controllers (`m5-controller/`):
+- `puppet-tracer/`: Puppet Signal Tracer. Press jump, attack and swim and follow each signal from Input to Controller to Pawn: a jump pressed while falling waits in a queue, an attack in the water is refused until you flip one flag. (slides 17-62).
+- `two-jumps/`: Two Jumps, Two Philosophies. One key drives two jumpers: an Ori-style jump built from six pieces you can switch on and off, and a No Rest-style jump that only fires at a ledge marker and follows one fixed curve. (slides 69-115).
+- `control-metaphors/`: Controls as Metaphor. One controller, five metaphors: left and right hand, horizontal and vertical, body parts, light and heavy, and numbered slots, each relabelled with the game that used it. (slides 143-155).
+- `one-thumb/`: One Thumb, Too Many Buttons. Map Souls actions to a gamepad or to mouse and keyboard, and see every pair of actions that must happen at once but lands on the same thumb or finger. (slides 157-164).
+- `adr-curves/`: ADR Curves. Tune acceleration, deceleration and rotation on a top-down runner and watch the speed curve, from Mega Man X's instant turns to heavy momentum. (slides 190-193).
+- `axe-context/`: Interaction + Context = Outcome. One axe button and a hero you can drag: the same press chops a tree, backstabs from behind, attacks from the front or swings at the air. (slides 235-243).
+- `attack-windows/`: Attack Window Editor. Drag the windows of a looping strike (queue, interrupt, hit, iFrames, motion, VFX, sound and shake), compare a dagger with a greatsword, and read plus, even or minus on block. (slides 248-323).
+- `cancel-playground/`: Cancel Playground. Press keys mid-attack to see which of the seventeen cancels lets you out, and watch an anti-pattern detector flag free-cancel loops and option selects. (slides 329-392).
+- `hitbox-lab/`: Hitbox Lab. One looping sword swing with its colliders drawn: switch genres to watch "hitbox" change sides, swap the five attack shapes, ride the weapon bone, and replay seven placement tips before and after. (slides 396-441).
+
+Module 4, 3Cs: Character (`m4-character/`):
+- `same-button/`: Same Button, Five Meanings. One jump key, five character states: follow the signal from input through the controller to the character and see five different results. (slides 9-20, 30-31).
+- `same-kit-new-fantasy/`: Same Kit, New Fantasy. The kit never changes, only the character wearing it: step through Ziggs, Trundle, Braum, Ori and three Apex Legends reworks and watch how they read. (slides 37-48, 102, 127-137).
+- `champion-dossier/`: Champion Dossier. Alex Yee's seven-layer Pyramid of Complexity and Devon Giehl's six pieces, filled in for Jinx, Draven, Braum, Lucian, Gnar and Ziggs, plus a lug-nut pyramid for your own cast. (slides 54-123, 141-200).
+- `world-speeds-up/`: The World Speeds Up. Slow the hero or speed up the world: two runs of the same chase, and only one makes the controls feel heavy. (slides 82).
+- `silhouette-test/`: Silhouette Test. Mario, Bowser and League champions filled solid black: name each shape, then sort friend from foe before the colours come back. (Part 6).
+- `jump-tuner/`: Jump Metrics Tuner. Play a Mario runner and tune run speed, jump height, apex time, fall gravity and coyote time; see where each preset's arc lands and whether the level still fits. (Part 6).
+- `core-actions-by-genre/`: Core Actions by Genre. One puppet, five genres: swap the action bar and play each core verb, from a platformer's stomp to a Souls-like dodge. (Part 6).

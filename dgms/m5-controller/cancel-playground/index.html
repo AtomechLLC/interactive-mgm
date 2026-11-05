@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cancel Playground · Directing Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/deck.css">
+<link rel="stylesheet" href="../../../assets/kit.css">
+<link rel="stylesheet" href="../../shared/dgms.css">
+<link rel="stylesheet" href="cancel.css">
+<script>
+  window.DECK = { title: 'Directing Game Mechanics · Module 5 · Cancel Playground', home: '../../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1: commitment, free cancel vs no cancel vs IASA -->
+<section class="slide" data-title="Commitment" data-demo="cp-commit">
+  <div class="kicker">3Cs: controller · cancel philosophies, about slides 329-340</div>
+  <h2 class="sm">One strike, three <span class="accent">cancel philosophies</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Press during the strike</h4>
+      <p class="tip">Press K (or the button) while the strike plays. All three rows get the same press on the same frame.</p>
+      <div class="row wrap"><button class="btn cm-press">K · Dodge</button><button class="btn cm-slow">Slow motion</button></div>
+      <div class="row wrap"><button class="btn cm-tour on">▶ Walk-through</button></div>
+      <div class="mt-stats cm-stats"></div>
+      <p class="mt-out cm-out"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 2: the playground -->
+<section class="slide" data-title="Cancel playground" data-demo="cp-play">
+  <div class="kicker">3Cs: controller · 17 ways to cancel ongoing actions, about slides 363-392</div>
+  <h2 class="sm">The cancel <span class="accent">playground</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side cp-side">
+      <h4>Presets</h4>
+      <div class="seg cp-presets"><button class="btn" data-p="souls">Souls commit</button><button class="btn" data-p="fight">On-hit chain</button><button class="btn" data-p="free">Character action</button><button class="btn" data-p="clear">Clear</button></div>
+      <h4>17 cancels</h4>
+      <div class="cp-chips"></div>
+      <h4>Rules</h4>
+      <label class="chk"><input type="checkbox" class="cp-connect" checked> Strikes connect with the dummy</label>
+      <label class="chk"><input type="checkbox" class="cp-costs" checked> Cancels cost stamina</label>
+      <label class="chk"><input type="checkbox" class="cp-wide"> Stretch every window to the whole move</label>
+      <div class="row wrap"><button class="btn cp-tour on" data-w="play">▶ Walk-through</button><button class="btn cp-tour" data-w="anti">▶ Anti-patterns</button></div>
+      <p class="mt-out cp-out"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 3: strings vs chains vs combos -->
+<section class="slide" data-title="Strings, chains and combos" data-demo="cp-chains">
+  <div class="kicker">3Cs: controller · strings, chains and combos, about slides 329-392</div>
+  <h2 class="sm">Strings, chains and <span class="accent">combos</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Chain pattern</h4>
+      <div class="seg ch-pat"><button class="btn on" data-p="ladder">Ascending ladder</button><button class="btn" data-p="tree">Branching tree</button><button class="btn" data-p="loop">Capped loop</button></div>
+      <h4>Input</h4>
+      <div class="row wrap ch-btns"><button class="btn" data-b="L">J · Light</button><button class="btn" data-b="M">K · Medium</button><button class="btn" data-b="H">L · Heavy</button><button class="btn" data-b="S">O · Special</button></div>
+      <div class="row wrap"><button class="btn ch-tour on">▶ Walk-through</button></div>
+      <div class="mt-stats ch-stats"></div>
+      <p class="mt-out ch-out"></p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../../assets/deck.js"></script>
+<script src="../../../assets/kit.js"></script>
+<script src="cancel-playground.js"></script>
+</body>
+</html>

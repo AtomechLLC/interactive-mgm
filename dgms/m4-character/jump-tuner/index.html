@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jump Metrics Tuner · Directing Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/deck.css">
+<link rel="stylesheet" href="../../../assets/kit.css">
+<link rel="stylesheet" href="../../shared/dgms.css">
+<style>
+  .jt-side label.rng { margin: 4px 0; font-size: 15px; }
+  .jt-side h4 { margin: 4px 0 4px; }
+  .jt-side .seg { margin: 2px 0 6px; }
+  .jt-side label.chk { margin: 4px 0; font-size: 16px; }
+  .jt-side .tip { font-size: 14px; margin: 4px 0; }
+  .jt-side .mt-out { font-size: 16px; margin-top: 6px; }
+  canvas.demo:focus { outline: none; }
+</style>
+<script>
+  window.DECK = { title: 'Directing Game Mechanics · Module 4 · Jump Metrics Tuner', home: '../../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<section class="slide" data-title="Tune the jump" data-demo="tuner" data-touch-keys="ArrowLeft:←,ArrowRight:→,Space:Jump">
+  <div class="kicker">3Cs: character · Part 6, Character Metrics: how far, how fast, how long</div>
+  <h2 class="sm">Metrics <span class="accent">define the feel</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585" tabindex="0"></canvas>
+    <div class="mt-side jt-side">
+      <h4>Presets (illustrative approximations)</h4>
+      <div class="seg jt-presets"><button class="btn on" data-p="smb">Super Mario Bros.</button><button class="btn" data-p="sonic">Sonic</button><button class="btn" data-p="megaman">Mega Man</button><button class="btn" data-p="keen1">Keen 1</button><button class="btn" data-p="keen4">Keen 4</button></div>
+      <label class="rng">Run speed <b class="jt-v-run"></b><input type="range" class="jt-run" min="3" max="24" step="0.1"></label>
+      <label class="rng">Jump height <b class="jt-v-h"></b><input type="range" class="jt-h" min="1" max="8" step="0.1"></label>
+      <label class="rng">Time to apex <b class="jt-v-apex"></b><input type="range" class="jt-apex" min="0.2" max="1" step="0.01"></label>
+      <label class="rng">Fall gravity multiplier <b class="jt-v-fall"></b><input type="range" class="jt-fall" min="0.5" max="4" step="0.1"></label>
+      <label class="rng">Coyote time <b class="jt-v-coy"></b><input type="range" class="jt-coy" min="0" max="12" step="1"></label>
+      <label class="chk"><input type="checkbox" class="jt-fit" checked> Fit the level: fixed gaps and ledges</label>
+      <label class="chk"><input type="checkbox" class="jt-arcs" checked> Show the preset arcs</label>
+      <div class="row wrap"><button class="btn jt-tour on">▶ Walk-through</button><button class="btn jt-play">Play it yourself</button></div>
+      <p class="tip">Arrows or A and D to run, Space or W to jump. Let go early for a shorter hop. PageUp and PageDown change slides.</p>
+      <p class="mt-out jt-out"></p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Coyote time" data-demo="coyote" data-touch-keys="Space:Jump">
+  <div class="kicker">3Cs: character · Part 6, Coyote Time, Celeste</div>
+  <h2 class="sm">A late press, <span class="accent">forgiven</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585" tabindex="0"></canvas>
+    <div class="mt-side jt-side">
+      <h4>The same press, two rules</h4>
+      <label class="rng">Press after leaving the ledge <b class="cy-v-p"></b><input type="range" class="cy-p" min="-4" max="12" step="1" value="4"></label>
+      <label class="rng">Coyote window (lower lane) <b class="cy-v-c"></b><input type="range" class="cy-c" min="1" max="12" step="1" value="6"></label>
+      <div class="row wrap"><button class="btn cy-tour on">▶ Walk-through</button><button class="btn cy-try">Use my own timing</button></div>
+      <p class="tip">With "Use my own timing" on, press Space as Mario runs off the ledge. Both lanes get the same press.</p>
+      <div class="mt-stats cy-stats"></div>
+      <p class="mt-out cy-out"></p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../../assets/deck.js"></script>
+<script src="../../../assets/kit.js"></script>
+<script src="../../shared/topdown.js"></script>
+<script src="jump-tuner.js"></script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shift the Power · Directing Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/deck.css">
+<link rel="stylesheet" href="../../../assets/kit.css">
+<link rel="stylesheet" href="../../shared/dgms.css">
+<style>
+  .sp-ways { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 4px 0 8px; }
+  .sp-ways .btn { font-size: 14px !important; padding: 5px 8px !important; line-height: 1.2; text-align: left; }
+  .sp-ways .btn small { display: block; font-size: 12px; opacity: .75; }
+  .sp-ways .btn.flash { background: var(--navy); color: #fff; }
+  .mt-stats.tight { gap: 6px; }
+  .mt-stats.tight div { padding: 4px 10px; }
+  .mt-stats.tight b { font-size: 24px; }
+</style>
+<script>
+  window.DECK = { title: 'Directing Game Mechanics · Module 2 · Shift the Power', home: '../../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1: slides 174-178 -->
+<section class="slide" data-title="Shift the power" data-demo="shift">
+  <div class="kicker">tailor to hardcore players · slides 174-178</div>
+  <h2 class="sm">Shift the power, <span class="accent">move the floor and ceiling</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Champion kit</h4>
+      <div class="seg sp-pre">
+        <button class="btn on" data-k="aph">Aphelios</button>
+        <button class="btn" data-k="yi0">Master Yi, pre-rework</button>
+        <button class="btn" data-k="yi1">Master Yi, post-rework</button>
+      </div>
+      <label class="rng">Share of power in niche elements <b class="sp-nv"></b><input type="range" class="sp-n" min="0" max="100" step="5" value="75"></label>
+      <h4>4 ways to shift power (slide 176)</h4>
+      <div class="sp-ways">
+        <button class="btn" data-w="addN">+ niche power<small>empowers hardcore</small></button>
+        <button class="btn" data-w="addR">+ reliable power<small>empowers everyone</small></button>
+        <button class="btn" data-w="n2r">niche → reliable<small>raises the floor</small></button>
+        <button class="btn" data-w="r2n">reliable → niche<small>raises the ceiling</small></button>
+      </div>
+      <div class="row wrap"><button class="btn sp-tour on">▶ Walk-through</button></div>
+      <div class="mt-stats tight sp-stats"></div>
+      <p class="mt-out sp-out"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 2: slides 88-89 -->
+<section class="slide" data-title="Floor and ceiling elements" data-demo="elements">
+  <div class="kicker">5 types of player skill curves · slides 88-89</div>
+  <h2 class="sm">Floor elements and <span class="accent">ceiling elements</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Add elements to a kit</h4>
+      <p class="tip">Click a card on the left, or tick it here.</p>
+      <label class="chk"><input type="checkbox" class="el-c" data-i="0"> WoW auto attacks</label>
+      <label class="chk"><input type="checkbox" class="el-c" data-i="1"> Button mashing</label>
+      <label class="chk"><input type="checkbox" class="el-c" data-i="2"> LoL passive gold</label>
+      <label class="chk"><input type="checkbox" class="el-c" data-i="3"> LoL animation cancelling</label>
+      <label class="chk"><input type="checkbox" class="el-c" data-i="4"> StarCraft II Chrono Boost</label>
+      <label class="chk"><input type="checkbox" class="el-c" data-i="5"> Street Fighter III parries</label>
+      <div class="row wrap"><button class="btn el-tour on">▶ Walk-through</button></div>
+      <div class="mt-stats tight el-stats"></div>
+      <p class="mt-out el-out"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 3: slide 183 -->
+<section class="slide" data-title="The 55% and 60% lines" data-demo="review">
+  <div class="kicker">tailor to hardcore players · slide 183</div>
+  <h2 class="sm">Close enough at 55%, <span class="accent">review at 60%</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Patch</h4>
+      <div class="seg rv-patch">
+        <button class="btn on" data-p="0">Patch 1</button><button class="btn" data-p="1">Patch 2</button><button class="btn" data-p="2">Patch 3</button><button class="btn" data-p="3">Patch 4</button>
+      </div>
+      <h4>Rank bracket</h4>
+      <div class="seg rv-br">
+        <button class="btn on" data-b="all">All ranks</button><button class="btn" data-b="low">Low ranks</button><button class="btn" data-b="high">High ranks</button>
+      </div>
+      <div class="row wrap"><button class="btn rv-tour on">▶ Walk-through</button></div>
+      <div class="mt-stats tight rv-stats"></div>
+      <p class="mt-out rv-out"></p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../../assets/deck.js"></script>
+<script src="../../../assets/kit.js"></script>
+<script src="../../shared/topdown.js"></script>
+<script src="shift-the-power.js"></script>
+</body>
+</html>

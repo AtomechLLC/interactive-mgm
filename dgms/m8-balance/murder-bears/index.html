@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Murder Bears · Directing Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/deck.css">
+<link rel="stylesheet" href="../../../assets/kit.css">
+<link rel="stylesheet" href="../../shared/dgms.css">
+<script>
+  window.DECK = { title: 'Directing Game Mechanics · Module 8 · The Murder Bears', home: '../../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<section class="slide" data-title="The murder bears" data-demo="bears">
+  <div class="kicker">tools for tuning: orders of magnitude</div>
+  <h2 class="sm">The <span class="accent">murder bears</span> of Bloodmyst Isle</h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <div class="row wrap"><button class="btn mb-tour on">▶ Walk-through</button><button class="btn mb-replay">↻ Replay the pull</button></div>
+      <h4>Attack speed field</h4>
+      <div class="seg mb-seg"><button class="btn on" data-a="1000">1000 (intended)</button><button class="btn" data-a="1">1 (shipped)</button></div>
+      <label class="rng">Milliseconds between attacks <b class="mb-av">1000</b><input type="range" class="mb-a" min="0" max="3" step="0.01" value="3"></label>
+      <div class="mt-stats mb-stats"></div>
+      <p class="mt-out mb-out"></p>
+      <p class="src">Icons: Blizzard Entertainment, World of Warcraft (via Wowhead). Health and damage values are illustrative.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Val'anyr's shield cap" data-demo="valanyr">
+  <div class="kicker">tools for tuning: orders of magnitude</div>
+  <h2 class="sm">Val’anyr: <span class="accent">2,000</span> typed as <span class="accent">20,000</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <div class="row wrap"><button class="btn va-tour on">▶ Walk-through</button></div>
+      <label class="rng">Incoming damage per second <b class="va-dv">900</b><input type="range" class="va-d" min="0" max="1500" step="50" value="900"></label>
+      <div class="seg va-seg"><button class="btn" data-d="900">Boss fight</button><button class="btn" data-d="100">Light damage</button><button class="btn" data-d="0">Between pulls</button></div>
+      <div class="mt-stats va-stats"></div>
+      <p class="mt-out va-out"></p>
+      <p class="src">Icons: Blizzard Entertainment, World of Warcraft (via Wowhead). Heal sizes are illustrative.</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../../assets/deck.js"></script>
+<script src="../../../assets/kit.js"></script>
+<script src="../../shared/topdown.js"></script>
+<script src="murder-bears.js"></script>
+</body>
+</html>

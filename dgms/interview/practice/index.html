@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interview Practice Card · Directing Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/deck.css">
+<link rel="stylesheet" href="../../../assets/kit.css">
+<link rel="stylesheet" href="../../shared/dgms.css">
+<link rel="stylesheet" href="../shared/iv.css">
+<style>
+.pr-board { display: grid; grid-template-columns: 590px 1fr; gap: 16px; }
+.pr-left { display: flex; flex-direction: column; gap: 12px; }
+.pr-prompt { flex: 1; display: flex; flex-direction: column; }
+.pr-prompt .who { display: flex; gap: 8px; align-items: center; }
+.pr-prompt .who .iv-ico { width: 30px; height: 30px; } .pr-prompt .who .iv-ico .gi { width: 21px; height: 21px; }
+.pr-prompt .who b { font-size: 15px; }
+.pr-q { font-family: var(--display); font-weight: 700; font-size: 25px; line-height: 1.3; color: #262c6a; margin: 12px 0; flex: 1; }
+.pr-btn { font-family: var(--font); font-size: 15px; font-weight: 600; color: #262c6a; background: #fff; border: 2px solid #cdbf9f; border-radius: 9px; padding: 5px 12px; }
+.pr-btn:hover { border-color: #262c6a; }
+.pr-btn.on { background: #262c6a; color: #fff; border-color: #262c6a; }
+.pr-shape { margin: 0 0 12px; } .pr-shape small { display: block; font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: #5d618c; margin-bottom: 5px; }
+.pr-shape div { display: flex; flex-wrap: wrap; gap: 6px; } .pr-shape span { font-size: 14px; font-weight: 600; background: #dfe6fb; border: 2px solid #8ea2e6; color: #23306e; border-radius: 8px; padding: 2px 9px; }
+.pr-timer { display: grid; grid-template-columns: 1fr auto; gap: 4px 14px; align-items: center; }
+.pr-phase { font-family: var(--display); font-weight: 800; font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: #7a4a00; }
+.pr-digits { font-family: var(--display); font-weight: 800; font-size: 50px; line-height: 1; color: #262c6a; font-variant-numeric: tabular-nums; }
+.pr-bar { grid-column: 1 / -1; height: 12px; border-radius: 6px; background: #e6dcc5; overflow: hidden; display: flex; }
+.pr-bar i { display: block; height: 100%; }
+.pr-bar .th { background: #2ea3dc; } .pr-bar .an { background: #e0a92d; }
+.pr-tbtns { display: flex; gap: 6px; }
+.pr-steer { font-size: 14.5px; line-height: 1.35; display: flex; gap: 10px; align-items: center; padding: 8px 12px; }
+.pr-steer .iv-ico { width: 30px; height: 30px; }
+.pr-right { display: flex; flex-direction: column; gap: 8px; }
+.pr-right h3 { margin-bottom: 2px; }
+.pr-tac { display: flex; gap: 10px; align-items: flex-start; background: #fffaf0; border: 2px solid #cdbf9f; border-radius: 10px; padding: 7px 10px; cursor: pointer; transition: background .2s; }
+.pr-tac input { width: 19px; height: 19px; margin-top: 2px; flex: none; }
+.pr-tac b { display: block; font-size: 15.5px; } .pr-tac small { font-size: 13.5px; color: #5d618c; line-height: 1.25; display: block; }
+.pr-tac.on { background: #d8f0df; border-color: #5fb47c; }
+.pr-fw-open { margin-top: auto; width: 100%; padding: 9px; font-size: 16px; background: #262c6a; color: #fff; border-color: #262c6a; }
+.pr-drawer { position: absolute; top: 0; right: 0; bottom: 0; width: 470px; background: #262c6a; color: #fff; padding: 16px 18px; box-sizing: border-box; transform: translateX(100%); transition: transform .35s; z-index: 5; overflow: hidden; visibility: hidden; }
+.pr-drawer.open { transform: none; box-shadow: -8px 0 24px rgba(0,0,0,.25); visibility: visible; }
+.pr-drawer.instant { transition: none; }
+.pr-drawer h3 { color: #ffb951; font-size: 19px; }
+.slide .iv-board .pr-drawer p { color: #c9cff0; font-size: 14px; margin: 0 0 8px; }
+.pr-fw { background: rgba(255,255,255,.08); border-radius: 10px; padding: 7px 10px; margin-bottom: 7px; }
+.pr-fw b { font-size: 15px; color: #fff; } .pr-fw b span { color: #ffb951; font-weight: 600; font-size: 13px; margin-left: 6px; }
+.slide .iv-board .pr-fw li { font-size: 13px; line-height: 1.3; color: #e4e8fb; margin: 0; }
+.pr-fw ul { margin: 3px 0 0; padding-left: 18px; columns: 2; column-gap: 18px; }
+.pr-close { position: absolute; top: 12px; right: 14px; background: none; border: 2px solid #8ea2e6; color: #fff; border-radius: 8px; font-size: 14px; padding: 2px 10px; }
+.mt-side select { width: 100%; font: 16px var(--font); color: #262c6a; background: #fffaf0; border: 2px solid #cdbf9f; border-radius: 9px; padding: 6px 8px; }
+/* slide 2 */
+.ps-board { display: grid; grid-template-columns: 650px 1fr; gap: 16px; }
+.ps-q { font-family: var(--display); font-weight: 700; font-size: 16px; margin: 0 0 8px; }
+.ps-row { display: grid; grid-template-columns: 1fr 140px; gap: 8px; align-items: center; background: #fffaf0; border: 2px solid #cdbf9f; border-radius: 9px; padding: 4px 10px; margin-bottom: 5px; font-size: 15px; font-weight: 600; }
+.ps-row small { display: block; font-weight: 400; font-size: 12.5px; color: #5d618c; }
+.ps-row .rb-sc { display: flex; gap: 5px; justify-content: flex-end; }
+.ps-row .rb-sc button { width: 28px; height: 28px; border-radius: 7px; border: 2px solid #cdbf9f; background: #fff; font-weight: 700; font-size: 13px; color: #5d618c; padding: 0; }
+.ps-row .rb-sc button.on { background: #262c6a; border-color: #262c6a; color: #fff; }
+.ps-sec { font-family: var(--display); font-weight: 800; font-size: 12.5px; text-transform: uppercase; letter-spacing: .06em; color: #7a4a00; margin: 6px 0 4px; }
+.ps-right { display: flex; flex-direction: column; gap: 10px; }
+.ps-total { text-align: center; }
+.ps-total .big { font-family: var(--display); font-weight: 800; font-size: 54px; line-height: 1; color: #262c6a; }
+.ps-total small { color: #5d618c; font-size: 14px; }
+.ps-log { flex: 1; overflow: hidden; }
+.ps-log ol { margin: 4px 0 0; padding-left: 20px; }
+.slide .iv-board .ps-log li { font-size: 13.5px; line-height: 1.3; margin: 0 0 5px; }
+.ps-log li b { color: #7a4a00; }
+.ps-weak { font-size: 14.5px; line-height: 1.35; }
+</style>
+<script>
+  window.DECK = { title: 'Directing Game Mechanics · Interview · Interview Practice Card', home: '../../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<section class="slide" data-title="Practice card" data-demo="practice">
+  <div class="kicker">quick ways to improve your odds</div>
+  <h2 class="sm">Practice, practice, <span class="accent">practice</span></h2>
+  <div class="mt-wrap">
+    <div class="iv-board pr-board">
+      <div class="pr-left">
+        <div class="pr-prompt iv-card">
+          <div class="who"><span class="iv-ico pr-ico"></span><b class="pr-role"></b><span class="chip pr-lean"></span></div>
+          <div class="pr-q"></div>
+          <div class="pr-shape"><small>One shape for any answer</small><div><span>1 Ask what the problem is</span><span>2 Name options</span><span>3 Weigh costs</span><span>4 Pick one and test it</span></div></div>
+          <div class="row wrap"><button class="pr-btn pr-draw">Draw another prompt</button></div>
+        </div>
+        <div class="pr-timer iv-card">
+          <div><div class="pr-phase">Think time</div><div class="pr-digits">0:30</div></div>
+          <div class="pr-tbtns"><button class="pr-btn pr-go">Start</button><button class="pr-btn pr-reset">Reset</button></div>
+          <div class="pr-bar"><i class="th"></i><i class="an"></i></div>
+        </div>
+        <div class="pr-steer iv-card"><span class="iv-ico pr-steer-ico"></span><span>You have some control over the interview! Try to steer it toward the topic where you are strongest.</span></div>
+      </div>
+      <div class="pr-right">
+        <h3>Five tactics</h3>
+        <div class="pr-tacs"></div>
+        <button class="pr-btn pr-fw-open">Frameworks drawer ›</button>
+      </div>
+      <div class="pr-drawer">
+        <button class="pr-close">Close</button>
+        <h3>Frameworks from this course</h3>
+        <p>Frameworks are repeatable tools. They organize your thoughts, help you handle things on the fly, and keep your design thinking consistent.</p>
+        <div class="pr-fws"></div>
+      </div>
+    </div>
+    <div class="mt-side">
+      <div class="row wrap"><button class="btn iv-tour on">▶ Walk-through</button></div>
+      <h4>Role</h4>
+      <select class="pr-sel"></select>
+      <p class="mt-out pr-out"></p>
+      <p class="iv-note">The role comes from the <a href="../role-map/index.html">role map</a>. Answer out loud: 30 seconds to think, two minutes to answer. Then score yourself on the next slide.</p>
+      <p class="src">Tactics: the deck's slide 49. Steering: slide 50. Frameworks: slide 52, with the lists from Modules 1, 3, 8 and 9.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Score yourself" data-demo="score">
+  <div class="kicker">quick ways to improve your odds</div>
+  <h2 class="sm">Score the <span class="accent">answer</span></h2>
+  <div class="mt-wrap">
+    <div class="iv-board ps-board">
+      <div class="ps-left">
+        <p class="ps-q"></p>
+        <div class="ps-rows"></div>
+      </div>
+      <div class="ps-right">
+        <div class="ps-total iv-card"><div class="big">0</div><small>of 32 · <span class="ps-n">0</span> of 8 rows scored</small></div>
+        <div class="ps-weak iv-card"></div>
+        <button class="pr-btn on ps-save">Save this round</button>
+        <div class="ps-log iv-card"><b>Recent rounds</b><ol></ol></div>
+      </div>
+    </div>
+    <div class="mt-side">
+      <div class="row wrap"><button class="btn iv-tour on">▶ Walk-through</button><button class="btn ps-clear">Clear scores</button></div>
+      <p class="mt-out ps-out">Score each row from 1 (not shown) to 4 (shown clearly, more than once).</p>
+      <p class="iv-note">The same rows as the printable <a href="../rubric/index.html">interview rubric</a>. Rounds are saved in this browser only.</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../../assets/deck.js"></script>
+<script src="../../../assets/gi.js"></script>
+<script src="../../../assets/kit.js"></script>
+<script src="../shared/iv.js"></script>
+<script src="practice.js"></script>
+</body>
+</html>

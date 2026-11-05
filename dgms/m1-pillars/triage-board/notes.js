@@ -1,0 +1,5 @@
+// Speaker notes. Source: Module 1 deck, see ../../proposals/m1-pillars.md.
+window.NOTES = [
+  { script: "Whenever you add any feature, ask yourself which pillar it supports. Here is a deep-sea survival game with three pillars: thrill of the unknown, desperate survival, and a living world. Go down the backlog. The oxygen system supports thrill of the unknown and desperate survival, so it gets a star. A daily login reward supports none of them, so it drops to cut or rethink. Any feature that supports more than one pillar should be prioritized. And make the pillars visible everywhere: they are the guidelines for the team." },
+  { script: "Aim for one to three pillars, never more than five. Slide 33 has nine: thrill of the unknown, earned triumph, silent predator, living world, desperate survival, controlled chaos, fragile humanity, echoes of the past, relentless momentum. The cost is not the length of the list. Add them one at a time and watch the priority stars spread: with nine pillars, most features support two of them, and the rule that a feature supporting two pillars comes first stops picking anything out." },
+];
