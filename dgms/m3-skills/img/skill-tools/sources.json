@@ -1,0 +1,8 @@
+{
+ "game": "Super Mario Bros. (Nintendo, 1985)",
+ "files": {
+  "smb-mario*, smb-hammer*, smb-ground, smb-brick, smb-block": "copied from pve-interactions/hammer-bros/img (Mario Universe, mariouniverse.com/sprites-nes-smb/)",
+  "smb-goomba*, smb-bullet-bill, smb-coin, smb-qblock": "copied from composition/shared/img and mechanics-tools/contrapositive-rules/img",
+  "podoboo, lava, castle-ground": "copied from ../async-cycles (Super Mario Wiki, mario.wiki.gallery)"
+ }
+}
