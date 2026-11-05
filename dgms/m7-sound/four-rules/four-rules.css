@@ -1,0 +1,10 @@
+/* Same scene, four rules: page-only styles (rule tabs and the slide 50 drill form). */
+.mt-side .fr-tabs { margin-bottom: 4px; }
+.mt-side .fr-tabs .btn { font-size: 14px; padding: 4px 8px; }
+.mt-side .fr-snd.on { background: #2fae63; border-color: #2fae63; color: #fff; }
+.slide .fr-lead { font-size: 21px; line-height: 1.4; color: var(--ink); max-width: 1300px; margin: 4px 0 16px; }
+.fr-form { grid-template-columns: 1fr 1fr; gap: 14px 22px; background: rgba(255,252,244,.92); border-color: #cdbf9f; max-width: 1420px; }
+.fr-form label { color: var(--ink); font-weight: 600; }
+.fr-form label.wide { grid-column: 1 / -1; }
+.fr-form textarea { height: 150px; font-size: 18px; }
+.fr-form input { font-size: 18px; }

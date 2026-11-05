@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clipping and Occlusion Lab · Directing Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/deck.css">
+<link rel="stylesheet" href="../../../assets/kit.css">
+<link rel="stylesheet" href="../../shared/dgms.css">
+<link rel="stylesheet" href="clipping-lab.css">
+<script>
+  window.DECK = { title: 'Directing Game Mechanics · Module 6 · Clipping and Occlusion Lab', home: '../../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<section class="slide" data-title="Clipping and occlusion lab" data-demo="lab">
+  <div class="kicker">Goals 4 and 5: no clipping, no full occlusion · slides 233-251</div>
+  <h2 class="sm">Keep the camera <span class="accent">out of the walls</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side cl-side">
+      <div class="row wrap"><button class="btn cl-tour on">▶ Walk-through</button><button class="btn cl-play">❚❚ Pause</button></div>
+      <label class="rng">Path position <span class="cl-tv">0.0 s</span><input class="cl-t" type="range" min="0" max="22" step="0.05" value="0"></label>
+      <h4>Presets</h4>
+      <div class="seg cl-pre"></div>
+      <h4>Solutions</h4>
+      <div class="cl-tg">
+        <label class="chk"><input type="checkbox" data-k="col"> Collision: push to anchor</label>
+        <label class="chk"><input type="checkbox" data-k="pred"> Prediction: feeler rays</label>
+        <label class="chk"><input type="checkbox" data-k="quant"> Pitch quantizer</label>
+        <label class="chk"><input type="checkbox" data-k="hall"> Hallway pull-in</label>
+        <label class="chk"><input type="checkbox" data-k="res"> Collision resolve point</label>
+        <label class="chk old"><input type="checkbox" data-k="up"> Old: push up over the head</label>
+        <label class="chk old"><input type="checkbox" data-k="dith"> Dithering (Elden Ring)</label>
+        <label class="chk cmb"><input type="checkbox" class="cl-combat"> Combat: enemy by the pillar</label>
+      </div>
+      <label class="rng">Arm distance <span class="cl-dv">4.0 m</span><input class="cl-d" type="range" min="2" max="6" step="0.1" value="4"></label>
+      <h4>Whole path, frames at 30 fps</h4>
+      <table class="cls cl-tab"></table>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="The combat trade-off" data-demo="combat">
+  <div class="kicker">Goal 5: occlusion in combat · slides 246-250</div>
+  <h2 class="sm">Pull in, or <span class="accent">fade the pillar?</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side cl-side">
+      <div class="row wrap"><button class="btn cb-tour on">▶ Walk-through</button><button class="btn cb-play">❚❚ Pause</button></div>
+      <label class="rng">Fight position <span class="cb-tv">0.0 s</span><input class="cb-t" type="range" min="0" max="14" step="0.05" value="0"></label>
+      <h4>Left camera</h4>
+      <div class="seg cb-a"><button class="btn on" data-s="pc">Prediction + collision</button><button class="btn" data-s="c">Collision only</button></div>
+      <h4>Right camera</h4>
+      <div class="seg cb-b"><button class="btn on" data-s="d">Dithering only</button><button class="btn" data-s="dc">Dithering + collision</button></div>
+      <div class="mt-stats cb-stats"></div>
+      <p class="mt-out cb-out"></p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../../assets/deck.js"></script>
+<script src="../../../assets/kit.js"></script>
+<script src="../../shared/topdown.js"></script>
+<script src="clipping-lab.js"></script>
+</body>
+</html>

@@ -32,7 +32,7 @@ From [game-icons.net](https://game-icons.net), licensed [CC BY 3.0](https://crea
 | `mechanics-tools--contrapositive-rules.svg` | [rule-book](https://game-icons.net/1x1/delapouite/rule-book.html) | Delapouite |
 | `pvp.svg` | [crossed-swords](https://game-icons.net/1x1/lorc/crossed-swords.html) | Lorc |
 | `pvp--strike-trades.svg` | [sword-clash](https://game-icons.net/1x1/lorc/sword-clash.html) | Lorc |
-| `pvp--payoffs.svg` | [position-marker](https://game-icons.net/1x1/delapouite/position-marker.html) | Delapouite |
+| `pvp--payoffs.svg` | [path-distance](https://game-icons.net/1x1/delapouite/path-distance.html) | Delapouite |
 | `pvp--core-actions.svg` | [fencer](https://game-icons.net/1x1/delapouite/fencer.html) | Delapouite |
 | `pvp--bruiser-meta.svg` | [muscle-up](https://game-icons.net/1x1/lorc/muscle-up.html) | Lorc |
 | `pvp--elusives.svg` | [invisible](https://game-icons.net/1x1/delapouite/invisible.html) | Delapouite |
@@ -51,7 +51,7 @@ From [game-icons.net](https://game-icons.net), licensed [CC BY 3.0](https://crea
 | `pve-interactions--hazards.svg` | [falling-rocks](https://game-icons.net/1x1/delapouite/falling-rocks.html) | Delapouite |
 | `coop-interactions.svg` | [three-friends](https://game-icons.net/1x1/delapouite/three-friends.html) | Delapouite |
 | `coop-interactions--interactions.svg` | [mesh-network](https://game-icons.net/1x1/delapouite/mesh-network.html) | Delapouite |
-| `coop-interactions--camera.svg` | [video-camera](https://game-icons.net/1x1/delapouite/video-camera.html) | Delapouite |
+| `coop-interactions--camera.svg` | [eyeball](https://game-icons.net/1x1/lorc/eyeball.html) | Lorc |
 | `coop-interactions--targeting.svg` | [multiple-targets](https://game-icons.net/1x1/delapouite/multiple-targets.html) | Delapouite |
 | `coop-interactions--timing.svg` | [stopwatch](https://game-icons.net/1x1/lorc/stopwatch.html) | Lorc |
 | `coop-interactions--chains.svg` | [andromeda-chain](https://game-icons.net/1x1/lorc/andromeda-chain.html) | Lorc |
@@ -154,5 +154,18 @@ Page images in `dgms/m8-balance/` and `dgms/m9-game-feel/`: World of Warcraft ic
 | `dgms--m5-controller--control-metaphors.svg` | [joystick](https://game-icons.net/1x1/delapouite/joystick.html) | Delapouite |
 | `dgms--m4-character--same-button.svg` | [push](https://game-icons.net/1x1/delapouite/push.html) | Delapouite |
 | `dgms--m5-controller--adr-curves.svg` | [sprint](https://game-icons.net/1x1/lorc/sprint.html) | Lorc |
+| `dgms--m6-camera--rig-switcher.svg` | [cctv-camera](https://game-icons.net/1x1/delapouite/cctv-camera.html) | Delapouite |
+| `dgms--m6-camera--position-blend.svg` | [path-distance](https://game-icons.net/1x1/delapouite/path-distance.html) | Delapouite |
+| `dgms--m6-camera--lens-ladder.svg` | [photo-camera](https://game-icons.net/1x1/delapouite/photo-camera.html) | Delapouite |
+| `dgms--m6-camera--follow-tuner.svg` | [spyglass](https://game-icons.net/1x1/lorc/spyglass.html) | Lorc |
+| `dgms--m6-camera--clipping-lab.svg` | [brick-wall](https://game-icons.net/1x1/delapouite/brick-wall.html) | Delapouite |
+| `dgms--m6-camera--lower-horizon.svg` | [giant](https://game-icons.net/1x1/delapouite/giant.html) | Delapouite |
+| `dgms--m7-sound--faucet.svg` | [tap](https://game-icons.net/1x1/delapouite/tap.html) | Delapouite |
+| `dgms--m7-sound--four-classes.svg` | [sound-on](https://game-icons.net/1x1/delapouite/sound-on.html) | Delapouite |
+| `dgms--m7-sound--four-rules.svg` | [headphones](https://game-icons.net/1x1/delapouite/headphones.html) | Delapouite |
+| `dgms--m7-sound--reactive-music.svg` | [musical-score](https://game-icons.net/1x1/delapouite/musical-score.html) | Delapouite |
+| `dgms--m7-sound--audio-breaks.svg` | [speaker-off](https://game-icons.net/1x1/delapouite/speaker-off.html) | Delapouite |
+| `dgms--m7-sound--consonant-menu.svg` | [piano-keys](https://game-icons.net/1x1/delapouite/piano-keys.html) | Delapouite |
+| `dgms--m7-sound--boss-telegraph.svg` | [dodging](https://game-icons.net/1x1/lorc/dodging.html) | Lorc |
 
 Page images in `dgms/m4-character/` and `dgms/m5-controller/`: see each page's `img/SOURCES.txt` (Riot Data Dragon, League wiki renders, mariowiki sprites, WoW icons).

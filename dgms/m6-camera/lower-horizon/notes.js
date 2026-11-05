@@ -1,0 +1,4 @@
+// Speaker notes. Source: "RGF C2 M6 - 3Cs - Camera" (Chad Verrall), slides 122-129.
+window.NOTES = [
+  { script: 'Angles are our friends. When you are setting up a camera, try extremes: what does the minimal setting do, and what does the maximal setting do? Here is one boss and one camera. At eye level the boss is just big. Drop the camera to the ground and tilt it up, and the horizon sinks toward the bottom of the frame; the boss towers over the hero and over you. If you want to make something big and scary or imposing, this is one of the best tools; think boss fights. Now go the other way. When the camera is up high looking down on someone, the horizon climbs out of the top of the frame and the same boss becomes a small figure on the floor, something you can handle. Nothing about the boss changed, only where we put the camera. Keep in mind the angles available to you depend on the type of game camera you choose.' },
+];

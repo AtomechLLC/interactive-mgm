@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Four Classes Sorter · Directing Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/deck.css">
+<link rel="stylesheet" href="../../../assets/kit.css">
+<link rel="stylesheet" href="../../shared/dgms.css">
+<link rel="stylesheet" href="four-classes.css">
+<script>
+  window.DECK = { title: 'Directing Game Mechanics · Module 7 · Four Classes Sorter', home: '../../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<section class="slide" data-title="Four classes sorter" data-demo="fc-sort">
+  <div class="kicker">the 4 classes of engaging sound design · slides 118-175</div>
+  <h2 class="sm">Which class is <span class="accent">this sound?</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Sort the sounds</h4>
+      <p class="tip">Play each sound, then drag the disc into its class, or click a bin. Every sound is also drawn, so you can sort with the sound off.</p>
+      <div class="row wrap"><button class="btn fc-tour on">▶ Walk-through</button><button class="btn snd on">♪ Sound on</button></div>
+      <div class="row wrap" style="margin-top:8px"><button class="btn fc-play">Play again</button><button class="btn fc-next">Next sound</button><button class="btn fc-reset">Start over</button></div>
+      <div class="mt-stats fc-stats"></div>
+      <p class="mt-out fc-out"></p>
+      <p class="src">All sounds are synthesised in your browser (Web Audio), loosely after each game’s cue. Pixel hero after Super Mario Bros. Deck: Noah Taublieb’s Sound Design course, workshop version.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Environment layers" data-demo="fc-layers">
+  <div class="kicker">environment sounds are comprised of many parts · slides 137-139</div>
+  <h2 class="sm">One field, <span class="accent">four layers</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Layers</h4>
+      <label class="chk"><input type="checkbox" class="fl-l" data-l="grass"> Grass in the wind</label>
+      <label class="chk"><input type="checkbox" class="fl-l" data-l="birds"> Birds</label>
+      <label class="chk"><input type="checkbox" class="fl-l" data-l="steps"> Footsteps by terrain</label>
+      <label class="chk"><input type="checkbox" class="fl-l" data-l="drop"> A dropped boulder</label>
+      <div class="row wrap"><button class="btn fl-tour on">▶ Walk-through</button><button class="btn snd on">♪ Sound on</button><button class="btn fl-all">All on</button></div>
+      <div class="mt-stats fl-stats"></div>
+      <p class="mt-out fl-out"></p>
+      <p class="src">Breath of the Wild’s field, as described on slides 137-139: grass, birds, footsteps that change with the terrain, and a boulder. Original grey-box scene; every layer synthesised.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Drill: tag five sounds" data-demo="journal">
+  <div class="kicker">drill · slides 191-197</div>
+  <h2 class="sm">Pick a clip, tag <span class="accent">five sounds</span></h2>
+  <div class="fc-drill">
+    <div class="jform" data-store="dgms-m7-four-classes-drill">
+      <label>Gameplay clip (a link to a 30-60 second video)<input data-k="link" placeholder="https://"></label>
+      <div class="fc-rows">
+        <div class="fc-row fc-head"><span>#</span><span>The sound you hear</span><span>Class</span><span>Which takeaway does it show?</span></div>
+        <div class="fc-row"><span>1</span><input data-k="s1" placeholder="e.g. the jump"><select data-k="c1"><option value="">class…</option><option>Character</option><option>Environment</option><option>UI / UX</option><option>Music</option></select><input data-k="w1" placeholder="e.g. represents the character’s action"></div>
+        <div class="fc-row"><span>2</span><input data-k="s2"><select data-k="c2"><option value="">class…</option><option>Character</option><option>Environment</option><option>UI / UX</option><option>Music</option></select><input data-k="w2"></div>
+        <div class="fc-row"><span>3</span><input data-k="s3"><select data-k="c3"><option value="">class…</option><option>Character</option><option>Environment</option><option>UI / UX</option><option>Music</option></select><input data-k="w3"></div>
+        <div class="fc-row"><span>4</span><input data-k="s4"><select data-k="c4"><option value="">class…</option><option>Character</option><option>Environment</option><option>UI / UX</option><option>Music</option></select><input data-k="w4"></div>
+        <div class="fc-row"><span>5</span><input data-k="s5"><select data-k="c5"><option value="">class…</option><option>Character</option><option>Environment</option><option>UI / UX</option><option>Music</option></select><input data-k="w5"></div>
+      </div>
+      <label>Which class does this game lean on most, and why?<textarea data-k="lean"></textarea></label>
+      <small>Saved in this browser only.</small>
+    </div>
+    <div class="fc-key">
+      <h4>The four classes</h4>
+      <div class="k c1"><b>Character</b><span>represents the character’s actions · demonstrates traits · stands out</span></div>
+      <div class="k c2"><b>Environment</b><span>indicates danger · defines ambience · comprised of many parts</span></div>
+      <div class="k c3"><b>UI / UX</b><span>guides non-diegetically · shows how players should feel · marks success or failure</span></div>
+      <div class="k c4"><b>Music</b><span>defines tone · provides context · notifies changes in gameplay state</span></div>
+      <p class="tip">Watch the clip twice: once for what you see, once with your eyes closed. The second pass finds the environment and UI sounds you stopped noticing.</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../../assets/deck.js"></script>
+<script src="../../../assets/kit.js"></script>
+<script src="../../shared/topdown.js"></script>
+<script src="four-classes.js"></script>
+</body>
+</html>

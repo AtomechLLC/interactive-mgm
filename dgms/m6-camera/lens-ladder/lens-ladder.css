@@ -1,0 +1,5 @@
+/* Lens ladder page only: the HFOV <-> VFOV converter box. */
+.mt-side .ll-convbox { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.mt-side .ll-convbox label { display: flex; flex-direction: column; font-size: 14px; color: var(--muted); font-weight: 600; gap: 2px; }
+.mt-side .ll-convbox input, .mt-side .ll-convbox select { width: 100%; box-sizing: border-box; font: 600 16px Jost, sans-serif; padding: 4px 6px; border: 2px solid #cdbf9f; border-radius: 8px; background: #fffaf0; color: var(--ink); }
+.slide .mt-side .ll-conv { font-size: 15px; line-height: 1.35; color: var(--ink); margin: 6px 0 0; }
