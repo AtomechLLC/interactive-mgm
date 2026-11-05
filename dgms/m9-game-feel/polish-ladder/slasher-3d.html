@@ -53,9 +53,9 @@
    swing, 4.5 range, 1.4 radius, 12 ms apart, 0.1 s cooldown (reset to 0 on a hit), 1.8 forward dash over 0.2 s, 10 move speed,
    0.05 s hit stop on every hit (GlobalManager has it on in all presets), 1.5 push-back over 0.1 s, a 50° lean punch.
    Rendering: linear HDR scene -> bright pass -> two blur pyramids -> composite (aberration, bloom, ACES, grade, vignette, grain).
-   ?auto=1 lets a bot play; ?cycle=1 also steps through the presets (used to record the GIF); ?record=1 steps frames by hand. */
+   ?auto=1 lets a bot play; ?cycle=1 also steps through the presets every 4.2 s, ?cycle=2.8 every 2.8 s (used to record the GIF); ?record=1 steps frames by hand. */
 (function () {
-  const Q = new URLSearchParams(location.search), AUTO = Q.has('auto'), CYCLE = Q.has('cycle'), RECORD = Q.has('record');
+  const Q = new URLSearchParams(location.search), AUTO = Q.has('auto'), CYCLE = Q.has('cycle') ? (+Q.get('cycle') || 4.2) : 0, RECORD = Q.has('record');
   const timers = []; const after = (sec, fn) => timers.push({ t: sec, fn });
   const P = [
     { t: 'no polish' },
@@ -111,8 +111,8 @@
     void main() { vec3 c = texture2D(t, vUv).rgb * .2270;
       c += (texture2D(t, vUv + uDir * 1.3846).rgb + texture2D(t, vUv - uDir * 1.3846).rgb) * .3162;
       c += (texture2D(t, vUv + uDir * 3.2308).rgb + texture2D(t, vUv - uDir * 3.2308).rgb) * .0703; gl_FragColor = vec4(c, 1.0); }` });
-  const compMat = new THREE.ShaderMaterial({ uniforms: { tScene: { value: null }, tB1: { value: null }, tB2: { value: null }, uAberr: { value: 0 }, uFlash: { value: 0 }, uTime: { value: 0 }, uRes: { value: new THREE.Vector2(1, 1) }, uBloom: { value: .3 }, uExposure: { value: 1.05 } }, vertexShader: QUAD_VS, depthTest: false, depthWrite: false, fragmentShader: `
-    uniform sampler2D tScene, tB1, tB2; uniform float uAberr, uFlash, uTime, uBloom, uExposure; uniform vec2 uRes; varying vec2 vUv;
+  const compMat = new THREE.ShaderMaterial({ uniforms: { tScene: { value: null }, tB1: { value: null }, tB2: { value: null }, uAberr: { value: 0 }, uFlash: { value: 0 }, uTime: { value: 0 }, uRes: { value: new THREE.Vector2(1, 1) }, uBloom: { value: .3 }, uExposure: { value: 1.05 }, uGrain: { value: RECORD ? 0 : .028 } }, vertexShader: QUAD_VS, depthTest: false, depthWrite: false, fragmentShader: `
+    uniform sampler2D tScene, tB1, tB2; uniform float uAberr, uFlash, uTime, uBloom, uExposure, uGrain; uniform vec2 uRes; varying vec2 vUv;
     vec3 aces(vec3 x) { return clamp((x * (2.51 * x + .03)) / (x * (2.43 * x + .59) + .14), 0.0, 1.0); }
     void main() {
       vec2 d = vUv - .5; d.x *= uRes.x / uRes.y; float rr = dot(d, d);
@@ -128,7 +128,7 @@
       c = mix(vec3(l), c, 1.14);                                           // a touch of saturation
       c *= mix(.52, 1.0, smoothstep(.62, .12, rr));                        // vignette
       float g = fract(sin(dot(floor(vUv * uRes) + fract(uTime) * 61.0, vec2(12.9898, 78.233))) * 43758.5453);
-      c += (g - .5) * .028;
+      c += (g - .5) * uGrain;
       c = mix(c * 12.92, 1.055 * pow(max(c, 0.0), vec3(1.0 / 2.4)) - .055, step(.0031308, c));   // linear -> sRGB
       gl_FragColor = vec4(c, 1.0);
     }` });
@@ -330,7 +330,7 @@
     for (let i = 0; i < n; i++) {
       const m = new THREE.Mesh(debrisGeo, debrisMat.clone()); m.position.copy(pos); m.scale.setScalar(.6 + Math.random() * .9); m.castShadow = true;
       const v = new THREE.Vector3(Math.random() - .5, Math.random() * .8 + .3, Math.random() - .5).normalize().multiplyScalar(5 + Math.random() * 6);
-      scene.add(m); fx.push({ o: m, t: 0, life: 1.8 + Math.random(), kind: 'debris', v, w: new THREE.Vector3(Math.random() * 12, Math.random() * 12, Math.random() * 12) });
+      scene.add(m); fx.push({ o: m, t: 0, life: 1.0 + Math.random() * .6, kind: 'debris', v, w: new THREE.Vector3(Math.random() * 12, Math.random() * 12, Math.random() * 12) });
     }
   }
   const scorches = [];
@@ -472,7 +472,7 @@
   function kill(en) {
     if (en.dying >= 0) return;
     const p = en.o.position.clone().setY(1.1);
-    if (pre.enemy) { sparks(p, 80, 0xff7a2a, 12, .8, .3); flash(p, 0xff8a40, .4, .24, 4); shockwave(en.o.position, 8, new THREE.Color(1.8, .9, .3)); debris(p, 11); scorch(en.o.position); flashAmt = .22; }
+    if (pre.enemy) { sparks(p, 80, 0xff7a2a, 12, .8, .3); flash(p, 0xff8a40, .4, .24, 4); shockwave(en.o.position, 8, new THREE.Color(1.8, .9, .3)); debris(p, 7); scorch(en.o.position); flashAmt = .22; }
     if (pre.hitSnd) { thump(90, .4, .7); noise(.35, 1800, 200, .4, .6); }
     en.bar.visible = en.back.visible = false;
     if (pre.enemy) { en.dying = 0; en.push = null; }                   // dissolve, then remove
@@ -508,7 +508,7 @@
     botAim.copy(n.o.position);
     if (d > 3.6) botMove.set(to.x / d, to.z / d);
     botT -= dt; if (d < 4.6 && botT <= 0) { attack(); botT = .32 + Math.random() * .12; }
-    if (CYCLE) { cycleT += dt; if (cycleT > 4.2) { cycleT = 0; setPreset((preIdx + 1) % P.length); } }
+    if (CYCLE) { cycleT += dt; if (cycleT > CYCLE) { cycleT = 0; setPreset((preIdx + 1) % P.length); } }
   }
   const botMove = new THREE.Vector2(), botAim = new THREE.Vector3();
 
@@ -579,7 +579,7 @@
       if (f.kind === 'debris') {
         f.v.y -= 22 * dt; f.o.position.addScaledVector(f.v, dt); f.o.rotation.x += f.w.x * dt; f.o.rotation.y += f.w.y * dt;
         if (f.o.position.y < .12) { f.o.position.y = .12; f.v.y *= -.45; f.v.x *= .7; f.v.z *= .7; f.w.multiplyScalar(.5); }
-        f.o.material.emissive.setRGB(1.2, .35, .08).multiplyScalar(Math.max(0, 1 - k * 2.5)); if (k > .7) f.o.scale.multiplyScalar(1 - dt * 3);
+        f.o.material.emissive.setRGB(1.2, .35, .08).multiplyScalar(Math.max(0, 1 - k * 2.5)); if (k > .55) f.o.scale.multiplyScalar(1 - dt * 4);
       }
     });
     for (let i = fx.length - 1; i >= 0; i--) if (fx[i].t >= fx[i].life) { const f = fx[i]; scene.remove(f.o); if (f.kind !== 'debris') f.o.geometry?.dispose(); if (f.kind === 'arc' || f.kind === 'wave') f.m.material.dispose(); fx.splice(i, 1); }
