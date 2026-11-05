@@ -120,11 +120,22 @@
       e.r = r; e.stage = e.stage || r.stage;
     });
     posCache.clear();
-    const total = t => ev.reduce((s, e) => s + (t >= e.th ? e.r.dmg * (e.r.burst && spec.minions && stateAt(e.th - .001).gathered ? 1 + spec.minions.length : 1) : 0), 0);
     const last = ev.reduce((m, e) => Math.max(m, e.th), 0);
-    return { spec, en, ev, states, stateAt, pos, total, last };
+    const S = { spec, en, ev, states, stateAt, pos, last };
+    // a shatter is an area hit: every minion inside BURST_R when it lands takes SHARD damage
+    ev.forEach(e => { e.splash = e.r.burst && spec.minions ? spec.minions.map((m, i) => i).filter(i => { const [x, y] = minionAt(S, i, e.th), [ex, ey] = pos(e.th); return Math.hypot(x - ex, y - ey) < BURST_R; }) : []; });
+    S.total = t => ev.reduce((s, e) => s + (t >= e.th ? e.r.dmg + e.splash.length * SHARD : 0), 0);
+    return S;
   }
 
+  const BURST_R = 175, SHARD = 40;
+  // minion i at time t: far ones slide in next to the target after a successful pull
+  function minionAt(S, i, t) {
+    const m = S.spec.minions[i], pull = S.ev.find(e => e.el === 'pull' && e.r && e.r.ok);
+    if (!m.far || !pull) return [m.x, m.y];
+    const [ex, ey] = S.pos(t), k = ease(clamp((t - pull.th) / .5));
+    return [lerp(m.x, ex + m.gx, k), lerp(m.y, ey + m.gy, k)];
+  }
   function drawEnemy(g, S, t, o = {}) {
     const [ex, ey] = S.pos(t), st = S.stateAt(t), r = S.en.r;
     if (st.frozen) { g.fillStyle = 'rgba(160,215,255,.55)'; g.beginPath(); g.roundRect(ex - r - 12, ey - r - 12, (r + 12) * 2, (r + 12) * 2, 14); g.fill(); g.strokeStyle = '#57b6ff'; g.lineWidth = 3; g.stroke(); }
@@ -148,15 +159,15 @@
 
   function drawScene(g, S, t, o = {}) {
     const P = S.spec.players, st = S.stateAt(t);
-    // minions (the converge slide): gathered by a pull, shattered with the target
+    // minions (the converge slide): the shatter's area hits every one inside its ring; a pull brings far ones in
     if (S.spec.minions) {
-      const pull = S.ev.find(e => e.el === 'pull' && e.r.ok), rock = S.ev.find(e => e.el === 'rock' && e.r.ok);
-      const [ex, ey] = S.pos(t);
-      S.spec.minions.forEach(([mx, my], i) => {
-        const k = pull ? ease(clamp((t - pull.th) / .5)) : 0, side = i ? 1 : -1;
-        const x = lerp(mx, ex + side * 78, k), y = lerp(my, ey - 6, k);
-        if (rock && t >= rock.th) { T.poof(x, y, t - rock.th, 26); return; }
-        T.foe(x, y, 22, Math.PI / 2, '#d4554f', { mark: 'horns' });
+      const rock = S.ev.find(e => e.el === 'rock'), [ex, ey] = S.pos(t);
+      // the payoff's area, shown while the Rock is in the air
+      if (rock && rock.r.ok && t >= rock.fire - .3 && t < rock.th) { g.save(); g.fillStyle = 'rgba(87,182,255,.12)'; g.strokeStyle = 'rgba(60,140,230,.8)'; g.lineWidth = 3; g.setLineDash([10, 8]); g.beginPath(); g.arc(ex, ey, BURST_R, 0, TAU); g.fill(); g.stroke(); g.restore(); T.label('Shatter area', ex + BURST_R - 10, ey - BURST_R + 20, 'center', '#fff', 13, '#3c8ce6'); }
+      S.spec.minions.forEach((m, i) => {
+        const [x, y] = minionAt(S, i, t), hit = rock && rock.splash.includes(i);
+        if (hit && t >= rock.th) { T.poof(x, y, t - rock.th, 26); if (t < rock.th + 1.1) T.popText(`${SHARD}`, x, y - 34 - (t - rock.th) * 16, C.goldInk, 1 - (t - rock.th) / 1.1); return; }
+        T.foe(x, y, 22, Math.atan2(ey - y, ex - x), '#d4554f', { mark: 'horns' });
       });
     }
     const [ex, ey] = drawEnemy(g, S, t, o);
@@ -201,10 +212,10 @@
       if (t >= e.th && t < e.th + 1.1) {
         const v = (t - e.th) / 1.1;
         if (v < .25 && !e.r.fail) T.flash(ex, ey, e.r.big ? 80 : 44, 1 - v * 4);
-        if (e.r.burst && v < .6) { g.save(); g.globalAlpha = 1 - v / .6; g.strokeStyle = '#9fdcff'; g.lineWidth = 6; g.beginPath(); g.arc(ex, ey, 40 + v * 220, 0, TAU); g.stroke(); g.restore(); }
+        if (e.r.burst && v < .6) { g.save(); g.globalAlpha = 1 - v / .6; g.strokeStyle = '#9fdcff'; g.lineWidth = 6; g.beginPath(); g.arc(ex, ey, 40 + v / .6 * (BURST_R - 40), 0, TAU); g.stroke(); g.restore(); }
         if (e.r.fail && v < .5) { const s = Math.sin(v * 40) * 8 * (1 - v * 2); g.strokeStyle = C.red; g.lineWidth = 5; g.beginPath(); g.moveTo(ex - 14 + s, ey - 14); g.lineTo(ex + 14 + s, ey + 14); g.moveTo(ex + 14 + s, ey - 14); g.lineTo(ex - 14 + s, ey + 14); g.stroke(); }
-        const many = e.r.burst && S.spec.minions && S.stateAt(e.th - .001).gathered;
-        T.popText(many ? `Shattered! 80 × ${1 + S.spec.minions.length}` : e.r.word, ex, ey - S.en.r - 30 - v * 18, e.r.big ? C.goldInk : e.r.fail ? '#7a7f9e' : STAGE[e.stage] || C.blue, 1 - v * .7);
+        const n = e.splash ? e.splash.length : 0;
+        T.popText(n ? `Shattered! 80 + ${n} × ${SHARD}` : e.r.word, ex, ey - S.en.r - 30 - v * 18, e.r.big ? C.goldInk : e.r.fail ? '#7a7f9e' : STAGE[e.stage] || C.blue, 1 - v * .7);
       }
     });
     return [ex, ey];
@@ -386,17 +397,20 @@
      Slide 5: two setups converge (deck slides 238-240)
      ===================================================================== */
   const W5 = 1420, H5 = 600;
-  const CV_PLAYERS = [[230, 300], [1190, 300], [710, 520], [710, 70]];
+  const CV_PLAYERS = [[230, 300], [1190, 300], [710, 520], [1230, 120]];
+  // minions: three already inside the shatter's area, two far ones that only a Pull brings in
+  const NEAR = [{ x: 575, y: 345 }, { x: 845, y: 345 }, { x: 710, y: 150 }];
+  const FAR = [{ x: 430, y: 110, far: 1, gx: -110, gy: -70 }, { x: 990, y: 110, far: 1, gx: 110, gy: -70 }];
   const CONVERGE = [
-    { name: 'Setup A, then Setup B', dur: 4.8, events: [{ t: .5, p: 0, el: 'water', label: 'Water · Setup A' }, { t: 1.6, p: 1, el: 'chill', label: 'Chill · Setup B' }, { t: 2.8, p: 2, el: 'rock', label: 'Rock · Payoff' }] },
-    { name: 'Setup B, then Setup A', dur: 4.8, events: [{ t: .5, p: 1, el: 'chill', label: 'Chill · Setup B' }, { t: 1.6, p: 0, el: 'water', label: 'Water · Setup A' }, { t: 2.8, p: 2, el: 'rock', label: 'Rock · Payoff' }] },
-    { name: 'Only Setup A', dur: 3.8, events: [{ t: .5, p: 0, el: 'water', label: 'Water · Setup A' }, { t: 1.7, p: 2, el: 'rock', label: 'Rock · Payoff' }] },
-    { name: 'A + B → Exploit → Payoff', dur: 6.0, minions: [[520, 170], [900, 170]], events: [{ t: .5, p: 0, el: 'water', label: 'Water · Setup A' }, { t: 1.3, p: 1, el: 'chill', label: 'Chill · Setup B' }, { t: 2.2, p: 3, el: 'pull', label: 'Pull · Exploit' }, { t: 3.3, p: 2, el: 'rock', label: 'Rock · Payoff' }] },
-  ].map(k => ({ ...k, S: sim({ players: CV_PLAYERS, enemy: { x: 710, y: 270 }, events: k.events.map(e => ({ ...e, stage: /Setup/.test(e.label) ? 'setup' : /Exploit/.test(e.label) ? 'exploit' : 'payoff' })), minions: k.minions }) }));
+    { name: 'Setup A, then Setup B', dur: 5.0, events: [{ t: .5, p: 0, el: 'water', label: 'Water · Setup A' }, { t: 1.6, p: 1, el: 'chill', label: 'Chill · Setup B' }, { t: 2.8, p: 2, el: 'rock', label: 'Rock · Payoff' }] },
+    { name: 'Setup B, then Setup A', dur: 5.0, events: [{ t: .5, p: 1, el: 'chill', label: 'Chill · Setup B' }, { t: 1.6, p: 0, el: 'water', label: 'Water · Setup A' }, { t: 2.8, p: 2, el: 'rock', label: 'Rock · Payoff' }] },
+    { name: 'Only Setup A: no shatter, no area', dur: 3.8, events: [{ t: .5, p: 0, el: 'water', label: 'Water · Setup A' }, { t: 1.7, p: 2, el: 'rock', label: 'Rock · Payoff' }] },
+    { name: 'A + B → Exploit → Payoff: the Pull brings two more into the area', dur: 6.2, p4: 1, events: [{ t: .5, p: 0, el: 'water', label: 'Water · Setup A' }, { t: 1.3, p: 1, el: 'chill', label: 'Chill · Setup B' }, { t: 2.2, p: 3, el: 'pull', label: 'Pull · Exploit' }, { t: 3.3, p: 2, el: 'rock', label: 'Rock · Payoff' }] },
+  ].map(k => ({ ...k, S: sim({ players: CV_PLAYERS, enemy: { x: 710, y: 250 }, events: k.events.map(e => ({ ...e, stage: /Setup/.test(e.label) ? 'setup' : /Exploit/.test(e.label) ? 'exploit' : 'payoff' })), minions: [...NEAR, ...FAR] }) }));
   function drawConverge(g, t, o = {}) {
     const { k, t: u } = take(CONVERGE, t), S = k.S;
     arena(g, 0, 0, W5, H5);
-    drawScene(g, S, u, { only: k.minions ? null : [0, 1, 2], labelSide: [1, -1, 1, 1] });
+    drawScene(g, S, u, { only: k.p4 ? null : [0, 1, 2], labelSide: [1, -1, 1, 1] });
     if (!o.quiet) T.label(k.name, 24, 46, 'left', '#fff', 18, 'rgba(21,32,68,.92)');
     damage(g, S, u, W5 - 24, 46);
   }
