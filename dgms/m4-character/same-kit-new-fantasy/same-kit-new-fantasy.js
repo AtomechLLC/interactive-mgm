@@ -245,7 +245,7 @@
     const tx = ax + aw + 30, tw = cx + cw - tx - 20;
     const fade = since < FLIP ? clamp((since - FLIP / 2) / (FLIP / 2)) : 1;
     g.save(); g.globalAlpha = fade;
-    text(g, `Version ${st.v + 1} of ${c.versions.length} · ${c.at}`, tx, ay + 22, 15, C.muted, 600);
+    text(g, `Version ${st.v + 1} of ${c.versions.length}`, tx, ay + 22, 15, C.muted, 600);
     g.font = font(28, 800, 'Montserrat, Jost'); g.fillStyle = C.ink; g.textAlign = 'left'; g.fillText(v.name, tx, ay + 60);
     wrap(g, v.text, tx, ay + 94, tw, 23, 17, C.ink, 500);
     // reads as
@@ -353,7 +353,7 @@
     g.fillStyle = '#152044'; rr(g, 8, jy, W - 16, jh, 12); g.fill();
     const jt = focus === -1 ? t - LANE * 3 : t - .2;
     const together = indep ? 0 : ease(clamp(jt / 1.4)), apart = indep ? ease(clamp(jt / 1.4)) : 0;
-    const mx = 160 + together * 46 - apart * 30, fx = 400 - together * 46 + apart * 30, py = jy + jh / 2;
+    const mx = 160 + together * 45 - apart * 30, fx = 400 - together * 45 + apart * 30, py = jy + jh / 2;
     piece(g, mx, py, 'Mechanics', '#2ea3dc', 1, apart);
     piece(g, fx, py, 'Fantasy', '#8a4fd6', -1, apart);
     if (together >= 1) { T.flash(280, py, 30, clamp((jt - 1.4) / .4) * (1 - clamp((jt - 2) / .6))); }
@@ -370,8 +370,10 @@
     const w = 150, h = 56;
     g.fillStyle = col; g.strokeStyle = '#fffaf0'; g.lineWidth = 2;
     g.beginPath();
-    if (side === 1) { g.moveTo(-w / 2, -h / 2); g.lineTo(w / 2, -h / 2); g.lineTo(w / 2, -12); g.arc(w / 2 + 6, 0, 13, Math.PI * 1.2, Math.PI * .8, false); g.lineTo(w / 2, h / 2); g.lineTo(-w / 2, h / 2); g.closePath(); }
-    else { g.moveTo(w / 2, -h / 2); g.lineTo(-w / 2, -h / 2); g.lineTo(-w / 2, -12); g.arc(-w / 2 + 6, 0, 13, Math.PI * 1.8, Math.PI * .2, true); g.lineTo(-w / 2, h / 2); g.lineTo(w / 2, h / 2); g.closePath(); }
+    // one circle shared by the knob and the socket: centre 10 past the edge, radius 13, so the neck meets the edge at ±8.3
+    const R = 13, D = 10, ny = Math.sqrt(R * R - D * D), a0 = Math.atan2(-ny, -D), a1 = Math.atan2(ny, -D);
+    if (side === 1) { g.moveTo(-w / 2, -h / 2); g.lineTo(w / 2, -h / 2); g.lineTo(w / 2, -ny); g.arc(w / 2 + D, 0, R, a0, a1, false); g.lineTo(w / 2, h / 2); g.lineTo(-w / 2, h / 2); g.closePath(); }
+    else { g.moveTo(w / 2, -h / 2); g.lineTo(-w / 2, -h / 2); g.lineTo(-w / 2, -ny); g.arc(-w / 2 + D, 0, R, a0, a1, false); g.lineTo(-w / 2, h / 2); g.lineTo(w / 2, h / 2); g.closePath(); }
     g.fill(); g.stroke();
     g.font = font(18, 800, 'Montserrat, Jost'); g.fillStyle = '#fff'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(name, -side * 6, 1);
     g.restore();
