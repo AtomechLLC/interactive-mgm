@@ -118,3 +118,4 @@ m7-sound/four-rules 3 fr-identity m7-sound--four-rules-identity
 m7-sound/four-rules 4 fr-reward m7-sound--four-rules-reward
 m7-sound/reactive-music 1 rm-style m7-sound--reactive-music
 m7-sound/reactive-music 2 rm-stealth m7-sound--reactive-music-stealth
+m2-audience/hard-check 2 ice m2-audience--soft-on-paper
