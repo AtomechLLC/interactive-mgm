@@ -224,7 +224,7 @@ Module 0, The Power of Polish (`m0-power-of-polish/`, icons in `img/`):
 - `designer-to-director/`: six studio roles connect to one designer (6-10), collapse onto one person on a small project (8, 17), and a seniority ladder (16; middle rungs illustrative).
 - `it-depends/`: permadeath, auto-aim, fall damage and fast travel, each in three games, as "fits the pillars" or "fights the pillars" (27-29; verdicts are the page's examples).
 - `audience-dials/`: theme, pace and combat dials with Stardew Valley, Dark Souls and Hades presets, the notes' audience to fantasy chain, and neighbouring games (59-62; positions by eye).
-- `controller-preview/`: one press through Controller, Pawn, Model and Actions with a gamepad or an AI brain (70), and Titanfall 2's wall-run assist at three thresholds (69; stick trace invented).
+- `controller-preview/`: one press through Input, Device, Controller, Pawn and Actions, or an AI brain issuing commands straight to the controller (70), and Titanfall 2's wall-run assist at three thresholds (69; stick trace invented).
 - `polish-layers/`: one melee strike with eight layers of feel, and raw against polished (75-78, 81).
 
 Module 1, Game Pillars and Values (`m1-pillars/`):
@@ -281,7 +281,7 @@ Bonus, Getting Hired as a Game Designer (`interview/`):
 - `practice/`: Interview Practice Card. Draw a prompt for your role, answer against a timer, tick the five tactics, then score yourself on the rubric. (slides 48-52).
 
 Module 5, 3Cs: Controllers (`m5-controller/`):
-- `puppet-tracer/`: Puppet Signal Tracer. Press jump, attack and swim and follow each signal from Input to Controller to Pawn: a jump pressed while falling waits in a queue, an attack in the water is refused until you flip one flag. (slides 17-62).
+- `puppet-tracer/`: Puppet Signal Tracer. Press jump, attack and swim and follow each signal from Input to Device to Controller to Pawn to Actions: a jump pressed while falling waits in a queue, an attack in the water is refused until you flip one flag. (slides 17-62).
 - `two-jumps/`: Two Jumps, Two Philosophies. One key drives two jumpers: an Ori-style jump built from six pieces you can switch on and off, and a No Rest-style jump that only fires at a ledge marker and follows one fixed curve. (slides 69-115).
 - `control-metaphors/`: Controls as Metaphor. One controller, five metaphors: left and right hand, horizontal and vertical, body parts, light and heavy, and numbered slots, each relabelled with the game that used it. (slides 143-155).
 - `one-thumb/`: One Thumb, Too Many Buttons. Map Souls actions to a gamepad or to mouse and keyboard, and see every pair of actions that must happen at once but lands on the same thumb or finger. (slides 157-164).

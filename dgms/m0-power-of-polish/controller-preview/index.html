@@ -19,15 +19,15 @@
 
 <section class="slide" data-title="Puppet architecture" data-demo="puppet">
   <div class="kicker">Module 0 · slide 70</div>
-  <h2 class="sm">4 pieces of <span class="accent">puppet architecture</span></h2>
+  <h2 class="sm">Input to action: <span class="accent">puppet architecture</span></h2>
   <div class="mt-wrap">
     <canvas class="demo" width="1040" height="585"></canvas>
     <div class="mt-side">
-<h4>Controller</h4>
+<h4>Who drives it</h4>
       <div class="seg pp-ctrl"><button class="btn on" data-c="pad">Gamepad</button><button class="btn" data-c="ai">AI brain</button></div>
       <div class="row wrap"><button class="btn pp-press">Press A</button><button class="btn tour on">▶ Walk-through</button></div>
       <p class="mt-out pp-out"></p>
-      <p class="src">Slide 70 names the four pieces: Controllers, Pawns, Models, Actions. The captions are this page’s reading; Module 5 covers them in full.</p>
+      <p class="src">A button push goes to a device, which sends an input signal. The controller is the code that turns input into a command by reading the state of the pawn (the entity in the world), and the resulting actions have side effects: the mechanics. An AI brain issues its commands straight to the controller. Module 5 covers it in full.</p>
     </div>
   </div>
 </section>
