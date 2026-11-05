@@ -264,7 +264,7 @@ Module 8, Gameplay Balance (`m8-balance/`):
 - `comebacks/`: Comeback Tug-of-War. One seeded match under five comeback rules. (slides 287-324).
 
 Module 9, Game Feel (`m9-game-feel/`):
-- `polish-ladder/`: Polish Ladder. Andre's three before-and-after polish demos rebuilt in grey-box art; number keys add layers and show what each adds and costs. A Real build switch plays a recording of Andre's Unity build at each stage (`clips/`, recorded from the WebGL build's presets 1-7).
+- `polish-ladder/`: Polish Ladder. Andre's three before-and-after polish demos rebuilt in grey-box art; number keys add layers and show what each adds and costs. A Real build switch plays a recording of Andre's Unity build at each stage (`clips/`, recorded from the WebGL build's presets 1-7). `slasher-3d.html` is a three.js rebuild of the slasher itself: playable, with the build's seven presets on keys 1-7 (`?auto=1&cycle=1` lets a bot play through them, `&record=1` exposes `__step(dt)` for the GIF recorder).
 - `seven-principles/`: Seven Principles Score Sheet. Score any game 0 to 10 on the seven principles on a radar chart. (slides 65-84).
 - `which-attack/`: Which Attack Comes Out?. The stick picks the move vs a random picker. (slides 66-69).
 - `jump-lab/`: Jump Curve Lab. One jump key, four jumpers that differ only in what happens on release: Sonic, Super Mario Bros. and Mega Man 2 with their real constants (from jump-test-classic) and a fighting-game pre-jump, plus an easing gallery.
