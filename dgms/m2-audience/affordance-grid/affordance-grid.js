@@ -7,7 +7,8 @@
             invisible block with a 1-Up -> hidden affordance (secret; Super Metroid's wall jump, slide 109)
           Each discovery drops a token into the grid. The walk-through is an autopilot run of the same physics,
           stepped at a fixed 60 Hz from t = 0, so every frame is a pure function of time.
-   words: slide 104/110, "Natural language is important!": Ooblets' "hype" and "fluster" next to "steal 1 life".
+   words: "Natural language is important!": two real Ooblets cards (One Step Pep, Flummoxtrot) as printed, in battle
+          words, and with the flavour word kept plus what it does. See the slide 2 header below for what the cards do.
    Numbers: the level layout, physics and lives are illustrative (tuned to feel like SMW, not measured from it).
    The grid's four cells are the deck's (slide 105); the labels intended / misleading / secret replace the deck's
    Good / BAD on slides 106-107.
@@ -213,7 +214,7 @@
     const x = (w.x - cam) * S, y = w.y * S;
     if (!ok(im)) { g.fillStyle = C.red; g.fillRect(x - 20, y - 58, 40, 58); return; }
     const iw = im.naturalWidth * 3, ih = im.naturalHeight * 3;
-    g.save(); g.translate(x, y); if (w.face < 0) g.scale(-1, 1);
+    g.save(); g.translate(x, y); if (w.face > 0) g.scale(-1, 1);   // the SMW sprites face left
     g.drawImage(im, -iw / 2, -ih + 3, iw, ih); g.restore();
   }
   function hills(g, cam) {
@@ -367,56 +368,75 @@
     };
   }, { leave(s) { } });
 
-  /* ---------- slide 2: natural language ---------- */
-  const SETS = [
-    { id: 'ooblets', name: 'Ooblets’ words', cards: [['Hype', 'Hype 2'], ['Fluster', 'Fluster 1']], think: '“Hype? Is that points? And what does fluster do?”',
-      cell: 'hidden', learn: 2, read: 0, tone: 'kept', out: 'Ooblets’ words fit a cozy dance-off, but a first-time reader cannot see what “fluster” does. The action is possible and not perceived: a hidden affordance until someone teaches it.' },
-    { id: 'plain', name: 'Battle words', cards: [['Score', 'Score 2 points'], ['Steal', 'Steal 1 life']], think: '“I score two. I take one of theirs.”',
-      cell: 'visible', learn: 0, read: 2, tone: 'lost', out: '“Steal 1 life” reads on sight, so the card is a visible affordance. But “life” is battle language in a game about dancing, so the fantasy pays for the clarity.' },
-    { id: 'both', name: 'Both: name + natural verb', cards: [['Hype', 'Hype: score 2'], ['Fluster', 'Fluster: steal 1 hype']], think: '“Hype is points. Fluster takes theirs.”',
-      cell: 'visible', learn: 0, read: 2, tone: 'kept', out: 'Keep the flavour word, then say what it does in words players already know. Natural language makes the action visible without losing the game’s tone.' },
+  /* ---------- slide 2: natural language ----------
+     Real Ooblets cards (Glumberland, 2022; card images from the Ooblets Wiki, ooblets.fandom.com):
+       One Step Pep (basic move, 2 beats): "Gain 1 hype"
+       Flummoxtrot (Nuppo's level 3 signature move, 3 beats): "Earn 5 points and add 1 fluster to opponent team"
+       Lil Lindy (basic move, 1 beat): "Earn 2 points", used for the worked example.
+     What they do in the game (Ooblets Wiki, "Dance Battle"): a dance-off is a turn-based card game. Each turn a team
+     draws a hand and spends beats to play moves; the first team to the point goal wins (25 points in a 2 vs 2).
+     Hype adds 1 point to every move the team plays, per hype, for the rest of the battle. Fluster takes 1 point off
+     every move, per fluster. Hype and fluster offset each other. The overlays in sets 1 and 2 are our rewrites. */
+  const OOB = {};
+  ['one-step-pep', 'flummoxtrot', 'lil-lindy'].forEach(n => { const i = new Image(); i.src = '../img/affordance-grid/ooblets-' + n + '.png'; OOB[n] = i; });
+  const CARDS = [
+    { img: 'one-step-pep', bg: '#f9f5e4', ink: '#5a4a3a', em: '#7b4fd6' },
+    { img: 'flummoxtrot', bg: '#2e0646', ink: '#ffffff', em: '#c9a8ff' },
   ];
-  function ooblet(g, x, y, r, col, t) {
-    const b = Math.sin(t * 4) * 3;
-    g.fillStyle = col; g.strokeStyle = C.navy; g.lineWidth = 3;
-    g.beginPath(); g.ellipse(x, y + b, r, r * .86, 0, 0, Math.PI * 2); g.fill(); g.stroke();
-    g.fillStyle = '#2fae63'; g.beginPath(); g.ellipse(x - 10, y - r * .9 + b, 10, 18, -.5, 0, Math.PI * 2); g.fill(); g.stroke();
-    g.beginPath(); g.ellipse(x + 10, y - r * .9 + b, 10, 18, .5, 0, Math.PI * 2); g.fill(); g.stroke();
-    g.fillStyle = C.navy; [-1, 1].forEach(k => { g.beginPath(); g.arc(x + k * r * .32, y - 4 + b, 5, 0, Math.PI * 2); g.fill(); });
-    g.strokeStyle = C.navy; g.lineWidth = 2.5; g.beginPath(); g.arc(x, y + 8 + b, 8, .2, Math.PI - .2); g.stroke();
-    g.fillStyle = 'rgba(229,90,120,.45)'; [-1, 1].forEach(k => { g.beginPath(); g.ellipse(x + k * r * .55, y + 6 + b, 7, 4, 0, 0, Math.PI * 2); g.fill(); });
-  }
-  function card(g, x, y, title, rule, col, art, t, a) {
-    const cw = 220, ch = 300;
-    g.save(); g.globalAlpha = a;
-    g.fillStyle = 'rgba(40,30,20,.18)'; g.beginPath(); g.roundRect(x + 6, y + 8, cw, ch, 16); g.fill();
-    g.fillStyle = '#fffaf0'; g.strokeStyle = C.navy; g.lineWidth = 4; g.beginPath(); g.roundRect(x, y, cw, ch, 16); g.fill(); g.stroke();
-    g.fillStyle = col; g.beginPath(); g.roundRect(x + 12, y + 12, cw - 24, 130, 10); g.fill();
-    ooblet(g, x + cw / 2, y + 86, 38, art, t);
-    g.fillStyle = C.gold; g.strokeStyle = C.navy; g.lineWidth = 3; g.beginPath(); g.arc(x + 24, y + 24, 17, 0, Math.PI * 2); g.fill(); g.stroke();
-    txt(g, '1', x + 24, y + 25, '800 18px Montserrat, Jost, sans-serif', C.navy, 'center');
-    txt(g, title, x + cw / 2, y + 168, '800 24px Montserrat, Jost, sans-serif', C.ink, 'center');
-    g.strokeStyle = '#cdbf9f'; g.lineWidth = 2; g.beginPath(); g.moveTo(x + 24, y + 190); g.lineTo(x + cw - 24, y + 190); g.stroke();
-    // rule text, wrapped
-    g.font = '600 22px Jost, sans-serif'; const words = rule.split(' '), lines = []; let cur = '';
-    words.forEach(wd => { const tr = cur ? cur + ' ' + wd : wd; if (g.measureText(tr).width > cw - 36) { lines.push(cur); cur = wd; } else cur = tr; }); lines.push(cur);
-    lines.forEach((l, i) => txt(g, l, x + cw / 2, y + 226 + i * 30 - (lines.length - 1) * 15, '600 22px Jost, sans-serif', C.ink, 'center'));
-    g.restore();
+  const SETS = [
+    { name: 'Ooblets’ words, as printed', rules: null,
+      think: '“Gain 1 hype... what is hype for? And what does fluster do to them?”',
+      cell: 'hidden', learn: 2, read: 0, tone: 'kept',
+      out: 'Both cards work, but a first-time reader can’t see what “hype” or “fluster” will do. The action is possible and not perceived: a hidden affordance until the game teaches it.' },
+    { name: 'Battle words', rules: [['+1 damage on', 'every attack'], ['Deal 5 damage.', 'Enemy attacks', 'deal 1 less']],
+      think: '“More damage for me, less for them. Got it.”',
+      cell: 'visible', learn: 0, read: 2, tone: 'lost',
+      out: 'Combat words read at a glance, so both cards become visible affordances. But damage and attacks are fighting-game language in a cozy dance-off, so the tone pays for the clarity.' },
+    { name: 'Ooblets’ word + what it does', rules: [['Gain 1 hype:', 'your moves score', '+1 point'], ['Earn 5 points.', '1 fluster: their', 'moves score 1 less']],
+      think: '“Hype makes my moves score more. Fluster makes theirs score less.”',
+      cell: 'visible', learn: 0, read: 2, tone: 'kept',
+      out: 'Keep the flavour word and say what it does in words players already know. The action becomes visible and the dance-off keeps its tone.' },
+  ];
+  function oobCard(g, k, rules, x, y, w) {
+    const c = CARDS[k], im = OOB[c.img], h = w * 372 / 268, s = w / 268;
+    g.fillStyle = 'rgba(40,30,20,.18)'; g.beginPath(); g.roundRect(x + 5, y + 7, w, h, 14 * s); g.fill();
+    if (ok(im)) g.drawImage(im, x, y, w, h); else { g.fillStyle = c.bg; g.fillRect(x, y, w, h); }
+    if (!rules) return;
+    // our rewrite, printed over the card's own rules box in its own colours
+    g.fillStyle = c.bg; g.fillRect(x + 22 * s, y + 246 * s, 224 * s, 100 * s);
+    rules.forEach((l, i) => txt(g, l, x + w / 2, y + (296 + (i - (rules.length - 1) / 2) * 27) * s, `800 ${Math.round(21 * s)}px Jost, sans-serif`, i === 0 ? c.em : c.ink, 'center'));
   }
   function miniGrid(g, x0, y0, cell, a) {
-    const cw = 150, ch = 96, cells = [['visible', 0, 0, 'Visible', C.good], ['false', 0, 1, 'False', C.red], ['hidden', 1, 0, 'Hidden', '#b07a0c'], ['reject', 1, 1, 'Correct rejection', C.good]];
-    txt(g, 'Where the card lands', x0, y0 - 64, '800 18px Montserrat, Jost, sans-serif');
-    txt(g, 'for a first-time reader', x0, y0 - 42, '500 15px Jost, sans-serif', C.muted);
+    const cw = 140, ch = 74, cells = [['visible', 0, 0, 'Visible', C.good], ['false', 0, 1, 'False', C.red], ['hidden', 1, 0, 'Hidden', '#b07a0c'], ['reject', 1, 1, 'Correct rejection', C.good]];
+    txt(g, 'Where the cards land for a first-time reader', x0 - 110, y0 - 44, '800 17px Montserrat, Jost, sans-serif');
     txt(g, 'possible: yes', x0 + cw / 2, y0 - 12, '700 13px Jost, sans-serif', C.muted, 'center'); txt(g, 'no', x0 + cw * 1.5, y0 - 12, '700 13px Jost, sans-serif', C.muted, 'center');
     cells.forEach(([k, r, c, name, col]) => {
       const x = x0 + c * cw, y = y0 + r * ch, on = k === cell;
       g.fillStyle = on ? col + '26' : 'rgba(255,250,240,.7)'; g.strokeStyle = on ? col : '#cdbf9f'; g.lineWidth = on ? 4 : 2;
       g.beginPath(); g.roundRect(x + 3, y + 3, cw - 6, ch - 6, 10); g.fill(); g.stroke();
-      txt(g, name, x + cw / 2, y + 26, `${on ? 800 : 600} 15px Montserrat, Jost, sans-serif`, on ? col : C.muted, 'center');
-      if (on) { g.save(); g.globalAlpha = a; g.fillStyle = col; g.beginPath(); g.arc(x + cw / 2, y + 62, 14, 0, Math.PI * 2); g.fill(); g.fillStyle = '#fff'; g.font = '800 15px Montserrat'; g.textAlign = 'center'; g.fillText('2', x + cw / 2, y + 63); g.restore(); }
+      txt(g, name, x + cw / 2, y + 22, `${on ? 800 : 600} ${name.length > 10 ? 13 : 15}px Montserrat, Jost, sans-serif`, on ? col : C.muted, 'center');
+      if (on) { g.save(); g.globalAlpha = a; g.fillStyle = col; g.beginPath(); g.arc(x + cw / 2, y + 50, 13, 0, Math.PI * 2); g.fill(); g.restore(); txt(g, '2', x + cw / 2, y + 51, '800 14px Montserrat, Jost, sans-serif', '#fff', 'center'); }
     });
     txt(g, 'perceives: yes', x0 - 8, y0 + ch / 2, '700 13px Jost, sans-serif', C.muted, 'right');
     txt(g, 'no', x0 - 8, y0 + ch * 1.5, '700 13px Jost, sans-serif', C.muted, 'right');
+  }
+  function howItWorks(g, x, y, t) {
+    g.fillStyle = 'rgba(255,250,240,.9)'; g.strokeStyle = '#cdbf9f'; g.lineWidth = 2; g.beginPath(); g.roundRect(x, y, 450, 192, 12); g.fill(); g.stroke();
+    txt(g, 'What the cards do in Ooblets', x + 16, y + 22, '800 17px Montserrat, Jost, sans-serif');
+    [['A dance-off is a turn-based card game. Each turn you draw', C.ink], ['a hand and spend beats on moves; first team to 25 points wins.', C.ink],
+     ['Hype: every move your team plays scores +1 point per hype.', '#c2410c'], ['Fluster: every move scores 1 point less per fluster.', '#15803d']]
+      .forEach(([l, col], i) => txt(g, l, x + 16, y + 50 + i * 22, '500 15px Jost, sans-serif', col));
+    const im = OOB['lil-lindy'], cw = 44, chh = cw * 372 / 268, cy = y + 132;
+    if (ok(im)) g.drawImage(im, x + 18, cy - 6, cw, chh);
+    txt(g, 'Lil Lindy, “Earn 2 points”, scores:', x + 84, cy + 4, '600 14px Jost, sans-serif', C.muted);
+    const k = Math.floor(t / 1.6) % 3;
+    [['no status', '2', C.ink], ['1 hype', '3', '#c2410c'], ['1 fluster', '1', '#15803d']].forEach(([lab, v, col], i) => {
+      const bx = x + 84 + i * 118, on = i === k;
+      g.fillStyle = on ? col + '1f' : 'rgba(255,255,255,.6)'; g.strokeStyle = on ? col : '#d8ccb0'; g.lineWidth = on ? 3 : 1.5;
+      g.beginPath(); g.roundRect(bx, cy + 18, 108, 36, 8); g.fill(); g.stroke();
+      txt(g, v, bx + 18, cy + 37, '800 20px Montserrat, Jost, sans-serif', col, 'center');
+      txt(g, lab, bx + 34, cy + 37, '600 14px Jost, sans-serif', on ? col : C.muted);
+    });
   }
   canvasDemo('words', (s, cv, g) => {
     const st = { tour: true, t: 0, held: false, set: 0, swapT: -9, key: '' };
@@ -424,33 +444,37 @@
     const free = () => { st.tour = false; tourBtn.classList.remove('on'); };
     $$(s, '.wd-set .btn').forEach(b => b.onclick = () => { free(); st.set = +b.dataset.i; st.swapT = st.t; });
     tourBtn.onclick = () => { st.tour = true; st.t = 0; tourBtn.classList.add('on'); };
-    const DUR = 15;
+    const DUR = 18;
     function render() {
       let set = st.set, since = st.t - st.swapT;
-      if (st.tour) { set = Math.floor(st.t / 5) % 3; since = st.t % 5; }
+      if (st.tour) { set = Math.floor(st.t / 6) % 3; since = st.t % 6; }
       const S2 = SETS[set], a = clamp(since / .35);
       $$(s, '.wd-set .btn').forEach(b => b.classList.toggle('on', +b.dataset.i === set));
       T.use(g); panel(g);
-      txt(g, 'Same two cards, same rules. Only the words change.', 30, 34, '800 20px Montserrat, Jost, sans-serif');
-      txt(g, S2.name, 30, 62, '600 17px Jost, sans-serif', C.muted);
-      const flip = since < .35 ? Math.abs(Math.cos(since / .35 * Math.PI)) : 1;
-      [[0, '#bfe3f5', '#ffb3c8'], [1, '#f9d9a8', '#b9a3f0']].forEach(([i, bg, art]) => {
-        const x = 40 + i * 250, y = 92;
-        g.save(); g.translate(x + 110, 0); g.scale(Math.max(.04, flip), 1); g.translate(-(x + 110), 0);
-        card(g, x, y, S2.cards[i][0], S2.cards[i][1], bg, art, st.t, 1); g.restore();
+      txt(g, 'Same two Ooblets cards, same rules. Only the words change.', 30, 30, '800 20px Montserrat, Jost, sans-serif');
+      txt(g, S2.name, 30, 56, '600 17px Jost, sans-serif', C.muted);
+      const flip = since < .35 ? Math.abs(Math.cos(since / .35 * Math.PI)) : 1, cw = 200;
+      [0, 1].forEach(i => {
+        const x = 30 + i * 230, y = 74;
+        g.save(); g.translate(x + cw / 2, 0); g.scale(Math.max(.04, flip), 1); g.translate(-(x + cw / 2), 0);
+        oobCard(g, i, S2.rules && S2.rules[i], x, y, cw); g.restore();
       });
+      howItWorks(g, 20, 378, st.t);
+      miniGrid(g, 640, 120, S2.cell, a);
       // the first-time reader
-      const by = 440;
-      T.player(70, by + 66, -Math.PI / 2, 1.1);
+      const by = 300;
+      T.player(530, by + 46, -Math.PI / 2, 1);
       g.fillStyle = '#fffaf0'; g.strokeStyle = C.navy; g.lineWidth = 2.5;
-      g.beginPath(); g.roundRect(110, by + 10, 440, 70, 16); g.fill(); g.stroke();
-      g.beginPath(); g.moveTo(112, by + 52); g.lineTo(92, by + 64); g.lineTo(114, by + 64); g.fill();
-      g.save(); g.globalAlpha = a; txt(g, S2.think, 130, by + 45, 'italic 600 19px Jost, sans-serif', C.ink); g.restore();
-      txt(g, 'a first-time reader', 130, by + 100, '600 14px Jost, sans-serif', C.muted);
-      miniGrid(g, 680, 170, S2.cell, a);
-      txt(g, 'Natural language is important!', 610, 430, '800 22px Montserrat, Jost, sans-serif', C.ink);
-      txt(g, 'Flavour words are fine once they are taught;', 610, 464, '500 16px Jost, sans-serif', C.muted);
-      txt(g, 'words players already know need no teaching.', 610, 488, '500 16px Jost, sans-serif', C.muted);
+      g.beginPath(); g.roundRect(566, by, 450, 92, 16); g.fill(); g.stroke();
+      g.save(); g.globalAlpha = a;
+      g.font = 'italic 600 17px Jost, sans-serif'; const ws = S2.think.split(' '), ls = []; let cur = '';
+      ws.forEach(wd => { const tr = cur ? cur + ' ' + wd : wd; if (g.measureText(tr).width > 410) { ls.push(cur); cur = wd; } else cur = tr; }); ls.push(cur);
+      ls.forEach((l, i) => txt(g, l, 586, by + 46 + (i - (ls.length - 1) / 2) * 24, 'italic 600 17px Jost, sans-serif', C.ink));
+      g.restore();
+      txt(g, 'a first-time reader', 586, by + 108, '600 14px Jost, sans-serif', C.muted);
+      txt(g, 'Natural language is important!', 500, 470, '800 22px Montserrat, Jost, sans-serif', C.ink);
+      txt(g, 'Flavour words work once they are taught;', 500, 502, '500 16px Jost, sans-serif', C.muted);
+      txt(g, 'words players already know need no teaching.', 500, 526, '500 16px Jost, sans-serif', C.muted);
       const key = String(set); if (key === st.key) return; st.key = key;
       say($(s, '.wd-stats'), `<div class="${S2.learn ? 'y' : 'g'}"><b>${S2.learn}</b><span>new words to learn before the cards make sense</span></div><div class="${S2.read ? 'g' : 'r'}"><b>${S2.read} / 2</b><span>cards a first-time reader can act on</span></div><div class="${S2.tone === 'kept' ? 'g' : 'r'}"><b>${S2.tone}</b><span>the cozy dance-off tone</span></div>`);
       say($(s, '.wd-out'), S2.out);
