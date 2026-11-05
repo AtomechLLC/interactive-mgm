@@ -90,7 +90,7 @@
     [30.5, 7.5, 40, 8], [30.5, 22, 40, 22.5], [39.5, 8, 40, 22],                               // arena
   ];
   const PROPS = [
-    { r: [20, 4.5, 21, 5.5], h: 3, kind: 'pillar' }, { r: [26, 23.5, 27, 24.5], h: 3, kind: 'pillar' },
+    { r: [20, 4.5, 21, 5.5], h: 3, kind: 'pillar' }, { r: [27, 3.8, 28, 4.8], h: 3, kind: 'pillar' },
     { r: [20.5, 7.5, 22.5, 8.3], h: 1, kind: 'crate' }, { r: [24.5, 19.7, 26.5, 20.5], h: 1, kind: 'crate' }, { r: [36.5, 9.6, 38, 10.4], h: 1, kind: 'crate' },
   ];
   const LABELS = [['corridor', 8.5, 10.4], ['doorway', 12.8, 19.6], ['courtyard', 23.25, .5], ['arena', 35, 6.5]];
@@ -125,7 +125,7 @@
   // 9 Follow: anchor height, distance, height above anchor, right offset (m), pitch (deg), facing lag (s)
   const FOLLOW = { anchor: 1.6, dist: 5, up: .9, side: .5, pitch: 14, lag: .9 };
   // 10 Cover: the camera blended in near low cover (right shoulder, Gears/Order style) and the cover volumes
-  const COVER = { anchor: 1, dist: 2.4, up: .45, side: .85, pitch: 6, fade: 1.2, vols: [{ r: [24.3, 20.5, 26.7, 21.6], face: -Math.PI / 2 }] };
+  const COVER = { anchor: 1.05, dist: 3.3, up: .5, side: 1.15, pitch: 6, fade: 1.2, vols: [{ r: [24.3, 20.5, 26.7, 21.6], face: -Math.PI / 2 }] };
   // 11 First-person: eye height, facing lag
   const FP = { eye: 1.65, lag: .3, pitch: 4 };
   // 8 Floating: the demo flight, keyed by time; cut:true is a jump-to shortcut
@@ -322,7 +322,7 @@
       const w = coverW(R.h), base = followCam(R.h, meanFace(R, FOLLOW.lag), FOLLOW, RIGS.follow.fov);
       if (w <= 0) return { ...base, w, crouch: 0 };
       const v = COVER.vols[0], cov = followCam(R.h, v.face, COVER, RIGS.cover.fov);
-      return { x: lerp(base.x, cov.x, w), y: lerp(base.y, cov.y, w), z: lerp(base.z, cov.z, w), yaw: lerpA(base.yaw, cov.yaw, w), pitch: lerp(base.pitch, cov.pitch, w), fov: lerp(base.fov, cov.fov, w), anchor: lerp3(base.anchor, cov.anchor, w), w, crouch: w };
+      return { x: lerp(base.x, cov.x, w), y: lerp(base.y, cov.y, w), z: lerp(base.z, cov.z, w), yaw: lerpA(base.yaw, cov.yaw, w), pitch: lerp(base.pitch, cov.pitch, w), fov: lerp(base.fov, cov.fov, w), anchor: lerp3(base.anchor, cov.anchor, w), w, crouch: w, heroFace: w > .5 ? v.face : null };
     },
     first(R) { return { x: R.h.x, y: R.h.y, z: FP.eye, yaw: meanFace(R, FP.lag, 4), pitch: FP.pitch * D2R, fov: RIGS.first.fov, fp: true }; },
   };
@@ -423,7 +423,7 @@
     const items = [];
     FACES.forEach(F => { if (dot(F.n, sub(B.o, F.q[0])) > 0) items.push({ d: Math.hypot(...sub(F.c, B.o)), F }); });
     const h = R.h, crouch = cam.crouch || 0;
-    if (!cam.fp) items.push({ d: Math.hypot(h.x - B.o[0], h.y - B.o[1], .9 - B.o[2]), cap: [h.x, h.y, lerp(HERO_H, 1.15, crouch), HERO_R, C.player, h.face] });
+    if (!cam.fp) items.push({ d: Math.hypot(h.x - B.o[0], h.y - B.o[1], .9 - B.o[2]), cap: [h.x, h.y, lerp(HERO_H, 1.15, crouch), HERO_R, C.player, cam.heroFace ?? h.face] });
     foesAt(R.t).forEach(([x, y]) => items.push({ d: Math.hypot(x - B.o[0], y - B.o[1], 1 - B.o[2]), cap: [x, y, 1.9, .42, C.red, Math.atan2(h.y - y, h.x - x)] }));
     items.sort((a, b) => b.d - a.d);
     let px = 0;

@@ -97,8 +97,8 @@
       return out; } },
   };
   // the walk-through: noise, spotted, hide, calm by timer; then a Guardian interrupts the ambience
-  const TOUR2_IN = [{ t: 0, a: 'mode:mgs' }, { t: 5, a: 'noise' }, { t: 8.5, a: 'spotted' }, { t: 14, a: 'hide' }, { t: 20, a: 'mode:botw' }, { t: 24.5, a: 'spot' }, { t: 30, a: 'escape' }];
-  const DUR2 = 34;
+  const TOUR2_IN = [{ t: 0, a: 'mode:mgs' }, { t: 3.5, a: 'noise' }, { t: 6.5, a: 'spotted' }, { t: 11, a: 'hide' }, { t: 16.5, a: 'mode:botw' }, { t: 20, a: 'spot' }, { t: 25, a: 'escape' }];
+  const DUR2 = 28;
 
   /* ---------- audio (self-contained: other sound pages carry their own) ---------- */
   const BUSES = ['drums', 'bass', 'lead', 'vocal', 'sfx', 'track', 'sting', 'amb'];
