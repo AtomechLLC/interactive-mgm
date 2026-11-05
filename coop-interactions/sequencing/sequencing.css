@@ -1,0 +1,36 @@
+/* Sequencing with tokens: per-slide layout. */
+.sq-canvas { width: 1420px; height: 600px; display: block; margin-top: -2px; }
+.slide.center canvas.ti-canvas { width: 640px; }
+
+/* slide 6: sandbox */
+.sb-wrap { display: grid; grid-template-columns: 960px 1fr; gap: 26px; margin-top: -4px; }
+.sb-canvas { width: 960px; height: 352px; display: block; }
+.sb-grid { display: grid; grid-template-columns: 110px repeat(8, 1fr); gap: 4px; margin-top: 8px; }
+.sb-grid .gh { font-size: 13px; color: var(--muted); text-align: center; font-weight: 600; }
+.sb-grid .gp { font-family: var(--display); font-size: 15px; color: var(--ink); display: flex; align-items: center; gap: 6px; }
+.sb-grid .gp::before { content: ''; width: 12px; height: 12px; border-radius: 50%; background: var(--c); border: 2px solid #fff; box-shadow: 0 0 0 1.5px var(--ink); }
+.sb-grid .cell { height: 40px; border-radius: 8px; border: 2px dashed #cdbf9f; background: rgba(255, 250, 240, .7); font: 600 14px Jost, sans-serif; color: var(--ink); cursor: pointer; padding: 0 2px; line-height: 1.1; }
+.sb-grid .cell:hover { border-color: var(--ink); }
+.sb-grid .cell.off { opacity: .35; cursor: not-allowed; background: repeating-linear-gradient(45deg, #eee4cf 0 6px, #f6efe0 6px 12px); }
+.sb-grid .cell.setup { border-style: solid; background: #dfe6fb; border-color: #8ea2e6; color: #23306e; }
+.sb-grid .cell.exploit { border-style: solid; background: #fde9b8; border-color: #e0a92d; color: #7a4a00; }
+.sb-grid .cell.payoff { border-style: solid; background: #f9d9d6; border-color: #e07b72; color: #8a1c15; }
+.sb-grid .cell.now { box-shadow: 0 0 0 3px var(--navy); }
+.sb-grid .cell.meh { opacity: .55; }
+.sb-grid .cell.big { box-shadow: 0 0 0 3px #e0a92d, 0 0 14px rgba(255, 185, 81, .9); }
+.sb-side h4 { font-family: var(--display); font-size: 15px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 8px; }
+.sb-side .pre { display: grid; width: 100%; text-align: left; gap: 1px; margin-bottom: 5px; padding: 5px 12px; border-radius: 10px; border: 2px solid #cdbf9f; background: #fffaf0; color: var(--ink); font: inherit; cursor: pointer; }
+.sb-side .pre b { font-family: var(--display); font-size: 16px; }
+.sb-side .pre span { font-size: 13px; color: var(--muted); }
+.sb-side .pre.on { border-color: var(--navy); background: #e6e9f8; }
+.sb-btns .btn { font-size: 15px; padding: 5px 11px; }
+.sb-solo.on { background: var(--navy); color: #fff; }
+.slide .sb-hint { font-size: 14px; color: var(--muted); margin: 8px 0 0; line-height: 1.6; }
+.sb-hint .chip { font-size: 13px; padding: 0 6px; }
+.sb-total { display: flex; align-items: baseline; gap: 10px; margin-top: 6px; flex-wrap: wrap; }
+.sb-total b { font-family: var(--display); font-size: 38px; color: var(--ink); }
+.sb-total span { font-size: 15px; color: var(--muted); }
+.sb-out { font-size: 16px; line-height: 1.38; color: var(--ink); }
+.sb-out .chain { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; margin-top: 5px; }
+.sb-out .chip { font-size: 13px; padding: 1px 7px; }
+.sb-out i { font-style: normal; color: var(--muted); }
