@@ -336,7 +336,7 @@
     { id: 'p_ctl', x: RX2 + 172, y: 96, w: 170, h: 100, part: 'entity', title: 'Controller', value: 'Ready' },
     { id: 'p_pawn', x: RX2 + 172, y: 252, w: 170, h: 110, part: 'entity', title: 'Pawn', value: 'Idle' },
     { id: 'p_vw', x: RX2 + 366, y: 252, w: 136, h: 110, part: 'entity', title: 'View', sub: 'sprite, effects' },
-    { id: 'p_ai', x: RX2 + 172, y: 410, w: 170, h: 82, part: 'entity', title: 'AI controller', sub: 'same pawn' },
+    { id: 'p_ai', x: RX2 + 172, y: 410, w: 170, h: 82, part: 'entity', title: 'AI brain', sub: 'issues commands' },
     { id: 'p_net', x: RX2 + 6, y: 410, w: 140, h: 82, part: 'entity', title: 'Online input', sub: 'player 2' },
     { id: 'p_vw2', x: RX2 + 366, y: 410, w: 136, h: 82, part: 'entity', title: 'View, player 2', sub: 'same simulation' },
   ];
@@ -356,9 +356,10 @@
     ],
     ai: () => [
       { dt: 0, dur: .9, from: 'm_ai', to: 'm_in', kind: 'command', label: 'Jump', bounce: 'input is wired inside' },
-      { dt: 0, dur: .5, from: 'p_ai', to: 'p_pawn', kind: 'command', label: 'Jump', set: { p_pawn: 'Jumping' } },
-      { dt: .55, dur: .5, from: 'p_pawn', to: 'p_vw', kind: 'system', label: 'state' },
-      { dt: 2.2, dur: .01, set: { p_pawn: 'Idle' } },
+      { dt: 0, dur: .7, from: 'p_ai', to: 'p_ctl', kind: 'command', label: 'Jump', via: [RX2 + 354, 230] },
+      { dt: .75, dur: .5, from: 'p_ctl', to: 'p_pawn', kind: 'command', label: 'Jump', set: { p_pawn: 'Jumping' } },
+      { dt: 1.3, dur: .5, from: 'p_pawn', to: 'p_vw', kind: 'system', label: 'state' },
+      { dt: 2.6, dur: .01, set: { p_pawn: 'Idle' } },
     ],
     net: () => [
       { dt: 0, dur: .9, from: 'm_net', to: 'm_vw', kind: 'command', label: 'Join', bounce: 'no seam to sync' },
@@ -374,7 +375,7 @@
   const AR_PH = [
     [0, 'Press Jump on both. Left, Ori\'s SeinPrefab: input, control, abilities, physics and animation live in one object and call each other.'],
     [2.6, 'An animation event reaches back into the abilities, which change the control state: the circular feedback that muppets tend to create.'],
-    [5.5, 'Plug in an AI. The puppet takes it: an AI controller drives the same pawn. In the muppet the input is wired inside, so there is no place to plug it.'],
+    [5.5, 'Plug in an AI. The puppet takes it: an AI brain issues commands to the same controller, which drives the same pawn. In the muppet the input is wired inside, so there is no place to plug it.'],
     [8.5, 'Add an online player. With Photon Quantum only inputs travel; every machine runs the same simulation and draws its own view.'],
   ];
   let archApi;

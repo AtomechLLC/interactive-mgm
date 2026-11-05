@@ -1,7 +1,10 @@
-/* Puppet signal tracer (RGF C2 M5, deck slides 17-62). Slide 1: three X-ray boxes (Input, Controller, Pawn, drawn with
-   ../shared/xray.js) beside a small side-view puppet, and the pawn's mode-by-action flag table under it. Every press, source
+/* Puppet signal tracer (RGF C2 M5, deck slides 17-62). Slide 1: five X-ray boxes (Input → Device → Controller → Pawn →
+   Actions, drawn with ../shared/xray.js) beside a small side-view puppet, and the pawn's mode-by-action flag table under it. Every press, source
    swap, pawn swap or flag edit is an action at a time; simulate() turns the whole action list into XR hops plus the puppet's
-   moves, so the picture is a pure function of time and GIFs can seek. Slide 2: modes vs actions for a few games. */
+   moves, so the picture is a pure function of time and GIFs can seek. A human button push goes to a device, which sends an
+   input signal; the controller turns input into a command by reading the pawn's state (the entity in the world), and the
+   actions it issues have side effects, the mechanics. An AI brain (and a replay) skips the device and feeds the controller
+   directly. Slide 2: modes vs actions for a few games. */
 (function () {
   const { $, $$, canvasDemo, say } = FPF.kit;
   const T = TD, C = TD.C, { clamp, lerp, ease } = TD;
@@ -20,9 +23,11 @@
   const SRC = {
     kb: { name: 'Keyboard', key: { jump: 'J', attack: 'K', swim: 'S' } },
     pad: { name: 'Gamepad', key: { jump: 'A', attack: 'X', swim: 'B' } },
-    bot: { name: 'Bot', key: { jump: 'Jump', attack: 'Attack', swim: 'Swim' } },
+    bot: { name: 'AI brain', key: { jump: 'Jump', attack: 'Attack', swim: 'Swim' } },
     replay: { name: 'Replay', key: { jump: 'J (rec)', attack: 'K (rec)', swim: 'S (rec)' } },
   };
+  // sources that skip the device and feed the controller directly
+  const DIRECT = { bot: 1, replay: 1 };
   // scene geometry (left column of the canvas)
   const SW = 380, SH = 290, GY = 222, EDGE = 222, WY = 236, SHORE = 108, POOL = 305;
 
@@ -45,10 +50,10 @@
       const q = S.queued, f = S.cfg.flags[S.mode][q.act], p = P();
       if (f === 'queue') return;
       S.queued = null; out.queues.at(-1).t1 = t;
-      hop(t, .16, 'pawn', 'ctrl', { kind: 'system', label: landed ? 'Landed' : 'Mode: ' + p.mode[S.mode], via: [735, 392] });
+      hop(t, .16, 'pawn', 'ctrl', { kind: 'system', label: landed ? 'Landed' : 'Mode: ' + p.mode[S.mode], via: [700, 325] });
       const d = t + .16;
       set(d, { ctrl: 'Idle' });
-      if (f === 'allow') { hop(d, HOP, 'ctrl', 'pawn', { label: p.act[q.act] }); log(d, `${p.act[q.act]} leaves the queue and fires.`, 'g', S.mode, q.act); perform(q.act, d, d + HOP); }
+      if (f === 'allow') { fire(p.act[q.act], d); log(d, `${p.act[q.act]} leaves the queue and fires.`, 'g', S.mode, q.act); perform(q.act, d, d + HOP); }
       else refuse(q.act, d);
     }
     function advance(t) { while (S.land && S.land.t <= t) land(); }
@@ -75,13 +80,25 @@
       out.bubbles.push({ t: d, text: `It's ${p.it[S.mode]}. ${p.noun[act]} allowed right now.`, col: '#cc0000' });
       log(d, `${name} refused: ${p.mode[S.mode]} forbids it.`, 'r', S.mode, act);
     }
+    // the command reaches the pawn, and the pawn's action runs: its side effects are the mechanics
+    function fire(name, d) {
+      hop(d, HOP, 'ctrl', 'pawn', { label: name });
+      hop(d + HOP, HOP, 'pawn', 'actions', { kind: 'effect', label: name, set: { actions: name } });
+    }
     function press(a) {
-      const p = P(), name = p.act[a.act];
-      set(a.at, { key: SRC[S.cfg.src].key[a.act] });
-      hop(a.at, HOP, 'input', 'ctrl', { label: name });
-      const d = a.at + HOP; advance(d);
+      const p = P(), name = p.act[a.act], key = SRC[S.cfg.src].key[a.act];
+      set(a.at, { key, actions: '' });
+      let d;
+      if (DIRECT[S.cfg.src]) {
+        const what = S.cfg.src === 'bot' ? 'Command: ' + name : 'Recorded: ' + key;
+        hop(a.at, HOP * 1.6, 'input', 'ctrl', { label: what, via: [700, 150] }); d = a.at + HOP * 1.6;
+      } else {
+        hop(a.at, HOP, 'input', 'device', { label: 'Push ' + key });
+        hop(a.at + HOP, HOP, 'device', 'ctrl', { label: 'Input signal: ' + key }); d = a.at + 2 * HOP;
+      }
+      advance(d);
       const f = S.cfg.flags[S.mode][a.act];
-      if (f === 'allow') { hop(d, HOP, 'ctrl', 'pawn', { label: name }); log(d, `${name}: ${p.mode[S.mode]} allows it.`, 'g', S.mode, a.act); perform(a.act, d, d + HOP); }
+      if (f === 'allow') { fire(name, d); log(d, `${name}: ${p.mode[S.mode]} allows it.`, 'g', S.mode, a.act); perform(a.act, d, d + HOP); }
       else if (f === 'queue') {
         if (S.queued) out.queues.at(-1).t1 = d;
         S.queued = { act: a.act, t: d }; out.queues.push({ t0: d, t1: Infinity, act: a.act, pawn: S.cfg.pawn });
@@ -106,7 +123,7 @@
       out.cfgs.push({ t: a.at, cfg: clone(S.cfg), flag: a.flag });
     }
     acts.slice().sort((a, b) => a.at - b.at).forEach(a => {
-      advance(a.type === 'press' ? a.at + HOP : a.at);
+      advance(a.type === 'press' ? a.at + (DIRECT[S.cfg.src] ? HOP * 1.6 : 2 * HOP) : a.at);
       if (a.type === 'press') press(a); else cfg(a);
     });
     advance(Infinity);
@@ -164,31 +181,47 @@
 
   /* ---------- slide 1: the tracer ---------- */
   const NODES = [
-    { id: 'input', x: 430, y: 34, w: 250, h: 128, part: 'entity', title: 'Input: Keyboard', art: (g, x, y) => inputArt(g, x, y) },
-    { id: 'ctrl', x: 430, y: 220, w: 250, h: 144, part: 'entity', title: 'Controller', value: 'Idle', sub: 'reads the mode, checks its flags' },
-    { id: 'pawn', x: 430, y: 424, w: 250, h: 144, part: 'entity', title: 'Pawn: Hero', value: 'Grounded', sub: 'acts, and reports its mode' },
+    { id: 'input', x: 430, y: 4, w: 250, h: 84, part: 'entity', title: 'Input: button push', art: (g, x, y) => inputArt(g, x, y) },
+    { id: 'device', x: 430, y: 104, w: 250, h: 76, part: 'entity', title: 'Device: Keyboard', art: (g, x, y) => deviceArt(g, x, y) },
+    { id: 'ctrl', x: 430, y: 198, w: 250, h: 118, part: 'entity', title: 'Controller', value: 'Idle', sub: 'reads the pawn, issues a command' },
+    { id: 'pawn', x: 430, y: 334, w: 250, h: 108, part: 'entity', title: 'Pawn: Hero', value: 'Grounded', sub: 'the entity in the world, and its state' },
+    { id: 'actions', x: 430, y: 460, w: 250, h: 116, part: 'entity', title: 'Actions', value: '', sub: 'side effects: the mechanics' },
   ];
   let CUR = { src: 'kb', key: '' };
+  // the input box: who pushed what (a human's key, an AI brain's command, or a recorded press)
   function inputArt(g, x, y) {
-    const src = CUR.src, keys = SRC[src].key;
+    const src = CUR.src;
     g.save();
-    if (src === 'kb' || src === 'replay') {
-      ['jump', 'attack', 'swim'].forEach((a, i) => {
-        const kx = x - 96 + i * 34, on = CUR.key && CUR.key[0] === keys[a][0];
-        g.fillStyle = on ? '#ffb951' : '#fffaf0'; g.strokeStyle = C.navy; g.lineWidth = 2; g.beginPath(); g.roundRect(kx - 14, y - 14, 28, 28, 5); g.fill(); g.stroke();
-        g.fillStyle = C.navy; g.font = '700 14px Montserrat, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(keys[a][0], kx, y + 1);
-      });
-      if (src === 'replay') { g.fillStyle = '#cc0000'; g.beginPath(); g.arc(x - 108, y - 26, 5, 0, TAU); g.fill(); g.font = '700 11px Jost, sans-serif'; g.textAlign = 'left'; g.fillText('recorded', x - 100, y - 25); }
-    } else if (src === 'pad') {
-      g.fillStyle = C.navy; g.font = '46px sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('🎮', x - 62, y);
+    if (src === 'bot') {
+      g.fillStyle = '#b9bccb'; g.strokeStyle = C.navy; g.lineWidth = 2; g.beginPath(); g.roundRect(x - 84, y - 16, 44, 32, 8); g.fill(); g.stroke();
+      g.fillStyle = '#2ea3dc'; g.beginPath(); g.arc(x - 72, y, 5, 0, TAU); g.arc(x - 52, y, 5, 0, TAU); g.fill();
+    } else if (src === 'replay') {
+      g.fillStyle = '#cc0000'; g.beginPath(); g.arc(x - 70, y, 7, 0, TAU); g.fill(); g.font = '700 11px Jost, sans-serif'; g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillText('recorded', x - 58, y);
     } else {
-      // a little bot head
-      g.fillStyle = '#b9bccb'; g.strokeStyle = C.navy; g.lineWidth = 2; g.beginPath(); g.roundRect(x - 84, y - 18, 44, 34, 8); g.fill(); g.stroke();
-      g.fillStyle = '#2ea3dc'; g.beginPath(); g.arc(x - 72, y - 2, 5, 0, TAU); g.arc(x - 52, y - 2, 5, 0, TAU); g.fill();
-      g.strokeStyle = C.navy; g.beginPath(); g.moveTo(x - 62, y - 18); g.lineTo(x - 62, y - 28); g.stroke(); g.fillStyle = '#e5322d'; g.beginPath(); g.arc(x - 62, y - 30, 4, 0, TAU); g.fill();
+      g.fillStyle = '#f2c9a0'; g.strokeStyle = C.navy; g.lineWidth = 2; g.beginPath(); g.roundRect(x - 80, y - 6, 30, 22, 8); g.fill(); g.stroke();
+      g.beginPath(); g.roundRect(x - 70, y - 22, 9, 22, 4); g.fill(); g.stroke();
     }
-    if (CUR.key) XR.stateChip(g, x + 58, y, CUR.key, 0, 34);
-    else { g.font = 'italic 600 12px Montserrat, sans-serif'; g.fillStyle = '#5d618c'; g.textAlign = 'center'; g.fillText('waiting for a press', x + 58, y); }
+    if (CUR.key) XR.stateChip(g, x + 50, y, CUR.key, 0, 30);
+    else { g.font = 'italic 600 12px Montserrat, sans-serif'; g.fillStyle = '#5d618c'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(src === 'bot' ? 'deciding' : 'waiting for a push', x + 50, y); }
+    g.restore();
+  }
+  // the device box: the keyboard or gamepad that turns a push into an input signal; unused when the controller is fed directly
+  function deviceArt(g, x, y) {
+    const src = CUR.src, keys = SRC[src === 'pad' ? 'pad' : 'kb'].key;
+    g.save(); g.textAlign = 'center'; g.textBaseline = 'middle';
+    if (DIRECT[src]) {
+      g.font = 'italic 600 13px Montserrat, sans-serif'; g.fillStyle = '#8c86a8';
+      g.fillText('not used', x, y);
+    } else if (src === 'kb') {
+      ['jump', 'attack', 'swim'].forEach((a, i) => {
+        const kx = x - 40 + i * 40, on = CUR.key && CUR.key[0] === keys[a][0];
+        g.fillStyle = on ? '#ffb951' : '#fffaf0'; g.strokeStyle = C.navy; g.lineWidth = 2; g.beginPath(); g.roundRect(kx - 14, y - 14, 28, 28, 5); g.fill(); g.stroke();
+        g.fillStyle = C.navy; g.font = '700 14px Montserrat, sans-serif'; g.fillText(keys[a][0], kx, y + 1);
+      });
+    } else {
+      g.fillStyle = C.navy; g.font = '40px sans-serif'; g.fillText('🎮', x - 30, y);
+      if (CUR.key) XR.stateChip(g, x + 40, y, CUR.key, 0, 28);
+    }
     g.restore();
   }
   // tour: presses, a flag edit, a source swap and a pawn swap
@@ -199,20 +232,22 @@
     { at: 13.4, type: 'cfg', src: 'pad' }, press(14, 'jump'),
     { at: 15.9, type: 'cfg', flag: ['water', 'attack', 'refuse'] },
     { at: 16.3, type: 'cfg', pawn: 'tank' }, press(16.9, 'jump'), press(18.3, 'attack'), press(19.4, 'swim'), press(21, 'attack'),
-    { at: 23.4, type: 'cfg', pawn: 'hero', src: 'kb' },
+    { at: 22.2, type: 'cfg', src: 'bot' }, press(22.8, 'jump'),
+    { at: 25.9, type: 'cfg', pawn: 'hero', src: 'kb' },
   ];
-  const TOUR_DUR = 24.5;
+  const TOUR_DUR = 27;
   const PHASES = [
-    [0, 'Press Jump on the ground. Input sends Jump, the controller checks the pawn\'s mode, Grounded allows it, and the pawn jumps.'],
+    [0, 'Push Jump on the ground. The keyboard sends the input signal, the controller reads the pawn (Grounded), turns the input into a Jump command, and the jump action runs.'],
     [2.3, 'Jump again, then press Jump a second time while the pawn is falling.'],
     [3.6, 'Airborne queues jumps. The controller says "Oh… you\'re falling… you can\'t jump yet…" and holds the command.'],
     [3.95, 'The pawn lands and reports it. The queued jump fires on landing, with no second press.'],
     [6, 'Attack on the ground is allowed. Swim walks the pawn into the pool, and its mode becomes Swimming.'],
     [9.1, 'Attack while swimming: the flag says refuse, so the signal bounces and the screen flashes. "It\'s swimming. Attacks aren\'t allowed right now."'],
     [10.9, 'Flip one flag: In water now allows Attack. Same input, same pawn, and the refusal is gone.'],
-    [13.3, 'Swap the input source to a gamepad. The controller and pawn never notice: A means Jump, just as J did.'],
-    [16.2, 'Swap the pawn: a TankController drives a tank. Same three boxes, different actions: Hop, Fire, Ford.'],
+    [13.3, 'Swap the device to a gamepad. The controller and pawn never notice: A means Jump, just as J did.'],
+    [16.2, 'Swap the pawn: a TankController drives a tank. Same chain, different actions: Hop, Fire, Ford.'],
     [20.9, 'Fording forbids firing, so the tank\'s controller refuses, just as the hero\'s did.'],
+    [22.1, 'Swap the player for an AI brain. It needs no device: it issues commands straight to the controller, which reads the pawn and runs Hop the same way.'],
   ];
   const BOT = [[.4, 'jump'], [1.25, 'jump'], [3.6, 'attack'], [4.4, 'swim'], [5.9, 'attack'], [7.1, 'jump'], [9.6, null]];
 
@@ -283,8 +318,9 @@
       T.use(g); g.clearRect(0, 0, W, H);
       const { val } = XR.replay(NODES, sim.flow, t);
       CUR = { src: c.src, key: val.key };
-      NODES[0].title = 'Input: ' + SRC[c.src].name; NODES[1].title = p.ctrl; NODES[2].title = 'Pawn: ' + p.name;
-      NODES[1].sub = c.pawn === 'tank' ? 'maps Jump to Hop, Attack to Fire' : 'reads the mode, checks its flags';
+      NODES[0].title = c.src === 'bot' ? 'AI brain' : c.src === 'replay' ? 'Input: replay' : 'Input: button push';
+      NODES[1].title = DIRECT[c.src] ? 'Device: skipped' : 'Device: ' + SRC[c.src].name; NODES[2].title = p.ctrl; NODES[3].title = 'Pawn: ' + p.name;
+      NODES[2].sub = c.pawn === 'tank' ? 'maps Jump to Hop, Attack to Fire' : 'reads the pawn, issues a command';
       scene(g, sim, t, c, p);
       flagTable(g, sim, t, c, p);
       XR.frame(g, 396, 0, W - 396, H);
@@ -296,7 +332,7 @@
       const k = [c.src, c.pawn].join();
       if (k !== st.key) { st.key = k; $$(s, '.pt-src .btn').forEach(b => b.classList.toggle('on', b.dataset.v === c.src)); $$(s, '.pt-pawn .btn').forEach(b => b.classList.toggle('on', b.dataset.v === c.pawn)); $$(s, '.pt-act').forEach(b => b.textContent = `${p.act[b.dataset.a]} (${SRC[c.src === 'pad' ? 'pad' : 'kb'].key[b.dataset.a]})`); }
       const ph = st.tour ? PHASES.filter(q => t >= q[0]).at(-1) : null, last = sim.log.filter(e => e.t <= t).at(-1);
-      const txt = ph ? ph[1] : st.msg || (last ? last.text + (c.src === 'bot' ? ' The bot presses on its own; the controller treats it like any other input.' : c.src === 'replay' ? ' The replay plays back your last presses through the same controller.' : '') : 'Press J, K or S (or the buttons). Watch the signal hop from Input to Controller to Pawn, and try Jump while falling.');
+      const txt = ph ? ph[1] : st.msg || (last ? last.text + (c.src === 'bot' ? ' The AI brain issues commands straight to the controller, with no device; the controller treats them like any other.' : c.src === 'replay' ? ' The replay feeds your recorded input signals straight into the same controller.' : '') : 'Press J, K or S (or the buttons). Watch the push travel Input → Device → Controller → Pawn → Actions, and try Jump while falling.');
       if (out.textContent !== txt) say(out, txt);
     }
     tracerApi = {
@@ -384,9 +420,9 @@
     g.fillText('Refuse bounces the signal back.', TX + 14, H - 13);
   }
   function roles(g) {
-    const rows = [['Input', 'says what was pressed.'], ['Controller', 'decides if the pawn may do it now.'], ['Pawn', 'does it, and reports its mode.']];
+    const rows = [['Input', 'a button push, or an AI command.'], ['Device', 'sends the input signal.'], ['Controller', 'reads the pawn, issues a command.'], ['Pawn', 'the entity in the world.'], ['Actions', 'side effects: the mechanics.']];
     rows.forEach(([a, b], i) => {
-      const y = 62 + i * 30;
+      const y = 40 + i * 26;
       g.font = '800 14px Montserrat, sans-serif'; g.fillStyle = '#a64d79'; g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillText(a, 712, y);
       const w = g.measureText(a).width; g.font = '500 14px Jost, sans-serif'; g.fillStyle = '#20124d'; g.fillText(b, 712 + w + 8, y);
     });
