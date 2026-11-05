@@ -101,14 +101,14 @@ From [game-icons.net](https://game-icons.net), licensed [CC BY 3.0](https://crea
 | `dgms--m1-pillars--pillar-or-value.svg` | [brain](https://game-icons.net/1x1/lorc/brain.html) | Lorc |
 | `dgms--m2-audience--quantic-radar.svg` | [radar-sweep](https://game-icons.net/1x1/lorc/radar-sweep.html) | Lorc |
 | `dgms--m2-audience--skill-curves.svg` | [progression](https://game-icons.net/1x1/delapouite/progression.html) | Delapouite |
-| `dgms--m2-audience--shift-the-power.svg` | [scales](https://game-icons.net/1x1/lorc/scales.html) | Lorc |
+| `dgms--m2-audience--shift-the-power.svg` | [power-lightning](https://game-icons.net/1x1/lorc/power-lightning.html) | Lorc |
 | `dgms--m2-audience--affordance-grid.svg` | [warp-pipe](https://game-icons.net/1x1/delapouite/warp-pipe.html) | Delapouite |
-| `dgms--m2-audience--hard-check.svg` | [checked-shield](https://game-icons.net/1x1/lorc/checked-shield.html) | Lorc |
+| `dgms--m2-audience--hard-check.svg` | [padlock](https://game-icons.net/1x1/lorc/padlock.html) | Lorc |
 | `dgms--m2-audience--thirteen-percent.svg` | [armor-upgrade](https://game-icons.net/1x1/delapouite/armor-upgrade.html) | Delapouite |
 | `dgms--m2-audience--gold-items.svg` | [two-coins](https://game-icons.net/1x1/delapouite/two-coins.html) | Delapouite |
 | `dgms--m2-audience--time-pressure.svg` | [sands-of-time](https://game-icons.net/1x1/lorc/sands-of-time.html) | Lorc |
 | `dgms--m3-skills--flea-juggle.svg` | [juggler](https://game-icons.net/1x1/lorc/juggler.html) | Lorc |
-| `dgms--m3-skills--skill-fingerprints.svg` | [radar-sweep](https://game-icons.net/1x1/lorc/radar-sweep.html) | Lorc |
+| `dgms--m3-skills--skill-fingerprints.svg` | [cobweb](https://game-icons.net/1x1/lorc/cobweb.html) | Lorc |
 | `dgms--m3-skills--three-dials.svg` | [speedometer](https://game-icons.net/1x1/delapouite/speedometer.html) | Delapouite |
 | `dgms--m3-skills--and-or.svg` | [logic-gate-and](https://game-icons.net/1x1/delapouite/logic-gate-and.html) | Delapouite |
 | `dgms--m3-skills--best-answer.svg` | [basketball-basket](https://game-icons.net/1x1/delapouite/basketball-basket.html) | Delapouite |
@@ -120,21 +120,39 @@ From [game-icons.net](https://game-icons.net), licensed [CC BY 3.0](https://crea
 | `dgms--interview--rubric.svg` | [notebook](https://game-icons.net/1x1/lorc/notebook.html) | Lorc |
 | `dgms--interview--five-levels.svg` | [mountain-climbing](https://game-icons.net/1x1/delapouite/mountain-climbing.html) | Delapouite |
 | `dgms--interview--practice.svg` | [archery-target](https://game-icons.net/1x1/lorc/archery-target.html) | Lorc |
-| `dgms--m8-balance--patch-philosophies.svg` | [progression](https://game-icons.net/1x1/delapouite/progression.html) | Delapouite |
-| `dgms--m8-balance--unfair-fairness.svg` | [scales](https://game-icons.net/1x1/lorc/scales.html) | Lorc |
+| `dgms--m8-balance--patch-philosophies.svg` | [bandage-roll](https://game-icons.net/1x1/lorc/bandage-roll.html) | Lorc |
+| `dgms--m8-balance--unfair-fairness.svg` | [crossed-swords](https://game-icons.net/1x1/lorc/crossed-swords.html) | Lorc |
 | `dgms--m8-balance--hits-to-kill.svg` | [broken-heart](https://game-icons.net/1x1/lorc/broken-heart.html) | Lorc |
-| `dgms--m8-balance--toughness.svg` | [checked-shield](https://game-icons.net/1x1/lorc/checked-shield.html) | Lorc |
+| `dgms--m8-balance--toughness.svg` | [shield-reflect](https://game-icons.net/1x1/lorc/shield-reflect.html) | Lorc |
 | `dgms--m8-balance--dice-variance.svg` | [rolling-dices](https://game-icons.net/1x1/delapouite/rolling-dices.html) | Delapouite |
 | `dgms--m8-balance--murder-bears.svg` | [bear-head](https://game-icons.net/1x1/delapouite/bear-head.html) | Delapouite |
 | `dgms--m8-balance--hammer-time.svg` | [hammer-break](https://game-icons.net/1x1/delapouite/hammer-break.html) | Delapouite |
 | `dgms--m8-balance--comebacks.svg` | [back-forth](https://game-icons.net/1x1/lorc/back-forth.html) | Lorc |
 | `dgms--m9-game-feel--polish-ladder.svg` | [ladder](https://game-icons.net/1x1/delapouite/ladder.html) | Delapouite |
-| `dgms--m9-game-feel--seven-principles.svg` | [radar-sweep](https://game-icons.net/1x1/lorc/radar-sweep.html) | Lorc |
+| `dgms--m9-game-feel--seven-principles.svg` | [spider-web](https://game-icons.net/1x1/lorc/spider-web.html) | Lorc |
 | `dgms--m9-game-feel--which-attack.svg` | [perspective-dice-six-faces-random](https://game-icons.net/1x1/delapouite/perspective-dice-six-faces-random.html) | Delapouite |
-| `dgms--m9-game-feel--under-match-over.svg` | [scales](https://game-icons.net/1x1/lorc/scales.html) | Lorc |
-| `dgms--m9-game-feel--jump-lab.svg` | [jump-across](https://game-icons.net/1x1/delapouite/jump-across.html) | Delapouite |
+| `dgms--m9-game-feel--under-match-over.svg` | [histogram](https://game-icons.net/1x1/delapouite/histogram.html) | Delapouite |
+| `dgms--m9-game-feel--jump-lab.svg` | [high-kick](https://game-icons.net/1x1/delapouite/high-kick.html) | Delapouite |
 | `dgms--m9-game-feel--feedback-mixer.svg` | [settings-knobs](https://game-icons.net/1x1/delapouite/settings-knobs.html) | Delapouite |
 | `dgms--m9-game-feel--feel-shapes.svg` | [punch-blast](https://game-icons.net/1x1/lorc/punch-blast.html) | Lorc |
-| `dgms--m9-game-feel--pendulum.svg` | [pendulum-swing](https://game-icons.net/1x1/delapouite/pendulum-swing.html) | Delapouite |
+| `dgms--m9-game-feel--pendulum.svg` | [metronome](https://game-icons.net/1x1/delapouite/metronome.html) | Delapouite |
 
 Page images in `dgms/m8-balance/` and `dgms/m9-game-feel/`: World of Warcraft icons (Blizzard, via wow.zamimg.com), League of Legends portraits (Riot Data Dragon 14.1.1), Super Mario Bros. small Mario sprite (Nintendo).
+| `dgms--m4-character--champion-dossier.svg` | [egyptian-pyramids](https://game-icons.net/1x1/delapouite/egyptian-pyramids.html) | Delapouite |
+| `dgms--m4-character--same-kit-new-fantasy.svg` | [drama-masks](https://game-icons.net/1x1/lorc/drama-masks.html) | Lorc |
+| `dgms--m4-character--core-actions-by-genre.svg` | [run](https://game-icons.net/1x1/lorc/run.html) | Lorc |
+| `dgms--m4-character--silhouette-test.svg` | [two-shadows](https://game-icons.net/1x1/lorc/two-shadows.html) | Lorc |
+| `dgms--m4-character--jump-tuner.svg` | [boot-stomp](https://game-icons.net/1x1/lorc/boot-stomp.html) | Lorc |
+| `dgms--m4-character--world-speeds-up.svg` | [walk](https://game-icons.net/1x1/delapouite/walk.html) | Delapouite |
+| `dgms--m5-controller--puppet-tracer.svg` | [puppet](https://game-icons.net/1x1/lorc/puppet.html) | Lorc |
+| `dgms--m5-controller--two-jumps.svg` | [jump-across](https://game-icons.net/1x1/delapouite/jump-across.html) | Delapouite |
+| `dgms--m5-controller--attack-windows.svg` | [sword-slice](https://game-icons.net/1x1/lorc/sword-slice.html) | Lorc |
+| `dgms--m5-controller--cancel-playground.svg` | [split-arrows](https://game-icons.net/1x1/delapouite/split-arrows.html) | Delapouite |
+| `dgms--m5-controller--hitbox-lab.svg` | [sword-wound](https://game-icons.net/1x1/lorc/sword-wound.html) | Lorc |
+| `dgms--m5-controller--axe-context.svg` | [wood-axe](https://game-icons.net/1x1/lorc/wood-axe.html) | Lorc |
+| `dgms--m5-controller--one-thumb.svg` | [thumb-up](https://game-icons.net/1x1/delapouite/thumb-up.html) | Delapouite |
+| `dgms--m5-controller--control-metaphors.svg` | [joystick](https://game-icons.net/1x1/delapouite/joystick.html) | Delapouite |
+| `dgms--m4-character--same-button.svg` | [push](https://game-icons.net/1x1/delapouite/push.html) | Delapouite |
+| `dgms--m5-controller--adr-curves.svg` | [sprint](https://game-icons.net/1x1/lorc/sprint.html) | Lorc |
+
+Page images in `dgms/m4-character/` and `dgms/m5-controller/`: see each page's `img/SOURCES.txt` (Riot Data Dragon, League wiki renders, mariowiki sprites, WoW icons).
