@@ -281,16 +281,16 @@
   const thirdP = { ...VERBS.walk, ...PRESETS.third }, wideP = { ...thirdP, fov: 95 }, retuned = { ...wideP, off: thirdOffset(wideP) };
   const TOUR1 = [
     K(0, { ...VERBS.walk, ...PRESETS.centred }, 0, 'walk', 'Centred (Lies of P style): the hero sits on the sight line to the doorway (119-120)'),
-    K(4, thirdP, .8, 'walk', 'On a third (Gears style): offset the camera right and the doorway clears (121)'),
-    K(8, { ...VERBS.walk, ...PRESETS.far }, 1, 'walk', 'Too far: the hero shrinks, and you watch the hero instead of being the hero (232)'),
+    K(4, thirdP, .8, 'walk', 'On a third (Gears style): offset the camera right and the doorway clears'),
+    K(8, { ...VERBS.walk, ...PRESETS.far }, 1, 'walk', 'Too far: the hero shrinks, and you watch the hero instead of being the hero'),
     K(11.5, thirdP, .8, 'walk', 'Back on the third'),
-    K(13, wideP, 1.2, 'walk', 'Widen the FOV to 95°: the hero drifts off the third (209)', thirdP),
+    K(13, wideP, 1.2, 'walk', 'Widen the FOV to 95°: the hero drifts off the third', thirdP),
     K(16, retuned, 1, 'walk', `Re-tune the offset to ${retuned.off.toFixed(2)} m and the hero is back on the third`, thirdP),
     K(18.5, VERBS.walk, .45, 'walk', 'The Order’s drill as parameter sets, one per verb (229-230). Walk:'),
-    K(20, VERBS.sprint, VERBS.sprint.blend, 'sprint', 'Sprint: pull away and widen the FOV to sell speed (137)'),
+    K(20, VERBS.sprint, VERBS.sprint.blend, 'sprint', 'Sprint: pull away and widen the FOV to sell speed'),
     K(22.5, VERBS.cover, VERBS.cover.blend, 'cover', 'Cover: drop the anchor to the crouch, push the hero further left'),
     K(24.5, VERBS.blind, VERBS.blind.blend, 'blind', 'Blind fire: rise and swing wider to see over the cover'),
-    K(26.5, VERBS.aim, VERBS.aim.blend, 'aim', 'Aim: tighter FOV, close in, frame the weapon (137)'),
+    K(26.5, VERBS.aim, VERBS.aim.blend, 'aim', 'Aim: tighter FOV, close in, frame the weapon'),
   ];
   const DUR1 = 29.5;
 
@@ -310,7 +310,7 @@
     const hh = Math.round(clamp((res.bb.y1 - res.bb.y0) / H) * 100);
     T.label(`hero ${hh}% of frame height`, W - 16, 92, 'right', C.muted, 13);
     if (res.door && res.door[1] > 0) T.label('doorway', res.door[0], res.door[1] - 6, 'center', C.goldInk, 12);
-    if (F.p.dist > FAR_BADGE) { T.stamp('watching, not being', W / 2, 150, C.red, clamp((F.p.dist - FAR_BADGE) / 1), 28); T.label('sympathizing with the hero, not empathizing (232)', W / 2, 192, 'center', C.red, 13); }
+    if (F.p.dist > FAR_BADGE) { T.stamp('watching, not being', W / 2, 150, C.red, clamp((F.p.dist - FAR_BADGE) / 1), 28); T.label('sympathizing with the hero, not empathizing', W / 2, 192, 'center', C.red, 13); }
     const capY = F.cap ? wrapLabel(g, F.cap, 572, 30, 560, C.ink, 15) : 30;
     if (F.retune) T.label(`offset that restores the third: ${F.retune.toFixed(2)} m`, 572, capY + (F.cap ? 4 : 0), 'center', C.red, 14);
     verbStrip(g, 14, H - 64, F.verb, F.e, F.blend);
@@ -494,8 +494,8 @@
     card(g, 16, by, 1008, 177, .6);
     text(g, 'Sight line to the doorway', 32, by + 26, { w: 800, size: 14, disp: 1 });
     bar(g, 32, by + 52, 280, vis, 100, vis > 85 ? GRN : vis > 40 ? C.gold : C.red, 'doorway visible past the hero', `${vis}%`);
-    text(g, vis < 40 ? 'The hero blocks the destination (119).' : vis > 85 ? 'Clear: the destination reads past the hero.' : 'Partly covered.', 32, by + 100, { size: 13, col: C.ink });
-    text(g, '“Melee centric games tend to desire', 32, by + 128, { size: 12, col: C.muted }); text(g, 'a more of a centered view” (120)', 32, by + 146, { size: 12, col: C.muted });
+    text(g, vis < 40 ? 'The hero blocks the destination.' : vis > 85 ? 'Clear: the destination reads past the hero.' : 'Partly covered.', 32, by + 100, { size: 13, col: C.ink });
+    text(g, '“Melee centric games tend to desire', 32, by + 128, { size: 12, col: C.muted }); text(g, 'a more of a centered view”', 32, by + 146, { size: 12, col: C.muted });
     text(g, 'Arena you can see (8 m around the hero)', 350, by + 26, { w: 800, size: 14, disp: 1 });
     const mx = Math.max(S.L, S.R, 1);
     bar(g, 350, by + 52, 300, S.L, mx, C.blue, 'left of the hero', `${Math.round(S.L)} m²`);

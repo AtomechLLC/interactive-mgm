@@ -153,14 +153,13 @@
     if (!on.engine) speaker(g, p.x, p.y - 34, 1, false);
     // title over the infield
     txt(g, 'Need for Spirit: Drink & Drive Simulator', 34, 46, '800 17px Montserrat, Jost, sans-serif', C.ink);
-    T.stamp(all ? 'RE-SOUNDED (63)' : any ? `${LAY.filter(k => on[k]).length} OF 4 LAYERS` : 'AS SHIPPED: NO AUDIO (62)', 34 + 150, 92, all ? C.good : any ? C.goldInk : C.red, 1, 20);
+    T.stamp(all ? 'RE-SOUNDED' : any ? `${LAY.filter(k => on[k]).length} OF 4 LAYERS` : 'AS SHIPPED: NO AUDIO', 34 + 150, 92, all ? C.good : any ? C.goldInk : C.red, 1, 20);
     speaker(g, TR.cx, TR.cy - 8, 2.4, any, all ? C.good : C.goldInk);
     txt(g, `lap ${Math.floor((t + CAR.u0 * CAR.lap) / CAR.lap) + 1}`, TR.cx, TR.cy + 36, '600 13px Jost, sans-serif', C.muted, 'center');
     // quote
     g.fillStyle = 'rgba(255,252,244,.92)'; g.beginPath(); g.roundRect(30, 470, 580, 88, 10); g.fill();
     g.font = 'italic 500 14px Jost, sans-serif'; g.fillStyle = C.ink; g.textAlign = 'left';
     wrap(g, '“There’s no audio to indicate the friction of the various terrains, no stingers… there’s not even a sound effect to indicate whether the car itself is even turned on!”', 46, 496, 548, 19);
-    txt(g, 'slide 62', 594, 550, '600 11px Jost, sans-serif', C.muted, 'right');
 
     // right: what you hear, the last four seconds per layer
     txt(g, 'What you hear', 650, 40, '800 17px Montserrat, Jost, sans-serif', C.ink);
@@ -181,9 +180,9 @@
     });
   }
 
-  const CSTEPS = [[0, [], 'As shipped: no engine, no tyres, no impact, no stingers (62)'], [8, ['engine'], '+ engine: now you can tell the car is on'],
+  const CSTEPS = [[0, [], 'As shipped: no engine, no tyres, no impact, no stingers'], [8, ['engine'], '+ engine: now you can tell the car is on'],
     [8.6, ['engine', 'terrain'], '+ terrain friction: gravel and grass each sound different'], [12.5, ['engine', 'terrain', 'hit'], '+ collision: the hit lands'],
-    [14.5, LAY, '+ lap stinger: the lap gets a reward'], [16, LAY, 'Re-sounded, as Noah did for the deck (63): every action has a sound']];
+    [14.5, LAY, '+ lap stinger: the lap gets a reward'], [16, LAY, 'Re-sounded, as Noah did for the deck: every action has a sound']];
   const CDUR = 24;
   const carTour = t => { const s = CSTEPS.filter(x => t >= x[0]).at(-1), on = {}; LAY.forEach(k => on[k] = s[1].includes(k)); return { on, cap: s[2] }; };
 
@@ -222,7 +221,7 @@
       const n = LAY.filter(k => on[k]).length, key = LAY.map(k => +on[k]).join();
       if (key === st.key) return; st.key = key; boxes.forEach(b => { b.checked = !!on[b.dataset.l]; });
       say($(s, '.ab-stats'), `<div class="${n === 4 ? 'g' : n ? 'y' : 'r'}"><b>${n}/4</b><span>layers the game plays</span></div>`);
-      say($(s, '.ab-out'), n === 0 ? 'This is the game as shipped. You can see the car drive, hit gravel and clip the cones, but nothing tells your ears any of it. The indie team probably lacked the funds (65), but the cost is the whole feel.'
+      say($(s, '.ab-out'), n === 0 ? 'This is the game as shipped. You can see the car drive, hit gravel and clip the cones, but nothing tells your ears any of it. The indie team probably lacked the funds, but the cost is the whole feel.'
         : n === 4 ? 'Every action now has a sound: the engine says the car is on and how hard it works, the tyres say what you drive on, the crash lands, and the lap rewards you.'
           : `Playing: ${LAY.filter(k => on[k]).map(k => LNM[k].toLowerCase()).join(', ')}. Missing: ${LAY.filter(k => !on[k]).map(k => LNM[k].toLowerCase()).join(', ')}.`);
     }
@@ -266,7 +265,7 @@
     const k = ((t % DASH.period) + DASH.period) % DASH.period, nowLv = sumAt(k, lim), peak = peakOf(lim), clip = peak > 1, clipNow = nowLv > 1;
     // scene: a grey-box laser dash through a line of crystals
     g.fillStyle = '#e8e4f2'; g.beginPath(); g.roundRect(12, 12, W - 24, 222, 12); g.fill();
-    txt(g, 'Sonic Colors: Ultimate · the laser dash (68)', 28, 40, '800 16px Montserrat, Jost, sans-serif', C.ink);
+    txt(g, 'Sonic Colors: Ultimate · the laser dash', 28, 40, '800 16px Montserrat, Jost, sans-serif', C.ink);
     txt(g, '“becomes far too loud and way too crunchy”', 28, 60, 'italic 500 13px Jost, sans-serif', C.muted);
     T.label(`voice limit: ${fmtLim(lim)}`, 1012, 36, 'right', lim >= UNL ? C.red : C.ink, 15);
     if (cap) T.label(cap, 1012, 66, 'right', C.ink, 13);

@@ -188,8 +188,8 @@
     rows.forEach(([n, v], i) => { text(g, n, 28, 60 + i * 21, { size: 13, col: C.muted }); text(g, v, 270, 60 + i * 21, { size: 13, w: 700, align: 'right' }); });
     const vc = { imposing: C.red, level: C.muted, diminished: C.blue }[M.verdict];
     T.stamp(M.verdict === 'level' ? 'eye level: neutral' : M.verdict, 150, 206, vc, 1, 26);
-    if (M.verdict === 'imposing') { T.label('“big and scary / imposing…', 22, 252, 'left', C.red, 13); T.label('think boss fights” (129)', 22, 280, 'left', C.red, 13); }
-    if (M.verdict === 'diminished') T.label('“up high looking down on someone…” (125)', 22, 252, 'left', C.blue, 13);
+    if (M.verdict === 'imposing') { T.label('“big and scary / imposing…', 22, 252, 'left', C.red, 13); T.label('think boss fights”', 22, 280, 'left', C.red, 13); }
+    if (M.verdict === 'diminished') T.label('“up high looking down on someone…”', 22, 252, 'left', C.blue, 13);
     if (F.cap) T.label(F.cap, W / 2, H - 26, 'center', C.ink, 15);
     sideInset(g, W - 14 - 250, 14, 250, 210, p);
   }

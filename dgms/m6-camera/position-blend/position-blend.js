@@ -74,7 +74,7 @@
     { t0: 0, rig: 'multi', fall: 'smooth', R: 6, boss: .6, cap: ['Walk the path: PB1 → PB2 → PB3.', 'Each authored camera fades in as the hero nears its point. The player never touches the camera.'] },
     { t0: tB, rig: 'multi', fall: 'cut', R: 6, boss: .6, cap: ['Nearest point only: no blend at all.', 'Halfway between two points the shot jumps: a cut, not a move.'] },
     { t0: tC, rig: 'multi', fall: 'smooth', R: 16, Rfrom: 6, boss: .6, cap: ['Blend radius far too wide.', 'Every camera averages into one muddy shot; the authored framing is lost.'] },
-    { t0: tD, rig: 'two', fall: 'linear', R: 10, boss: .6, cap: ['Two points (slides 49-52).', 'Camera 1 blends into camera 2 as the hero walks from point 1 to point 2. Same rule, fewer cameras to author.'] },
+    { t0: tD, rig: 'two', fall: 'linear', R: 10, boss: .6, cap: ['Two points.', 'Camera 1 blends into camera 2 as the hero walks from point 1 to point 2. Same rule, fewer cameras to author.'] },
   ];
   const DUR = Math.ceil(tourPath.t * 10) / 10;
   function tourAt(st, t) {

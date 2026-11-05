@@ -187,7 +187,6 @@
     text(g, game.name, 678, 376, { size: 15, w: 800 });
     wrap(g, game.note, 678, 398, 336, 18, { size: 13, w: 500 });
     wrap(g, '"Familiarity usually wins… but an understandable metaphor is essential."', 670, 516, 350, 20, { size: 15, w: 700, col: C.goldInk });
-    text(g, 'Slide 152', 670, 562, { size: 12, w: 600, col: C.muted });
   }
 
   // walk-through: each metaphor in turn, pressing its buttons one after another

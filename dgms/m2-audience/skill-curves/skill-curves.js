@@ -272,7 +272,7 @@
       txt(g, gap < 3 ? 'neck and neck' : `${lead.name} +${Math.round(gap)}`, 778, 414, '800 26px Montserrat, Jost, sans-serif', lead.col);
       txt(g, 'skill gap between the two', 778, 438, '500 13px Jost, sans-serif', C.muted);
       g.fillStyle = '#fffaf0'; g.strokeStyle = C.gold; g.lineWidth = 2.5; g.beginPath(); g.roundRect(20, 512, 1000, 58, 10); g.fill(); g.stroke();
-      txt(g, 'Slide 84: skill curves are diverse', 40, 528, '800 16px Montserrat, Jost, sans-serif', C.ink);
+      txt(g, 'Skill curves are diverse', 40, 528, '800 16px Montserrat, Jost, sans-serif', C.ink);
       txt(g, `One game can hold several curves: ${D.a.name} and ${D.b.name} serve players who want different amounts of learning and mastery.`, 40, 552, '500 16px Jost, sans-serif', C.ink);
       const key = [k, Math.round(hv)].join(); if (key === st.key) return; st.key = key;
       say($(s, '.dv-stats'), `<div class="g"><b>${Math.round(sa)}</b><span>${D.a.name}: skill at ${fmtH(h)}</span></div>`

@@ -140,7 +140,7 @@
         const a = x0 + gw * 1 + 10, b = x0 + gw * 3 - 10, y = 470;
         g.strokeStyle = C.navy; g.lineWidth = 2.5; g.beginPath(); g.moveTo(a, y); g.lineTo(a, y + 10); g.lineTo(b, y + 10); g.lineTo(b, y); g.stroke();
         g.fillStyle = C.navy; g.beginPath(); g.roundRect(a - 30, y + 20, 600, 70, 8); g.fill();
-        txt(g, 'Slide 149: from 50% reduction, survive 400 instead of 200', a - 16, y + 38, '700 15px Jost', C.gold);
+        txt(g, 'From 50% reduction, survive 400 instead of 200', a - 16, y + 38, '700 15px Jost', C.gold);
         txt(g, mode === 'add' ? 'Additive: +16.7 then +8.3 = +25 points, 75% total (25 taken)' : 'Multiplicative: another 50% on top. 0.5 × 0.5 = 0.25 taken',
           a - 16, y + 66, '600 15px Jost', '#fff');
       }

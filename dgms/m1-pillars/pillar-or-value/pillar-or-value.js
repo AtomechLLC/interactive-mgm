@@ -13,16 +13,16 @@
 
   /* ---------- slide 1: pillar or value? ---------- */
   const CARDS = [
-    ['Thrill of the Unknown', 'P', 'slide 22'],
-    ['Never tell the player what to do. If there’s something we want them to do, breadcrumb it.', 'V', 'Subnautica, slide 46'],
-    ['Dark Modern Fairytale', 'P', 'slide 24'],
-    ['Meals should be visually appealing.', 'V', 'Master Chef, slide 50'],
-    ['Controlled Power', 'P', 'slide 37'],
-    ['The world doesn’t care about the player. The player is a foreigner in an unknowable, majestic alien world.', 'V', 'Subnautica, slide 46'],
-    ['Players leave their mark everywhere they go', 'P', 'slide 18'],
-    ['We give more recipes than the players need to finish the game so they can choose how they win.', 'V', 'Master Chef, slide 51'],
-    ['Father and Son', 'P', 'God of War, slide 32'],
-    ['Respect the player and their time. Don’t manipulate them through achievements, dopamine and extrinsic rewards.', 'V', 'Subnautica, slide 46'],
+    ['Thrill of the Unknown', 'P', 'deck example'],
+    ['Never tell the player what to do. If there’s something we want them to do, breadcrumb it.', 'V', 'Subnautica'],
+    ['Dark Modern Fairytale', 'P', 'deck example'],
+    ['Meals should be visually appealing.', 'V', 'Master Chef'],
+    ['Controlled Power', 'P', 'deck example'],
+    ['The world doesn’t care about the player. The player is a foreigner in an unknowable, majestic alien world.', 'V', 'Subnautica'],
+    ['Players leave their mark everywhere they go', 'P', 'deck example'],
+    ['We give more recipes than the players need to finish the game so they can choose how they win.', 'V', 'Master Chef'],
+    ['Father and Son', 'P', 'God of War'],
+    ['Respect the player and their time. Don’t manipulate them through achievements, dopamine and extrinsic rewards.', 'V', 'Subnautica'],
     ['All textures are hand-painted.', 'R', 'round 2', 'Only the art team can act on it: values should be team independent.'],
     ['Players should feel the thrill of the unknown.', 'R', 'round 2', 'It sounds like a pillar, so it is a pillar: don’t overlap values with pillars.'],
     ['Make it fun.', 'R', 'round 2', 'Too abstract to act on: nobody can apply it to a decision.'],
@@ -77,7 +77,7 @@
       $(st.s, '.pv-r2').style.display = ans.length >= 10 ? '' : 'none';
       const ok = ans.filter(a => CARDS[a.i][1] === a.c).length;
       say($(st.s, '.pv-stats'), `<div class="g"><b>${ok}/${ans.length}</b><span>in the right place</span></div>`);
-      say($(st.s, '.pv-out'), ans.length < 10 ? 'Round 1: is it a pillar or a value?' : 'Round 2: these sound like values but break one of slide 58’s rules: 2-4 values, no overlap with pillars, team independent.');
+      say($(st.s, '.pv-out'), ans.length < 10 ? 'Round 1: is it a pillar or a value?' : 'Round 2: these sound like values but break one of the deck’s rules: 2-4 values, no overlap with pillars, team independent.');
     },
     draw: drawSort,
   });

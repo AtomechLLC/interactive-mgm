@@ -123,7 +123,7 @@
       const f = st.tour ? tourState(t) : { mode: st.mode, sel: st.sel };
       if (st.tour) $$(st.s, '.cm-mode .btn').forEach(b => b.classList.toggle('on', b.dataset.m === f.mode));
       const k = f.mode + f.sel; if (k === st.key) return; st.key = k;
-      say($(st.s, '.cm-out'), f.mode === 'phases' ? 'The same seven blocks, grouped into the three phases of slide 56. Slide 56 splits the ring into nine labels (skill progression and skill tests come apart; sound gets its own). The phase notes are the deck’s; which phase each label sits in is read as three per phase and still to be checked against the slide image.'
+      say($(st.s, '.cm-out'), f.mode === 'phases' ? 'The same seven blocks, grouped into the deck’s three phases. The phase slide splits the ring into nine labels (skill progression and skill tests come apart; sound gets its own). The phase notes are the deck’s; which phase each label sits in is read as three per phase and still to be checked against the slide image.'
         : f.mode === 'order' ? 'The notes’ roadmap: audience first, game feel last. Each step leans on the one before it.'
         : f.sel >= 0 ? `<b>${SEG[f.sel][0]}</b>: ${SEG[f.sel][1]}.` : 'Seven building blocks around one centre: everything in this course serves the mechanics and the experience they create.');
     },

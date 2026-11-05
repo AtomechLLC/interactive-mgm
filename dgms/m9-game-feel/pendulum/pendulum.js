@@ -190,7 +190,7 @@
     { sq: .15, h: 70, ss: .5, tail: true, say: 'Small hop: a shallow squat and a short jump. The deck: "Small motions should have minimal anticipation."' },
     { sq: .9, h: 320, ss: .7, tail: true, say: 'Super jump: a deep squat before a big jump. "The bigger the difference between the anticipation and the impact poses, the more impactful the motion will appear."' },
     { sq: 1, h: 60, ss: .6, tail: true, say: 'A deep squat into a tiny hop: the anticipation promises more than the jump delivers.' },
-    { sq: .6, h: 220, ss: 1, tail: true, say: 'Full squash and stretch, and watch the tail: it keeps moving after the ball lands, then settles. That is follow-through (306).' },
+    { sq: .6, h: 220, ss: 1, tail: true, say: 'Full squash and stretch, and watch the tail: it keeps moving after the ball lands, then settles. That is follow-through.' },
   ];
   const BSTEP = 6, BDUR = BSTEPS.length * BSTEP;
   canvasDemo('ball', (s, cv, g) => {

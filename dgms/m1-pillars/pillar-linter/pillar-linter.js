@@ -11,17 +11,17 @@
   const FEATURES = ['system', 'systems', 'mode', 'modes', 'crafting', 'inventory', 'multiplayer', 'skill tree', 'leaderboard', 'combat', 'exploration', 'quests', 'quest', 'loot', 'pvp', 'co-op', 'coop', 'menu', 'hud', 'level editor', 'oxygen', 'feature', 'mechanic', 'mechanics'];
   const GENERIC = ['deep', 'exciting', 'replayable', 'retention', 'engaging', 'innovative', 'easy to learn', 'hard to master', 'fun', 'pick up and play', 'awesome', 'polished', 'immersive'];
   const PRESETS = [
-    ['Thrill of the Unknown', 'slide 22', 'yes'],
-    ['Oxygen system', 'slide 22', 'no'],
-    ['Dark Modern Fairytale', 'slides 24-25', 'yes'],
-    ['Avoid Lockout - Players should never be shut out of playing the game', 'slide 21', 'yes'],
-    ['Kids should be able to play the game because kids are the future and they will form our future audience for generations to come and this will mean the game is implicitly simple to learn hard to master if kids are dedicating all their time to it and and and and and', 'slides 18, 21', ''],
-    ['Fun!', 'slide 23', 'no'],
-    ['Easy to Learn, Hard to Master', 'slide 23', 'no'],
-    ['Players leave their mark everywhere they go', 'slide 18', 'yes'],
-    ['Combat', 'God of War (2018), slide 32', 'yes'],
-    ['Father and Son', 'God of War (2018), slide 32', 'yes'],
-    ['Exploration', 'God of War (2018), slide 32', 'yes'],
+    ['Thrill of the Unknown', 'deck example', 'yes'],
+    ['Oxygen system', 'deck example', 'no'],
+    ['Dark Modern Fairytale', 'deck example', 'yes'],
+    ['Avoid Lockout - Players should never be shut out of playing the game', 'deck example', 'yes'],
+    ['Kids should be able to play the game because kids are the future and they will form our future audience for generations to come and this will mean the game is implicitly simple to learn hard to master if kids are dedicating all their time to it and and and and and', 'deck example', ''],
+    ['Fun!', 'deck example', 'no'],
+    ['Easy to Learn, Hard to Master', 'deck example', 'no'],
+    ['Players leave their mark everywhere they go', 'deck example', 'yes'],
+    ['Combat', 'God of War (2018)', 'yes'],
+    ['Father and Son', 'God of War (2018)', 'yes'],
+    ['Exploration', 'God of War (2018)', 'yes'],
   ];
   const REWRITE = { 'combat': 'Every fight is a desperate struggle', 'exploration': 'A world that rewards curiosity', 'oxygen system': 'Thrill of the Unknown' };
   function lint(text, lb) {

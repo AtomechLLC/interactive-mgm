@@ -414,7 +414,7 @@
     ev: [{ k: 'start', t: .8 }, { k: 'fill', t: 3.6 }, { k: 'broken', t: 8.6, v: true }, { k: 'broken', t: 12.8, v: false }, { k: 'stop', t: 14.6 }, { k: 'start', t: 16.4 }, { k: 'stop', t: 19.6 }],
     listener: [[0, [215, 200]]],
     cap: [[0, 3.6, 'Turn the handle: a static start, then the loop takes over'], [3.6, 6.8, 'Fill the cup: a static event, its pitch rises for a set 3 s'], [6.8, 8.6, 'The loop plays, resets, plays: it has no set duration'],
-      [8.6, 12.8, 'Broken loop: a click at every reset (Sonic Colors, slide 70)'], [12.8, 14.6, 'Seamless again: you cannot hear the reset'], [14.6, 16.4, 'Second click: a static stop, when the player decided'], [16.4, 21, '"The player decides this!" (slide 185)']],
+      [8.6, 12.8, 'Broken loop: a click at every reset (Sonic Colors)'], [12.8, 14.6, 'Seamless again: you cannot hear the reset'], [14.6, 16.4, 'Second click: a static stop, when the player decided'], [16.4, 21, '"The player decides this!"']],
   };
   const FO_TOUR = {
     dur: 25,
@@ -538,7 +538,7 @@
     say($(s, '.fc-stats'), `<div class="${m.running ? '' : 'y'}"><b>${m.running ? 'on' : 'off'}</b><span>${m.running ? `loop, play ${n + 1}: no set duration` : 'water off'}</span></div>`
       + `<div class="${m.brokenAt(t) ? 'r' : 'g'}"><b>${m.brokenAt(t) ? 'click' : 'clean'}</b><span>at each reset of the loop</span></div>`);
     say($(s, '.fc-out'), m.filling(t) != null ? 'The cup fill is static: it has a set duration (3 s), so its rising pitch can be synced to the cup filling.'
-      : m.brokenAt(t) ? 'Every reset now clicks. Sonic Colors Ultimate’s level-clear music loops early in the same way (slide 70): a seam the ear catches every time.'
+      : m.brokenAt(t) ? 'Every reset now clicks. Sonic Colors Ultimate’s level-clear music loops early in the same way: a seam the ear catches every time.'
       : m.running ? 'The water is continuous: it loops seamlessly until the player turns it off. "Game designers can’t predict when players will turn off the faucet, or even if they ever will."'
       : 'Static sounds have a set duration and sync to an event: the handle turning, the cup filling. Turn the handle to start the loop.');
   });
@@ -652,7 +652,7 @@
       // your list
       const lx = CX, ly = 16, lw = CW * 2 + 12;
       panel(g, lx, ly, lw, 194, 'Your list');
-      text(g, '"Pause and write down what you would need" (slide 95)', lx + lw - 14, ly + 24, C.muted, font(600, 12), 'right');
+      text(g, '"Pause and write down what you would need"', lx + lw - 14, ly + 24, C.muted, font(600, 12), 'right');
       const covered = new Set();
       v.lines.slice(0, 5).forEach((ln, k) => {
         const y = ly + 54 + k * 28, hits = PARTS.map((p, i) => p.re.test(ln) ? i : -1).filter(i => i >= 0);
@@ -704,7 +704,7 @@
 
   /* ---------------- slide 4: start at -20 dB ---------------- */
   const LV_TOUR = { dur: 21, fader: [[0, -20], [3.5, -20], [6, 3], [8.5, 3], [11.5, -48], [14, -48], [16, -20], [17.5, -20], [19, -15], [21, -15]],
-    cap: [[0, 3.5, 'Start the faucet at -20 dB over the room bed'], [3.5, 8.5, 'Push it to the top: the peaks clip and distort'], [8.5, 14, 'Pull it down: the faucet is buried under the room bed'], [14, 17.5, 'Back to -20 dB: clear, with headroom'], [17.5, 21, '"…and then adjust it from there" (slide 233)']] };
+    cap: [[0, 3.5, 'Start the faucet at -20 dB over the room bed'], [3.5, 8.5, 'Push it to the top: the peaks clip and distort'], [8.5, 14, 'Pull it down: the faucet is buried under the room bed'], [14, 17.5, 'Back to -20 dB: clear, with headroom'], [17.5, 21, '"…and then adjust it from there"']] };
   const zone = db => db > -1 ? ['clipped: the peaks hit 0 dB and distort', CLICKC, 'r'] : db > -9 ? ['hot: little headroom left for louder sounds', '#c98a12', 'y']
     : db >= -26 ? ['balanced around -20 dB: room to adjust', C.good, 'g'] : db > R.BED_DB ? ['quiet: close to the room bed', '#1d6f96', ''] : ['buried under the room bed', C.muted, 'r'];
   canvasDemo('fc-level', (s, cv, g) => {
@@ -789,7 +789,7 @@
       if (st.tour) { fad.value = f; fv.textContent = `${f > 0 ? '+' : ''}${f} dB`; }
       const [zs, , cls] = zone(f);
       say($(s, '.fc-stats'), `<div class="${cls}"><b>${f > 0 ? '+' : ''}${f}</b><span>dB on the faucet fader</span></div><div><b>${R.BED_DB}</b><span>dB room bed</span></div>`);
-      say($(s, '.fc-out'), `${zs[0].toUpperCase() + zs.slice(1)}. "Balance your sound effect around -20 dB and then adjust it from there" (slide 233).`);
+      say($(s, '.fc-out'), `${zs[0].toUpperCase() + zs.slice(1)}. "Balance your sound effect around -20 dB and then adjust it from there".`);
     }
     return dt => {
       if (st.held) return;
