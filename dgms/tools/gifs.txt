@@ -60,7 +60,6 @@ m9-game-feel/jump-lab 1 jumps m9-game-feel--jump-lab
 m9-game-feel/jump-lab 2 easing m9-game-feel--jump-lab-easing
 m9-game-feel/seven-principles 1 radar m9-game-feel--seven-principles
 m9-game-feel/which-attack 1 attack m9-game-feel--which-attack
-m9-game-feel/under-match-over 1 umo m9-game-feel--under-match-over
 interview/role-map 1 rolemap interview--role-map
 interview/role-map 2 quadrant interview--role-map-quadrant
 interview/five-levels 1 levels interview--five-levels

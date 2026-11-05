@@ -267,7 +267,6 @@ Module 9, Game Feel (`m9-game-feel/`):
 - `polish-ladder/`: Polish Ladder. Andre's three before-and-after polish demos rebuilt in grey-box art; number keys add layers and show what each adds and costs. (slides 35-57).
 - `seven-principles/`: Seven Principles Score Sheet. Score any game 0 to 10 on the seven principles on a radar chart. (slides 65-84).
 - `which-attack/`: Which Attack Comes Out?. The stick picks the move vs a random picker. (slides 66-69).
-- `under-match-over/`: Under, Match, Over. Six elements of one action on under/match/over bars with a budget meter. (slides 107).
 - `jump-lab/`: Jump Curve Lab. One jump key, three jumpers that differ only in what happens on release. (slides 164-172).
 - `feedback-mixer/`: Feedback Mixer. One melee hit on a training dummy with eight feedback channels to mix, and a checklist that shows what is missing. (slides 179-208).
 - `feel-shapes/`: Feel Shapes. Rogers' 16 game feel types drawn as intensity-over-time curves you can compare, take apart and invent. (slides 211-271).

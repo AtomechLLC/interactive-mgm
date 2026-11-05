@@ -131,7 +131,6 @@ From [game-icons.net](https://game-icons.net), licensed [CC BY 3.0](https://crea
 | `dgms--m9-game-feel--polish-ladder.svg` | [ladder](https://game-icons.net/1x1/delapouite/ladder.html) | Delapouite |
 | `dgms--m9-game-feel--seven-principles.svg` | [spider-web](https://game-icons.net/1x1/lorc/spider-web.html) | Lorc |
 | `dgms--m9-game-feel--which-attack.svg` | [perspective-dice-six-faces-random](https://game-icons.net/1x1/delapouite/perspective-dice-six-faces-random.html) | Delapouite |
-| `dgms--m9-game-feel--under-match-over.svg` | [histogram](https://game-icons.net/1x1/delapouite/histogram.html) | Delapouite |
 | `dgms--m9-game-feel--jump-lab.svg` | [high-kick](https://game-icons.net/1x1/delapouite/high-kick.html) | Delapouite |
 | `dgms--m9-game-feel--feedback-mixer.svg` | [settings-knobs](https://game-icons.net/1x1/delapouite/settings-knobs.html) | Delapouite |
 | `dgms--m9-game-feel--feel-shapes.svg` | [punch-blast](https://game-icons.net/1x1/lorc/punch-blast.html) | Lorc |
