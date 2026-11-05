@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Faucet · Directing Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/deck.css">
+<link rel="stylesheet" href="../../../assets/kit.css">
+<link rel="stylesheet" href="../../shared/dgms.css">
+<link rel="stylesheet" href="faucet.css">
+<script>
+  window.DECK = { title: 'Directing Game Mechanics · Module 7 · The Faucet', home: '../../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<section class="slide" data-title="What does a faucet sound like?" data-demo="fc-list">
+  <div class="kicker">getting a sound library · slides 94-99</div>
+  <h2 class="sm">What does a faucet <span class="accent">sound like?</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <div class="row wrap"><button class="btn fc-tour on">▶ Walk-through</button><button class="btn fc-snd">♪ Sound: off</button></div>
+      <h4>Pause and write it down</h4>
+      <p class="tip">Every sound you would need for a faucet, one per line. Then reveal the deck's list.</p>
+      <textarea class="fc-text" rows="5" placeholder="one sound per line"></textarea>
+      <div class="row wrap"><button class="btn fc-reveal">Reveal the four</button><button class="btn fc-clear">Clear</button></div>
+      <div class="mt-stats fc-stats"></div>
+      <p class="mt-out fc-out"></p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Static vs continuous" data-demo="fc-timeline">
+  <div class="kicker">static vs continuous sounds · slides 177-185, 223-231</div>
+  <h2 class="sm">Static has a set duration; <span class="accent">continuous loops</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <div class="row wrap"><button class="btn fc-tour on">▶ Walk-through</button><button class="btn fc-snd">♪ Sound: off</button></div>
+      <h4>The faucet</h4>
+      <div class="row wrap"><button class="btn fc-handle">Turn the handle</button><button class="btn fc-fill">Fill the cup</button></div>
+      <label class="chk"><input type="checkbox" class="fc-broken"> Broken loop (click at the reset)</label>
+      <label class="rng">Fader <b class="fc-fv">-20 dB</b><input type="range" class="fc-fader" min="-60" max="6" step="1" value="-20"></label>
+      <div class="mt-stats fc-stats"></div>
+      <p class="mt-out fc-out"></p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Panning and attenuation" data-demo="fc-falloff">
+  <div class="kicker">panning and attenuation · slides 186-188, 234-236</div>
+  <h2 class="sm">Closer = louder, <span class="accent">farther = quieter</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <div class="row wrap"><button class="btn fc-tour on">▶ Walk-through</button><button class="btn fc-snd">♪ Sound: off</button></div>
+      <p class="tip">Drag the listener around the room. Click the handle to turn the water on or off.</p>
+      <div class="row wrap"><button class="btn fc-handle">Turn the handle</button></div>
+      <h4>Falloff curve</h4>
+      <div class="seg fc-curve"><button class="btn" data-c="lin">Linear</button><button class="btn on" data-c="log">Logarithmic</button></div>
+      <label class="rng">Min distance <b class="fc-minv">1.0 m</b><input type="range" class="fc-min" min="0.5" max="4" step="0.1" value="1"></label>
+      <label class="rng">Max distance <b class="fc-maxv">8.0 m</b><input type="range" class="fc-max" min="3" max="11" step="0.1" value="8"></label>
+      <label class="rng">Fader <b class="fc-fv">-20 dB</b><input type="range" class="fc-fader" min="-60" max="6" step="1" value="-20"></label>
+      <div class="mt-stats fc-stats"></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Start at -20 dB" data-demo="fc-level">
+  <div class="kicker">loudness · slides 189, 232-233</div>
+  <h2 class="sm">Balance it around <span class="accent">-20 dB</span>, then adjust</h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <div class="row wrap"><button class="btn fc-tour on">▶ Walk-through</button><button class="btn fc-snd">♪ Sound: off</button></div>
+      <p class="tip">The faucet loop plays over a quiet room bed. Move the fader (or drag its knob on the canvas).</p>
+      <label class="rng">Faucet fader <b class="fc-fv">-20 dB</b><input type="range" class="fc-fader" min="-60" max="6" step="1" value="-20"></label>
+      <button class="btn fc-reset">Back to -20 dB</button>
+      <div class="mt-stats fc-stats"></div>
+      <p class="mt-out fc-out"></p>
+      <p class="src">All sounds are synthesised live in your browser (Web Audio API); no recordings.</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../../assets/deck.js"></script>
+<script src="../../../assets/kit.js"></script>
+<script src="../../shared/topdown.js"></script>
+<script src="faucet.js"></script>
+</body>
+</html>

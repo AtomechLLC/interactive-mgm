@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Position Blend Arena · Directing Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/deck.css">
+<link rel="stylesheet" href="../../../assets/kit.css">
+<link rel="stylesheet" href="../../shared/dgms.css">
+<script>
+  window.DECK = { title: 'Directing Game Mechanics · Module 6 · Position Blend Arena', home: '../../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<section class="slide" data-title="Position blend arena" data-demo="blend">
+  <div class="kicker">camera type 3 · position blend · slides 48-58</div>
+  <h2 class="sm">The hero's position <span class="accent">picks the shot</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <div class="row wrap"><button class="btn pb-tour on">▶ Walk-through</button></div>
+      <h4>Rig</h4>
+      <div class="seg pb-rig"><button class="btn" data-r="two">Two points</button><button class="btn on" data-r="multi">Multi (God of War)</button></div>
+      <h4>Falloff</h4>
+      <div class="seg pb-fall"><button class="btn on" data-f="smooth">Smooth</button><button class="btn" data-f="linear">Linear</button><button class="btn" data-f="cut">Nearest (cut)</button></div>
+      <label class="rng">Blend radius <b class="pb-rv">6.0 m</b><input type="range" class="pb-r" min="1" max="16" step="0.5" value="6"></label>
+      <label class="rng">Boss framing pull <b class="pb-bv">60%</b><input type="range" class="pb-boss" min="0" max="100" step="5" value="60"></label>
+      <label class="chk"><input type="checkbox" class="pb-cams" checked> Authored cameras</label>
+      <label class="chk"><input type="checkbox" class="pb-path" checked> Camera path along the route</label>
+      <div class="mt-stats pb-stats"></div>
+      <p class="mt-out pb-out"></p>
+      <p class="src">Drag the hero on the map. Grey-box after the deck's God of War multi-point diagram (slides 53-56).</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../../assets/deck.js"></script>
+<script src="../../../assets/kit.js"></script>
+<script src="../../shared/topdown.js"></script>
+<script src="view3d.js"></script>
+<script src="position-blend.js"></script>
+</body>
+</html>

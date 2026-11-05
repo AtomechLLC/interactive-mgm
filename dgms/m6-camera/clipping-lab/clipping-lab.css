@@ -1,0 +1,18 @@
+/* Clipping lab: a denser side panel, there are seven solution toggles */
+.cl-side h4 { margin: 8px 0 4px; }
+.cl-side label.chk { font-size: 15px; margin: 3px 0; font-weight: 500; gap: 8px; }
+.cl-side label.chk input { width: 17px; height: 17px; }
+.cl-side label.chk.old { color: var(--muted); }
+.cl-side label.chk.cmb { margin-top: 7px; font-weight: 700; }
+.cl-side label.rng { font-size: 15px; margin: 6px 0; }
+.cl-side .seg { margin: 2px 0 4px; gap: 5px; }
+.cl-side .seg .btn { font-size: 13.5px; padding: 4px 8px; }
+.cl-side table.cls { font-size: 13.5px; }
+.cl-side table.cls td { padding: 1px 3px; }
+.cl-side table.cls tr.on td { background: #fde9b8; }
+.cl-side table.cls th { font-size: 12px; color: var(--muted); font-weight: 600; text-align: right; padding: 0 3px; }
+.cl-side table.cls th:first-child { text-align: left; }
+.cl-side table.cls td:nth-child(n+2) { text-align: right; font-weight: 700; width: 52px; }
+.cl-side .mt-stats b { font-size: 24px; min-width: 50px; }
+.cl-side .mt-stats span { font-size: 14px; }
+.cl-side .mt-out { font-size: 16px; }

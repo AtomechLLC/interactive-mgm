@@ -1,0 +1,5 @@
+/* Follow camera tuner: the tuner's side panel holds three presets, five verbs and six sliders, so it runs tighter. */
+.ft-side h4 { margin: 4px 0 2px; }
+.ft-side .seg { margin: 2px 0 6px; }
+.ft-side label.rng { margin: 3px 0; font-size: 15px; }
+.ft-side .row.wrap { margin-bottom: 2px; }
