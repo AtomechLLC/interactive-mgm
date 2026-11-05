@@ -10,12 +10,20 @@
 <link rel="stylesheet" href="../../../assets/kit.css">
 <link rel="stylesheet" href="../../shared/dgms.css">
 <style>
-  .jt-side label.rng { margin: 4px 0; font-size: 15px; }
-  .jt-side h4 { margin: 4px 0 4px; }
-  .jt-side .seg { margin: 2px 0 6px; }
-  .jt-side label.chk { margin: 4px 0; font-size: 16px; }
-  .jt-side .tip { font-size: 14px; margin: 4px 0; }
-  .jt-side .mt-out { font-size: 16px; margin-top: 6px; }
+  .jt-side h4 { margin: 0 0 4px; }
+  .jt-side .seg { margin: 2px 0 6px; gap: 5px; }
+  .jt-side .seg .btn { font-size: 14px; padding: 4px 9px; }
+  .jt-side .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+  .jt-side label.rng { margin: 2px 0; font-size: 14px; gap: 0 6px; }
+  .jt-side label.rng b { font-size: 14px; }
+  .jt-side label.sel { display: grid; grid-template-columns: auto 1fr; gap: 8px; align-items: center; font-size: 14px; margin: 4px 0 2px; color: var(--ink); }
+  .jt-side label.sel select { font: inherit; font-size: 14px; padding: 3px 6px; border-radius: 8px; border: 1px solid #c9d3ea; background: #fffdf7; color: var(--ink); min-width: 0; }
+  .jt-side .chks { display: flex; flex-wrap: wrap; gap: 0 16px; }
+  .jt-side label.chk { margin: 3px 0; font-size: 15px; }
+  .jt-side label.chk input { width: 17px; height: 17px; }
+  .jt-side .row { margin: 4px 0; }
+  .jt-side .tip { font-size: 13px; margin: 2px 0; }
+  .jt-side .mt-out { font-size: 15px; margin-top: 4px; }
   canvas.demo:focus { outline: none; }
 </style>
 <script>
@@ -32,17 +40,24 @@
   <div class="mt-wrap">
     <canvas class="demo" width="1040" height="585" tabindex="0"></canvas>
     <div class="mt-side jt-side">
-      <h4>Presets (illustrative approximations)</h4>
-      <div class="seg jt-presets"><button class="btn on" data-p="smb">Super Mario Bros.</button><button class="btn" data-p="sonic">Sonic</button><button class="btn" data-p="megaman">Mega Man</button><button class="btn" data-p="keen1">Keen 1</button><button class="btn" data-p="keen4">Keen 4</button></div>
-      <label class="rng">Run speed <b class="jt-v-run"></b><input type="range" class="jt-run" min="3" max="24" step="0.1"></label>
-      <label class="rng">Jump height <b class="jt-v-h"></b><input type="range" class="jt-h" min="1" max="8" step="0.1"></label>
-      <label class="rng">Time to apex <b class="jt-v-apex"></b><input type="range" class="jt-apex" min="0.2" max="1" step="0.01"></label>
-      <label class="rng">Fall gravity multiplier <b class="jt-v-fall"></b><input type="range" class="jt-fall" min="0.5" max="4" step="0.1"></label>
-      <label class="rng">Coyote time <b class="jt-v-coy"></b><input type="range" class="jt-coy" min="0" max="12" step="1"></label>
-      <label class="chk"><input type="checkbox" class="jt-fit" checked> Fit the level: fixed gaps and ledges</label>
-      <label class="chk"><input type="checkbox" class="jt-arcs" checked> Show the preset arcs</label>
+      <h4>Presets: the real numbers</h4>
+      <div class="seg jt-presets"><button class="btn on" data-p="cv">Castlevania</button><button class="btn" data-p="smb">Super Mario Bros.</button><button class="btn" data-p="sonic">Sonic</button><button class="btn" data-p="mm">Mega Man 2</button><button class="btn" data-p="keen1">Keen 1</button><button class="btn" data-p="keen4">Keen 4</button><button class="btn" data-p="celeste">Celeste</button></div>
+      <div class="grid2">
+        <label class="rng">Run speed <b class="jt-v-run"></b><input type="range" class="jt-run" min="2" max="24" step="0.01"></label>
+        <label class="rng">Time to top speed <b class="jt-v-acc"></b><input type="range" class="jt-acc" min="0" max="2.5" step="0.01"></label>
+        <label class="rng">Jump height <b class="jt-v-h"></b><input type="range" class="jt-h" min="1" max="8" step="0.01"></label>
+        <label class="rng">Time to apex <b class="jt-v-apex"></b><input type="range" class="jt-apex" min="0.2" max="1" step="0.01"></label>
+        <label class="rng">Flat climb <b class="jt-v-hold"></b><input type="range" class="jt-hold" min="0" max="30" step="1"></label>
+        <label class="rng">Fall gravity <b class="jt-v-fall"></b><input type="range" class="jt-fall" min="0.5" max="4" step="0.05"></label>
+        <label class="rng">Max fall speed <b class="jt-v-maxFall"></b><input type="range" class="jt-maxFall" min="8" max="40" step="0.1"></label>
+        <label class="rng">Coyote time <b class="jt-v-coyote"></b><input type="range" class="jt-coyote" min="0" max="12" step="1"></label>
+        <label class="rng">Take-off delay <b class="jt-v-delay"></b><input type="range" class="jt-delay" min="0" max="30" step="1"></label>
+        <label class="chk" style="align-self:end"><input type="checkbox" class="jt-air"> Steer in mid-air</label>
+      </div>
+      <label class="sel">Letting go of jump <select class="jt-release"><option value="none">nothing: the arc is committed</option><option value="gravity">gravity switches to falling</option><option value="cap">upward speed is capped</option><option value="stop">upward speed drops to zero</option><option value="timer">the flat climb ends early</option><option value="charge">the squat launches early</option></select></label>
+      <div class="chks"><label class="chk"><input type="checkbox" class="jt-fit" checked> Fit the level: fixed gaps and ledges</label><label class="chk"><input type="checkbox" class="jt-arcs" checked> Show the preset arcs</label></div>
       <div class="row wrap"><button class="btn jt-tour on">▶ Walk-through</button><button class="btn jt-play">Play it yourself</button></div>
-      <p class="tip">Arrows or A and D to run, Space or W to jump. Let go early for a shorter hop. PageUp and PageDown change slides.</p>
+      <p class="tip">Arrows or A and D to run, Space or W to jump; hold it for full height. PageUp and PageDown change slides.</p>
       <p class="mt-out jt-out"></p>
     </div>
   </div>
@@ -58,7 +73,7 @@
       <label class="rng">Press after leaving the ledge <b class="cy-v-p"></b><input type="range" class="cy-p" min="-4" max="12" step="1" value="4"></label>
       <label class="rng">Coyote window (lower lane) <b class="cy-v-c"></b><input type="range" class="cy-c" min="1" max="12" step="1" value="6"></label>
       <div class="row wrap"><button class="btn cy-tour on">▶ Walk-through</button><button class="btn cy-try">Use my own timing</button></div>
-      <p class="tip">With "Use my own timing" on, press Space as Mario runs off the ledge. Both lanes get the same press.</p>
+      <p class="tip">With "Use my own timing" on, press Space as Madeline runs off the ledge. Both lanes get the same press.</p>
       <div class="mt-stats cy-stats"></div>
       <p class="mt-out cy-out"></p>
     </div>
