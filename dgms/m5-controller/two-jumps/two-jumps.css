@@ -1,0 +1,7 @@
+/* Two jumps: page-only tweaks on top of ../../shared/dgms.css. */
+.mt-side h4 { margin-top: 10px; }
+.mt-side .tip { font-size: 15px; }
+.slide .mt-out { font-size: 17px; line-height: 1.38; min-height: 4.2em; }
+.mt-side .kw label.chk { font-size: 15px; }
+.tj-hold { touch-action: none; user-select: none; }
+.tj-hold.on { background: var(--navy); color: #fff; }

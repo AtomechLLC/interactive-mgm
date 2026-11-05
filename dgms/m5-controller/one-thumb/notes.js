@@ -1,0 +1,4 @@
+// Speaker notes. Source: "RGF C2 M5 - 3Cs - Controller", Part 3: simultaneous actions (slides 157-164).
+window.NOTES = [
+  { script: 'Some actions have to happen at the same moment: walking while looking around, rolling in a chosen direction, keeping the guard up while turning to face an enemy. Players only have one thumb, which can usually only press one button at a time. So when two actions that must happen together both sit under the right thumb, one of them is lost. The Souls games solve this by putting held actions on the shoulders: block on L1, attack on R1, so the right thumb stays on the camera. Move attack and block onto the face buttons and three pairs break at once. On mouse and keyboard the same rule applies to the two fingers on top of the mouse, and to every key that pulls a finger off WASD.' },
+];

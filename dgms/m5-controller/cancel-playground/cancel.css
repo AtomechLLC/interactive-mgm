@@ -1,0 +1,12 @@
+/* Cancel playground: compact chips for the seventeen cancels. */
+.cp-side h4 { margin: 4px 0 4px; }
+.cp-side .seg { margin: 2px 0 6px; }
+.cp-side .seg .btn { font-size: 14px; padding: 4px 9px; }
+.cp-chips { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 6px; }
+.cp-chips .cp-chip { font-size: 14px; padding: 3px 8px 3px 6px; text-align: left; border-left: 7px solid var(--c); border-radius: 7px; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.slide .mt-side .cp-chips .btn.cp-chip.on { background: var(--c); color: #1a1f45; border-color: var(--c); }
+.cp-side label.chk { font-size: 15px; margin: 4px 0; }
+.cp-side label.chk input { width: 18px; height: 18px; }
+.cp-side .mt-out { font-size: 16px; line-height: 1.35; margin-top: 8px; }
+.ch-btns .btn, .cm-press { min-width: 0; }
+.cp-side .btn, .ch-pat .btn, .ch-btns .btn, .cm-press, .cm-slow { transition: none; }

@@ -1,0 +1,4 @@
+// Speaker notes. Source: "RGF C2 M5 - 3Cs - Controller", Part 3: mapping gameplay through metaphor (slides 143-155).
+window.NOTES = [
+  { script: 'A control scheme is easier to learn when the buttons stand for something. Skyrim and Dark Souls map the left and right hands to the left and right shoulder buttons, so whatever you hold in a hand, the button on that side uses it. Soulcalibur names its attack buttons after the plane of the swing: horizontal and vertical, plus kick and guard. The first Assassin’s Creed mapped the face buttons onto the body: head, weapon hand, empty hand and legs. It was clever, and later games dropped it. God of War and Ninja Gaiden use light and heavy, and World of Warcraft took its ten numbered action slots from EverQuest. Familiarity usually wins, but an understandable metaphor is essential.' },
+];

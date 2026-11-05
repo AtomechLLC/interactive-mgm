@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interaction + Context = Outcome · Directing Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/deck.css">
+<link rel="stylesheet" href="../../../assets/kit.css">
+<link rel="stylesheet" href="../../shared/dgms.css">
+<style>
+  .slide .mt-out { font-size: 17px; line-height: 1.38; }
+  canvas.demo { touch-action: none; cursor: grab; }
+</style>
+<script>
+  window.DECK = { title: 'Directing Game Mechanics · Module 5 · Interaction + Context = Outcome', home: '../../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1: slides 235-243 -->
+<section class="slide" data-title="One axe button" data-demo="axe" data-touch-keys="KeyK:Axe">
+  <div class="kicker">3Cs: controller · slides 235-243</div>
+  <h2 class="sm">Interaction + context = <span class="accent">outcome</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Press</h4>
+      <div class="row wrap"><button class="btn ax-press">🪓 Axe (K)</button></div>
+      <h4>Where the hero stands</h4>
+      <div class="seg ax-spot"><button class="btn" data-v="tree">Next to the tree</button><button class="btn" data-v="back">Behind the enemy</button><button class="btn" data-v="front">In front of the enemy</button><button class="btn" data-v="open">Open ground</button></div>
+      <div class="row wrap"><button class="btn ax-tour on">▶ Walk-through</button><button class="btn ax-reset">Reset</button></div>
+      <p class="mt-out ax-out"></p>
+      <p class="src">Other examples from the deck: Assassin's Creed parkour (239), Forspoken (241), Titanfall wall-running (242), Ori's feather glide and updrafts (243).</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../../assets/deck.js"></script>
+<script src="../../../assets/gi.js"></script>
+<script src="../../../assets/kit.js"></script>
+<script src="../../shared/topdown.js"></script>
+<script src="../shared/xray.js"></script>
+<script src="axe-context.js"></script>
+</body>
+</html>

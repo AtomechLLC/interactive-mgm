@@ -1,0 +1,4 @@
+// Speaker notes. Source: RGF C2 M4, 3Cs: Character, Part 6 ("Core Actions Define the Character").
+window.NOTES = [
+  { script: 'Core actions define the character. Pick a genre and the verb list changes, and with it what the character is. A platformer hero needs to run, jump and attack. A fighting game character walks, has a fast attack and a heavy attack, blocks, grabs and jumps. A Souls-like character walks and runs, but its attacks use root motion, it gets pushed back when hit, and it dodges. An FPS character runs, shoots, aims down sights, throws grenades and takes cover. A parkour character runs, climbs, mantles, swings and slides. Same puppet every time. What changes is the short list of things it can do, and every one of those verbs has to be planned, animated and mapped to a button, which is where Module 5 picks up.' },
+];

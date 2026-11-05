@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Attack Window Editor · Directing Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/deck.css">
+<link rel="stylesheet" href="../../../assets/kit.css">
+<link rel="stylesheet" href="../../shared/dgms.css">
+<link rel="stylesheet" href="windows.css">
+<script>
+  window.DECK = { title: 'Directing Game Mechanics · Module 5 · Attack Window Editor', home: '../../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<section class="slide" data-title="Startup, active, recovery" data-demo="anatomy">
+  <div class="kicker">3Cs: controller · slides 258-260 and 284-286</div>
+  <h2 class="sm">Every strike has <span class="accent">three phases</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Phase lengths (frames at 60 fps)</h4>
+      <label class="rng">Startup <b data-v="S"></b><input type="range" data-k="S" min="4" max="36" value="14"></label>
+      <label class="rng">Active <b data-v="A"></b><input type="range" data-k="A" min="1" max="12" value="4"></label>
+      <label class="rng">Recovery <b data-v="R"></b><input type="range" data-k="R" min="6" max="44" value="22"></label>
+      <h4>Playback</h4>
+      <div class="seg an-speed"><button class="btn" data-fps="60">Real time</button><button class="btn on" data-fps="20">⅓ speed</button><button class="btn" data-fps="10">⅙ speed</button></div>
+      <label class="chk"><input type="checkbox" class="an-ghost" checked> Show key poses</label>
+      <div class="row wrap"><button class="btn an-tour on">▶ Walk-through</button><button class="btn an-reset">Reset</button></div>
+      <div class="mt-stats an-stats"></div>
+      <p class="mt-out an-out"></p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="The attack window editor" data-demo="editor">
+  <div class="kicker">3Cs: controller · slides 270-301</div>
+  <h2 class="sm">Windows: when things <span class="accent">can</span> happen</h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side aw-side">
+      <div class="aw-pair">
+        <div><h4>Weapon</h4><div class="seg ed-weapon"><button class="btn on" data-w="great">Greatsword</button><button class="btn" data-w="dagger">Dagger</button></div></div>
+        <div><h4>View</h4><div class="seg ed-view"><button class="btn on" data-v="edit">Editor</button><button class="btn" data-v="compare">Compare</button></div></div>
+      </div>
+      <h4>Test inputs</h4>
+      <label class="chk"><input type="checkbox" class="ed-dodge"> Scripted dodge press</label>
+      <label class="chk"><input type="checkbox" class="ed-arrow"> Enemy arrow lands mid-swing</label>
+      <div class="seg ed-prot"><button class="btn on" data-p="iframes">iFrames</button><button class="btn" data-p="super">Super armour</button><button class="btn" data-p="armour">Armour</button></div>
+      <div class="row wrap"><button class="btn ed-trio on">Sensory trio: on</button><button class="btn ed-atk">Attack (J)</button><button class="btn ed-dg">Dodge (K)</button></div>
+      <div class="seg ed-speed"><button class="btn" data-fps="60">Real time</button><button class="btn on" data-fps="20">⅓ speed</button><button class="btn" data-fps="10">⅙ speed</button></div>
+      <div class="row wrap"><button class="btn ed-tour on">▶ Walk-through</button><button class="btn ed-reset">Reset windows</button></div>
+      <div class="mt-stats ed-stats"></div>
+      <p class="mt-out ed-out"></p>
+      <p class="src">Drag window edges or bodies; click a row's name to switch it off. Frame values are illustrative.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Plus, even or minus" data-demo="advantage">
+  <div class="kicker">3Cs: controller · slides 302-309</div>
+  <h2 class="sm">Plus, even or <span class="accent">minus</span> on block</h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <div class="seg fa-mode"><button class="btn on" data-m="block">On block</button><button class="btn" data-m="hit">On hit</button></div>
+      <label class="rng">Attacker startup <b data-v="S"></b><input type="range" data-k="S" min="3" max="20" value="8"></label>
+      <label class="rng">Attacker active <b data-v="A"></b><input type="range" data-k="A" min="1" max="8" value="3"></label>
+      <label class="rng">Attacker recovery <b data-v="R"></b><input type="range" data-k="R" min="4" max="36" value="14"></label>
+      <label class="rng"><span class="fa-stun-name">Defender blockstun</span> <b data-v="B"></b><input type="range" data-k="B" min="4" max="36" value="15"></label>
+      <div class="row wrap"><button class="btn fa-tour on">▶ Walk-through</button><button class="btn fa-reset">Reset</button></div>
+      <div class="mt-stats fa-stats"></div>
+      <p class="mt-out fa-out"></p>
+      <p class="src">Drag the ends of the recovery and stun bars too. The defender's fastest jab is set to 6 frames. All values are illustrative.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Hitstun variants" data-demo="stun">
+  <div class="kicker">3Cs: controller · slides 289-301</div>
+  <h2 class="sm">What a hit does to <span class="accent">the target</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Hitstun styles</h4>
+      <div class="seg hs-pick"><button class="btn" data-i="0">None</button><button class="btn" data-i="1">Freeze</button><button class="btn" data-i="2">Interrupt</button><button class="btn" data-i="3">Crumple</button></div>
+      <div class="row wrap"><button class="btn hs-tour on">▶ Walk-through</button></div>
+      <p class="mt-out hs-out"></p>
+      <p class="src">Small re-creations of each style, not footage. Frame counts are illustrative.</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../../assets/deck.js"></script>
+<script src="../../../assets/kit.js"></script>
+<script src="timeline.js"></script>
+<script src="attack-windows.js"></script>
+</body>
+</html>

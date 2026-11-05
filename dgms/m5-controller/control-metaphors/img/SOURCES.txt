@@ -1,0 +1,5 @@
+World of Warcraft spell and item icons (Blizzard Entertainment), 56px JPEGs, copied from understand-mechanics/img/
+(originally from the WoW icon CDN, e.g. https://wow.zamimg.com/images/wow/icons/large/<name>.jpg):
+spell_shadow_shadowbolt, spell_fire_immolation, spell_fire_fireball, spell_nature_lightning, spell_holy_flashheal,
+inv_potion_54, ability_warrior_rampage, spell_nature_timestop, spell_fire_flamebolt, spell_shadow_rainoffire.
+Used for the ten-slot action bar on the "Controls as metaphor" slide.

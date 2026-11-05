@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ADR Curves · Directing Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/deck.css">
+<link rel="stylesheet" href="../../../assets/kit.css">
+<link rel="stylesheet" href="../../shared/dgms.css">
+<style>
+  .adr-side label.rng { margin: 5px 0; }
+  .adr-side .tip { font-size: 14px; margin: 6px 0; }
+  canvas.demo:focus { outline: none; }
+</style>
+<script>
+  window.DECK = { title: 'Directing Game Mechanics · Module 5 · ADR Curves', home: '../../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<section class="slide" data-title="ADR curves" data-demo="adr" data-touch-keys="ArrowLeft:←,ArrowUp:↑,ArrowDown:↓,ArrowRight:→">
+  <div class="kicker">3Cs: controller · slides 190-193, character responsiveness</div>
+  <h2 class="sm">Acceleration, deceleration, <span class="accent">rotation</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585" tabindex="0"></canvas>
+    <div class="mt-side adr-side">
+      <h4>Presets</h4>
+      <div class="seg adr-presets"><button class="btn on" data-p="instant">Instant (Mega Man X)</button><button class="btn" data-p="snappy">Snappy</button><button class="btn" data-p="momentum">Momentum</button><button class="btn" data-p="tank">Heavy turn</button></div>
+      <label class="rng">Acceleration: time to top speed <b class="adr-v-a"></b><input type="range" class="adr-a" min="0" max="1.2" step="0.02"></label>
+      <label class="rng">Deceleration: time to stop <b class="adr-v-d"></b><input type="range" class="adr-d" min="0" max="1.2" step="0.02"></label>
+      <label class="rng">Rotation speed <b class="adr-v-r"></b><input type="range" class="adr-r" min="60" max="1800" step="20"></label>
+      <div class="row wrap"><button class="btn adr-tour on">▶ Walk-through</button><button class="btn adr-play">Drive it yourself</button></div>
+      <p class="tip">Arrows or WASD to move. PageUp and PageDown change slides.</p>
+      <div class="mt-stats adr-stats"></div>
+      <p class="mt-out adr-out"></p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../../assets/deck.js"></script>
+<script src="../../../assets/kit.js"></script>
+<script src="../../shared/topdown.js"></script>
+<script src="adr-curves.js"></script>
+</body>
+</html>

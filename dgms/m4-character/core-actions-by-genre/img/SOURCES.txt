@@ -1,0 +1,2 @@
+smb-goomba.png, smb-goomba-flat.png: Super Mario Bros. (Nintendo, 1985) Goomba sprites, copied from understand-mechanics/img/ in this repo (used for class discussion).
+The puppet, props and all other drawings on this page are original canvas drawings.
