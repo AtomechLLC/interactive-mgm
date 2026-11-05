@@ -214,3 +214,21 @@ Home page `blog-posts/index.html` (cards from `PAGES`), for the posts in funsmit
   2. What the Dice Allowed: exact 5e odds for the setup (the ogre hits, Thistle is left on 1 to 3 HP, Ansel hits back), about 1 night in 11 with the night's numbers. Sliders for Thistle's AC and HP and Ansel's attack bonus, the 2d8 + 4 damage histogram against her HP, and 40 seeded nights. Model in `odds()`.
 - GIFs in `gifs/`: rebuild them all with `sh blog-posts/tools/record-all.sh` while serving InteractiveMGM on 127.0.0.1:8191. They are 1920×1080 with the side panel hidden.
 - `shared/`: `blog.css` layout, a copy of the top-down kit and `icons.js` (the depth icons plus potion, bomb, chest, heart and dice icons from game-icons.net). `img/`: World of Warcraft spell icons from wow.zamimg.com (sources in `img/sources.json`).
+
+## Directing Game Mechanics module (`dgms/`)
+
+Home page `dgms/index.html` (cards from `PAGES`, grouped by module in `PARTS`; GIFs from `GIFS`), for the eleven decks of *Directing Game Mechanics Satisfaction* (formerly *Refining Gameplay and Feel*): Module 0 to Module 9 and the bonus interview deck. `proposals/<module>.md` holds the proposals per deck; `README.md` in the folder lists the page conventions. Pages live at `dgms/<module>/<page>/` and share `dgms/shared/dgms.css`, `topdown.js` and `scene.js` (a looping walk-through per canvas, plus `window.__seek` / `__dur` for GIF recording). Rebuild the GIFs with `sh dgms/tools/record-all.sh` while serving InteractiveMGM on 127.0.0.1:8177; the list is `dgms/tools/gifs.txt`. Examples and numbers that are not from a deck are marked in each page's header comment and source line.
+
+Module 0, The Power of Polish (`m0-power-of-polish/`, icons in `img/`):
+- `course-map/`: the seven building blocks around "Game Mechanics & Experience" (slides 54-55), recoloured into slide 56's three phases and numbered in the notes' build order; the toolbox filling up one tool per module (22-26); and what the course leaves out (30-34).
+- `designer-to-director/`: six studio roles connect to one designer (6-10), collapse onto one person on a small project (8, 17), and a seniority ladder (16; middle rungs illustrative).
+- `it-depends/`: permadeath, auto-aim, fall damage and fast travel, each in three games, as "fits the pillars" or "fights the pillars" (27-29; verdicts are the page's examples).
+- `audience-dials/`: theme, pace and combat dials with Stardew Valley, Dark Souls and Hades presets, the notes' audience to fantasy chain, and neighbouring games (59-62; positions by eye).
+- `controller-preview/`: one press through Controller, Pawn, Model and Actions with a gamepad or an AI brain (70), and Titanfall 2's wall-run assist at three thresholds (69; stick trace invented).
+- `polish-layers/`: one melee strike with eight layers of feel, and raw against polished (75-78, 81).
+
+Module 1, Game Pillars and Values (`m1-pillars/`):
+- `pillar-linter/`: the four rules as lamps on any pillar, with the deck's examples and God of War's pillars (16-25, 32).
+- `triage-board/`: mark which pillars each feature of a deep-sea survival game supports and the backlog sorts itself (26-30); then nine pillars and the spreading priority star (16, 33). Features and supports in `SUP`.
+- `pull-a-pillar/`: features resting on pillars; pull one early or late (24-25, 34-35); and "The game must have combos" against "Controlled Power" on twelve moves (36-37).
+- `pillar-or-value/`: a sorting drill with a rules round (40-61), Master Chef's values from word to self-explanatory (49-56), and Subnautica's values as before and after scenes (44-46).

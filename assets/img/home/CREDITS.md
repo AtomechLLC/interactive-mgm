@@ -88,3 +88,14 @@ From [game-icons.net](https://game-icons.net), licensed [CC BY 3.0](https://crea
 | `blog-posts--hardware-mistake.svg` | [cpu](https://game-icons.net/1x1/delapouite/cpu.html) | Delapouite |
 | `blog-posts--atomech-lesson.svg` | [robot-golem](https://game-icons.net/1x1/lorc/robot-golem.html) | Lorc |
 | `blog--ogre-table.svg` | [ogre](https://game-icons.net/1x1/delapouite/ogre.html) | Delapouite |
+| `dgms.svg` | [director-chair](https://game-icons.net/1x1/delapouite/director-chair.html) | Delapouite |
+| `dgms--m0-power-of-polish--course-map.svg` | [compass](https://game-icons.net/1x1/lorc/compass.html) | Lorc |
+| `dgms--m0-power-of-polish--designer-to-director.svg` | [megaphone](https://game-icons.net/1x1/delapouite/megaphone.html) | Delapouite |
+| `dgms--m0-power-of-polish--it-depends.svg` | [scales](https://game-icons.net/1x1/lorc/scales.html) | Lorc |
+| `dgms--m0-power-of-polish--audience-dials.svg` | [team-idea](https://game-icons.net/1x1/delapouite/team-idea.html) | Delapouite |
+| `dgms--m0-power-of-polish--controller-preview.svg` | [gamepad](https://game-icons.net/1x1/delapouite/gamepad.html) | Delapouite |
+| `dgms--m0-power-of-polish--polish-layers.svg` | [screen-impact](https://game-icons.net/1x1/lorc/screen-impact.html) | Lorc |
+| `dgms--m1-pillars--pillar-linter.svg` | [checked-shield](https://game-icons.net/1x1/lorc/checked-shield.html) | Lorc |
+| `dgms--m1-pillars--triage-board.svg` | [abacus](https://game-icons.net/1x1/delapouite/abacus.html) | Delapouite |
+| `dgms--m1-pillars--pull-a-pillar.svg` | [stone-pile](https://game-icons.net/1x1/delapouite/stone-pile.html) | Delapouite |
+| `dgms--m1-pillars--pillar-or-value.svg` | [brain](https://game-icons.net/1x1/lorc/brain.html) | Lorc |
