@@ -1,0 +1,4 @@
+// Speaker notes. Source: "DGMS - RGF C2 M9 - Game Feel", slides 65-84 (quotes as given in proposals/m9-game-feel.md).
+window.NOTES = [
+  { script: 'The seven principles of highly satisfying games: predictable results, nuance, context, feedback, low floor and high ceiling, impact and resolution, and appealing reaction. When you can’t predict what your character is going to do, you can’t consistently make informed decisions. Low floor, high ceiling: Hour 1: This feels nice! Hour 100: This feels AMAZING! Impact needs restraint too: too much hit stop feels like a rollercoaster that brakes every 10 feet. And an appealing reaction works even if it’s completely fake. You can treat these 7 Principles like a score sheet. There’s no "perfect" score. Score a game of your choice and share it in the Discord drill.' },
+];

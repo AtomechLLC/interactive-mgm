@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interview Rubric · Directing Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/deck.css">
+<link rel="stylesheet" href="../../../assets/kit.css">
+<link rel="stylesheet" href="../../shared/dgms.css">
+<link rel="stylesheet" href="../shared/iv.css">
+<style>
+.rb-board { display: flex; flex-direction: column; padding: 14px 18px; }
+.rb-top { display: flex; align-items: baseline; gap: 14px; margin-bottom: 6px; }
+.rb-top h3 { font-size: 22px; margin: 0; }
+.rb-top .sub { margin: 0; }
+.rb-sec { font-family: var(--display); font-weight: 800; font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: #7a4a00; margin: 6px 0 4px; display: flex; gap: 8px; align-items: center; }
+.rb-row { display: grid; grid-template-columns: 34px 330px 1fr 150px; gap: 10px; align-items: center; background: #fffaf0; border: 2px solid #cdbf9f; border-radius: 10px; padding: 5px 10px; margin-bottom: 5px; transition: background .2s, border-color .2s; }
+.rb-row .iv-ico { width: 30px; height: 30px; } .rb-row .iv-ico .gi { width: 21px; height: 21px; }
+.rb-row .q { font-weight: 700; font-size: 15.5px; line-height: 1.2; }
+.rb-row .lk { font-size: 14px; line-height: 1.3; color: #5d618c; }
+.rb-row.hl { background: #fde9b8; border-color: #e0a92d; }
+.rb-row.hl .lk { color: #262c6a; }
+.rb-sc { display: flex; gap: 5px; justify-content: flex-end; }
+.rb-sc button { width: 30px; height: 30px; border-radius: 7px; border: 2px solid #cdbf9f; background: #fff; font-weight: 700; font-size: 14px; color: #5d618c; padding: 0; }
+.rb-sc button.on { background: #262c6a; border-color: #262c6a; color: #fff; }
+.rb-say { margin-top: auto; display: flex; gap: 10px; align-items: center; background: #262c6a; color: #fff; border-radius: 10px; padding: 8px 14px; min-height: 40px; }
+.rb-say b { color: #ffb951; font-family: var(--display); font-size: 13px; text-transform: uppercase; letter-spacing: .06em; flex: none; }
+.rb-say span { font-size: 16px; }
+/* paper copy */
+#iv-print-root h1 { font: 800 22pt "Montserrat", sans-serif; margin: 0 0 2mm; }
+#iv-print-root .meta { display: flex; gap: 8mm; font-size: 10.5pt; margin: 0 0 5mm; }
+#iv-print-root .meta span { flex: 1; border-bottom: 1px solid #000; padding-bottom: 1mm; }
+#iv-print-root h2 { font: 800 11.5pt "Montserrat", sans-serif; text-transform: uppercase; letter-spacing: .05em; margin: 4mm 0 2mm; }
+#iv-print-root table { width: 100%; border-collapse: collapse; font-size: 10pt; }
+#iv-print-root td, #iv-print-root th { border: 1px solid #555; padding: 1.4mm 2.2mm; vertical-align: top; text-align: left; }
+#iv-print-root th { background: #eee; font-size: 9.5pt; }
+#iv-print-root td.q { width: 30%; font-weight: 700; }
+#iv-print-root td.s { width: 22mm; white-space: nowrap; text-align: center; font-size: 12pt; letter-spacing: 2mm; }
+#iv-print-root .say { font-style: italic; color: #333; display: block; margin-top: 1mm; }
+#iv-print-root .foot { margin-top: 5mm; font-size: 9pt; color: #333; }
+</style>
+<script>
+  window.DECK = { title: 'Directing Game Mechanics · Interview · Interview Rubric', home: '../../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<section class="slide" data-title="Interview rubric" data-demo="rubric">
+  <div class="kicker">how to approach interviews</div>
+  <h2 class="sm">What the interviewer <span class="accent">listens for</span></h2>
+  <div class="mt-wrap">
+    <div class="iv-board rb-board">
+      <div class="rb-top"><h3>Interview rubric</h3><p class="sub">Score each row from 1 (not shown) to 4 (shown clearly, more than once).</p></div>
+      <div class="rb-rows"></div>
+      <div class="rb-say"><b>Sounds like</b><span class="rb-say-t">Pick a row to hear an example line.</span></div>
+    </div>
+    <div class="mt-side">
+      <div class="row wrap"><button class="btn iv-tour on">▶ Walk-through</button></div>
+      <div class="row wrap"><button class="btn rb-print">Print the card</button><button class="btn rb-clear">Clear scores</button></div>
+      <div class="mt-stats rb-stats"></div>
+      <p class="mt-out rb-out"></p>
+      <p class="iv-note">Use it with the <a href="../practice/index.html">practice card</a>: answer a prompt out loud, then score yourself here. The paper copy leaves the boxes blank.</p>
+      <p class="src">Questions: the deck's slides 31-34. The 4Cs: slides 43-47. Example lines are written for this page.</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../../assets/deck.js"></script>
+<script src="../../../assets/gi.js"></script>
+<script src="../../../assets/kit.js"></script>
+<script src="../shared/iv.js"></script>
+<script src="rubric.js"></script>
+</body>
+</html>

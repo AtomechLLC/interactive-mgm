@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>One Question, Five Levels · Directing Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/deck.css">
+<link rel="stylesheet" href="../../../assets/kit.css">
+<link rel="stylesheet" href="../../shared/dgms.css">
+<link rel="stylesheet" href="../shared/iv.css">
+<style>
+.fl-board { display: grid; grid-template-columns: 290px 1fr; grid-template-rows: auto 1fr; gap: 14px 16px; }
+.fl-prompt { grid-column: 1 / -1; display: flex; gap: 14px; align-items: center; padding: 10px 14px; }
+.fl-prompt .lbl { font-family: var(--display); font-weight: 800; font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: #7a4a00; background: #fde9b8; border-radius: 6px; padding: 3px 8px; }
+.fl-prompt .q { font-family: var(--display); font-weight: 700; font-size: 21px; color: #262c6a; }
+.fl-ladder { display: flex; flex-direction: column-reverse; gap: 8px; }
+.fl-rung { flex: 1; display: flex; align-items: center; gap: 10px; text-align: left; background: #fffaf0; border: 2px solid #cdbf9f; border-left: 8px solid var(--c); border-radius: 10px; padding: 6px 10px; color: #262c6a; }
+.fl-rung b { font-family: var(--display); font-size: 18px; display: block; }
+.fl-rung small { font-size: 13px; color: #5d618c; line-height: 1.2; display: block; }
+.fl-rung .n { font-family: var(--display); font-weight: 800; font-size: 22px; color: var(--c); width: 22px; text-align: center; }
+.fl-rung.on { background: #262c6a; border-color: #262c6a; border-left-color: var(--c); }
+.fl-rung.on b, .fl-rung.on .n { color: #fff; } .fl-rung.on small { color: #c9cff0; }
+.fl-ans { display: flex; flex-direction: column; }
+.fl-ans h3 { font-size: 22px; }
+.slide .iv-board .fl-text { font-size: 20px; line-height: 1.66; margin: 6px 0 10px; flex: 1; }
+.fl-text mark { background: none; color: inherit; padding: 1px 2px; border-radius: 4px; transition: background .3s, box-shadow .3s; }
+.fl-text mark.show { background: var(--bg); box-shadow: inset 0 -3px 0 var(--c); }
+.fl-traits { display: flex; flex-wrap: wrap; gap: 6px; }
+.tchip { font-size: 13.5px; font-weight: 700; padding: 3px 9px; border-radius: 7px; background: var(--bg); border: 2px solid var(--c); color: #262c6a; opacity: .3; transition: opacity .3s; }
+.tchip.on { opacity: 1; }
+.t-talk { --c: #2ea3dc; --bg: #d9eefa; } .t-plan { --c: #2fae63; --bg: #d8f0df; } .t-cost { --c: #e0a92d; --bg: #fde9b8; } .t-deleg { --c: #8a4fd6; --bg: #ece0fb; } .t-vision { --c: #e5322d; --bg: #fadcd9; }
+.fl-mine { display: grid; grid-template-columns: 1fr 330px; grid-template-rows: auto 1fr; gap: 14px 16px; }
+.fl-mine .fl-prompt { grid-column: 1 / -1; }
+.fl-write { display: flex; flex-direction: column; }
+.fl-write textarea { flex: 1; font-size: 17px; line-height: 1.5; }
+.fl-tags { display: flex; flex-direction: column; gap: 7px; }
+.fl-tag { display: flex; gap: 10px; align-items: center; background: #fffaf0; border: 2px solid #cdbf9f; border-left: 8px solid var(--c); border-radius: 10px; padding: 7px 10px; cursor: pointer; font-size: 15px; color: #262c6a; }
+.fl-tag input { width: 18px; height: 18px; flex: none; }
+.fl-tag b { display: block; font-size: 15.5px; } .fl-tag small { color: #5d618c; font-size: 13px; }
+.fl-tag.on { background: var(--bg); }
+.fl-read { margin-top: 4px; padding: 10px 12px; }
+.fl-read .lv { font-family: var(--display); font-weight: 800; font-size: 26px; }
+.fl-strip { display: flex; gap: 4px; margin-top: 6px; }
+.fl-strip span { flex: 1; height: 10px; border-radius: 4px; background: #e6dcc5; }
+.fl-strip span.on { background: var(--c); }
+</style>
+<script>
+  window.DECK = { title: 'Directing Game Mechanics · Interview · One Question, Five Levels', home: '../../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<section class="slide" data-title="Five levels" data-demo="levels">
+  <div class="kicker">how to approach interviews</div>
+  <h2 class="sm">One question, <span class="accent">five levels</span></h2>
+  <div class="mt-wrap">
+    <div class="iv-board fl-board">
+      <div class="fl-prompt iv-card"><span class="lbl">Prompt</span><span class="q"></span></div>
+      <div class="fl-ladder"></div>
+      <div class="fl-ans iv-card"></div>
+    </div>
+    <div class="mt-side">
+      <div class="row wrap"><button class="btn iv-tour on">▶ Walk-through</button></div>
+      <label class="rng"><span>Level</span><b class="fl-lvl">Junior</b><input type="range" class="fl-slider" min="0" max="4" step="1" value="0"></label>
+      <h4>Prompt</h4>
+      <div class="seg fl-pick"><button class="btn on" data-p="0">Dodge</button><button class="btn" data-p="1">Crafting</button></div>
+      <p class="mt-out fl-out"></p>
+      <p class="iv-note">Each level keeps the traits below it and adds one. Highlights show where an answer shows a trait.</p>
+      <p class="src">Level traits: the deck's slides 35-41. The sample answers are written for this page.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Your answer" data-demo="mine">
+  <div class="kicker">how to approach interviews</div>
+  <h2 class="sm">Write it, then <span class="accent">tag it</span></h2>
+  <div class="mt-wrap">
+    <div class="iv-board fl-mine">
+      <div class="fl-prompt iv-card"><span class="lbl">Prompt</span><span class="q"></span></div>
+      <div class="fl-write"><textarea class="fl-ta" placeholder="Type your answer as you would say it out loud."></textarea></div>
+      <div class="fl-tags"></div>
+    </div>
+    <div class="mt-side">
+      <div class="row wrap"><button class="btn iv-tour on">▶ Walk-through</button><button class="btn fl-clear">Clear</button></div>
+      <h4>Prompt</h4>
+      <div class="seg fl-pick2"><button class="btn on" data-p="0">Dodge</button><button class="btn" data-p="1">Crafting</button></div>
+      <div class="fl-read iv-card"><small>Your answer reads like</small><div class="lv">…</div><div class="fl-strip"></div></div>
+      <p class="mt-out fl-out2"></p>
+      <p class="iv-note">Saved in this browser only.</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../../assets/deck.js"></script>
+<script src="../../../assets/gi.js"></script>
+<script src="../../../assets/kit.js"></script>
+<script src="../shared/iv.js"></script>
+<script src="five-levels.js"></script>
+</body>
+</html>

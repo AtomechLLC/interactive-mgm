@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Hiring Funnel · Directing Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/deck.css">
+<link rel="stylesheet" href="../../../assets/kit.css">
+<link rel="stylesheet" href="../../shared/dgms.css">
+<link rel="stylesheet" href="../shared/iv.css">
+<style>
+.hf-board { display: grid; grid-template-columns: 600px 1fr; gap: 14px; }
+.hf-svg { width: 600px; height: 549px; display: block; }
+.hf-band { cursor: pointer; }
+.hf-band path { transition: fill .2s; }
+.hf-band-t text { font-family: "Montserrat", "Jost", sans-serif; font-weight: 800; font-size: 19px; fill: #fff; pointer-events: none; }
+.hf-band-t .sm { font-family: "Jost", sans-serif; font-weight: 600; font-size: 13px; fill: rgba(255,255,255,.85); }
+.hf-band.on path.f { stroke: #ffb951; stroke-width: 5; }
+.hf-br text { font-family: "Jost", sans-serif; font-weight: 700; font-size: 13px; fill: #5d618c; text-transform: uppercase; letter-spacing: .05em; }
+.hf-card { margin-top: 26px; display: flex; flex-direction: column; }
+.hf-card h3 { font-size: 23px; }
+.hf-step { font-family: var(--display); font-weight: 800; font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: #7a4a00; }
+.slide .iv-board .hf-what { font-size: 16px; }
+.hf-tip { background: #262c6a; color: #fff; border-radius: 10px; padding: 10px 12px; margin-top: 4px; }
+.hf-tip b { color: #ffb951; font-family: var(--display); font-size: 12.5px; text-transform: uppercase; letter-spacing: .06em; display: block; margin-bottom: 3px; }
+.slide .iv-board .hf-tip p { color: #fff; font-size: 15.5px; margin: 0; }
+.hf-cam { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 6px; }
+.slide .iv-board .hf-cam li { display: flex; gap: 9px; align-items: center; font-size: 15px; margin: 0; background: #fde9b8; border-radius: 8px; padding: 5px 9px; line-height: 1.25; }
+.hf-cam .iv-ico { width: 28px; height: 28px; } .hf-cam .iv-ico .gi { width: 19px; height: 19px; }
+.hf-strip { margin-top: auto; display: flex; gap: 6px; padding-top: 10px; }
+.hf-strip button { flex: 1; display: flex; align-items: center; justify-content: center; gap: 5px; font-weight: 700; font-size: 14px; color: #262c6a; background: #fff; border: 2px solid #cdbf9f; border-radius: 8px; padding: 4px 2px; }
+.hf-strip .iv-ico { width: 24px; height: 24px; } .hf-strip .iv-ico .gi { width: 16px; height: 16px; }
+.hf-strip button.iv { border-color: #e0a92d; }
+.hf-strip button.on { background: #262c6a; color: #fff; border-color: #262c6a; }
+</style>
+<script>
+  window.DECK = { title: 'Directing Game Mechanics · Interview · The Hiring Funnel', home: '../../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<section class="slide" data-title="The hiring funnel" data-demo="funnel">
+  <div class="kicker">hiring process</div>
+  <h2 class="sm">The hiring <span class="accent">funnel</span></h2>
+  <div class="mt-wrap">
+    <div class="iv-board hf-board">
+      <span class="iv-tag abs">stages unconfirmed</span>
+      <svg class="hf-svg" viewBox="0 0 600 549"></svg>
+      <div class="hf-card iv-card"></div>
+    </div>
+    <div class="mt-side">
+      <div class="row wrap"><button class="btn iv-tour on">▶ Walk-through</button></div>
+      <p class="mt-out hf-out">Click a band to see what happens there and one tip for it.</p>
+      <p class="iv-note">The first steps happen before an interview even occurs. The interview is the final assessment step to get hired.</p>
+      <p class="iv-note">The dots are illustrative: fewer candidates reach each stage. They are not real pass rates.</p>
+      <p class="src">Notes: the deck's slides 2-3. The stage list is a typical AA/AAA studio process, since the deck shows its stages only in an image; confirm before quoting it.</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../../assets/deck.js"></script>
+<script src="../../../assets/gi.js"></script>
+<script src="../../../assets/kit.js"></script>
+<script src="../shared/iv.js"></script>
+<script src="hiring-funnel.js"></script>
+</body>
+</html>

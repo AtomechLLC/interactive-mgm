@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pendulum and Ball · Directing Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/deck.css">
+<link rel="stylesheet" href="../../../assets/kit.css">
+<link rel="stylesheet" href="../../shared/dgms.css">
+<style>
+  .mt-side label.rng.pd-scrub input { accent-color: #e07b1a; }
+  .mt-side .pd-note { font-size: 14px; color: var(--muted); margin: 2px 0 6px; line-height: 1.35; }
+</style>
+<script>
+  window.DECK = { title: 'Directing Game Mechanics · Module 9 · Pendulum and Ball', home: '../../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1: slides 289-296, timing, spacing and easing on a pendulum -->
+<section class="slide" data-title="Timing and spacing" data-demo="pendulum">
+  <div class="kicker">Disney's 12 principles · slides 289-296</div>
+  <h2 class="sm">Timing, spacing <span class="accent">and easing</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <div class="row wrap"><button class="btn pd-tour on">▶ Walk-through</button><button class="btn pd-play">❚❚ Pause</button><label class="chk" style="margin:0 0 0 4px"><input type="checkbox" class="pd-onion" checked>Onion skin</label></div>
+      <h4>Timing: frames per swing</h4>
+      <div class="seg pd-frames"><button class="btn" data-v="10">10</button><button class="btn on" data-v="20">20</button><button class="btn" data-v="40">40</button></div>
+      <h4>Spacing: swing width</h4>
+      <div class="seg pd-width"><button class="btn on" data-v="40">40°</button><button class="btn" data-v="60">60°</button><button class="btn" data-v="90">90°</button></div>
+      <h4>Easing</h4>
+      <div class="seg pd-ease"><button class="btn on" data-v="none">None</button><button class="btn" data-v="in">In</button><button class="btn" data-v="out">Out</button><button class="btn" data-v="inout">In-out</button><button class="btn" data-v="lop">Lopsided</button></div>
+      <label class="rng pd-scrub"><span>Frame</span><b class="pd-fr">0</b><input type="range" min="0" max="39" step="1" value="0"></label>
+      <p class="mt-out pd-out"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 2: slides 284-287 and 306, squash and stretch, anticipation, follow-through -->
+<section class="slide" data-title="Bouncing ball" data-demo="ball">
+  <div class="kicker">Disney's 12 principles · slides 284-287, 306</div>
+  <h2 class="sm">Squash, stretch <span class="accent">and anticipation</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <div class="row wrap"><button class="btn bl-tour on">▶ Walk-through</button><button class="btn bl-hop">Small hop</button><button class="btn bl-super">Super jump</button></div>
+      <label class="rng"><span>Anticipation: squat depth</span><b class="bl-v-sq">0.20</b><input class="bl-sq" type="range" min="0" max="1" step="0.05" value="0.2"></label>
+      <label class="rng"><span>Jump height</span><b class="bl-v-h">120 px</b><input class="bl-h" type="range" min="40" max="340" step="10" value="120"></label>
+      <label class="rng"><span>Squash and stretch</span><b class="bl-v-ss">0.6</b><input class="bl-ss" type="range" min="0" max="1" step="0.05" value="0.6"></label>
+      <label class="chk"><input type="checkbox" class="bl-tail" checked>Tail (follow-through)</label>
+      <label class="chk"><input type="checkbox" class="bl-ghost" checked>Show the plain ball</label>
+      <p class="mt-out bl-out"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 3: principles 7-12, from slide text only (the notes export stops at 307) -->
+<section class="slide" data-title="Principles 7 to 12" data-demo="cards">
+  <div class="kicker">Disney's 12 principles · slides 307 to about 320</div>
+  <h2 class="sm">The other six, <span class="accent">before and after</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <div class="row wrap"><button class="btn pc-tour on">▶ Walk-through</button></div>
+      <h4 class="pc-h">Arcs</h4>
+      <p class="mt-out pc-out"></p>
+      <p class="pd-note">Click a card to read it. Each loop plays the same action twice: before on the left, after on the right.</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../../assets/deck.js"></script>
+<script src="../../../assets/kit.js"></script>
+<script src="../../shared/topdown.js"></script>
+<script src="pendulum.js"></script>
+</body>
+</html>
