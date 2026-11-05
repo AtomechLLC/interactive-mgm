@@ -297,7 +297,7 @@ Module 4, 3Cs: Character (`m4-character/`):
 - `champion-dossier/`: Champion Dossier. Alex Yee's seven-layer Pyramid of Complexity and Devon Giehl's six pieces, filled in for Jinx, Draven, Braum, Lucian, Gnar and Ziggs, plus a lug-nut pyramid for your own cast. (slides 54-123, 141-200).
 - `world-speeds-up/`: The World Speeds Up. Slow the hero or speed up the world: two runs of the same chase, and only one makes the controls feel heavy. (slides 82).
 - `silhouette-test/`: Silhouette Test. Mario, Bowser and League champions filled solid black: name each shape, then sort friend from foe before the colours come back. (Part 6).
-- `jump-tuner/`: Jump Metrics Tuner. Play a Mario runner and tune run speed, jump height, apex time, fall gravity and coyote time; see where each preset's arc lands and whether the level still fits. (Part 6).
+- `jump-tuner/`: Jump Metrics Tuner. Run seven real jumps (Castlevania, Super Mario Bros., Sonic, Mega Man 2, Commander Keen 1 and 4, Celeste) through one level of gaps and ledges, with their sourced and measured numbers on the sliders: run speed and acceleration, jump height, apex time, flat climb, fall gravity and cap, coyote time, take-off delay and what letting go does. Sprites and numbers from jump-test-classic. (Part 6).
 - `core-actions-by-genre/`: Core Actions by Genre. One puppet, five genres: swap the action bar and play each core verb, from a platformer's stomp to a Souls-like dodge. (Part 6).
 
 Module 6, 3Cs: Camera (`m6-camera/`):

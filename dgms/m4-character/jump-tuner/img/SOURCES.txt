@@ -1,3 +1,20 @@
-Super Mario Bros. small Mario sprites (Nintendo), downloaded from the Super Mario Wiki (mariowiki.com, files hosted on mario.wiki.gallery), used for class discussion:
-mario-walk0.png, mario-walk1.png, mario-walk2.png   frames of File:Small Mario Walk SMB.gif
-mario-jump.png                                       File:SMB Small Mario Jumping Sprite.png
+Character frames, shared with jump-test-classic (https://atomechllc.github.io/jump-test-classic/, AtomechLLC/jump-test-classic),
+used for class discussion of jump metrics. The characters and their sprites remain the property of their owners.
+
+mario_*    Super Mario Bros. (NES), small Mario. © Nintendo. Sheet ripped by SuperJustinBros, The Spriters Resource.
+simon_*    Castlevania (NES), Simon Belmont. © Konami. Sheet by Mister Mike, The Spriters Resource.
+mm_*       Mega Man 2 (NES), Mega Man. © Capcom. Sheet by Mister Mike, The Spriters Resource.
+sonic_*    Sonic the Hedgehog (Genesis), Sonic. © SEGA. Sheet by Triangly, The Spriters Resource.
+keen_*     Commander Keen 1 (DOS), decoded from the freely distributable shareware episode's EGAHEAD/EGASPRIT data. © id Software / ZeniMax.
+keen4_*    Commander Keen 4: Goodbye, Galaxy (DOS). Sheet ripped by Dolphman, The Spriters Resource. © id Software / ZeniMax.
+celeste_*  Celeste Classic (PICO-8), Madeline, from Source/PICO-8/Graphics/atlas.png in the officially released
+           github.com/NoelFB/Celeste repository. © Maddy Makes Games.
+
+Preset numbers come from jump-test-classic's per-game models and its sources:
+  Castlevania   TASVideos frame data (walk 1 px/frame, 40-frame jump; v0 4.0, gravity 0.2 reproduce it)
+  SMB           smbpedia movement docs (simplistic6502.github.io/smb1_tll): running row of the jump table, run cap 2.5, terminal 4.5
+  Sonic 1       Sonic Physics Guide (info.sonicretro.org/SPG:Jumping): jump 6.5, gravity 0.21875, release cap 4, top speed 6, accel 0.046875
+  Mega Man 2    nesdev reverse-engineering thread (forums.nesdev.org/viewtopic.php?t=10937): jump 0x04.DF, gravity 0x00.40, walk 0x01.4C
+  Keen 1        measured frame by frame from captured footage with an input display: 16-frame squat, 4.12-tile jump, gravity ~0.17
+  Keen 4        Omnispeak / KeenWiki: velY 40 units/tic for an 18-tic timer, gravity 2 units/tic^2, terminal 70
+  Celeste       Player.cs (github.com/NoelFB/Celeste): JumpSpeed 105, VarJumpTime 0.2 s, Gravity 900, MaxFall 160, MaxRun 90, JumpGraceTime 0.1 s
