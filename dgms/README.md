@@ -13,4 +13,4 @@ Course home: `index.html`. Proposals per deck: `proposals/`.
 - Home icon: `assets/img/home/dgms--<module>--<slug>.svg`, a game-icons.net path filled `#ffb951` (see `assets/img/home/blog-posts--keep-five.svg`).
 - GIFs: `dgms/gifs/<module>--<slug>[-<slide>].gif`, 1920×1080.
 - Real game imagery is fine (WoW and League icons, game-icons.net, Pokémon, Mario sprites). In visuals, avoid the words "good" and "bad"; use precise adjectives or nouns.
-- `dgms/index.html` (PAGES, GIFS), the root `index.html` and the root `README.md` are owned by one thread: send it your page list and it adds them.
+- `dgms/shared/catalog.js` (PARTS, PAGES, GIFS, which feed `dgms/index.html` and the module homes `dgms/<module>/index.html`), the root `index.html` and the root `README.md` are owned by one thread: send it your page list and it adds them.

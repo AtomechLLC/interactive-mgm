@@ -116,7 +116,7 @@
       st.setMode = m => { st.mode = m; segs.forEach(b => b.classList.toggle('on', b.dataset.m === m)); };
       segs.forEach(b => b.onclick = () => { st.manual(); st.setMode(b.dataset.m); });
       st.cv.addEventListener('mousemove', e => { const p = SCENE.at(st.cv, e), i = segAt(p.x, p.y); st.cv.style.cursor = i >= 0 ? 'pointer' : ''; if (i >= 0 && i !== st.sel) { st.manual(); st.sel = i; } });
-      st.cv.addEventListener('click', e => { const p = SCENE.at(st.cv, e), i = segAt(p.x, p.y); if (i >= 0) location.href = '../../index.html#' + KEYS[i]; });
+      st.cv.addEventListener('click', e => { const p = SCENE.at(st.cv, e), i = segAt(p.x, p.y); if (i >= 0) location.href = '../../' + KEYS[i] + '/index.html'; });
     },
     onTour(st) { st.setMode('topics'); },
     side(st, t) {

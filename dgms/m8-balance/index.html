@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Directing Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/home.css">
+</head>
+<body data-module="m8-balance">
+<!-- module home: the band header, cards and GIFs are rendered by ../shared/home.js from ../shared/catalog.js -->
+<section class="part">
+  <h2>Interactive Pages</h2>
+  <p>In course order. Open one and use ← → to move through it. Every page has a walk-through, and most let you play it yourself.</p>
+  <div class="row" id="cards"></div>
+</section>
+<section class="part">
+  <h2>Slide GIFs</h2>
+  <p>1920×1080, looping. Right-click a GIF to save it, or open it full size.</p>
+  <div class="grid" id="gifs"></div>
+  <nav class="next" id="next"></nav>
+</section>
+<script src="../shared/catalog.js"></script>
+<script src="../shared/home.js"></script>
+</body>
+</html>
