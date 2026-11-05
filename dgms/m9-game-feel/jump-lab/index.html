@@ -17,32 +17,33 @@
   .jl-key { display: inline-block; font-family: var(--display); font-size: 14px; background: #fffaf0; border: 2px solid #cdbf9f; border-bottom-width: 4px; border-radius: 6px; padding: 0 7px; }
   .mt-side .jl-stats div { padding: 4px 12px; }
   .mt-side .jl-stats b { font-size: 20px; min-width: 70px; white-space: nowrap; }
+  .mt-side .src a { color: inherit; }
 </style>
 </head>
 <body>
 <div class="viewport"><div class="stage">
 
-<!-- 1: slides 164-169 -->
-<section class="slide" data-title="Three jumps, one key" data-demo="jumps" data-touch-keys="Space:Jump">
+<!-- 1: game physics is a lie -->
+<section class="slide" data-title="Four jumps, one key" data-demo="jumps" data-touch-keys="Space:Jump">
   <div class="kicker">spatial simulation: game physics is a lie</div>
-  <h2 class="sm">One key, <span class="accent">three jumps</span></h2>
+  <h2 class="sm">One key, <span class="accent">four jumps</span></h2>
   <div class="mt-wrap">
     <canvas class="demo" width="1040" height="585"></canvas>
     <div class="mt-side">
       <h4 style="margin-top:0">Jump</h4>
-      <p class="tip">Hold <span class="jl-key">Space</span> or <span class="jl-key">Z</span> for different lengths. All three jumpers hear the same key.</p>
-      <label class="rng">Gravity <b class="jl-gv">3.0x Earth</b><input type="range" class="jl-g" min="1" max="3" step="0.1" value="3"></label>
+      <p class="tip">Hold <span class="jl-key">Space</span> or <span class="jl-key">Z</span> for different lengths. All four jumpers hear the same key.</p>
+      <label class="rng">Gravity <b class="jl-gv">×1, the real games</b><input type="range" class="jl-g" min="0.25" max="1.5" step="0.05" value="1"></label>
       <label class="rng">Pre-jump (fighter) <b class="jl-fv">4 frames</b><input type="range" class="jl-f" min="3" max="6" step="1" value="4"></label>
       <label class="chk"><input type="checkbox" class="jl-run"> Mario has a running start</label>
       <div class="row wrap"><button class="btn jl-tour on">▶ Walk-through</button><button class="btn jl-clear">Clear ghost arcs</button></div>
       <div class="mt-stats jl-stats"></div>
       <p class="mt-out jl-out"></p>
-      <p class="src">Mario sprite: Super Mario Bros. (Nintendo, 1985), via the meth-meth-method/super-mario sprite sheet. Jump rules from the deck, slides 165-169.</p>
+      <p class="src">Real values via <a href="https://atomechllc.github.io/jump-test-classic/" target="_blank" rel="noopener">jump-test-classic</a> (Sonic Physics Guide, SMB1 and Mega Man 2 disassembly); the fighter is illustrative. Earth multiples assume Sonic 1.0 m, Mario 1.55 m, Mega Man 1.32 m tall.</p>
     </div>
   </div>
 </section>
 
-<!-- 2: slides 170-172 -->
+<!-- 2: lerps and easing -->
 <section class="slide" data-title="Easing gallery" data-demo="easing">
   <div class="kicker">lerps and easing functions</div>
   <h2 class="sm">Same distance, <span class="accent">same time, different feel</span></h2>

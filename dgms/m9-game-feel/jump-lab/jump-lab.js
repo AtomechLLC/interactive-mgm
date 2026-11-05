@@ -1,9 +1,15 @@
-/* Jump curve lab (DGMS Module 9, deck slides 164-172).
-   jumps:  one jump key and three jumpers that differ only in what happens on release (slides 166-168):
-           Sonic cuts upward speed, Mario switches from low to high gravity, the fighter only listens during a 3-6 frame
-           pre-jump (short hop vs full jump). Arcs stay as ghost lines; a gravity slider runs 1x to 3x Earth (slide 165);
-           the bottom panel is the ADSR-style envelope of the last jump (slide 169).
-   easing: five easing curves (slides 170-172) moving dots over the same distance in the same time.
+/* Jump curve lab (DGMS Module 9, Game Feel: "game physics is a lie"; lerps and easing functions).
+   jumps:  one jump key and four jumpers that differ only in what happens on release. Sonic, Super Mario Bros. and
+           Mega Man 2 run their games' own per-frame rules with the real constants (game pixels per frame at 60 Hz,
+           1 tile = 16 px), taken from jump-test-classic (atomechllc.github.io/jump-test-classic) and its sources:
+           the Sonic Physics Guide (jump 6.5, gravity 0.21875, release cap 4), smbpedia's SMB1 disassembly (the
+           standing and running rows of the speed-indexed jump table: 4.0 / 0x20 / 0x70 and 5.0 / 0x28 / 0x90), and the
+           nesdev Mega Man 2 thread (jump 0x04.DF, gravity 0x00.40, release sets upward speed to 0). The fighter is an
+           illustrative 3-6 frame pre-jump (short hop vs full jump). Each jump is stepped in its game's own update order.
+           The gravity slider scales every game's gravity, with launch speed scaled by its square root so the full jump
+           keeps its height. Arcs stay as ghost lines; the bottom panel is the ADSR-style envelope of the last jump.
+           Sprites are the real game frames, shared with the Module 4 jump metrics tuner (m4-character/jump-tuner/img).
+   easing: five easing curves moving dots over the same distance in the same time.
    The jump physics runs at a fixed 60 steps a second, so the walk-through (and __seek) replays a list of timed key
    presses from t = 0 and every frame comes from t alone. */
 (function () {
@@ -14,20 +20,34 @@
   const panel = g => { g.clearRect(0, 0, W, H); g.fillStyle = 'rgba(255,252,244,.82)'; g.beginPath(); g.roundRect(0, 0, W, H, 14); g.fill(); };
   const txt = (g, s, x, y, font, col = C.ink, al = 'left') => { g.font = font; g.fillStyle = col; g.textAlign = al; g.textBaseline = 'middle'; g.fillText(s, x, y); };
 
-  /* ---------- physics ---------- */
-  const STEP = 1 / 60, PX = 40, EARTH = 9.8 * PX;      // 40 px to the metre
-  const JH = 150, VX = 120, LAND = 0.15, SHORT = 0.45;  // full jump height (px), run speed (px/s), landing pause (s), short hop height share
+  /* ---------- physics: each game's own per-frame rules, in game pixels per frame (1 tile = 16 px) ---------- */
+  const STEP = 1 / 60, S = 2, TILE = 16, VX = 120, LAND = 0.15;   // S: screen px per game px; VX: arcs drift right with time
+  // tall/px: the character's official height over its sprite height, to state gravity in multiples of Earth's
   const LANES = [
-    { kind: 'sonic', name: 'Sonic style', rule: ['Release: upward speed is cut', 'to 4/6.5 of launch speed'], col: '#2e63dc' },
-    { kind: 'mario', name: 'Mario style', rule: ['Held: 1/3 gravity while rising', 'Release: gravity triples'], col: '#e5322d' },
-    { kind: 'fighter', name: 'Fighting game', rule: ['Release during the pre-jump:', 'short hop. Later: full jump'], col: '#8a4fd6' },
+    { kind: 'sonic', name: 'Sonic the Hedgehog', short: 'Sonic', rule: ['Release while rising faster than 4:', 'upward speed is cut to 4'], col: '#2e63dc',
+      v0: 6.5, g: .21875, gf: .21875, cap: 4, term: Infinity, tall: 1.0, px: 39 },
+    { kind: 'mario', name: 'Super Mario Bros.', short: 'Mario', rule: ['Held and rising: weak gravity', 'Release: gravity ×3.5'], col: '#e5322d',
+      tiers: { stand: { v0: 4, g: .125, gf: .4375 }, run: { v0: 5, g: .15625, gf: .5625 } }, term: 4.5, tall: 1.55, px: 16 },
+    { kind: 'mm', name: 'Mega Man 2', short: 'Mega Man', rule: ['Release while rising:', 'upward speed drops to 0'], col: '#1d9bd6',
+      v0: 4.87109375, g: .25, gf: .25, term: 7, tall: 1.32, px: 24 },
+    { kind: 'fighter', name: 'Fighting game', short: 'Fighter', rule: ['Release during the pre-jump:', 'short hop. Later: full jump'], col: '#8a4fd6',
+      v0: Math.sqrt(2 * .3 * 64), g: .3, gf: .3, term: 8, hop: .45 },
   ];
+  // the lane's constants under the gravity scale k: gravity × k, speeds × √k, so the full jump keeps its height
+  function params(L, sim) {
+    const b = L.tiers ? L.tiers[sim.run ? 'run' : 'stand'] : L, k = sim.g, r = Math.sqrt(k);
+    return { v0: b.v0 * r, g: b.g * k, gf: b.gf * k, cap: (L.cap || 0) * r, term: L.term * r };
+  }
+  function fullHeight(L, sim) {   // a full-hold jump, stepped like the game
+    const P = params(L, sim); let y = 0, vy = P.v0, top = 0;
+    for (let n = 0; n < 400 && (n === 0 || y > 0); n++) { y += vy; vy = Math.max(vy - (vy > 0 ? P.g : P.gf), -P.term); top = Math.max(top, y); }
+    return top;
+  }
   function makeSim(o) {
     return { t: 0, g: o.g, frames: o.frames, run: o.run, held: false, pressT: null, releaseT: null, trace: null,
-      ghosts: [[], [], []], last: [null, null, null],
-      js: LANES.map(l => ({ kind: l.kind, phase: 'ready', x: 0, y: 0, vy: 0, pre: 0, hop: false, path: [], pressT: 0, releaseT: null, liftT: 0, landT: 0, peak: 0 })) };
+      ghosts: LANES.map(() => []), last: LANES.map(() => null),
+      js: LANES.map(l => ({ kind: l.kind, phase: 'ready', x: 0, y: 0, vy: 0, pre: 0, hop: false, cut: false, P: null, path: [], pressT: 0, releaseT: null, liftT: 0, landT: 0, peak: 0, air: 0 })) };
   }
-  const G = sim => sim.g * EARTH;
   function press(sim) {
     if (sim.held) return;
     sim.held = true; sim.pressT = sim.t; sim.releaseT = null;
@@ -35,13 +55,10 @@
     sim.js.forEach((j, i) => {
       if (j.phase !== 'ready') return;
       any = true;
-      Object.assign(j, { x: 0, y: 0, path: [[0, 0]], pressT: sim.t, releaseT: null, hop: false, pre: 0, liftT: sim.t, peak: 0, traced: true });
-      const g = G(sim);
-      if (j.kind === 'sonic') { j.phase = 'air'; j.vy = Math.sqrt(2 * g * JH); }
-      if (j.kind === 'mario') { j.phase = 'air'; j.vy = Math.sqrt(2 * (g / 3) * JH) * (sim.run ? 1.1 : 1); }
-      if (j.kind === 'fighter') { j.phase = 'pre'; j.vy = 0; }
+      Object.assign(j, { x: 0, y: 0, path: [[0, 0]], pressT: sim.t, releaseT: null, hop: false, cut: false, pre: 0, liftT: sim.t, peak: 0, air: 0, P: params(LANES[i], sim) });
+      if (j.kind === 'fighter') { j.phase = 'pre'; j.vy = 0; } else { j.phase = 'air'; j.vy = j.P.v0; }
     });
-    if (any) sim.trace = { pressT: sim.t, releaseT: null, curves: [[], [], []], lift: [0, 0, null], frames: sim.frames, g: sim.g, on: sim.js.map(j => j.pressT === sim.t) };
+    if (any) sim.trace = { pressT: sim.t, releaseT: null, curves: LANES.map(() => []), lift: LANES.map(() => 0), frames: sim.frames, g: sim.g, on: sim.js.map(j => j.pressT === sim.t) };
   }
   function release(sim) {
     if (!sim.held) return;
@@ -50,30 +67,33 @@
     sim.js.forEach(j => {
       if (j.phase === 'ready' || j.phase === 'land' || j.releaseT != null) return;
       j.releaseT = sim.t;
-      const g = G(sim);
-      if (j.kind === 'sonic' && j.phase === 'air') { const cut = Math.sqrt(2 * g * JH) * 4 / 6.5; if (j.vy > cut) j.vy = cut; }
       if (j.kind === 'fighter' && j.phase === 'pre') j.hop = true;
     });
   }
   function step(sim) {
-    const g = G(sim);
     sim.js.forEach((j, i) => {
+      const L = LANES[i], P = j.P;
       if (j.phase === 'pre') {
         j.pre++;
-        if (j.pre >= sim.frames) { j.phase = 'air'; j.liftT = sim.t; j.vy = Math.sqrt(2 * g * JH * (j.hop ? SHORT : 1)); if (sim.trace && sim.trace.on[i]) sim.trace.lift[i] = sim.t - sim.trace.pressT; }
+        if (j.pre >= sim.frames) { j.phase = 'air'; j.liftT = sim.t; j.vy = P.v0 * Math.sqrt(j.hop ? L.hop : 1); if (sim.trace && sim.trace.on[i]) sim.trace.lift[i] = sim.t - sim.trace.pressT; }
       } else if (j.phase === 'air') {
         const held = j.releaseT == null && sim.held;
-        const gg = j.kind === 'mario' && held && j.vy > 0 ? g / 3 : g;
-        j.vy -= gg * STEP; j.y += j.vy * STEP; j.x += VX * STEP;
+        // release rules, checked before the move (the Sonic Physics Guide's order)
+        if (j.kind === 'sonic' && !held && j.vy > P.cap) j.vy = P.cap;
+        if (j.kind === 'mm' && !held && j.vy > 0 && !j.cut) { j.vy = 0; j.cut = true; }
+        // move with the old speed, then apply gravity, as these games do
+        j.y += j.vy; j.x += VX * STEP; j.air++;
+        const gg = j.kind === 'mario' ? (j.vy > 0 && held ? P.g : P.gf) : (j.vy > 0 ? P.g : P.gf);
+        j.vy = Math.max(j.vy - gg, -P.term);
         if (j.y <= 0 && j.vy < 0) {
           j.y = 0; j.phase = 'land'; j.landT = sim.t;
           const hold = (j.releaseT ?? sim.t) - j.pressT;
-          const gh = sim.ghosts[i]; gh.push({ pts: j.path.slice(), hold, held: j.releaseT == null, hop: j.hop, g: sim.g });
+          const gh = sim.ghosts[i]; gh.push({ pts: j.path.concat([[j.x, 0]]), hold, held: j.releaseT == null, hop: j.hop, cut: j.cut });
           if (gh.length > 5) gh.shift();
-          sim.last[i] = { air: sim.t - j.pressT, peak: j.peak, hop: j.hop };
+          sim.last[i] = { air: sim.t + STEP - j.pressT, peak: j.peak, hop: j.hop };
         }
         j.peak = Math.max(j.peak, j.y);
-        j.path.push([j.x, j.y]);
+        if (j.phase === 'air') j.path.push([j.x, j.y]);
       } else if (j.phase === 'land' && sim.t - j.landT > LAND) { j.phase = 'ready'; j.x = 0; j.path = []; }
       const tr = sim.trace;
       if (tr && tr.on[i] && j.pressT === tr.pressT && (j.phase === 'pre' || j.phase === 'air' || (j.phase === 'land' && j.landT >= sim.t - STEP / 2))) tr.curves[i].push([sim.t - tr.pressT, j.y]);
@@ -84,23 +104,23 @@
   /* ---------- the walk-through: timed presses of varied lengths ---------- */
   const TOUR_DUR = 21;
   const TOUR = [
-    { at: 0, g: 3, clear: 1 },
+    { at: 0, g: 1, clear: 1 },
     { at: 0.6, hold: 0.06 }, { at: 2.4, hold: 0.16 }, { at: 4.2, hold: 0.32 }, { at: 6.0, hold: 0.9 },
-    { at: 8.0, g: 1, clear: 1 },
-    { at: 8.5, hold: 0.12 }, { at: 11.0, hold: 1.7 },
-    { at: 14.6, g: 3, clear: 1 },
+    { at: 8.0, g: 0.35, clear: 1 },
+    { at: 8.5, hold: 0.12 }, { at: 11.0, hold: 1.8 },
+    { at: 14.6, g: 1, clear: 1 },
     { at: 15.0, hold: 0.03 }, { at: 16.8, hold: 0.1 }, { at: 18.6, hold: 0.5 },
   ];
   const EVENTS = [];
-  TOUR.forEach(e => { if (e.hold) { EVENTS.push({ at: e.at, f: press }, { at: e.at + e.hold, f: release }); } else EVENTS.push({ at: e.at, f: sim => { sim.g = e.g; if (e.clear) sim.ghosts = [[], [], []]; } }); });
+  TOUR.forEach(e => { if (e.hold) { EVENTS.push({ at: e.at, f: press }, { at: e.at + e.hold, f: release }); } else EVENTS.push({ at: e.at, f: sim => { sim.g = e.g; if (e.clear) sim.ghosts = LANES.map(() => []); } }); });
   EVENTS.sort((a, b) => a.at - b.at);
   const TOUR_SAY = [
-    [0, 'Gravity is 3x Earth. The walk-through presses the key four times: a tap, a short hold, a longer hold and a full hold. Each arc stays as a ghost line, labelled with how long the key was held.'],
-    [8, 'Now 1x Earth, with the same full jump height. Every arc gets wide and slow. The deck: most 2D games use gravity about 3 times stronger than on Earth, because the sense of power is more fun than a realistic jump.'],
-    [14.6, 'Back to 3x. A tap shorter than the 4-frame pre-jump gives the fighter a short hop. Any longer hold gives it the same full jump, while Sonic and Mario keep growing with the hold.'],
+    [0, 'The real numbers: each lane runs its game’s own rules, frame by frame. The walk-through presses the key four times: a tap, a short hold, a longer hold and a full hold. Each arc stays as a ghost line, labelled with how long the key was held.'],
+    [8, 'Now about a third of each game’s gravity, same jump heights: every arc gets wide and slow. Against their own heights these games fall at 2× (Sonic), 5× (Mega Man) and 15× (Mario, released) Earth’s gravity, because power is more fun than realism.'],
+    [14.6, 'Back to the real gravity. A tap shorter than the 4-frame pre-jump gives the fighter a short hop, and Mega Man stops rising the instant the key comes up. Sonic and Mario keep growing with the hold, Sonic by a cut speed, Mario by a gravity switch.'],
   ];
   function tourSim(t, frames, run) {
-    const sim = makeSim({ g: 3, frames, run });
+    const sim = makeSim({ g: 1, frames, run });
     let k = 0;
     while (sim.t < t - 1e-9) {
       while (k < EVENTS.length && EVENTS[k].at <= sim.t + 1e-9) EVENTS[k++].f(sim);
@@ -110,53 +130,43 @@
   }
 
   /* ---------- drawing ---------- */
-  const mario = new Image(); mario.src = 'img/mario-small.png';
-  const LW = W / 3, GY = 340, X0 = 30;
-  function drawSonic(g, x, y, air, spin) {
-    g.save(); g.translate(x, y);
-    if (air) {
-      g.translate(0, -18); g.rotate(spin);
-      g.fillStyle = '#1f4fd1'; g.beginPath(); g.arc(0, 0, 18, 0, 7); g.fill();
-      g.fillStyle = '#4f7cf0';
-      for (let k = 0; k < 4; k++) { g.rotate(Math.PI / 2); g.beginPath(); g.moveTo(-6, -4); g.lineTo(0, -19); g.lineTo(6, -4); g.closePath(); g.fill(); }
-      g.fillStyle = '#f2c28e'; g.beginPath(); g.arc(0, 0, 6, 0, 7); g.fill();
-    } else {
-      g.fillStyle = '#d8261f'; g.beginPath(); g.ellipse(-7, -3, 8, 4, 0, 0, 7); g.ellipse(9, -3, 8, 4, 0, 0, 7); g.fill();
-      g.fillStyle = '#1f4fd1'; g.fillRect(-6, -20, 4, 16); g.fillRect(4, -20, 4, 16);
-      g.beginPath(); g.ellipse(1, -26, 10, 9, 0, 0, 7); g.fill();
-      for (let k = 0; k < 3; k++) { g.beginPath(); g.moveTo(-4, -44 + k * 9); g.lineTo(-24, -48 + k * 11); g.lineTo(-4, -36 + k * 9); g.closePath(); g.fill(); }
-      g.beginPath(); g.arc(2, -44, 13, 0, 7); g.fill();
-      g.fillStyle = '#f2c28e'; g.beginPath(); g.ellipse(10, -39, 7, 5, 0, 0, 7); g.fill(); g.beginPath(); g.ellipse(1, -26, 5, 6, 0, 0, 7); g.fill();
-      g.fillStyle = '#fff'; g.beginPath(); g.ellipse(7, -47, 5, 6, 0, 0, 7); g.fill();
-      g.fillStyle = '#1b2a6b'; g.beginPath(); g.arc(9, -47, 2.4, 0, 7); g.fill();
-    }
-    g.restore();
+  const SPR = '../../m4-character/jump-tuner/img/';
+  const IMG = {};
+  ['sonic_idle', 'sonic_ball1', 'sonic_ball2', 'sonic_ball3', 'sonic_ball4', 'mario_idle', 'mario_jump', 'mm_idle', 'mm_jump']
+    .forEach(n => { const i = new Image(); i.src = SPR + n + '.png'; IMG[n] = i; });
+  function sprite(g, n, x, y, flip) {
+    const im = IMG[n];
+    if (!im || !im.complete || !im.naturalWidth) { g.fillStyle = C.red; g.fillRect(x - 12, y - 32, 24, 32); return; }
+    const w = im.naturalWidth * S, h = im.naturalHeight * S;
+    g.save(); g.translate(Math.round(x), Math.round(y)); if (flip) g.scale(-1, 1);
+    g.imageSmoothingEnabled = false; g.drawImage(im, -w / 2, -h, w, h); g.restore();
   }
-  function drawMario(g, x, y, air) {
-    if (!mario.complete || !mario.naturalWidth) { g.fillStyle = '#e5322d'; g.fillRect(x - 18, y - 48, 36, 48); return; }
-    g.imageSmoothingEnabled = false;
-    g.drawImage(mario, air ? 16 : 0, 0, 16, 16, x - 24, y - 48, 48, 48);
-    g.imageSmoothingEnabled = true;
-  }
-  function drawFighter(g, x, y, pre, frames, air) {
-    const sq = pre ? 0.62 : air ? 1.06 : 1, w = 28 / Math.sqrt(sq), h = 44 * sq;
+  const LW = W / LANES.length, GY = 340, X0 = 24;
+  function drawFighter(g, x, y, pre, air) {
+    const sq = pre ? 0.62 : air ? 1.06 : 1, w = 26 / Math.sqrt(sq), h = 40 * sq;
     g.fillStyle = '#8a4fd6'; g.strokeStyle = C.navy; g.lineWidth = 2.5;
     g.beginPath(); g.roundRect(x - w / 2, y - h, w, h, 8); g.fill(); g.stroke();
-    g.fillStyle = '#c9b2f0'; g.beginPath(); g.arc(x, y - h - 12, 11, 0, 7); g.fill(); g.stroke();
-    g.fillStyle = C.navy; g.fillRect(x + 2, y - h - 15, 6, 3);
+    g.fillStyle = '#c9b2f0'; g.beginPath(); g.arc(x, y - h - 11, 10, 0, 7); g.fill(); g.stroke();
+    g.fillStyle = C.navy; g.fillRect(x + 2, y - h - 14, 6, 3);
   }
+  const earth = (L, gpf) => gpf * 3600 * (L.tall / L.px) / 9.8;   // px/frame² → multiples of Earth gravity
   function lane(g, sim, i, now) {
     const L = LANES[i], lx = i * LW, j = sim.js[i];
     if (i) { g.strokeStyle = '#e3d8bf'; g.lineWidth = 2; g.beginPath(); g.moveTo(lx, 16); g.lineTo(lx, 372); g.stroke(); }
-    txt(g, L.name, lx + 20, 24, '800 18px Montserrat', L.col);
-    txt(g, L.rule[0], lx + 20, 46, '600 14px Jost', C.muted); txt(g, L.rule[1], lx + 20, 64, '600 14px Jost', C.muted);
+    txt(g, L.name, lx + 16, 24, '800 16px Montserrat', L.col);
+    txt(g, L.rule[0], lx + 16, 45, '600 13px Jost', C.muted); txt(g, L.rule[1], lx + 16, 62, '600 13px Jost', C.muted);
+    if (L.tall) {
+      const P = params(L, sim), e1 = earth(L, P.g), e2 = earth(L, P.gf);
+      txt(g, Math.abs(e1 - e2) < .05 ? `Gravity ${e1.toFixed(1)}× Earth at ${L.tall.toFixed(2)} m tall` : `${e1.toFixed(1)}× Earth held, ${e2.toFixed(1)}× after (${L.tall} m)`, lx + 16, 81, '600 12px Jost', C.goldInk);
+    } else txt(g, 'Illustrative values', lx + 16, 81, '600 12px Jost', C.goldInk);
     // ground
-    g.fillStyle = '#e8dcc0'; g.fillRect(lx + 10, GY, LW - 20, 16);
-    g.strokeStyle = '#cdbf9f'; g.lineWidth = 2; g.beginPath(); g.moveTo(lx + 10, GY); g.lineTo(lx + LW - 10, GY); g.stroke();
-    // full jump height line
-    g.setLineDash([4, 6]); g.strokeStyle = '#cdbf9f'; g.lineWidth = 1.5; g.beginPath(); g.moveTo(lx + 10, GY - JH); g.lineTo(lx + LW - 10, GY - JH); g.stroke(); g.setLineDash([]);
-    txt(g, 'full jump height', lx + LW - 14, GY - JH - 9, '600 11px Jost', '#a99c7c', 'right');
-    const sx = x => lx + X0 + x, sy = y => GY - y;
+    g.fillStyle = '#e8dcc0'; g.fillRect(lx + 8, GY, LW - 16, 16);
+    g.strokeStyle = '#cdbf9f'; g.lineWidth = 2; g.beginPath(); g.moveTo(lx + 8, GY); g.lineTo(lx + LW - 8, GY); g.stroke();
+    // this lane's full jump height
+    const FH = fullHeight(L, sim) * S;
+    g.setLineDash([4, 6]); g.strokeStyle = '#cdbf9f'; g.lineWidth = 1.5; g.beginPath(); g.moveTo(lx + 8, GY - FH); g.lineTo(lx + LW - 8, GY - FH); g.stroke(); g.setLineDash([]);
+    txt(g, `full jump ${(FH / S / TILE).toFixed(1)} tiles`, lx + LW - 12, GY - FH - 9, '600 11px Jost', '#a99c7c', 'right');
+    const sx = x => lx + X0 + x, sy = y => GY - y * S;
     // ghost arcs
     const gh = sim.ghosts[i], placed = [];
     gh.forEach((a, k) => {
@@ -164,9 +174,9 @@
       g.globalAlpha = al; g.strokeStyle = L.col; g.lineWidth = 2.5; g.setLineDash([7, 5]);
       g.beginPath(); a.pts.forEach(([x, y], n) => n ? g.lineTo(sx(x), sy(y)) : g.moveTo(sx(x), sy(y))); g.stroke(); g.setLineDash([]);
       let top = a.pts[0]; a.pts.forEach(p => { if (p[1] > top[1]) top = p; });
-      const lab = (a.held ? 'held to landing' : a.hold.toFixed(2) + ' s') + (a.hop ? ', short hop' : '');
-      let lx2 = sx(top[0]), ly = sy(top[1]) - 12;
-      while (placed.some(([px, py]) => Math.abs(px - lx2) < 62 && Math.abs(py - ly) < 15)) ly -= 15;
+      const lab = (a.held ? 'held' : a.hold.toFixed(2) + ' s') + (a.hop ? ', hop' : '');
+      let lx2 = clamp(sx(top[0]), lx + 34, lx + LW - 34), ly = sy(top[1]) - 12;
+      while (placed.some(([px, py]) => Math.abs(px - lx2) < 56 && Math.abs(py - ly) < 15)) ly -= 15;
       placed.push([lx2, ly]);
       g.font = '700 12px Jost'; const tw = g.measureText(lab).width + 8;
       g.fillStyle = 'rgba(255,252,244,.92)'; g.fillRect(lx2 - tw / 2, ly - 8, tw, 16);
@@ -179,17 +189,18 @@
     }
     const air = j.phase === 'air';
     const px = sx(j.phase === 'ready' ? 0 : j.x), py = sy(j.y);
-    T.use(g); T.shadow(px, GY + 3, 16 * (1 - Math.min(.6, j.y / 300)), 4, .25);
-    if (L.kind === 'sonic') drawSonic(g, px, py, air, now * 22);
-    if (L.kind === 'mario') drawMario(g, px, py, air);
+    T.use(g); T.shadow(px, GY + 3, 16 * (1 - Math.min(.6, j.y / 120)), 4, .25);
+    if (L.kind === 'sonic') sprite(g, air ? 'sonic_ball' + (1 + Math.floor(j.air / 3) % 4) : 'sonic_idle', px, py, false);
+    if (L.kind === 'mario') sprite(g, air ? 'mario_jump' : 'mario_idle', px, py, false);
+    if (L.kind === 'mm') sprite(g, air ? 'mm_jump' : 'mm_idle', px, py, true);
     if (L.kind === 'fighter') {
-      drawFighter(g, px, py, j.phase === 'pre', sim.frames, air);
-      if (j.phase === 'pre') T.label(`pre-jump ${j.pre + 1} / ${sim.frames}`, px, py - 84, 'center', L.col, 13);
+      drawFighter(g, px, py, j.phase === 'pre', air);
+      if (j.phase === 'pre') T.label(`pre-jump ${j.pre + 1} / ${sim.frames}`, px + 30, py - 78, 'center', L.col, 13);
     }
     const ls = sim.last[i];
-    txt(g, ls ? `last: ${ls.air.toFixed(2)} s in the air, ${(ls.peak / PX).toFixed(1)} m high` : 'press to jump', lx + LW / 2, GY + 30, '600 13px Jost', C.muted, 'center');
+    txt(g, ls ? `last: ${ls.air.toFixed(2)} s, ${(ls.peak / TILE).toFixed(1)} tiles high` : 'press to jump', lx + LW / 2, GY + 30, '600 13px Jost', C.muted, 'center');
   }
-  function envelope(g, sim, now) {
+  function envelope(g, sim) {
     const y0 = 392, y1 = 580;
     g.fillStyle = '#fffaf0'; g.strokeStyle = '#e3d8bf'; g.lineWidth = 2; g.beginPath(); g.roundRect(10, y0, W - 20, y1 - y0, 12); g.fill(); g.stroke();
     // key cap
@@ -206,8 +217,8 @@
     const p0 = 160, p1 = 1015, q0 = 446, q1 = 556;
     if (!tr) { txt(g, 'Press the key to draw an envelope.', (p0 + p1) / 2, (q0 + q1) / 2, '600 16px Jost', C.muted, 'center'); return; }
     let tEnd = 0.6; tr.curves.forEach(c => { if (c.length) tEnd = Math.max(tEnd, c[c.length - 1][0]); });
-    const Tm = Math.max(1, Math.ceil((tEnd + 0.05) * 2) / 2);
-    const X = t => p0 + (t / Tm) * (p1 - p0), Y = h => q1 - (h / (JH * 1.25)) * (q1 - q0);
+    const Tm = Math.max(1, Math.ceil((tEnd + 0.05) * 2) / 2), Hm = Math.max(...LANES.map(L => fullHeight(L, sim))) * 1.1;
+    const X = t => p0 + (t / Tm) * (p1 - p0), Y = h => q1 - (h / Hm) * (q1 - q0);
     // key held band
     const rel = tr.releaseT != null ? tr.releaseT - tr.pressT : sim.t - tr.pressT;
     g.fillStyle = 'rgba(255,185,81,.22)'; g.fillRect(X(0), q0 - 8, X(rel) - X(0), q1 - q0 + 8);
@@ -234,10 +245,10 @@
       c.forEach(([t, h], n) => n ? g.lineTo(X(t), Y(h)) : g.moveTo(X(t), Y(h))); g.stroke();
     });
     // legend
-    LANES.forEach((L, i) => { const lx = p1 - 300 + i * 100; g.fillStyle = L.col; g.fillRect(lx, y0 + 12, 16, 4); txt(g, L.name.split(' ')[0], lx + 21, y0 + 15, '700 12px Jost', L.col); });
+    LANES.forEach((L, i) => { const lx = p1 - 380 + i * 95; g.fillStyle = L.col; g.fillRect(lx, y0 + 12, 16, 4); txt(g, L.short, lx + 21, y0 + 15, '700 12px Jost', L.col); });
   }
 
-  /* ---------- 1: three jumpers ---------- */
+  /* ---------- 1: four jumpers ---------- */
   canvasDemo('jumps', (s, cv, g) => {
     const gIn = $(s, '.jl-g'), fIn = $(s, '.jl-f'), runIn = $(s, '.jl-run'), tourBtn = $(s, '.jl-tour');
     const opts = () => ({ g: +gIn.value, frames: +fIn.value, run: runIn.checked });
@@ -246,7 +257,7 @@
     gIn.oninput = () => { free(); st.sim.g = +gIn.value; };
     fIn.oninput = () => { free(); st.sim.frames = +fIn.value; };
     runIn.onchange = () => { free(); st.sim.run = runIn.checked; };
-    $(s, '.jl-clear').onclick = () => { free(); st.sim.ghosts = [[], [], []]; };
+    $(s, '.jl-clear').onclick = () => { free(); st.sim.ghosts = LANES.map(() => []); };
     tourBtn.onclick = () => { st.tour = true; st.t = 0; tourBtn.classList.add('on'); };
     const isJump = e => e.code === 'Space' || e.code === 'KeyZ';
     document.addEventListener('keydown', e => {
@@ -266,17 +277,17 @@
       const sim = st.tour ? tourSim(st.t, 4, false) : st.sim;
       if (st.tour) { gIn.value = sim.g; fIn.value = 4; runIn.checked = false; }
       panel(g);
-      for (let i = 0; i < 3; i++) lane(g, sim, i, st.tour ? st.t : sim.t);
-      envelope(g, sim, sim.t);
-      $(s, '.jl-gv').textContent = (+gIn.value).toFixed(1) + 'x Earth';
+      for (let i = 0; i < LANES.length; i++) lane(g, sim, i, st.tour ? st.t : sim.t);
+      envelope(g, sim);
+      $(s, '.jl-gv').textContent = Math.abs(+gIn.value - 1) < 1e-6 ? '×1, the real games' : '×' + (+gIn.value).toFixed(2) + ' of real';
       $(s, '.jl-fv').textContent = fIn.value + ' frames';
       const tr = sim.trace, hold = tr ? ((tr.releaseT ?? sim.t) - tr.pressT).toFixed(2) + ' s' : '–';
       const air = sim.last.map(l => l ? l.air.toFixed(2) : '–').join(' / ');
       const key = [hold, air, st.tour ? TOUR_SAY.filter(x => x[0] <= st.t + 1e-6).length : -1].join('|');
       if (key === st.key) return; st.key = key;
-      $(s, '.jl-stats').innerHTML = `<div class="y"><b>${hold}</b><span>last key hold</span></div><div style="display:block"><b>${air}</b><br><span>seconds in the air: Sonic / Mario / fighter</span></div>`;
+      $(s, '.jl-stats').innerHTML = `<div class="y"><b>${hold}</b><span>last key hold</span></div><div style="display:block"><b>${air}</b><br><span>seconds in the air: Sonic / Mario / Mega Man / fighter</span></div>`;
       if (st.tour) say($(s, '.jl-out'), TOUR_SAY.filter(x => x[0] <= st.t + 1e-6).pop()[1]);
-      else say($(s, '.jl-out'), 'The three jumpers only differ in what happens when the key comes up. That release behaviour is the part of a jump that real life does not have, and the part players feel first.');
+      else say($(s, '.jl-out'), 'The four jumpers only differ in what happens when the key comes up. That release behaviour is the part of a jump that real life does not have, and the part players feel first.');
     }
     apis.jumps = { seek(t) { st.frozen = st.tour = true; st.t = t; render(); }, dur: () => TOUR_DUR };
     return dt => {
