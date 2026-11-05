@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sequencing with Tokens · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="../shared/coop.css">
+<link rel="stylesheet" href="sequencing.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · Co-op Interactions · Sequencing with Tokens', home: '../index.html', audio: null, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1 -->
+<section class="slide center" data-title="Sequencing with Tokens" data-demo="title">
+  <div class="kicker rise">teamplay sequencing framework</div>
+  <h1 class="rise">Setup, Exploit, <span class="accent">Payoff</span></h1>
+  <div class="rule rise" style="margin:22px auto"></div>
+  <canvas class="demo ti-canvas rise" width="1420" height="600"></canvas>
+  <p class="lede rise" style="margin:18px auto 0;text-align:center">Four players, four elements, one enemy: every stage leaves a hook for the next.</p>
+</section>
+
+<!-- 2: deck slides 209-213 -->
+<section class="slide" data-title="Hooks as Puzzle Tabs" data-demo="tabs">
+  <div class="kicker">collaboration hooks</div>
+  <h2 class="sm">Only the Next Piece <span class="accent">Fits the Hook</span></h2>
+  <canvas class="demo sq-canvas" width="1420" height="600"></canvas>
+  <p class="out">A setup leaves a state on the enemy, and that state has a shape. Only the abilities built for that shape can plug into it, so the order of play is part of the design.</p>
+</section>
+
+<!-- 3: deck slide 237 -->
+<section class="slide" data-title="One Player or Three" data-demo="hands">
+  <div class="kicker">by 1 player vs by 3 players</div>
+  <h2 class="sm">Same Chain, <span class="accent">Different Clock</span></h2>
+  <canvas class="demo sq-canvas" width="1420" height="600"></canvas>
+  <p class="out">One kit can hold the whole chain, but cooldowns stretch it out and the Wet state nearly runs out. Split across three players, the same chain lands in a third of the time, as long as they time the hand-off.</p>
+</section>
+
+<!-- 4: deck slides 223-228 -->
+<section class="slide" data-title="Payoff Window" data-demo="window">
+  <div class="kicker">why payoffs need setups</div>
+  <h2 class="sm">The Payoff Lands When <span class="accent">Held ≥ Windup</span></h2>
+  <canvas class="demo sq-canvas" width="1420" height="600"></canvas>
+  <p class="out">Payoffs are strong because they are slow. A charged beam needs the target to stay put for its whole windup, so it needs someone else to hold the enemy still for at least that long.</p>
+</section>
+
+<!-- 5: deck slides 238-240 -->
+<section class="slide" data-title="Two Setups Converge" data-demo="converge">
+  <div class="kicker">advanced forms</div>
+  <h2 class="sm">Setup A + Setup B → <span class="accent">Payoff</span></h2>
+  <canvas class="demo sq-canvas" width="1420" height="600"></canvas>
+  <p class="out">Water and Chill can land in either order, but both have to land before the Rock. Add an exploit between them and the payoff grows: a pull gathers the enemies before the shatter.</p>
+</section>
+
+<!-- 6: sandbox -->
+<section class="slide" data-title="Token Chain Sandbox" data-demo="sandbox">
+  <div class="kicker">try it</div>
+  <h2 class="sm">Build a Chain, <span class="accent">Beat by Beat</span></h2>
+  <div class="sb-wrap">
+    <div>
+      <canvas class="demo sb-canvas" width="900" height="330"></canvas>
+      <div class="sb-grid"></div>
+    </div>
+    <div class="sb-side">
+      <h4>Try a plan</h4>
+      <div class="sb-presets"></div>
+      <div class="row wrap sb-btns">
+        <button class="btn sb-play">▶ Play</button>
+        <button class="btn sb-clear">Clear</button>
+        <button class="btn sb-solo">One player does it all</button>
+      </div>
+      <p class="sb-hint">Click a cell to cycle that player’s abilities. Stages: <span class="chip">setup</span> <span class="chip gold">exploit</span> <span class="chip red">payoff</span></p>
+      <div class="sb-total"></div>
+      <div class="sb-out"></div>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="../shared/topdown.js"></script>
+<script src="sequencing.js"></script>
+</body>
+</html>

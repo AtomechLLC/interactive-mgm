@@ -67,6 +67,7 @@
   const PAGES = [
     ['timing', 'Protect_Friendly', 'Before, During, After the Hit', 'Shield before the hit, intervene during it, heal after it: try each on the same enemy swing, then see how shields invite risk', '147 to 160', 'timing-before-during-after', 'Before, During, After', 'One enemy swing, three answers: a shield before the hit, an intervention during it, a heal after it.'],
     ['chains', 'Chain', 'Co-op Chain Builder', 'Three players, six keywords and one enemy: put setups, exploits and payoffs in order, or let everyone play their own loop', '186 to 229, 288 to 291', 'chains-setup-exploit-payoff', 'Setup, Exploit, Payoff', 'Everyone on their own loop, then the same three players chaining slow → bind → charged shot and wet → freeze → shatter.'],
+    ['sequencing', 'Chain', 'Sequencing with Tokens', 'The C4 update of Part 8 drawn with plain tokens: hooks as puzzle tabs, one player vs three, the payoff window, two setups converging, and a four-player sandbox', '209 to 240 (C4 M6 Update)', 'sequencing-hook-tabs', 'Only the Next Piece Fits the Hook', 'Water leaves a round tab, Chill fits it and leaves a triangle, Rock fits that; then Rock with no setup, and Rock on Wet alone.'],
     ['camera', 'Target_Reticule', 'Shared-Screen Camera Lab', 'Two players and an enemy on one screen: follow one player, frame both, lock the scroll, split the screen or weight what matters', '68 to 78', 'camera-shared-screen', 'Who gets the camera?', 'The same couch co-op moment under five camera rules, with what each one costs.'],
     ['targeting', 'Grid', 'Teamplay Targeting Matrix', 'Walk one mechanic through source × target, cell by cell, and watch each cell become a drawn ability: fire becomes a fireball, a pool of flames, Hellfire, cauterize and twelve more. Plus trap, hazard and insight', '116 to 133, 161 to 171', 'targeting-matrix', 'One Mechanic, Sixteen Ideas', 'Fire walked cell by cell through who acts upon whom, each cell drawn as an ability.'],
     ['keywords', 'Text', 'Keywords Need Situations', 'Class keyword sheets with role, class and spec layers, and encounter sliders that show which keywords ever matter', '270 to 285', 'keywords-need-situations', 'Keywords Only Matter If Situations Demand Them', 'Four classes through four encounters: each keyword lights up only when the content asks for it.'],
@@ -75,7 +76,7 @@
     ['free-gear', 'Mana_Crystal', 'Free Gear Plateau', 'A tier-9 gift at hour one versus earning gear by questing: the spike, then the hours with nothing new to equip, and what soulbound changes', '316 and 317', 'free-gear-plateau', 'The Gift That Flattens the Curve', 'Gifted quest gear outclasses every reward for 22 hours; with soulbound rewards both players climb the same steps.'],
   ];
   // pages that are built so far
-  const READY = ['timing', 'chains', 'camera', 'targeting', 'keywords', 'team-roles', 'interactions', 'free-gear'];
+  const READY = ['timing', 'chains', 'sequencing', 'camera', 'targeting', 'keywords', 'team-roles', 'interactions', 'free-gear'];
   const LIVE = PAGES.filter(p => READY.includes(p[0]));
   // deck parts in deck order: [title, first slide, last slide]. Each page sits under the part its first slide is in.
   const PARTS = [
@@ -103,6 +104,10 @@
     ['timing', '150 and 151', 'timing-revive', 'Heal and Revive', 'Reactive tools need the event first: a heal needs damage, a revive needs a death.'],
     ['timing', '156 to 158', 'timing-souls', 'Iron Flesh, Block, Estus', 'The same punch on yourself: halve it before, block it during, drink after.'],
     ['timing', '159 and 160', 'timing-stack', 'Stack All Three', 'A shield before, an intervention during and a heal after, all on one big hit.'],
+    ['sequencing', '237 (C4)', 'sequencing-one-vs-three', 'Same Chain, Different Clock', 'One kit with cooldowns takes 6.6 s and nearly loses the Wet state; three players land the same chain in 2.4 s.'],
+    ['sequencing', '223 to 228 (C4)', 'sequencing-payoff-window', 'Held ≥ Windup', 'A charged beam with no setup, with a short root and with a long root: it lands only when the enemy is held for the whole windup.'],
+    ['sequencing', '238 to 240 (C4)', 'sequencing-two-setups', 'Setup A + Setup B → Payoff', 'Water and Chill in either order make Frozen; Water alone does not fit Rock; a Pull exploit gathers three enemies for the shatter.'],
+    ['sequencing', 'all of Part 8 (C4)', 'sequencing-sandbox', 'Token Chain Sandbox', 'Everyone on their own, then Water → Shock, Water + Chill → Rock, Root → Topple → Beam, and one player doing the whole chain.'],
     ['team-roles', '249', 'roles-holy-trinity', 'The Holy Trinity Tug-of-War', 'Tank soaks, healer refills, DPS chips the boss; then the same pull with no healer, and the party wipes.'],
     ['team-roles', '250 to 253', 'roles-lanes-to-teamfight', 'From Lanes to a Teamfight', 'Laning duels and a jungle gank, then a frontline, a backline and an assassin flank take the tower.'],
   ];

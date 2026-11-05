@@ -78,6 +78,17 @@ Each deck's home button goes back to `pvp/index.html`. Add a card there when you
   5. Same sequence, three weapons: the whole sequence re-run for each weapon in one table.
   The rules (`WEAPONS`, `ENEMY`, `plan`) are at the top of `pvp/payoffs/payoffs.js`. Spear numbers are the deck's; fist and sword payoffs are illustrative.
 
+## Co-op Interactions: Sequencing with Tokens (`coop-interactions/sequencing/`)
+
+Part 8 of *MGM C4 M6 - Engaging Co-op Interaction Design Fundamentals (Update)*, the Teamplay Sequencing Framework, drawn with plain tokens (P1-P4, one enemy, Water / Chill / Shock / Rock and the `student-tokens/vector-basics` status icons).
+  1. Title
+  2. Hooks as puzzle tabs (209-213): each state is a shape the next piece must fit; Rock with no setup, and Rock on Wet alone, bounce.
+  3. One player or three (237): the same chain in one kit with cooldowns vs one step each.
+  4. Payoff window (223-228): a charged beam lands only when the enemy is held for its whole windup.
+  5. Two setups converge (238-240): A + B in either order, A alone, and A + B → Pull exploit → shatter.
+  6. Sandbox: four players, two abilities each, eight beats; presets and a "one player does it all" mode.
+  The rules are `RULES` (timed scenes) and `BRULE` (sandbox beats) in `sequencing.js`. GIFs: `coop-interactions/gifs/sequencing-*.gif`, recorded by `coop-interactions/tools/record-all.sh`.
+
 ## Layout
 
 - `index.html`: the course home. One section per module in module number order (M1 to M8), each listing that module's interactive pages in deck order with their part and slide range. Add a line here when you add a page to a module.
