@@ -194,32 +194,44 @@
   }
   function series(gi, weapon, masks) { const f = []; for (let n = 0; n < RUNS; n++) f.push(fight(gi, weapon, masks, n)); return { f, clears: f.filter(x => x.clear).length }; }
 
-  function hornet(g, x, y, s, flash) {
-    g.save(); g.translate(x, y); g.scale(s, s);
-    g.fillStyle = flash ? '#fff' : '#b3242a'; g.beginPath(); g.moveTo(0, -30); g.lineTo(20, 22); g.lineTo(-20, 22); g.closePath(); g.fill();
-    g.fillStyle = '#f3efe6'; g.beginPath(); g.ellipse(0, -36, 12, 14, 0, 0, Math.PI * 2); g.fill();
-    g.beginPath(); g.moveTo(-8, -46); g.lineTo(-12, -66); g.lineTo(-3, -48); g.fill(); g.beginPath(); g.moveTo(8, -46); g.lineTo(12, -66); g.lineTo(3, -48); g.fill();
-    g.fillStyle = '#152044'; g.beginPath(); g.ellipse(-5, -35, 3, 5, 0, 0, Math.PI * 2); g.ellipse(5, -35, 3, 5, 0, 0, Math.PI * 2); g.fill();
-    g.strokeStyle = '#d9dde8'; g.lineWidth = 3; g.beginPath(); g.moveTo(14, -6); g.lineTo(52, -14); g.stroke();
+  // Real Hollow Knight: Silksong art (Team Cherry), in ../img/three-dials/. Hornet's frames are cut from the Game Animation
+  // Library's sprite sheets (gameanimationlibrary.net, Hollow Knight > Hornet (Silksong): hunter slash, dash stab, hit);
+  // the Savage Beastfly, the Beastfly summon, the mask, the needle and the Silk Spear icon come from hollowknight.wiki.
+  const IMG = {};
+  ['hornet-slash.webp', 'hornet-dash-stab.webp', 'hornet-hit.webp', 'savage-beastfly.png', 'beastfly.png', 'mask.png', 'needle.png', 'silk-spear.png']
+    .forEach(f => { const im = new Image(); im.src = `../img/three-dials/${f}`; IMG[f.replace(/\..*/, '')] = im; });
+  const ready = im => im && im.complete && im.naturalWidth > 0;
+  // one cell of a single-row sheet: cw x ch cells, (ax, ay) is Hornet's feet inside a cell; flip mirrors her to face right
+  const SHEETS = {
+    slash: { img: 'hornet-slash', cw: 414, ch: 203, ax: 212, ay: 191, flip: true },
+    stab: { img: 'hornet-dash-stab', cw: 389, ch: 198, ax: 150, ay: 178, flip: false },
+    hit: { img: 'hornet-hit', cw: 295, ch: 242, ax: 190, ay: 194, flip: true },
+  };
+  function cell(g, sheet, i, x, y, s) {
+    const S = SHEETS[sheet], im = IMG[S.img]; if (!ready(im)) return;
+    g.save(); g.translate(x, y); g.scale(S.flip ? -s : s, s);
+    g.drawImage(im, i * S.cw, 0, S.cw, S.ch, -S.ax, -S.ay, S.cw, S.ch);
     g.restore();
+  }
+  function pic(g, key, x, y, w, h, alpha = 1, flip = false) {
+    const im = IMG[key]; if (!ready(im)) return;
+    g.save(); g.globalAlpha *= alpha; g.translate(x, y); if (flip) g.scale(-1, 1);
+    g.drawImage(im, -w / 2, -h / 2, w, h); g.restore();
+  }
+  // Hornet: ready stance between exchanges, the needle slash (or the silk-spear thrust) on a hit, the stagger when struck
+  function hornet(g, x, y, s, wpn, hitA, k, hurt) {
+    if (hurt) return cell(g, 'hit', Math.min(9, 5 + Math.floor(k * 5)), x, y, s);
+    if (wpn === 'spear') return cell(g, 'stab', hitA > 0 ? 10 + Math.min(6, Math.floor(k * 7)) : 0, x, y, s);
+    cell(g, 'slash', hitA > 0 ? 3 + Math.min(8, Math.floor(k * 9)) : 12, x, y, s);
   }
   function beastfly(g, x, y, s, t, flash) {
-    g.save(); g.translate(x, y); g.scale(s, s);
-    const fl = Math.sin(t * 40) * .5 + .5;
-    g.fillStyle = 'rgba(200,220,255,.45)'; g.strokeStyle = 'rgba(220,235,255,.8)'; g.lineWidth = 2;
-    [-1, 1].forEach(sg => { g.beginPath(); g.ellipse(sg * 18, -46 - fl * 8, 30, 12 + fl * 8, sg * -.6, 0, Math.PI * 2); g.fill(); g.stroke(); });
-    g.fillStyle = flash ? '#a86a52' : '#5c3a2e'; g.beginPath(); g.ellipse(0, 0, 62, 44, 0, 0, Math.PI * 2); g.fill();
-    g.fillStyle = flash ? '#c98a6a' : '#7a4a36'; g.beginPath(); g.ellipse(10, 8, 44, 26, 0, 0, Math.PI * 2); g.fill();
-    g.fillStyle = '#3a221a'; g.beginPath(); g.moveTo(-52, -14); g.lineTo(-104, -4); g.lineTo(-54, 10); g.closePath(); g.fill();
-    g.fillStyle = '#ffb951'; g.beginPath(); g.arc(-34, -12, 7, 0, Math.PI * 2); g.fill();
-    g.fillStyle = '#152044'; g.beginPath(); g.arc(-36, -12, 3, 0, Math.PI * 2); g.fill();
+    const im = IMG['savage-beastfly']; if (!ready(im)) return;
+    g.save(); g.translate(x, y + Math.sin(t * 9) * 3); g.rotate(Math.sin(t * 2.2) * .05);
+    if (flash) g.filter = 'brightness(1.9)';
+    g.drawImage(im, -156 * s, -156 * s, 312 * s, 311 * s);
     g.restore();
   }
-  function maskIcon(g, x, y, full) {
-    g.fillStyle = full ? '#f3efe6' : 'rgba(243,239,230,.18)'; g.strokeStyle = full ? '#fff' : 'rgba(243,239,230,.4)'; g.lineWidth = 1.5;
-    g.beginPath(); g.moveTo(x - 10, y - 12); g.quadraticCurveTo(x, y - 18, x + 10, y - 12); g.lineTo(x + 8, y + 8); g.quadraticCurveTo(x, y + 14, x - 8, y + 8); g.closePath(); g.fill(); g.stroke();
-    if (full) { g.fillStyle = '#152044'; g.beginPath(); g.ellipse(x - 4, y - 2, 2.2, 4, 0, 0, Math.PI * 2); g.ellipse(x + 4, y - 2, 2.2, 4, 0, 0, Math.PI * 2); g.fill(); }
-  }
+  function maskIcon(g, x, y, full) { pic(g, 'mask', x, y, 19, 27, full ? 1 : .22); }
 
   canvasDemo('beast', (s, cv, g) => {
     const st = { tour: true, t: 0, held: false, wpn: 'needle', gh: 1, masks: BEAST.masks, key: '', data: null };
@@ -262,6 +274,8 @@
       g.fillStyle = '#e5322d'; g.fillRect(hpX, hpY - 9, hpW * (e ? e.hp : BEAST.hp) / BEAST.hp, 18);
       g.fillStyle = 'rgba(21,32,68,.7)'; for (let i = 1; i < need; i++) g.fillRect(hpX + hpW * i / need - .5, hpY - 9, 1, 18);
       txt(g, `${need} hits needed at ${BEAST[st.wpn]} damage`, hpX + hpW, hpY + 24, BODY(15, 600), '#ffd98a', 'right');
+      g.font = BODY(15, 600); const nw = g.measureText(`${need} hits needed at ${BEAST[st.wpn]} damage`).width;
+      if (st.wpn === 'spear') pic(g, 'silk-spear', hpX + hpW - nw - 26, hpY + 24, 32, 24, 1, true); else pic(g, 'needle', hpX + hpW - nw - 42, hpY + 24, 66, 9);
       // masks
       for (let i = 0; i < st.masks; i++) maskIcon(g, 44 + i * 28, 84, e ? i < e.m : true);
       txt(g, `Hornet · ${GHOSTS[st.gh].name}`, 44 + st.masks * 28 + 6, 84, BODY(15, 600), '#fffaf0');
@@ -269,19 +283,22 @@
       const hitA = e && e.hit && !ended ? Math.sin(Math.PI * k) : 0, hurt = e && e.hurt && !ended ? e.hurt : 0;
       const bx = 690 - (hurt === 2 ? Math.sin(Math.PI * k) * 160 : 0), by = 190 + Math.sin(st.t * 3) * 10;
       const hx = 330 + hitA * 120, hy = AH - 32;
-      beastfly(g, bx, by, 1, st.t, hitA > .5);
+      g.save(); g.beginPath(); g.roundRect(14, 14, W - 28, AH, 12); g.clip();   // fighters stay inside the arena
+      beastfly(g, bx, by, .55, st.t, hitA > .5);
       // summons circle the arena
       for (let i = 0; i < 2; i++) {
         const a = st.t * 1.6 + i * Math.PI, sx = 520 + Math.cos(a) * 260, sy = 150 + Math.sin(a * 1.3) * 50;
         const dart = hurt === 1 && i === 0 ? Math.sin(Math.PI * k) : 0;
         const fx = lerp(sx, hx, dart), fy = lerp(sy, hy - 30, dart);
-        g.fillStyle = '#6b4a3a'; g.beginPath(); g.ellipse(fx, fy, 14, 10, 0, 0, Math.PI * 2); g.fill();
-        g.fillStyle = 'rgba(220,235,255,.6)'; g.beginPath(); g.ellipse(fx, fy - 10, 10, 5 + 3 * Math.sin(st.t * 50), 0, 0, Math.PI * 2); g.fill();
+        pic(g, 'beastfly', fx, fy + Math.sin(st.t * 12 + i) * 2, 44, 46, 1, Math.cos(a) < 0);
       }
-      hornet(g, hx, hy, 1.15, hurt > 0 && k < .6);
-      if (hitA > .2) { g.strokeStyle = 'rgba(255,255,255,' + hitA + ')'; g.lineWidth = 4; g.beginPath(); g.arc(hx + 60, hy - 30, 34, -1.2, .6); g.stroke(); }
+      hornet(g, hx, hy, .7, st.wpn, hitA, k, hurt > 0 && k < .6);
+      // the Silk Spear flies from Hornet to the Beastfly on a landed throw
+      if (st.wpn === 'spear' && hitA > 0) pic(g, 'silk-spear', lerp(hx + 70, bx - 40, k), lerp(hy - 50, by, k), 80, 60, 1 - k * .5, true);
+      g.restore();
       if (hurt && k < .8) T.popText(`−${hurt} mask${hurt > 1 ? 's' : ''}`, hx, hy - 110 - k * 20, '#ff8a80', 1 - k);
       txt(g, `fight ${fi % RUNS + 1} of ${RUNS} · hits landed ${e ? e.hits : 0}/${need}`, 34, AH - 8, BODY(15, 600), '#fffaf0');
+      txt(g, 'Hollow Knight: Silksong art © Team Cherry', W - 30, AH - 8, BODY(12, 500), 'rgba(255,250,240,.7)', 'right');
       if (ended) T.label(f.clear ? 'BEASTFLY DEFEATED' : 'HORNET FALLS', W / 2, 140, 'center', f.clear ? '#1a8a4c' : C.red, 22);
 
       // the table: three ghosts x two weapons, twenty fights each
@@ -290,7 +307,8 @@
       [['needle', `Needle · ${Math.ceil(BEAST.hp / BEAST.needle)} hits`], ['spear', `Silk Spear · ${Math.ceil(BEAST.hp / BEAST.spear)} hits`]].forEach(([w, lab], c) => {
         const x = 250 + c * 390, on = w === st.wpn;
         if (on) { g.fillStyle = 'rgba(255,185,81,.18)'; g.beginPath(); g.roundRect(x - 12, ty - 18, 382, 196, 10); g.fill(); }
-        txt(g, lab, x, ty, HEAD(15), on ? C.ink : C.muted);
+        if (w === 'spear') { g.fillStyle = on ? C.navy : 'rgba(21,32,68,.55)'; g.beginPath(); g.roundRect(x - 4, ty - 13, 36, 26, 7); g.fill(); pic(g, 'silk-spear', x + 14, ty, 30, 23, 1, true); } else pic(g, 'needle', x + 24, ty, 50, 7, on ? 1 : .6);
+        txt(g, lab, x + (w === 'spear' ? 36 : 56), ty, HEAD(15), on ? C.ink : C.muted);
         GHOSTS.forEach((gh, i) => {
           const sr = st.data[i][w], y = ty + 40 + i * 50;
           for (let r = 0; r < RUNS; r++) {
