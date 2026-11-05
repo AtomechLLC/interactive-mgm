@@ -12,6 +12,21 @@
 <style>
   .mt-side label.rng.pd-scrub input { accent-color: #e07b1a; }
   .mt-side .pd-note { font-size: 14px; color: var(--muted); margin: 2px 0 6px; line-height: 1.35; }
+  .pc-side { display: flex; flex-direction: column; }
+  .pc-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 8px; }
+  .mt-side .pc-tabs .btn { font-size: 14px; padding: 5px 8px; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mt-side .pc-tabs .btn b { color: #e07b1a; margin-right: 3px; }
+  .mt-side .pc-tabs .btn.on b { color: #ffb951; }
+  .pc-row { align-items: center; gap: 10px; }
+  .pc-row h4 { margin: 0 !important; }
+  .slide .mt-out.pc-out { font-size: 16px; line-height: 1.38; margin: 8px 0 4px; }
+  .pc-ctl h4 { margin: 6px 0 2px !important; font-size: 13px !important; }
+  .pc-ctl .seg { margin: 2px 0 4px !important; }
+  .mt-side .pc-ctl label.rng { margin: 4px 0; font-size: 15px; }
+  .mt-side .pc-ctl label.chk { margin: 4px 0; font-size: 15px; }
+  .mt-side .pc-ctl .pc-b { margin: 4px 6px 2px 0; font-size: 15px; }
+  .mt-side .pc-ctl label.rng input { accent-color: #e07b1a; }
+  .mt-side .pc-src { margin-top: 4px; }
 </style>
 <script>
   window.DECK = { title: 'Directing Game Mechanics · Module 9 · Pendulum and Ball', home: '../../index.html', audio: false, cues: null };
@@ -21,9 +36,9 @@
 <body>
 <div class="viewport"><div class="stage">
 
-<!-- 1: slides 289-296, timing, spacing and easing on a pendulum -->
+<!-- 1: timing, spacing and easing on a pendulum -->
 <section class="slide" data-title="Timing and spacing" data-demo="pendulum">
-  <div class="kicker">Disney's 12 principles · slides 289-296</div>
+  <div class="kicker">Disney's 12 principles · timing and spacing</div>
   <h2 class="sm">Timing, spacing <span class="accent">and easing</span></h2>
   <div class="mt-wrap">
     <canvas class="demo" width="1040" height="585"></canvas>
@@ -41,9 +56,9 @@
   </div>
 </section>
 
-<!-- 2: slides 284-287 and 306, squash and stretch, anticipation, follow-through -->
+<!-- 2: squash and stretch, anticipation, follow-through -->
 <section class="slide" data-title="Bouncing ball" data-demo="ball">
-  <div class="kicker">Disney's 12 principles · slides 284-287, 306</div>
+  <div class="kicker">Disney's 12 principles · squash, anticipation, follow-through</div>
   <h2 class="sm">Squash, stretch <span class="accent">and anticipation</span></h2>
   <div class="mt-wrap">
     <canvas class="demo" width="1040" height="585"></canvas>
@@ -59,17 +74,19 @@
   </div>
 </section>
 
-<!-- 3: principles 7-12, from slide text only (the notes export stops at 307) -->
+<!-- 3: principles 7-12, one lab each -->
 <section class="slide" data-title="Principles 7 to 12" data-demo="cards">
-  <div class="kicker">Disney's 12 principles · slides 307 to about 320</div>
-  <h2 class="sm">The other six, <span class="accent">before and after</span></h2>
+  <div class="kicker">Disney's 12 principles · arcs to appeal</div>
+  <h2 class="sm">The other six, <span class="accent">side by side</span></h2>
   <div class="mt-wrap">
     <canvas class="demo" width="1040" height="585"></canvas>
-    <div class="mt-side">
-      <div class="row wrap"><button class="btn pc-tour on">▶ Walk-through</button></div>
-      <h4 class="pc-h">Arcs</h4>
+    <div class="mt-side pc-side">
+      <div class="pc-tabs"></div>
+      <div class="row wrap pc-row"><button class="btn pc-tour on">▶ Walk-through</button><h4 class="pc-h">7. Arcs</h4></div>
       <p class="mt-out pc-out"></p>
-      <p class="pd-note">Click a card to read it. Each loop plays the same action twice: before on the left, after on the right.</p>
+      <div class="pc-ctl"></div>
+      <p class="pd-note pc-how"></p>
+      <p class="src pc-src"></p>
     </div>
   </div>
 </section>
@@ -79,5 +96,7 @@
 <script src="../../../assets/kit.js"></script>
 <script src="../../shared/topdown.js"></script>
 <script src="pendulum.js"></script>
+<script src="../../../assets/vendor/three-r128.min.js"></script>
+<script src="principles.js"></script>
 </body>
 </html>

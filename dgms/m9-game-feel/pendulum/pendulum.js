@@ -2,7 +2,7 @@
    Slide 1 reproduces slides 289-296: a pendulum drawn on 24 fps frames, with an onion skin, a spacing chart and a frame
    scrubber; frame count is timing, swing width is spacing, and five easings (none, in, out, in-out, lopsided) bunch the drawings.
    Slide 2 is the bouncing ball: squash and stretch, an anticipation squat (small hop and super jump presets, slide 287)
-   and a tail that follows through (306). Slide 3 is principles 7-12 as before / after loops.
+   and a tail that follows through. Principles 7-12 live in principles.js.
    Every frame is a pure function of t and the controls, so __seek is deterministic. */
 (function () {
   const { $, $$, canvasDemo, say } = FPF.kit;
@@ -11,7 +11,7 @@
   const font = (w, s, m) => `${w} ${s}px ${m ? 'Montserrat, Jost' : 'Jost'}, sans-serif`;
   const bg = g => { g.clearRect(0, 0, W, H); g.fillStyle = PAPER; g.beginPath(); g.roundRect(0, 0, W, H, 14); g.fill(); };
   const sstep = k => { k = clamp(k); return k * k * (3 - 2 * k); };
-  const scenes = {};
+  const scenes = window.__pdScenes = window.__pdScenes || {};
 
   /* =================== slide 1: the pendulum =================== */
   const EASE = {
@@ -80,7 +80,7 @@
     });
   }
   const PSTEPS = [
-    { n: 20, w: 40, ease: 'none', say: 'Slide 289: one swing drawn on 20 frames at 24 fps, every drawing the same distance apart.' },
+    { n: 20, w: 40, ease: 'none', say: 'One swing drawn on 20 frames at 24 fps, every drawing the same distance apart.' },
     { n: 40, w: 40, ease: 'none', say: 'Inbetweening doubles the drawings to 40. At the same 24 fps the swing takes twice as long. Timing is how many frames an action gets.' },
     { n: 40, w: 90, ease: 'none', say: 'Respaced: the same 40 frames, spread wider. The swing covers more ground in the same time. Spacing is how far apart the drawings sit.' },
     { n: 40, w: 90, ease: 'lop', say: 'Lopsided: the drawings bunch on one side only. The bob lingers on the left and whips through the right.' },
@@ -187,7 +187,7 @@
     g.font = font(700, 13); g.fillStyle = verdict[1]; g.fillText(verdict[0], px + 14, py + 358);
   }
   const BSTEPS = [
-    { sq: .15, h: 70, ss: .5, tail: true, say: 'Small hop: a shallow squat and a short jump. Slide 287: "Small motions should have minimal anticipation."' },
+    { sq: .15, h: 70, ss: .5, tail: true, say: 'Small hop: a shallow squat and a short jump. The deck: "Small motions should have minimal anticipation."' },
     { sq: .9, h: 320, ss: .7, tail: true, say: 'Super jump: a deep squat before a big jump. "The bigger the difference between the anticipation and the impact poses, the more impactful the motion will appear."' },
     { sq: 1, h: 60, ss: .6, tail: true, say: 'A deep squat into a tiny hop: the anticipation promises more than the jump delivers.' },
     { sq: .6, h: 220, ss: 1, tail: true, say: 'Full squash and stretch, and watch the tail: it keeps moving after the ball lands, then settles. That is follow-through (306).' },
@@ -216,109 +216,6 @@
       if (st.tour) { st.t += dt; if (st.t >= BDUR) st.t = 0; u = apply(st.t); }
       else { st.u = (st.u + dt) % plan(st).P; u = st.u; }
       sync(); drawBall(g, st, u);
-    };
-  });
-
-  /* =================== slide 3: principles 7-12, before and after =================== */
-  const LOOPP = 2.4;
-  const ping = t => { const p = (t % LOOPP) / LOOPP; return p < .5 ? sstep(p * 2) : sstep(2 - p * 2); };
-  const box = (g, x, y, w, h, col, edge = C.navy) => { g.fillStyle = col; g.strokeStyle = edge; g.lineWidth = 2; g.beginPath(); g.roundRect(x, y, w, h, 4); g.fill(); g.stroke(); };
-  const PR = [
-    { name: 'Arcs', n: 7, say: 'Most natural motion travels along arcs, not straight lines. On the left the hand slides in a line; on the right it swings through an arc around the shoulder.',
-      draw(g, w, h, t, after) {
-        const sx = w / 2, sy = h * .62, r = Math.min(h * .38, w * .4), pos = p => after ? [sx + Math.cos(Math.PI + .25 + p * (Math.PI - .5)) * r, sy + Math.sin(Math.PI + .25 + p * (Math.PI - .5)) * r] : [lerp(sx - r * .95, sx + r * .95, p), lerp(sy - r * .25, sy - r * .25, p)];
-        box(g, sx - 14, sy - 6, 28, 50, C.stone);
-        for (let i = 0; i <= 8; i++) { const [x, y] = pos(i / 8); g.fillStyle = 'rgba(46,163,220,.25)'; g.beginPath(); g.arc(x, y, 7, 0, TAU); g.fill(); }
-        const [x, y] = pos(ping(t)); g.strokeStyle = C.ink; g.lineWidth = 4; g.beginPath(); g.moveTo(sx, sy); g.lineTo(x, y); g.stroke();
-        g.fillStyle = C.player; g.beginPath(); g.arc(x, y, 10, 0, TAU); g.fill(); g.strokeStyle = C.navy; g.lineWidth = 2; g.stroke();
-      } },
-    { name: 'Secondary action', n: 8, say: 'A smaller action that supports the main one. Both blocks walk the same way; the one on the right adds swinging arms and a head that bobs a beat late.',
-      draw(g, w, h, t, after) {
-        const ph = (t % .8) / .8, bob = Math.abs(Math.sin(ph * Math.PI)) * 8, cx = w / 2, gy = h * .82;
-        g.strokeStyle = C.muted; g.lineWidth = 1.5; g.beginPath(); g.moveTo(10, gy); g.lineTo(w - 10, gy); g.stroke();
-        for (let i = 0; i < 5; i++) { const x = ((i * 40 - t * 50) % (w + 40) + w + 40) % (w + 40) - 20; g.fillStyle = '#d9cba8'; g.fillRect(x, gy + 4, 18, 3); }
-        const by = gy - 60 - bob;
-        g.strokeStyle = C.ink; g.lineWidth = 5; [-1, 1].forEach(sd => { const a = Math.sin(ph * TAU) * .5 * sd; g.beginPath(); g.moveTo(cx, by + 50); g.lineTo(cx + Math.sin(a) * 14, gy); g.stroke(); });
-        box(g, cx - 18, by, 36, 52, C.p2);
-        if (after) [-1, 1].forEach(sd => { const a = Math.sin(ph * TAU) * .8 * sd; g.strokeStyle = C.navy; g.lineWidth = 6; g.lineCap = 'round'; g.beginPath(); g.moveTo(cx + sd * 21, by + 10); g.lineTo(cx + sd * 21 + Math.sin(a) * 30, by + 10 + Math.cos(a) * 30); g.stroke(); g.lineCap = 'butt'; });
-        const hb = after ? Math.abs(Math.sin((ph - .12) * Math.PI)) * 8 - bob : 0;
-        g.fillStyle = C.p2; g.strokeStyle = C.navy; g.lineWidth = 2; g.beginPath(); g.arc(cx + 2, by - 16 + hb * .6 + (after ? Math.sin(ph * TAU) * 2 : 0), 15, 0, TAU); g.fill(); g.stroke();
-      } },
-    { name: 'Exaggeration', n: 9, say: 'Push the poses past realism so they read at a glance. Same jump and timing; the right one gets a deeper squash, a longer stretch and more height.',
-      draw(g, w, h, t, after) {
-        const gy = h * .82, u = (t % LOOPP) / LOOPP, air = u > .3 && u < .75, a = (u - .3) / .45, k = after ? 1 : .3;
-        const lift = air ? 4 * a * (1 - a) * (after ? h * .5 : h * .22) : 0;
-        let q = 0; if (u < .3) q = .5 * k * sstep(u / .3) * (u > .15 ? 1 : u / .15); else if (air) q = -.45 * k * Math.abs(1 - 2 * a); else q = .45 * k * Math.exp(-(u - .75) * 12);
-        g.strokeStyle = C.muted; g.lineWidth = 1.5; g.beginPath(); g.moveTo(10, gy); g.lineTo(w - 10, gy); g.stroke();
-        const r = 22, sx = 1 + q * .8, sy = 1 - q; g.fillStyle = C.red; g.strokeStyle = C.redDk; g.lineWidth = 2; g.beginPath(); g.ellipse(w / 2, gy - r * sy - lift, r * sx, r * sy, 0, 0, TAU); g.fill(); g.stroke();
-      } },
-    { name: 'Staging', n: 10, say: 'Present one idea so it cannot be missed. On the right the background calms down, the strike gets contrast, and the frame centers it.',
-      draw(g, w, h, t, after) {
-        const cx = w / 2, cy = h * .55, hit = (t % 1.2) / 1.2;
-        if (after) { g.fillStyle = 'rgba(21,32,68,.12)'; g.fillRect(0, 0, w, h); g.fillStyle = 'rgba(255,250,240,.9)'; g.beginPath(); g.arc(cx, cy, 60, 0, TAU); g.fill(); }
-        for (let i = 0; i < 7; i++) { const a = i * 1.7 + (after ? 0 : t * (1 + i * .2)), r = 60 + (i % 3) * 14, x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r * .7; box(g, x - 9, y - 9, 18, 18, after ? '#d9cba8' : [C.player, C.p2, C.gold, C.p3][i % 4], after ? '#cdbf9f' : C.navy); }
-        const sx = after ? 0 : 36, sy = after ? 0 : -30, ax = cx - 30 + sx + (hit < .4 ? hit / .4 * 18 : 18 * (1 - (hit - .4) / .6));
-        box(g, ax - 11, cy + sy - 11, 22, 22, after ? C.player : C.stone); box(g, cx + 10 + sx, cy + sy - 12, 24, 24, after ? C.red : C.stone);
-        if (hit > .35 && hit < .55) { g.fillStyle = after ? 'rgba(255,185,81,.9)' : 'rgba(255,185,81,.35)'; g.beginPath(); g.arc(cx + 8 + sx, cy + sy, 12, 0, TAU); g.fill(); }
-      } },
-    { name: 'Solid drawing', n: 11, say: 'Give forms weight, volume and depth. The flat card on the left flips in place; the cube on the right turns in three dimensions.',
-      draw(g, w, h, t, after) {
-        const cx = w / 2, cy = h * .52, a = t * 1.3, s = 34;
-        if (!after) { const sx = Math.cos(a); box(g, cx - s * Math.abs(sx), cy - s, 2 * s * Math.abs(sx), 2 * s, sx > 0 ? C.p3 : '#b79ae6'); return; }
-        const V = [[-1, -1, -1], [1, -1, -1], [1, 1, -1], [-1, 1, -1], [-1, -1, 1], [1, -1, 1], [1, 1, 1], [-1, 1, 1]].map(([x, y, z]) => { const c = Math.cos(a), sn = Math.sin(a), x1 = x * c - z * sn, z1 = x * sn + z * c, c2 = Math.cos(.45), s2 = Math.sin(.45), y1 = y * c2 - z1 * s2, z2 = y * s2 + z1 * c2, f = 6 / (6 + z2); return [cx + x1 * s * .78 * f, cy + y1 * s * .78 * f, z2]; });
-        const F = [[0, 1, 2, 3], [4, 5, 6, 7], [0, 1, 5, 4], [2, 3, 7, 6], [1, 2, 6, 5], [0, 3, 7, 4]];
-        F.map(f => ({ f, z: f.reduce((m, i) => m + V[i][2], 0) / 4 })).sort((p, q) => q.z - p.z).forEach(({ f, z }, i) => {
-          g.fillStyle = ['#6d43b8', '#8a4fd6', '#a67de6', '#c3a6f0', '#8a4fd6', '#6d43b8'][i]; g.strokeStyle = C.navy; g.lineWidth = 2; g.beginPath(); f.forEach((k, j) => j ? g.lineTo(V[k][0], V[k][1]) : g.moveTo(V[k][0], V[k][1])); g.closePath(); g.fill(); g.stroke();
-        });
-      } },
-    { name: 'Appeal', n: 12, say: 'A design the player wants to keep watching: a clear silhouette, readable shapes and a hint of personality. Same hop, two characters.',
-      draw(g, w, h, t, after) {
-        const gy = h * .82, u = (t % 1.2) / 1.2, lift = u < .5 ? Math.sin(u / .5 * Math.PI) * 34 : 0, cx = w / 2;
-        g.strokeStyle = C.muted; g.lineWidth = 1.5; g.beginPath(); g.moveTo(10, gy); g.lineTo(w - 10, gy); g.stroke();
-        if (!after) { box(g, cx - 22, gy - 70 - lift, 44, 70, '#b9b4a6', C.stoneDk); return; }
-        const tilt = u < .5 ? Math.sin(u / .5 * Math.PI) * .15 : 0, sq = u >= .5 && u < .65 ? .15 * Math.sin((u - .5) / .15 * Math.PI) : 0;
-        g.save(); g.translate(cx, gy - lift); g.rotate(tilt); g.scale(1 + sq, 1 - sq);
-        g.fillStyle = C.gold; g.strokeStyle = C.goldInk; g.lineWidth = 3; g.beginPath(); g.ellipse(0, -30, 30, 30, 0, 0, TAU); g.fill(); g.stroke();
-        g.fillStyle = C.gold; g.beginPath(); g.moveTo(-18, -54); g.lineTo(-24, -74); g.lineTo(-6, -58); g.moveTo(18, -54); g.lineTo(24, -74); g.lineTo(6, -58); g.fill(); g.stroke();
-        g.fillStyle = '#fff'; g.beginPath(); g.ellipse(-10, -34, 8, 10, 0, 0, TAU); g.ellipse(12, -34, 8, 10, 0, 0, TAU); g.fill();
-        g.fillStyle = C.navy; g.beginPath(); g.arc(-8, -32, 4, 0, TAU); g.arc(14, -32, 4, 0, TAU); g.fill();
-        g.strokeStyle = C.navy; g.lineWidth = 2; g.beginPath(); g.arc(2, -20, 6, .2, Math.PI - .2); g.stroke();
-        g.restore();
-      } },
-  ];
-  const CW = 333, CHH = 278, CG = 10;
-  const cardXY = i => ({ x: CG + (i % 3) * (CW + CG), y: CG + Math.floor(i / 3) * (CHH + CG) });
-  function drawCards(g, st, t) {
-    T.use(g); bg(g);
-    PR.forEach((p, i) => {
-      const { x, y } = cardXY(i), on = st.sel === i;
-      g.fillStyle = CARD; g.beginPath(); g.roundRect(x, y, CW, CHH, 12); g.fill();
-      if (on) { g.strokeStyle = ORANGE; g.lineWidth = 4; g.beginPath(); g.roundRect(x + 2, y + 2, CW - 4, CHH - 4, 12); g.stroke(); }
-      g.font = font(800, 16, 1); g.fillStyle = C.ink; g.textAlign = 'left'; g.fillText(`${p.n}. ${p.name}`, x + 14, y + 26);
-      const hw = (CW - 36) / 2, hy = y + 40, hh = CHH - 72;
-      [false, true].forEach((after, k) => {
-        const hx = x + 12 + k * (hw + 12);
-        g.fillStyle = '#fffaf0'; g.beginPath(); g.roundRect(hx, hy, hw, hh, 8); g.fill();
-        g.save(); g.beginPath(); g.roundRect(hx, hy, hw, hh, 8); g.clip(); g.translate(hx, hy); p.draw(g, hw, hh, t, after); g.restore();
-        g.font = font(700, 12); g.fillStyle = after ? C.good : C.muted; g.textAlign = 'center'; g.fillText(after ? 'after' : 'before', hx + hw / 2, y + CHH - 12);
-      });
-    });
-  }
-  const CSTEP = 3.5, CDUR = PR.length * CSTEP;
-  canvasDemo('cards', (s, cv, g) => {
-    const st = { sel: 0, tour: true, held: false, t: 0, key: '' }, tourBtn = $(s, '.pc-tour');
-    const manual = () => { if (st.tour) { st.tour = false; tourBtn.classList.remove('on'); } };
-    tourBtn.onclick = () => { st.tour = true; st.t = 0; tourBtn.classList.add('on'); };
-    const atPt = e => { const r = cv.getBoundingClientRect(), x = (e.clientX - r.left) * W / r.width, y = (e.clientY - r.top) * H / r.height; return PR.findIndex((_, i) => { const c = cardXY(i); return x >= c.x && x < c.x + CW && y >= c.y && y < c.y + CHH; }); };
-    cv.addEventListener('mousemove', e => { cv.style.cursor = atPt(e) >= 0 ? 'pointer' : ''; });
-    cv.addEventListener('click', e => { const i = atPt(e); if (i < 0) return; manual(); st.sel = i; });
-    const apply = t => { st.sel = Math.floor(t / CSTEP) % PR.length; };
-    function info() { if (st.key === st.sel) return; st.key = st.sel; const p = PR[st.sel]; $(s, '.pc-h').textContent = `${p.n}. ${p.name}`; say($(s, '.pc-out'), p.say); }
-    scenes.cards = { seek(t) { st.held = true; st.tour = true; apply(t); info(); drawCards(g, st, t); }, dur: () => CDUR };
-    return dt => {
-      if (st.held) return; st.t += Math.max(0, dt);
-      if (st.tour) { if (st.t >= CDUR) st.t = 0; apply(st.t); }
-      info(); drawCards(g, st, st.t);
     };
   });
 
