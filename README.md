@@ -225,7 +225,7 @@ Module 0, The Power of Polish (`m0-power-of-polish/`, icons in `img/`):
 - `it-depends/`: permadeath, auto-aim, fall damage and fast travel, each in three games, as "fits the pillars" or "fights the pillars" (27-29; verdicts are the page's examples).
 - `audience-dials/`: theme, pace and combat dials with Stardew Valley, Dark Souls and Hades presets, the notes' audience to fantasy chain, and neighbouring games (59-62; positions by eye).
 - `controller-preview/`: one press through Controller, Pawn, Model and Actions with a gamepad or an AI brain (70), and Titanfall 2's wall-run assist at three thresholds (69; stick trace invented).
-- `polish-layers/`: one melee strike with eight layers of feel, and raw against polished (75-78, 81).
+- `polish-layers/`: the Aztez sword strike (Team Colorblind, used with permission) with nine layers of feedback on the demo's schedule, a quarter-speed view, and raw against polished (75-78, 81).
 
 Module 1, Game Pillars and Values (`m1-pillars/`):
 - `pillar-linter/`: the four rules as lamps on any pillar, with the deck's examples and God of War's pillars (16-25, 32).
