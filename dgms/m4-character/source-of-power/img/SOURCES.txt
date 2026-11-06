@@ -5,3 +5,8 @@ Art extracted from the course deck "RGF C2 M4 - 3Cs - Character", resized for th
 - trundle.jpg: League of Legends (Riot Games).
 - kratos-ballerina.jpg: the deck's "Spartan warrior with the grace of a ballerina" sketch around God of War art (Santa Monica Studio).
 - ashen-one.jpg: Dark Souls III (FromSoftware).
+Steam store art (library capsules), resized for the web; these four are our own examples, not from the deck:
+- kratos-axe.jpg: God of War (Santa Monica Studio).
+- aloy.jpg: Horizon Zero Dawn (Guerrilla Games).
+- geralt.jpg: The Witcher 3: Wild Hunt (CD PROJEKT RED).
+- arthur.jpg: Red Dead Redemption 2 (Rockstar Games).
