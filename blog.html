@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blog Posts · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* the course deck's theme: navy band with an angled edge over parchment, gold accents */
+  :root { --navy: #152044; --ink: #262c6a; --muted: #5d618c; --gold: #ffb951; --gold-ink: #9a5a06; --line: #cdbf9f; }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; background: #ede7e7 url("assets/img/theme/paper.jpg") center / cover fixed; color: var(--ink); font-family: Jost, system-ui, sans-serif; border: 4px solid var(--gold); }
+  .band { background: var(--navy); color: #fff; clip-path: polygon(0 0, 100% 0, 100% 78%, 0 100%); padding: 0 0 70px; }
+  header { position: relative; padding: 60px 24px 0; max-width: 1180px; margin: 0 auto; }
+  .kicker { color: var(--gold); font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; }
+  h1 { font-family: Montserrat, sans-serif; font-weight: 800; font-size: clamp(34px, 6vw, 68px); margin: 8px 0 10px; }
+  h1 span { color: var(--gold); }
+  header p { color: #d6dbef; font-size: 19px; max-width: 720px; margin-bottom: 0; }
+  main { max-width: 1180px; margin: 0 auto; padding: 30px 24px 80px; }
+  /* one section per course module, in module order M1 to M8; its pages listed in deck order */
+  section.mod { margin-bottom: 34px; }
+  a.head { display: grid; grid-template-columns: 64px 1fr auto; gap: 16px; align-items: center; padding: 14px 18px; border-radius: 12px; background: rgba(255, 252, 244, .82); border: 1px solid var(--line); color: inherit; text-decoration: none; box-shadow: 0 2px 0 rgba(120, 96, 50, .12); transition: border-color .2s; }
+  a.head:hover { border-color: var(--navy); }
+  .head img { width: 64px; height: 64px; border-radius: 50%; background: var(--navy); padding: 8px; object-fit: contain; }
+  .head .code { color: var(--gold-ink); font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; display: block; }
+  .head b { font-family: Montserrat, sans-serif; font-weight: 800; font-size: 22px; display: block; }
+  .head small { color: var(--muted); font-size: 15px; }
+  .head .go { color: var(--gold-ink); font-weight: 600; font-size: 15px; white-space: nowrap; }
+  .pages { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; margin: 10px 0 0 24px; }
+  a.pg { display: grid; grid-template-columns: 40px 1fr; gap: 12px; align-items: center; padding: 10px 12px; border-radius: 10px; background: rgba(255, 252, 244, .6); border: 1px solid var(--line); color: inherit; text-decoration: none; transition: transform .15s, border-color .2s; }
+  a.pg:hover { transform: translateY(-2px); border-color: var(--navy); }
+  .pg img { width: 40px; height: 40px; border-radius: 50%; background: var(--navy); padding: 6px; object-fit: contain; }
+  .pg b { font-family: Montserrat, sans-serif; font-weight: 700; font-size: 15px; display: block; }
+  .pg small { color: var(--muted); font-size: 13px; }
+  footer { max-width: 1180px; margin: 0 auto; padding: 0 24px 40px; color: var(--muted); font-size: 13px; }
+  footer a { color: var(--gold-ink); }
+  @media (max-width: 560px) { a.head { grid-template-columns: 52px 1fr; } .head img { width: 52px; height: 52px; } .head .go { display: none; } .pages { margin-left: 0; } }
+</style>
+</head>
+<body>
+<div class="band"><header>
+  <div class="kicker"><a href="index.html" style="color:inherit;text-decoration:none">← Mastering Game Mechanics</a> · funsmith.world</div>
+  <h1>Blog <span>Posts</span></h1>
+  <p>Interactives for the posts in funsmith.world’s <i>Analyze real games</i> path: post-mortems, system teardowns and genre breakdowns. Open one, then use ← → to move, N for speaker notes, O for an overview.</p>
+</header></div>
+<main>
+  <section class="mod">
+    <a class="head" href="blog-posts/index.html"><img src="assets/img/home/blog-posts.svg" alt=""><span><span class="code">funsmith.world</span><b>Blog Posts</b><small><i>Analyze real games</i>: post-mortems and genre breakdowns</small></span><span class="go">Module home →</span></a>
+    <div class="pages">
+      <a class="pg" href="blog-posts/aran/index.html"><img src="assets/img/home/blog-posts--aran.svg" alt=""><span><b>Shade of Aran</b><small>Post-mortem · spike</small></span></a>
+      <a class="pg" href="blog-posts/best-button/index.html"><img src="assets/img/home/blog-posts--best-button.svg" alt=""><span><b>Best Button</b><small>Post-mortem · spike</small></span></a>
+      <a class="pg" href="blog-posts/netherspite/index.html"><img src="assets/img/home/blog-posts--netherspite.svg" alt=""><span><b>Netherspite Beams</b><small>Post-mortem · spike</small></span></a>
+      <a class="pg" href="blog-posts/keep-five/index.html"><img src="assets/img/home/blog-posts--keep-five.svg" alt=""><span><b>Keep Only Five</b><small>Post-mortem · spike</small></span></a>
+      <a class="pg" href="blog-posts/ring-of-blood/index.html"><img src="assets/img/home/blog-posts--ring-of-blood.svg" alt=""><span><b>Ring of Blood</b><small>Post-mortem · spike</small></span></a>
+      <a class="pg" href="blog-posts/attumen/index.html"><img src="assets/img/home/blog-posts--attumen.svg" alt=""><span><b>Same Names, Different Fight</b><small>Post-mortem · spike</small></span></a>
+      <a class="pg" href="blog-posts/warlock-talents/index.html"><img src="assets/img/home/blog-posts--warlock-talents.svg" alt=""><span><b>Where You Play Sets the Price</b><small>Post-mortem · spike</small></span></a>
+      <a class="pg" href="blog-posts/nightbane-tools/index.html"><img src="assets/img/home/blog-posts--nightbane-tools.svg" alt=""><span><b>Nightbane’s Flight</b><small>Post-mortem · spike</small></span></a>
+      <a class="pg" href="blog-posts/dnd-advantage/index.html"><img src="assets/img/home/blog-posts--dnd-advantage.svg" alt=""><span><b>D&amp;D Advantage</b><small>System teardown · spike</small></span></a>
+      <a class="pg" href="blog-posts/counter-strafe/index.html"><img src="assets/img/home/blog-posts--counter-strafe.svg" alt=""><span><b>Counter-Strafe</b><small>Genre breakdown · spike</small></span></a>
+      <a class="pg" href="blog-posts/gacha-pity/index.html"><img src="assets/img/home/blog-posts--gacha-pity.svg" alt=""><span><b>Gacha Pity</b><small>Genre breakdown · spike</small></span></a>
+      <a class="pg" href="blog-posts/pac-man/index.html"><img src="assets/img/home/blog-posts--pac-man.svg" alt=""><span><b>Pac-Man Ghost Targeting</b><small>Genre breakdown · spike</small></span></a>
+      <a class="pg" href="blog-posts/games-played/index.html"><img src="assets/img/home/blog-posts--games-played.svg" alt=""><span><b>All the Games I’ve Played</b><small>Alex Brazie · GDS</small></span></a>
+      <a class="pg" href="blog-posts/compositional-cats/index.html"><img src="assets/img/home/blog-posts--compositional-cats.svg" alt=""><span><b>Compositional Cats</b><small>Alex Brazie · GDS</small></span></a>
+      <a class="pg" href="blog-posts/cross-game-controllers/index.html"><img src="assets/img/home/blog-posts--cross-game-controllers.svg" alt=""><span><b>Cross-Game Controllers</b><small>Alex Brazie · GDS</small></span></a>
+      <a class="pg" href="blog-posts/hardware-mistake/index.html"><img src="assets/img/home/blog-posts--hardware-mistake.svg" alt=""><span><b>The Billion Dollar Hardware Mistake</b><small>Alex Brazie · GDS</small></span></a>
+      <a class="pg" href="blog-posts/atomech-lesson/index.html"><img src="assets/img/home/blog-posts--atomech-lesson.svg" alt=""><span><b>Atomech’s First Year</b><small>Alex Brazie · GDS</small></span></a>
+      <a class="pg" href="blog-posts/too-weak-to-waste/index.html"><img src="assets/img/home/depth--sword-forge.svg" alt=""><span><b>Too Weak to Waste</b><small>Other designers · Dan Felder</small></span></a>
+      <a class="pg" href="blog-posts/ogre-table/index.html"><img src="assets/img/home/blog--ogre-table.svg" alt=""><span><b>The Ogre Turn</b><small>Other designers · one D&amp;D turn</small></span></a>
+    </div>
+  </section>
+</main>
+<footer>Module and page icons from <a href="https://game-icons.net">game-icons.net</a> by Lorc, Delapouite, Caro Asercion, Quoting, Sbed and Skoll, under <a href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>. Credits per icon in <code>assets/img/home/CREDITS.md</code>.</footer>
+</body>
+</html>
