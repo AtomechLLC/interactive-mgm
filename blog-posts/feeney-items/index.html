@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brian Feeney’s Magic Items · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="../shared/blog.css">
+<style>
+  .an-list h4 { margin: 10px 0 4px !important; }
+  .an-list .btn { display: block; width: 100%; text-align: left; margin: 0 0 5px; font-size: 15px; padding: 5px 10px; }
+  .lo-pick { display: grid; grid-template-columns: 64px 1fr; gap: 6px 8px; align-items: center; font-size: 15px; font-weight: 600; color: var(--ink); margin: 4px 0 10px; }
+  .lo-pick select { font: 500 14px Jost, sans-serif; padding: 3px 4px; border: 2px solid #cdbf9f; border-radius: 8px; background: #fffaf0; color: var(--ink); width: 100%; }
+</style>
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · Blog · Brian Feeney’s Magic Items', home: '../../dnd.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1: five problems, the classic answers and Brian's items -->
+<section class="slide" data-title="Same Problem, New Answers" data-demo="answers">
+  <div class="kicker">Brian Feeney’s magic items · five common D&amp;D problems</div>
+  <h2 class="sm">Same Problem, <span class="accent">New Answers</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4 style="margin-top:0">Problem</h4>
+      <div class="seg an-prob"><button class="btn on" data-p="door">Locked door</button><button class="btn" data-p="chasm">Chasm</button><button class="btn" data-p="guards">Guarded gate</button><button class="btn" data-p="ambush">Ambush</button><button class="btn" data-p="flood">Flooded tunnel</button></div>
+      <div class="an-list"></div>
+      <div class="row wrap"><button class="btn an-tour on">▶ Walk-through</button></div>
+      <p class="mt-out an-out"></p>
+      <p class="src">Items: Brian Feeney (Riot Games), <i>D&amp;D Magic Items Megasheet</i>. Scenes, DCs and the party are this page’s own and illustrative; 5e rules from the Player’s Handbook. Icons: game-icons.net (CC BY 3.0) by Lorc, Delapouite and other contributors.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 2: what each item changes -->
+<section class="slide" data-title="What the Item Changes" data-demo="sort">
+  <div class="kicker">most of them do more than skip the roll</div>
+  <h2 class="sm">What the Item <span class="accent">Changes</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4 style="margin-top:0">Show items for</h4>
+      <div class="seg so-f"><button class="btn on" data-f="all">All five</button><button class="btn" data-f="door">Locked door</button><button class="btn" data-f="chasm">Chasm</button><button class="btn" data-f="guards">Guarded gate</button><button class="btn" data-f="ambush">Ambush</button><button class="btn" data-f="flood">Flooded tunnel</button></div>
+      <p class="tip">Click an item to read its entry from Brian’s sheet and what it does to the problem.</p>
+      <div class="row wrap"><button class="btn so-tour on">▶ Walk-through</button></div>
+      <p class="mt-out so-out"></p>
+      <p class="src">Item text quoted from Brian Feeney’s sheet as written. The four groups are this page’s reading. Icons: game-icons.net (CC BY 3.0) by Lorc, Delapouite and other contributors.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 3: hand out the loot -->
+<section class="slide" data-title="Hand Out the Loot" data-demo="loot">
+  <div class="kicker">items move the spotlight</div>
+  <h2 class="sm">Hand Out <span class="accent">the Loot</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4 style="margin-top:0">One item each</h4>
+      <div class="lo-pick">
+        <span>Fighter</span><select class="lo-F"></select>
+        <span>Rogue</span><select class="lo-R"></select>
+        <span>Wizard</span><select class="lo-W"></select>
+        <span>Bard</span><select class="lo-B"></select>
+      </div>
+      <div class="row wrap"><button class="btn lo-roll">🎲 Roll loot</button><button class="btn lo-clear">Take it all back</button><button class="btn lo-tour on">▶ Walk-through</button></div>
+      <p class="mt-out lo-out"></p>
+      <p class="src">Each classic answer sits with the class built for it; answers everyone shares (hold your breath, find another way, passive Perception) are left out. An item belongs to whoever holds it. Model is this page’s own.</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="../shared/topdown.js"></script>
+<script src="../shared/icons.js"></script>
+<script src="icons-extra.js"></script>
+<script src="items.js"></script>
+<script src="feeney.js"></script>
+</body>
+</html>

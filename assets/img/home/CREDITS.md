@@ -89,6 +89,8 @@ From [game-icons.net](https://game-icons.net), licensed [CC BY 3.0](https://crea
 | `blog-posts--hardware-mistake.svg` | [cpu](https://game-icons.net/1x1/delapouite/cpu.html) | Delapouite |
 | `blog-posts--atomech-lesson.svg` | [robot-golem](https://game-icons.net/1x1/lorc/robot-golem.html) | Lorc |
 | `blog--ogre-table.svg` | [ogre](https://game-icons.net/1x1/delapouite/ogre.html) | Delapouite |
+| `blog--feeney-items.svg` | [locked-chest](https://game-icons.net/1x1/lorc/locked-chest.html) | Lorc |
+| `dnd.svg` | [dice-twenty-faces-twenty](https://game-icons.net/1x1/delapouite/dice-twenty-faces-twenty.html) | Delapouite |
 | `dgms.svg` | [director-chair](https://game-icons.net/1x1/delapouite/director-chair.html) | Delapouite |
 | `dgms--m0-power-of-polish--course-map.svg` | [compass](https://game-icons.net/1x1/lorc/compass.html) | Lorc |
 | `dgms--m0-power-of-polish--designer-to-director.svg` | [megaphone](https://game-icons.net/1x1/delapouite/megaphone.html) | Delapouite |

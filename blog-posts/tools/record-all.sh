@@ -10,6 +10,15 @@ rec 'too-weak-to-waste/index.html#3' keys too-weak-to-waste-items-as-keys
 rec 'ogre-table/index.html#1' scene ogre-table-one-turn
 rec 'ogre-table/index.html#2' odds ogre-table-what-the-dice-allowed
 wait
+rec 'feeney-items/index.html#1' door feeney-items-locked-door
+rec 'feeney-items/index.html#1' chasm feeney-items-chasm
+rec 'feeney-items/index.html#1' guards feeney-items-guarded-gate
+wait
+rec 'feeney-items/index.html#1' ambush feeney-items-ambush
+rec 'feeney-items/index.html#1' flood feeney-items-flooded-tunnel
+rec 'feeney-items/index.html#2' sort feeney-items-what-it-changes
+rec 'feeney-items/index.html#3' loot feeney-items-hand-out-the-loot
+wait
 rec 'games-played/index.html#1' draw games-played-draw-ten
 rec 'games-played/index.html#2' range games-played-range-or-rut
 wait
