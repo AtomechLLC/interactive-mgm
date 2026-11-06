@@ -3,6 +3,7 @@
 From [game-icons.net](https://game-icons.net), licensed [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/). Recolored (fill only). Module icons are `<module>.svg`; page icons are `<module>--<page>.svg`. Used on the site home page, the module home pages and the course map in `composition/whats-next` (`disc/` holds the module icons on a navy disc for that map).
 
 | File | Icon | Artist |
+| `mgm.svg` | [gears](https://game-icons.net/1x1/lorc/gears.html) | Lorc |
 | `depth.svg` | [diving-helmet](https://game-icons.net/1x1/delapouite/diving-helmet.html) | Delapouite |
 | `depth--three-tiers.svg` | [podium](https://game-icons.net/1x1/delapouite/podium.html) | Delapouite |
 | `depth--ghost-runs.svg` | [ghost](https://game-icons.net/1x1/lorc/ghost.html) | Lorc |
