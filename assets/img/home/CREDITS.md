@@ -182,3 +182,22 @@ Page images in `dgms/m4-character/` and `dgms/m5-controller/`: see each page's `
 | `dgms--m8-balance.svg` | [weight-scale](https://game-icons.net/1x1/delapouite/weight-scale.html) | Delapouite |
 | `dgms--m9-game-feel.svg` | [spark-spirit](https://game-icons.net/1x1/lorc/spark-spirit.html) | Lorc |
 | `dgms--interview.svg` | [briefcase](https://game-icons.net/1x1/delapouite/briefcase.html) | Delapouite |
+
+Atomech Pages (`atomech.html` and its home card):
+
+| File | Icon | Artist |
+|---|---|---|
+| `atomech.svg` | [molecule](https://game-icons.net/1x1/lorc/molecule.html) | Lorc |
+| `atomech--jump-test-classic.svg` | [jump-across](https://game-icons.net/1x1/delapouite/jump-across.html) | Delapouite |
+| `atomech--anatomy-of-a-successful-attack.svg` | [sword-wound](https://game-icons.net/1x1/lorc/sword-wound.html) | Lorc |
+| `atomech--game-animation-library.svg` | [film-strip](https://game-icons.net/1x1/delapouite/film-strip.html) | Delapouite |
+| `atomech--god-of-war-chains-demo.svg` | [crossed-chains](https://game-icons.net/1x1/lorc/crossed-chains.html) | Lorc |
+| `atomech--fps-classic-tuner.svg` | [revolver](https://game-icons.net/1x1/delapouite/revolver.html) | Delapouite |
+| `atomech--dnd-roll-tables.svg` | [dice-twenty-faces-twenty](https://game-icons.net/1x1/delapouite/dice-twenty-faces-twenty.html) | Delapouite |
+| `atomech--monte-carlo-sim.svg` | [poker-hand](https://game-icons.net/1x1/lorc/poker-hand.html) | Lorc |
+| `atomech--bg3-spell-graphs.svg` | [magic-swirl](https://game-icons.net/1x1/lorc/magic-swirl.html) | Lorc |
+| `atomech--cats-vs-mechs.svg` | [robot-golem](https://game-icons.net/1x1/lorc/robot-golem.html) | Lorc |
+| `atomech--all-the-games-i-played-before.svg` | [gamepad](https://game-icons.net/1x1/delapouite/gamepad.html) | Delapouite |
+| `atomech--starcraft-tech-tree-builds.svg` | [tree-branch](https://game-icons.net/1x1/lorc/tree-branch.html) | Lorc |
+| `atomech--stellaris-tech-tree-browser.svg` | [ringed-planet](https://game-icons.net/1x1/lorc/ringed-planet.html) | Lorc |
+| `atomech--mewgenics-kitten-share.svg` | [cat](https://game-icons.net/1x1/lorc/cat.html) | Lorc |
