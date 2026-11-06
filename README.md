@@ -101,7 +101,7 @@ The appendix to Sequencing with Tokens, with real game art.
 
 ## Layout
 
-- `index.html`: the course home. One section per module in module number order (M1 to M8), each listing that module's interactive pages in deck order with their part and slide range. Add a line here when you add a page to a module. The home page shows summary cards only: the seven MGM modules link to `mgm.html`, Blog Posts links to `blog.html` and Directing Game Mechanics (DGMS + RGF) links to `dgms.html`; those root pages hold the full card lists (add new MGM module pages to `mgm.html`) (the `dgms:start` / `dgms:end` block now lives in `dgms.html`), so add new blog and DGMS cards there.
+- `index.html`: the course home. One section per module in module number order (M1 to M8), each listing that module's interactive pages in deck order with their part and slide range. Add a line here when you add a page to a module. The home page shows summary cards only: the seven MGM modules link to `mgm.html`, Blog Posts links to `blog.html` and Directing Game Mechanics (DGMS + RGF) links to `dgms.html`; those root pages hold the full card lists (add new MGM module pages to `mgm.html`). `atomech.html` links Atomech LLC's other GitHub Pages sites; add a card there when the org publishes a new one (the `dgms:start` / `dgms:end` block now lives in `dgms.html`), so add new blog and DGMS cards there.
 - Each module home groups its pages under the deck part they come from (`PARTS` in the data-driven homes, `<div class="part">` blocks in `pvp/` and `pve-interactions/`), in deck order.
 - `assets/deck.js`, `deck.css`, `kit.js`, `kit.css`, `gi.js`: copied from `InteractiveFPF/assets`. Keep them in sync by hand if the engine changes there.
 - `assets/img/forsaken/`: the token art from `MoonStudios/Forsaken/Design/Abilities/images`.
@@ -323,6 +323,8 @@ Module 4, 3Cs: Character (`m4-character/`):
 - `silhouette-test/`: Silhouette Test. Mario, Bowser and League champions filled solid black: name each shape, then sort friend from foe before the colours come back. (Part 6).
 - `jump-tuner/`: Jump Metrics Tuner. Run seven real jumps (Castlevania, Super Mario Bros., Sonic, Mega Man 2, Commander Keen 1 and 4, Celeste) through one level of gaps and ledges, with their sourced and measured numbers on the sliders: run speed and acceleration, jump height, apex time, flat climb, fall gravity and cap, coyote time, take-off delay and what letting go does. Sprites and numbers from jump-test-classic. (Part 6).
 - `core-actions-by-genre/`: Core Actions by Genre. One puppet, five genres: swap the action bar and play each core verb, from a platformer's stomp to a Souls-like dodge. (Part 6).
+- `source-of-power/`: Source of Power. Link's sword, Ratchet's gadgets, Kenny the talking gun and Trundle's ice club each shape silhouette, moves, reach, animation, voice and story; then one attack button drives Kratos (cancels each hit into the next) and the Ashen One (locked until recovery ends). Frame counts are illustrative.
+- `log-line/`: Log Line. The same walk-and-pick-up input under two log lines: roll it up into a star (Katamari Damacy) or survive at all costs (The Last of Us).
 
 Module 6, 3Cs: Camera (`m6-camera/`):
 - `rig-switcher/`: Camera Rig Switcher. One grey-box level seen as a top-down map and a 3D view; pick any of the 11 rigs or drag the hero, with each rig's pros and cons as chips, the fixed rig's combat cut, a Mario-style scrolling strip, plus off-the-spline and a classify-the-camera drill. (slides 21-107).
