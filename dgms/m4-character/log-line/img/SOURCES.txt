@@ -1,3 +1,11 @@
 Art extracted from the course deck "RGF C2 M4 - 3Cs - Character", resized for the web:
 - katamari.jpg: Katamari Damacy (Bandai Namco).
 - last-of-us.jpg: The Last of Us (Naughty Dog).
+Steam store art (header capsules), resized for the web:
+- god-of-war.jpg: God of War (Santa Monica Studio), cropped from the Steam library hero.
+- red-dead-2.jpg: Red Dead Redemption 2 (Rockstar Games).
+- witcher-3.jpg: The Witcher 3: Wild Hunt (CD PROJEKT RED).
+- hades.jpg: Hades (Supergiant Games).
+- celeste.jpg: Celeste (Maddy Makes Games).
+- stardew.jpg: Stardew Valley (ConcernedApe).
+- doom.jpg: DOOM (id Software).

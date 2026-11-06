@@ -82,7 +82,8 @@ m4-character/jump-tuner 2 coyote m4-character--jump-tuner-coyote
 m4-character/world-speeds-up 1 world m4-character--world-speeds-up
 m4-character/source-of-power 1 power m4-character--source-of-power
 m4-character/source-of-power 2 anim m4-character--source-of-power-animation
-m4-character/log-line 1 log m4-character--log-line
+m4-character/log-line 1 story m4-character--log-line
+m4-character/log-line 1 genres m4-character--log-line-genres
 m5-controller/puppet-tracer 1 tracer m5-controller--puppet-tracer
 m5-controller/two-jumps 1 jumps m5-controller--two-jumps
 m5-controller/two-jumps 2 arch m5-controller--two-jumps-muppet-puppet

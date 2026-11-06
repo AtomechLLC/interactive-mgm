@@ -1,6 +1,7 @@
 /* Source of power (RGF C2 M4, 3Cs: Character, Part 6: "Silhouette and Metrics").
-   Slide 1: pick a character's source of power (Link's sword, Ratchet's gadgets, Kenny the talking gun, Trundle's ice club)
-   and watch it inform the rest of the character: silhouette, core moves, reach, animation, voice and story.
+   Slide 1: pick a character's source of power (Link's sword, Ratchet's gadgets, Kenny the talking gun, Trundle's ice club,
+   all from the deck, plus big story games: Kratos's Leviathan Axe, Aloy's bow and Focus, Geralt's swords and Signs and
+   Arthur Morgan's revolver and Dead Eye) and watch it inform the rest of the character: silhouette, core moves, reach, animation, voice and story.
    Slide 2: personality through animation. Kratos, "a Spartan warrior with the grace and fluidity of a ballerina", against
    the heavy, grounded, animation-locked Ashen One. One attack button drives both; frame counts are illustrative.
    Both canvases are pure functions of time (and, on slide 2, of the press timeline), so window.__seek is deterministic. */
@@ -36,22 +37,38 @@
 
   /* ---------- slide 1: the source of power informs the rest ---------- */
   const SRC = [
-    { id: 'link', who: 'Link', game: 'The Legend of Zelda', art: 'link.jpg', fy: .2, power: 'A sword', icon: '⚔', col: '#2e7dd1',
+    { deck: true, id: 'link', who: 'Link', game: 'The Legend of Zelda', art: 'link.jpg', fy: .2, power: 'A sword', icon: '⚔', col: '#2e7dd1',
       line: 'The sword is how Link meets the world: the blade that chooses its hero.',
       reach: 'melee',
       spokes: ['A blade in hand and a shield on the back: you know what he does at a glance.', 'Slash, spin attack, block and parry.', 'Close range: he has to step in.', 'Planted feet and wide, readable sword arcs.', 'Silent: the sword does the talking.', 'A hero chosen by a legendary blade.'] },
-    { id: 'ratchet', who: 'Ratchet', game: 'Ratchet & Clank: Rift Apart', art: 'ratchet.jpg', fy: .3, power: 'Guns and gizmos', icon: '🔧', col: '#e0702d',
+    { deck: true, id: 'ratchet', who: 'Ratchet', game: 'Ratchet & Clank: Rift Apart', art: 'ratchet.jpg', fy: .3, power: 'Guns and gizmos', icon: '🔧', col: '#e0702d',
       line: 'Ratchet\'s power is his arsenal: a mechanic with a wrench and a backpack full of guns and gadgets.',
       reach: 'arsenal',
       spokes: ['A big gun in hand, a wrench, a gadget gauntlet and tech on his back.', 'Shoot, swap weapons, swing the wrench, grind and hover.', 'Every range: each gadget has its own reach.', 'Quick swaps, recoil and fizzing tech on every action.', 'A quippy tinkerer who loves his toys.', 'A mechanic who builds his way out of trouble.'] },
-    { id: 'kenny', who: 'Kenny', game: 'High on Life', art: 'kenny.jpg', fy: .4, power: 'A talking gun', icon: '🔫', col: '#3fa65a',
+    { deck: true, id: 'kenny', who: 'Kenny', game: 'High on Life', art: 'kenny.jpg', fy: .4, power: 'A talking gun', icon: '🔫', col: '#3fa65a',
       line: 'High on Life personifies the source of power: Kenny the Gatlian is the gun, and he never stops talking.',
       reach: 'ranged',
       spokes: ['The weapon itself has eyes and a mouth: the power is the most visible character on screen.', 'Shoot, charge a glob shot, and banter between fights.', 'Ranged: the gun fights for you at a distance.', 'The gun reacts, blinks and squirms in your hand.', 'The power has the voice: a companion with opinions.', 'Your weapon is your partner on the adventure.'] },
-    { id: 'trundle', who: 'Trundle', game: 'League of Legends', art: 'trundle.jpg', fy: .4, power: 'A magic ice club', icon: '🧊', col: '#3aa6c9',
+    { deck: true, id: 'trundle', who: 'Trundle', game: 'League of Legends', art: 'trundle.jpg', fy: .4, power: 'A magic ice club', icon: '🧊', col: '#3aa6c9',
       line: 'Trundle\'s rework introduced a new source of power, a magical club of ice, which worked with all of the existing mechanics.',
       reach: 'zone',
       spokes: ['A hulking troll king with a frozen club over his shoulder.', 'Chomp, freeze the ground, raise a pillar of ice.', 'Melee, plus a frozen zone he fights inside.', 'Heavy, frosty swings that crack the ice.', 'A bragging troll king of the frozen north.', 'He rules the Freljord\'s trolls with ice.'] },
+    { id: 'kratos', who: 'Kratos', game: 'God of War (2018)', art: 'kratos-axe.jpg', fy: .62, power: 'The Leviathan Axe', icon: '🪓', col: '#4aa3d9',
+      line: 'The Leviathan Axe is a frost axe that comes back when called: a weapon built for a father learning control.',
+      reach: 'thrown',
+      spokes: ['A huge, bearded figure with an axe on his back and a boy at his side.', 'Chop, throw the axe, recall it, then fight with your fists while it is away.', 'Melee or thrown: the axe flies out and comes back.', 'Heavy, deliberate swings and the snap of the catch.', 'Few words, gruff and restrained.', 'A gift from his late wife, not the blades of his past.'] },
+    { id: 'aloy', who: 'Aloy', game: 'Horizon Zero Dawn', art: 'aloy.jpg', fy: .58, power: 'A bow and the Focus', icon: '🏹', col: '#e07a3a',
+      line: 'Aloy hunts machines with a bow, and the Focus on her temple lets her see their weak points before she shoots.',
+      reach: 'marks',
+      spokes: ['A hunter\'s bow, layered tribal gear and a small device on her temple.', 'Scan with the Focus, tag weak spots, then shoot them off.', 'Long range: read the target, then pick it apart.', 'Agile rolls, careful draws and slow-motion aim.', 'Curious, sharp and outcast.', 'An outcast who sees what her tribe cannot.'] },
+    { id: 'geralt', who: 'Geralt', game: 'The Witcher 3: Wild Hunt', art: 'geralt.jpg', fy: .18, power: 'Two swords and Signs', icon: '🗡', col: '#c23b3b',
+      line: 'Geralt carries steel for humans and silver for monsters, and casts simple magic Signs: a professional\'s kit.',
+      reach: 'sign',
+      spokes: ['Two swords on his back and the white hair of a mutant.', 'Swordplay, dodges, and five Signs such as fire and a force push.', 'Sword range, plus Signs that hit a cone in front of him.', 'Spinning pirouettes between quick, precise strikes.', 'Dry, wry and few words.', 'A monster hunter paid by the contract.'] },
+    { id: 'arthur', who: 'Arthur Morgan', game: 'Red Dead Redemption 2', art: 'arthur.jpg', fy: .14, power: 'A revolver and Dead Eye', icon: '🎯', col: '#d9483b',
+      line: 'Arthur\'s power is his gun and Dead Eye, a slowed moment where he marks several targets and fires them all.',
+      reach: 'deadeye',
+      spokes: ['A hat, a coat, a gun belt and a horse never far away.', 'Draw, aim, Dead Eye, ride and lasso.', 'Gun range, with Dead Eye marks across several targets.', 'Grounded, weighty movement and a slow, heavy draw.', 'A tired outlaw with a dry sense of humour.', 'An enforcer for a gang whose time is ending.'] },
   ];
   const SPOKES = ['Silhouette', 'Core moves', 'Reach', 'Animation', 'Voice', 'Story'];
   SRC.forEach(s => load(s.art));
@@ -66,8 +83,12 @@
     if (kind === 'melee') { g.globalAlpha = .25; g.beginPath(); g.moveTo(x - 10, y); g.arc(x - 10, y, 22, -.9, .9); g.closePath(); g.fill(); g.globalAlpha = 1; }
     if (kind === 'ranged') { g.globalAlpha = .2; g.beginPath(); g.moveTo(x - 20, y); g.lineTo(x + 32, y - 12); g.lineTo(x + 32, y + 12); g.closePath(); g.fill(); g.globalAlpha = 1; const p = (t * 1.5) % 1; g.beginPath(); g.arc(x - 16 + p * 46, y, 2.5, 0, TAU); g.fill(); }
     if (kind === 'arsenal') { g.globalAlpha = .18; g.beginPath(); g.arc(x - 12, y, 12, 0, TAU); g.fill(); g.beginPath(); g.moveTo(x - 12, y); g.lineTo(x + 32, y - 14); g.lineTo(x + 32, y + 6); g.closePath(); g.fill(); g.globalAlpha = 1; [0, .33, .66].forEach(o => { const p = (t * 1.2 + o) % 1; g.beginPath(); g.arc(x - 12 + p * 44, y - 4 - o * 6, 2, 0, TAU); g.fill(); }); }
+    if (kind === 'thrown') { const p = (t * .8) % 1, d = Math.sin(p * Math.PI) * 44; g.globalAlpha = .25; g.setLineDash([3, 4]); g.beginPath(); g.moveTo(x - 20, y); g.quadraticCurveTo(x + 2, y - 22, x + 24, y); g.stroke(); g.setLineDash([]); g.globalAlpha = 1; g.save(); g.translate(x - 20 + d, y - Math.sin(p * Math.PI) * 10); g.rotate(t * 14); g.fillRect(-5, -1.5, 10, 3); g.restore(); }
+    if (kind === 'marks') { g.globalAlpha = .18; g.beginPath(); g.moveTo(x - 20, y); g.lineTo(x + 32, y - 14); g.lineTo(x + 32, y + 14); g.closePath(); g.fill(); g.globalAlpha = 1; [[22, -8], [26, 6]].forEach(([dx, dy], i) => { g.lineWidth = 1.5; g.beginPath(); g.arc(x + dx, y + dy, 4 + Math.sin(t * 4 + i) , 0, TAU); g.stroke(); }); }
+    if (kind === 'sign') { g.globalAlpha = .25; g.beginPath(); g.moveTo(x - 12, y); g.arc(x - 12, y, 20, -.8, .8); g.closePath(); g.fill(); g.globalAlpha = .12 + .1 * Math.sin(t * 3); g.beginPath(); g.moveTo(x - 12, y); g.arc(x - 12, y, 42, -.45, .45); g.closePath(); g.fill(); g.globalAlpha = 1; }
+    if (kind === 'deadeye') { g.globalAlpha = .15; g.fillRect(x - 34, y - 26, 68, 52); g.globalAlpha = 1; [[14, -12], [26, 0], [16, 14]].forEach(([dx, dy], i) => { const on = (t * 1.2) % 3 > i * .7; g.beginPath(); g.moveTo(x + dx - 4, y + dy - 4); g.lineTo(x + dx + 4, y + dy + 4); g.moveTo(x + dx + 4, y + dy - 4); g.lineTo(x + dx - 4, y + dy + 4); g.globalAlpha = on ? 1 : .3; g.stroke(); g.globalAlpha = 1; }); }
     if (kind === 'zone') { g.globalAlpha = .22; g.beginPath(); g.arc(x - 4, y, 22, 0, TAU); g.fill(); g.globalAlpha = .5; g.beginPath(); g.arc(x - 4, y, 22, 0, TAU); g.stroke(); g.globalAlpha = 1; }
-    g.fillStyle = C.ink; g.beginPath(); g.arc(kind === 'zone' ? x - 4 : kind === 'melee' ? x - 10 : kind === 'ranged' ? x - 20 : x - 12, y, 5, 0, TAU); g.fill();
+    g.fillStyle = C.ink; g.beginPath(); g.arc(kind === 'zone' ? x - 4 : kind === 'melee' ? x - 10 : kind === 'ranged' || kind === 'thrown' || kind === 'marks' ? x - 20 : kind === 'deadeye' ? x - 22 : x - 12, y, 5, 0, TAU); g.fill();
     g.restore();
   }
   function drawPower(g, i, since, t) {
@@ -78,7 +99,7 @@
     const lx = 12, ly = 12, lw = 400, lh = H - 24;
     g.fillStyle = '#152044'; rr(g, lx, ly, lw, lh, 12); g.fill();
     g.save(); rr(g, lx, ly, lw, 300, [12, 12, 0, 0]); g.clip(); cover(g, s.art, lx, ly, lw, 300, .5, s.fy);
-    g.fillStyle = 'rgba(13,20,36,.72)'; g.fillRect(lx, ly + 274, lw, 26); text(g, 'From the course deck', lx + 12, ly + 292, 13, '#fffaf0', 600); g.restore();
+    g.fillStyle = 'rgba(13,20,36,.72)'; g.fillRect(lx, ly + 274, lw, 26); text(g, s.deck ? 'From the course deck' : 'Store art, not from the deck', lx + 12, ly + 292, 13, '#fffaf0', 600); g.restore();
     text(g, s.who, lx + 20, ly + 342, 30, '#fffaf0', 800, 'left', 'M');
     text(g, s.game, lx + 20, ly + 366, 15, '#c9d3f0', 600);
     g.fillStyle = s.col; rr(g, lx + 20, ly + 384, 0, 0, 0);
@@ -122,7 +143,7 @@
       drawPower(g, i, since, t);
       if (st.key === i) return; st.key = i;
       $$(s, '.sp-src .btn').forEach(b => b.classList.toggle('on', +b.dataset.i === i));
-      say($(s, '.sp-out'), `${SRC[i].who}: ${SRC[i].power.toLowerCase()}. ${SRC[i].line}`);
+      say($(s, '.sp-out'), `${SRC[i].who}: ${SRC[i].power[0].toLowerCase() + SRC[i].power.slice(1)}. ${SRC[i].line}`);
     }
     scenes.power = { seek(t) { st.held = true; st.tour = true; render(t); }, dur: () => POW_DUR };
     return dt => { if (st.held) return; st.t += dt; if (st.tour && st.t >= POW_DUR) st.t = 0; render(st.t); };
