@@ -3,4 +3,11 @@ League of Legends images from Riot Games' Data Dragon (used for class discussion
 - Passive icons: https://ddragon.leagueoflegends.com/cdn/14.1.1/img/passive/<file>  (ZiggsPassiveReady, Trundle_Passive, Braum_Passive, Caitlyn_Headshot, AurelionSolP)
 - Spell icons: https://ddragon.leagueoflegends.com/cdn/14.1.1/img/spell/<file>  (names from .../14.1.1/data/en_US/champion/<Name>.json)
 - Splashes (resized to 800px wide JPEG): https://ddragon.leagueoflegends.com/cdn/img/champion/splash/<Name>_0.jpg  (Ziggs, Trundle, Braum)
-Ori and Apex Legends characters are drawn as simple original shapes or shown as text only; no art from those games is used.
+Versions the deck describes only in words are drawn as original sketches or shown as text cards.
+
+Course deck art (img/deck/), extracted from "RGF C2 M4 - 3Cs - Character" and resized for the web:
+- ziggs-original.jpg, ziggs-yordle.jpg (Ziggs concept and splash), trundle-original.jpg, trundle-ice.jpg (Trundle classic and rework splashes), braum.jpg, caitlyn.jpg (splashes), aurelion-sol-concepts.jpg (Aurelion Sol concept sketches): Riot Games, League of Legends.
+- ori-boy.jpg, ori-box.jpg, ori-spirit.jpg: early Ori prototypes, Moon Studios, Ori and the Blind Forest.
+- caustic.jpg, revenant.jpg, pathfinder.jpg: Respawn Entertainment, Apex Legends.
+- mountain-troll.jpg: Hogwarts Legacy (Avalanche Software / Warner Bros. Games).
+- nazgul.jpg: The Lord of the Rings: The Return of the King (New Line Cinema film still); nazgul-game.jpg: the EA video game.
