@@ -114,7 +114,7 @@
   function tourState(t) {
     const on = {}; let hi = 'No talents: the DoTs out-earn Shadow Bolt, so you weave them in';
     ORDER.forEach((k, i) => { const u = clamp((t - STAGE * (i + 1)) / .8); on[k] = ease(u); if (t >= STAGE * (i + 1)) hi = `+ ${TAL.find(x => x[0] === k)[1]}`; });
-    if (t >= STAGE * (ORDER.length + 1)) hi = 'The full 21/40 build: nothing beats Shadow Bolt';
+    if (t >= STAGE * (ORDER.length + 1)) hi = 'The full 0/21/40 build: nothing beats Shadow Bolt';
     return { on, hi };
   }
 
