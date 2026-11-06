@@ -12,7 +12,19 @@
   const NAME = { arcane: 'Arcane Explosion', frost: 'Blizzard', fire: 'Flame Wreath' };
   const ICON = { arcane: 'spell_nature_starfall', frost: 'spell_frost_icestorm', fire: 'spell_fire_fire' };
   const ANSWER = { arcane: 'leave', frost: 'follow', fire: 'hold still' };
-  const COLS = ['#ffb951', '#2fae63', '#2fae63', '#8a4fd6', '#8a4fd6', '#8a4fd6', '#8a4fd6', '#8a4fd6', '#8a4fd6'];
+  // the raid: melee stack on Aran and hit him, healers and ranged spread out round the room. You are ranged.
+  const ROLE = ['ranged', 'melee', 'melee', 'melee', 'melee', 'heal', 'heal', 'ranged', 'ranged', 'ranged'];
+  const ROLE_COL = { melee: '#e8892c', heal: '#2fae63', ranged: '#8a4fd6' };
+  const MELEE_R = 58, SPREAD_R = 180;
+  // home spots: the melee pack in an arc on the boss, everyone else evenly round the room, far enough apart
+  // that one Flame Wreath explosion only reaches the person who crossed
+  const HOME = (() => {
+    const out = [], mel = ROLE.map((r, i) => r === 'melee' ? i : -1).filter(i => i >= 0), far = ROLE.map((r, i) => r !== 'melee' ? i : -1).filter(i => i >= 0);
+    mel.forEach((i, k) => { out[i] = { a: .55 + (k - (mel.length - 1) / 2) * .78, r: MELEE_R }; });
+    far.forEach((i, k) => { out[i] = { a: k / far.length * TAU - .35, r: SPREAD_R }; });
+    return out;
+  })();
+  const homeAt = (i, r = HOME[i].r) => ({ x: CX + Math.cos(HOME[i].a) * r, y: CY + Math.sin(HOME[i].a) * r });
   const img = {}; Object.values(ICON).forEach(n => { const i = new Image(); i.src = `../img/${n}.jpg`; img[n] = i; });
 
   // seeded random so every run of the walk-through is the same picture
@@ -22,7 +34,7 @@
 
   function fresh(o) {
     const r = rng(7), ppl = [];
-    for (let i = 0; i < 10; i++) { const a = i / 10 * TAU + .3; ppl.push({ x: CX + Math.cos(a) * 150, y: CY + Math.sin(a) * 150, hp: 100, lift: 0, home: a, you: i === 0, col: i === 0 ? C.player : COLS[i - 1], moved: 0, wreath: null, ang: 0 }); }
+    for (let i = 0; i < 10; i++) { const h = homeAt(i); ppl.push({ x: h.x, y: h.y, hp: 100, lift: 0, home: HOME[i].a, role: ROLE[i], you: i === 0, col: i === 0 ? C.player : ROLE_COL[ROLE[i]], moved: 0, wreath: null, ang: Math.atan2(CY - h.y, CX - h.x) }); }
     return { t: 0, ppl, r, o, fx: [], log: { arcane: null, frost: null, fire: null }, inBliz: 0, detonations: 0, youHits: 0 };
   }
   const phaseAt = t => { const c = ((t % CYCLE) + CYCLE) % CYCLE, k = Math.floor(c / PH); return { sup: SUPERS[k], f: c - k * PH, n: Math.floor(t / CYCLE) }; };
@@ -31,14 +43,15 @@
   // where the AI wants each person to stand this frame (the post's intended answers)
   function aiTarget(S, p, i, ph) {
     const { sup, f } = ph;
-    if (sup === 'arcane' && f > 1.2 && f < 9.2) { const a = p.home; return { x: CX + Math.cos(a) * R * .86, y: CY + Math.sin(a) * R * .86 }; }
-    if (sup === 'frost' && f > 1.2 && f < 11) {
-      // stand on the Blizzard's ring, just behind it, and walk round after it
-      const b = blizAt(f), a = b.a - .7 - (i % 5) * .24, rr = R * (.3 + (i % 4) * .17);
+    if (sup === 'arcane' && f > 1.2 && f < 9.2) { const a = i / 10 * TAU; return { x: CX + Math.cos(a) * R * .86, y: CY + Math.sin(a) * R * .86 }; }
+    if (sup === 'frost' && f > 1.2 && f < 11 && p.role !== 'melee') {
+      // ranged and healers: stand on the Blizzard's ring, just behind it, and walk round after it
+      // (the melee pack on the boss is inside the storm's path and keeps attacking)
+      const b = blizAt(f), a = b.a - .95 - (i % 5) * .24, rr = R * (.46 + (i % 4) * .12);
       return { x: CX + Math.cos(a) * rr, y: CY + Math.sin(a) * rr };
     }
     if (sup === 'fire' && f > 1) return { x: p.x, y: p.y };
-    const a = p.home; return { x: CX + Math.cos(a) * 150, y: CY + Math.sin(a) * 150 };
+    return homeAt(i);
   }
 
   function step(S, keys) {
@@ -51,8 +64,10 @@
       S.fx.push({ k: 'pull', t });
     }
     if (sup === 'fire' && prev.f < 1 && f >= 1) {
-      // three random people are wreathed, and you are always one of them
-      const pick = [0]; while (pick.length < 3) { const j = 1 + Math.floor(S.r() * 9); if (!pick.includes(j)) pick.push(j); }
+      // three people are wreathed: you, one of the melee pack on the boss (where a crossing would hit the whole pack),
+      // and one more at random
+      const mel = ROLE.map((r, i) => r === 'melee' ? i : -1).filter(i => i >= 0);
+      const pick = [0, mel[Math.floor(S.r() * mel.length)]]; while (pick.length < 3) { const j = 1 + Math.floor(S.r() * 9); if (!pick.includes(j)) pick.push(j); }
       pick.forEach(j => { const p = S.ppl[j]; p.wreath = { x: p.x, y: p.y }; });
     }
     const slow = sup === 'arcane' && f > 1 && f < 9.2 ? .55 : 1;
@@ -70,7 +85,7 @@
       if (m > 0) {
         const sp = 165 * slow * DT; p.x += vx / m * sp; p.y += vy / m * sp; p.ang = Math.atan2(vy, vx); inRoom(p);
         if (sup === 'fire' && f > 1) p.moved += sp;
-      }
+      } else if (p.role === 'melee' && Math.hypot(p.x - CX, p.y - CY) < 90) p.ang = Math.atan2(CY - p.y, CX - p.x);   // face Aran and attack
       // Flame Wreath: crossing your ring (or, with the bug, anyone moving) detonates it on everyone near you
       if (sup === 'fire' && f > 1 && f < 10.5) {
         const crossed = p.wreath ? dist(p, p.wreath) > 46 : (o.bug && m > 0);
@@ -127,7 +142,7 @@
       const k = (f - 1) / 8.2;
       g.fillStyle = `rgba(138,79,214,${.06 + .2 * k})`; g.beginPath(); g.arc(CX, CY, R * .66, 0, TAU); g.fill();
       g.setLineDash([10, 8]); g.strokeStyle = 'rgba(138,79,214,.9)'; g.lineWidth = 3; g.stroke(); g.setLineDash([]);
-      T.label(`Arcane Explosion in ${Math.max(0, 9.2 - f).toFixed(1)} s · slowed`, CX, CY - R * .66 - 18, 'center', '#5b2aa8', 15);
+      T.label(`Arcane Explosion in ${Math.max(0, 9.2 - f).toFixed(1)} s · slowed`, CX, CY - 64, 'center', '#5b2aa8', 15);
     }
     if (sup === 'frost' && f > 1.5 && f < 11) {
       const b = blizAt(f);
@@ -144,6 +159,14 @@
       const a = 1 - (S.t - e.t) / 1.4;
       if (e.k === 'nova') { g.fillStyle = `rgba(160,110,240,${.45 * a})`; g.beginPath(); g.arc(CX, CY, R * .66, 0, TAU); g.fill(); }
       if (e.k === 'boom') { T.flash(e.x, e.y, 110, a); }
+    });
+    // melee on the boss swing at him
+    S.ppl.forEach((p, i) => {
+      if (p.role !== 'melee' || p.lift > 0 || Math.hypot(p.x - CX, p.y - CY) > 70) return;
+      const k = ((S.t * 1.6 + i * .37) % 1), a = Math.atan2(CY - p.y, CX - p.x);
+      if (k > .45) return;
+      g.strokeStyle = `rgba(255,255,255,${.9 * (1 - k / .45)})`; g.lineWidth = 3;
+      g.beginPath(); g.arc(p.x + Math.cos(a) * 14, p.y + Math.sin(a) * 14, 14, a - 1 + k * 2.2, a - .2 + k * 2.2); g.stroke();
     });
     S.ppl.forEach(p => {
       const up = p.lift > 0 ? Math.sin((1.2 - p.lift) / 1.2 * Math.PI) * 40 : 0;
@@ -164,6 +187,12 @@
     });
     g.font = '600 15px Jost, sans-serif'; g.fillStyle = C.muted;
     g.fillText(`Detonations: ${S.detonations}${S.o.bug ? '  ·  shipped bug on: anyone moving detonates' : ''}`, 690, 500);
+    // who is who
+    let lx = 690;
+    [['melee', ROLE_COL.melee], ['healers', ROLE_COL.heal], ['ranged', ROLE_COL.ranged], ['you (ranged)', C.player]].forEach(([t, c]) => {
+      g.fillStyle = c; g.beginPath(); g.arc(lx + 7, 540, 7, 0, TAU); g.fill();
+      g.font = '600 14px Jost, sans-serif'; g.fillStyle = C.muted; g.textAlign = 'left'; g.fillText(t, lx + 19, 541); lx += 30 + g.measureText(t).width;
+    });
   }
 
   const DUR = CYCLE;
