@@ -24,6 +24,7 @@
     far.forEach((i, k) => { out[i] = { a: k / far.length * TAU - .35, r: SPREAD_R }; });
     return out;
   })();
+  const PACK_RISK = 2;   // the melee in the middle of the pack, right of Aran, who gets a Flame Wreath
   const homeAt = (i, r = HOME[i].r) => ({ x: CX + Math.cos(HOME[i].a) * r, y: CY + Math.sin(HOME[i].a) * r });
   const img = {}; Object.values(ICON).forEach(n => { const i = new Image(); i.src = `../img/${n}.jpg`; img[n] = i; });
 
@@ -64,10 +65,9 @@
       S.fx.push({ k: 'pull', t });
     }
     if (sup === 'fire' && prev.f < 1 && f >= 1) {
-      // three people are wreathed: you, one of the melee pack on the boss (where a crossing would hit the whole pack),
-      // and one more at random
-      const mel = ROLE.map((r, i) => r === 'melee' ? i : -1).filter(i => i >= 0);
-      const pick = [0, mel[Math.floor(S.r() * mel.length)]]; while (pick.length < 3) { const j = 1 + Math.floor(S.r() * 9); if (!pick.includes(j)) pick.push(j); }
+      // three people are wreathed: you, a melee player in the middle of the pack on the boss (the one at risk of
+      // triggering: one step out of the ring and the whole pack is hit), and one more of the spread-out players at random
+      const pick = [0, PACK_RISK]; while (pick.length < 3) { const j = 1 + Math.floor(S.r() * 9); if (!pick.includes(j) && ROLE[j] !== 'melee') pick.push(j); }
       pick.forEach(j => { const p = S.ppl[j]; p.wreath = { x: p.x, y: p.y }; });
     }
     const slow = sup === 'arcane' && f > 1 && f < 9.2 ? .55 : 1;
@@ -168,6 +168,14 @@
       g.strokeStyle = `rgba(255,255,255,${.9 * (1 - k / .45)})`; g.lineWidth = 3;
       g.beginPath(); g.arc(p.x + Math.cos(a) * 14, p.y + Math.sin(a) * 14, 14, a - 1 + k * 2.2, a - .2 + k * 2.2); g.stroke();
     });
+    // the wreathed melee in the pack: at risk of triggering, because one step out of the ring hits everyone on the boss
+    const risk = S.ppl[PACK_RISK];
+    if (risk.wreath && !risk.you) {
+      const k = .5 + .5 * Math.sin(S.t * 6);
+      g.fillStyle = `rgba(255,170,30,${.25 + .25 * k})`; g.beginPath(); g.arc(risk.x, risk.y, 21 + 3 * k, 0, TAU); g.fill();
+      g.strokeStyle = '#e5322d'; g.lineWidth = 3; g.beginPath(); g.arc(risk.x, risk.y, 21 + 3 * k, 0, TAU); g.stroke();
+      T.label('⚠ at risk of triggering', risk.x + 30, risk.y + 2, 'left', C.redDk, 13);
+    }
     S.ppl.forEach(p => {
       const up = p.lift > 0 ? Math.sin((1.2 - p.lift) / 1.2 * Math.PI) * 40 : 0;
       if (up) T.shadow(p.x, p.y + 8, 16, 7, .3);
