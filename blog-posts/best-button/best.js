@@ -114,7 +114,7 @@
   function tourState(t) {
     const on = {}; let hi = 'No talents: the DoTs out-earn Shadow Bolt, so you weave them in';
     ORDER.forEach((k, i) => { const u = clamp((t - STAGE * (i + 1)) / .8); on[k] = ease(u); if (t >= STAGE * (i + 1)) hi = `+ ${TAL.find(x => x[0] === k)[1]}`; });
-    if (t >= STAGE * (ORDER.length + 1)) hi = 'The full 21/40 build: nothing beats Shadow Bolt';
+    if (t >= STAGE * (ORDER.length + 1)) hi = 'The full 0/21/40 build: nothing beats Shadow Bolt';
     return { on, hi };
   }
 
@@ -165,7 +165,7 @@
     for (let i = 0; i < 30; i++) { const x = 60 + i * 30, y = 360, got = i < n; g.fillStyle = got ? C.gold : '#e6dcc5'; g.beginPath(); g.roundRect(x, y, 24, 24, 5); g.fill(); }
     g.font = '600 14px Jost, sans-serif'; g.fillStyle = C.muted;
     g.fillText('Each talent alone is a rounding error. Thirty of them stacked multiplicatively is about +81%, not +60%.', 60, 420);
-    g.fillText('Every one of the 21/40 build’s damage talents multiplied the same spell, which is how one button ran away from the rest.', 60, 446);
+    g.fillText('All six of the build’s damage talents reached Shadow Bolt (×2.2). Immolate and Incinerate got three each, Corruption one.', 60, 446);
     g.font = '600 13px Jost, sans-serif';
     g.fillText(`Multiplied over added: ${((mul / add - 1) * 100).toFixed(1)}% more. At thirty talents that reaches the 13% the post says players start to notice.`, 60, 500);
   }
