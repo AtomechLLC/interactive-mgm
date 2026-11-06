@@ -2,4 +2,4 @@ Champion portraits and splash art: Riot Games, League of Legends, via Data Drago
 Portraits: https://ddragon.leagueoflegends.com/cdn/14.1.1/img/champion/<Name>.png (120px, as served)
 Splashes:  https://ddragon.leagueoflegends.com/cdn/img/champion/splash/<Name>_0.jpg (resized to 800px wide)
 Champions: Jinx, Draven, Braum, Lucian, Gnar, Ziggs.
-Goofy is shown as text only (no Disney art).
+Goofy (img/deck/): two stills from the course deck, a 1930s Disney short (goofy-classic.jpg) and A Goofy Movie, 1995 (goofy-movie.jpg). Disney.

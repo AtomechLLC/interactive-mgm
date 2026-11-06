@@ -1,5 +1,6 @@
 /* Champion dossier (Module 4, 3Cs: Character, slides 54-123 and 141-200).
-   Slide 1: Alex Yee's seven-layer Pyramid of Complexity for six League champions plus Goofy (text only, before and after).
+   Slide 1: Alex Yee's seven-layer Pyramid of Complexity for six League champions plus Goofy, before and after
+   (the deck's two Goofy stills: a 1930s short and A Goofy Movie).
    Click a layer for one champion's answer, click a layer name to compare every champion's answer.
    Slide 2: Devon Giehl's six pieces of Compelling Character Composition on the same champions, with the role-and-lens
    column (context, emotional framing, subjective truth) and FPGD fit lamps (clarity, motivation, response, satisfaction, fit).
@@ -136,14 +137,17 @@
   const img = {};
   LEAGUE.forEach(c => ['', '_splash'].forEach(s => { const i = new Image(); i.src = `img/${c.id}${s}${s ? '.jpg' : '.png'}`; img[c.id + s] = i; }));
   const ok = i => i && i.complete && i.naturalWidth;
+  // Goofy from the course deck: a 1930s short (before) and A Goofy Movie (after); face boxes are in source pixels
+  const GOOFY = { before: { src: 'img/deck/goofy-classic.jpg', fy: .15, face: [300, 0, 200], cap: 'A 1930s short: little more than a running gag' }, after: { src: 'img/deck/goofy-movie.jpg', fy: .3, face: [370, 50, 220], cap: 'A Goofy Movie: dramatically elevated' } };
+  Object.values(GOOFY).forEach(o => { o.img = new Image(); o.img.src = o.src; });
   function cover(g, i, x, y, w, h, fy = .3) {
     if (!ok(i)) { g.fillStyle = '#3d4270'; g.fillRect(x, y, w, h); return; }
     const k = Math.max(w / i.naturalWidth, h / i.naturalHeight), sw = w / k, sh = h / k;
     g.drawImage(i, (i.naturalWidth - sw) / 2, (i.naturalHeight - sh) * fy, sw, sh, x, y, w, h);
   }
-  function portrait(g, c, x, y, s) {
+  function portrait(g, c, x, y, s, goofy = 'after') {
     g.save(); g.beginPath(); g.roundRect(x, y, s, s, s * .18); g.clip();
-    if (c.text) { g.fillStyle = '#e6dcc5'; g.fillRect(x, y, s, s); g.fillStyle = C.ink; g.font = `700 ${Math.round(s * .24)}px Montserrat, Jost, sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('Goofy', x + s / 2, y + s / 2 + 1); }
+    if (c.text) { const o = GOOFY[goofy] || GOOFY.after, [fx, fy, fs] = o.face; g.fillStyle = '#e6dcc5'; g.fillRect(x, y, s, s); if (ok(o.img)) g.drawImage(o.img, fx, fy, fs, fs, x, y, s, s); }
     else if (ok(img[c.id])) g.drawImage(img[c.id], x, y, s, s);
     g.restore();
     g.strokeStyle = 'rgba(38,44,106,.5)'; g.lineWidth = 1.5; g.beginPath(); g.roundRect(x, y, s, s, s * .18); g.stroke();
@@ -196,7 +200,7 @@
   }
   function champButtons(s, ids) {
     const box = $(s, '.cd-champ');
-    box.innerHTML = ids.map(id => { const c = BYID[id]; return `<button class="btn" data-c="${id}">${c.text ? '<span class="gf">G</span>' : `<img src="img/${id}.png" alt="">`}${id}</button>`; }).join('');
+    box.innerHTML = ids.map(id => { const c = BYID[id]; return `<button class="btn" data-c="${id}"><img src="img/${id}.png" alt="">${id}</button>`; }).join('');
     return $$(box, '.btn');
   }
 
@@ -246,13 +250,14 @@
     g.fillStyle = CARD; g.beginPath(); g.roundRect(RX, 12, RW, H - 24, 12); g.fill();
     if (st.mode === 'one') {
       g.save(); g.beginPath(); g.roundRect(RX, 12, RW, 168, [12, 12, 0, 0]); g.clip();
-      if (c.text) { g.fillStyle = '#d9cba8'; g.fillRect(RX, 12, RW, 168); font(g, 13, 600); text(g, 'Text only: no Disney art in this course page.', RX + RW - 16, 34, C.muted, 'right'); }
+      const go = c.text ? GOOFY[st.goofy] || GOOFY.after : null;
+      if (go) { cover(g, go.img, RX, 12, RW, 168, go.fy); font(g, 12, 600); const cw = g.measureText(go.cap).width + 16; g.fillStyle = 'rgba(21,32,68,.75)'; g.beginPath(); g.roundRect(RX + RW - cw - 10, 20, cw, 20, 6); g.fill(); text(g, go.cap, RX + RW - 18, 34, '#fffaf0', 'right'); }
       else cover(g, img[c.id + '_splash'], RX, 12, RW, 168, .25);
-      if (!c.text) { const gr = g.createLinearGradient(0, 100, 0, 180); gr.addColorStop(0, 'rgba(21,32,68,0)'); gr.addColorStop(1, 'rgba(21,32,68,.85)'); g.fillStyle = gr; g.fillRect(RX, 90, RW, 90); }
+      { const gr = g.createLinearGradient(0, 100, 0, 180); gr.addColorStop(0, 'rgba(21,32,68,0)'); gr.addColorStop(1, 'rgba(21,32,68,.85)'); g.fillStyle = gr; g.fillRect(RX, 90, RW, 90); }
       g.restore();
-      portrait(g, c, RX + 16, 112, 56);
-      font(g, 24, 800, 'M'); text(g, c.id, RX + 84, 146, c.text ? C.ink : '#fff');
-      font(g, 14, 600); text(g, c.text ? (st.goofy === 'before' ? 'before the pyramid' : 'after the pyramid') : c.title, RX + 84, 166, c.text ? '#7a4a00' : '#fde9b8');
+      portrait(g, c, RX + 16, 112, 56, st.goofy);
+      font(g, 24, 800, 'M'); text(g, c.id, RX + 84, 146, '#fff');
+      font(g, 14, 600); text(g, c.text ? (st.goofy === 'before' ? 'before the pyramid' : 'after the pyramid') : c.title, RX + 84, 166, '#fde9b8');
       const a = ans(c, st.layer, st.goofy), y = 214;
       g.fillStyle = LAYER_COL[st.layer]; g.beginPath(); g.arc(RX + 28, y - 6, 13, 0, TAU); g.fill();
       font(g, 13, 700); text(g, String(st.layer + 1), RX + 28, y - 1, '#fff', 'center');

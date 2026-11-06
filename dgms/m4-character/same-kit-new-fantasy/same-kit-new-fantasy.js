@@ -1,7 +1,8 @@
 /* Same kit, new fantasy (RGF C2 M4, 3Cs: Character, slides 37-48, 102, 127-137).
    Slide 1: a kit strip that never changes above a fantasy card that steps through each version of the character, with a
    short "reads as" label under each card (Ziggs, Trundle, Braum and Ori, then Caustic, Revenant and Pathfinder as text).
-   Slide 2: mechanics-first (Braum, Caitlyn) vs fantasy-first (Aurelion Sol), and why a cohesive character needs both.
+   Slide 2: mechanics-first (Braum, Caitlyn) vs fantasy-first (Aurelion Sol, then the film-licensed Mountain Troll and Nazgul),
+   and why a cohesive character needs both. Character art on both slides comes from the course deck.
    Both canvases are pure functions of time plus the learner's picks, so window.__seek is deterministic. */
 (function () {
   const { $, $$, canvasDemo, say } = FPF.kit;
@@ -33,53 +34,53 @@
     ziggs: { name: 'Ziggs', kit: [['ZiggsPassiveReady.png', 'Short Fuse'], ['ZiggsQ.png', 'Bouncing Bomb'], ['ZiggsW.png', 'Satchel Charge'], ['ZiggsE.png', 'Hexplosive Minefield'], ['ZiggsR.png', 'Mega Inferno Bomb']],
       kitLine: 'Bombs that bounce, blast him around and blanket an area in mines.',
       versions: [
-        { name: 'A weird human man', sketch: 'bomber', reads: 'Distasteful', fit: 'clash', text: 'The first Ziggs was a weird human man. A grown man throwing bombs read as real-world warfare, and that framing made the same explosions feel distasteful.' },
-        { name: 'A Yordle', img: 'Ziggs', reads: 'Chaotic fun', fit: 'fit', text: 'As a small, gleeful Yordle the bombs did not change at all, but the emotional framing did: the same explosions now read as chaotic fun.' },
+        { name: 'A weird human man', sketch: 'bomber', art: 'ziggs-original.jpg', fy: .2, reads: 'Distasteful', fit: 'clash', text: 'The first Ziggs was a weird human man. A grown man throwing bombs read as real-world warfare, and that framing made the same explosions feel distasteful.' },
+        { name: 'A Yordle', img: 'Ziggs', art: 'ziggs-yordle.jpg', fy: .4, reads: 'Chaotic fun', fit: 'fit', text: 'As a small, gleeful Yordle the bombs did not change at all, but the emotional framing did: the same explosions now read as chaotic fun.' },
       ] },
     trundle: { name: 'Trundle', kit: [['Trundle_Passive.png', 'King’s Tribute'], ['TrundleTrollSmash.png', 'Chomp'], ['trundledesecrate.png', 'Frozen Domain'], ['TrundleCircle.png', 'Pillar of Ice'], ['TrundlePain.png', 'Subjugate']],
       kitLine: 'Bites that steal strength, an icy zone to fight in and a pillar that cuts off escape.',
       versions: [
-        { name: 'A gross troll', sketch: 'troll', reads: 'Repulsive', fit: 'clash', text: 'The first Trundle was a gross troll. The look pushed players away, and nothing about it explained the ice in his kit.' },
-        { name: 'A troll with a magic ice club', img: 'Trundle', reads: 'Frozen troll king', fit: 'fit', text: 'The rework gave him a magic ice club, "which worked with all of the existing mechanics." Not one ability had to change.' },
+        { name: 'A gross troll', sketch: 'troll', art: 'trundle-original.jpg', fy: .4, reads: 'Repulsive', fit: 'clash', text: 'The first Trundle was a gross troll. The look pushed players away, and nothing about it explained the ice in his kit.' },
+        { name: 'A troll with a magic ice club', img: 'Trundle', art: 'trundle-ice.jpg', fy: .4, reads: 'Frozen troll king', fit: 'fit', text: 'The rework gave him a magic ice club, "which worked with all of the existing mechanics." Not one ability had to change.' },
       ] },
     braum: { name: 'Braum', kit: [['Braum_Passive.png', 'Concussive Blows'], ['BraumQ.png', 'Winter’s Bite'], ['BraumW.png', 'Stand Behind Me'], ['BraumE.png', 'Unbreakable'], ['BraumRWrapper.png', 'Glacial Fissure']],
       kitLine: 'Leap to an ally, then raise a shield that stops incoming shots.',
       versions: [
         { name: 'A shield', sketch: 'shield', reads: 'Pure mechanic', fit: 'start', text: 'Braum began as a mechanic: a shield that blocks projectiles for your allies. There was no character yet, only the thing he does.' },
         { name: 'A girl from Piltover', sketch: 'pilt', reads: 'Gadget inventor', fit: 'explored', text: 'One iteration was "a girl from Piltover with a big energy shield and trampolines." The same leap and block, read as technology.' },
-        { name: 'Braum', img: 'Braum', reads: 'Kind protector', fit: 'fit', text: 'The final Braum is a big-hearted hero of the Freljord with a vault door for a shield. His theme, "Kindness is Strength", makes stepping in front of allies the whole fantasy.' },
+        { name: 'Braum', img: 'Braum', art: 'braum.jpg', fy: .4, reads: 'Kind protector', fit: 'fit', text: 'The final Braum is a big-hearted hero of the Freljord with a vault door for a shield. His theme, "Kindness is Strength", makes stepping in front of allies the whole fantasy.' },
       ] },
     ori: { name: 'Ori', glyph: [['🔥', 'Spirit Flame'], ['🧗', 'Wall Jump'], ['👊', 'Bash'], ['💨', 'Glide']],
       kitLine: 'A small, fast platforming hero who jumps, climbs, bashes and glides.',
       versions: [
-        { name: 'A boy', sketch: 'boy', reads: 'Ordinary child', fit: 'explored', text: 'Ori started as a boy.' },
-        { name: 'A white box', sketch: 'box', reads: 'Placeholder', fit: 'start', text: 'Then a plain white box: no character at all, only the moves.' },
+        { name: 'A boy', sketch: 'boy', art: 'ori-boy.jpg', small: true, reads: 'Ordinary child', fit: 'explored', text: 'Ori started as a boy.' },
+        { name: 'A white box', sketch: 'box', art: 'ori-box.jpg', small: true, reads: 'Placeholder', fit: 'start', text: 'Then a plain white box: no character at all, only the moves.' },
         { name: 'A horned demon', sketch: 'demon', reads: 'Menacing', fit: 'explored', text: 'Then a horned demon, which pulled the same moves toward something threatening.' },
-        { name: 'A forest spirit', sketch: 'spirit', reads: 'Gentle guardian', fit: 'fit', text: 'Finally a small, glowing forest spirit. The jumps and glides had not changed, and now they read as light and gentle.' },
+        { name: 'A forest spirit', sketch: 'spirit', art: 'ori-spirit.jpg', small: true, reads: 'Gentle guardian', fit: 'fit', text: 'Finally a small, glowing forest spirit. The jumps and glides had not changed, and now they read as light and gentle.' },
       ] },
     caustic: { name: 'Caustic', apex: true, glyph: [['👁', 'Nox Vision'], ['⚠', 'Nox Gas Trap'], ['💣', 'Nox Gas Grenade']],
       kitLine: 'Place gas traps, then wait for enemies to walk into them.',
       versions: [
         { name: 'An aggressive soldier', reads: 'Charge in', fit: 'clash', text: 'Caustic’s trap-and-wait loop clashed with an aggressive soldier fantasy: the look said charge in, the kit said wait.' },
-        { name: 'A mad scientist', reads: 'Patient menace', fit: 'fit', text: 'As a mad scientist, setting traps and watching the gas work is exactly who he is. The kit stayed, the fantasy moved.' },
+        { name: 'A mad scientist', art: 'caustic.jpg', fy: .3, reads: 'Patient menace', fit: 'fit', text: 'As a mad scientist, setting traps and watching the gas work is exactly who he is. The kit stayed, the fantasy moved.' },
       ] },
     revenant: { name: 'Revenant', apex: true, glyph: [['🧗', 'Stalker'], ['🔇', 'Silence'], ['💀', 'Death Totem']],
       kitLine: 'Climb high, silence a target and ambush from above.',
       versions: [
         { name: 'A skeleton ninja', reads: 'Mixed signals', fit: 'clash', text: 'Revenant’s ambush kit did not fit a skeleton ninja.' },
-        { name: 'A horror character', reads: 'Stalking dread', fit: 'fit', text: 'Reframed as a horror character, the ambush became the point: something that stalks you and strikes from the dark.' },
+        { name: 'A horror character', art: 'revenant.jpg', fy: .3, reads: 'Stalking dread', fit: 'fit', text: 'Reframed as a horror character, the ambush became the point: something that stalks you and strikes from the dark.' },
       ] },
     pathfinder: { name: 'Pathfinder', apex: true, glyph: [['🛰', 'Insider Knowledge'], ['🪢', 'Grappling Hook'], ['🔀', 'Zipline Gun']],
       kitLine: 'Open routes for the whole team: scan ahead, grapple up, lay a zipline.',
       versions: [
-        { name: 'A friendly robot', reads: 'Helpful scout', fit: 'fit', text: 'Pathfinder’s kit is about leading and helping the team.' },
+        { name: 'A friendly robot', art: 'pathfinder.jpg', fy: .3, reads: 'Helpful scout', fit: 'fit', text: 'Pathfinder’s kit is about leading and helping the team.' },
         { name: 'A colder, harder look', reads: 'Cold machine', fit: 'clash', text: 'An art pass moved him away from friendly, and the look stopped matching a kit built to lead the team.' },
-        { name: 'Friendly again', reads: 'Cheerful team leader', fit: 'fit', text: 'The art moved back to friendly to match the team-leader kit. The kit was never the problem.' },
+        { name: 'Friendly again', art: 'pathfinder.jpg', fy: .3, reads: 'Cheerful team leader', fit: 'fit', text: 'The art moved back to friendly to match the team-leader kit. The kit was never the problem.' },
       ] },
   };
   const ORDER = ['ziggs', 'trundle', 'braum', 'ori', 'caustic', 'revenant', 'pathfinder'];
   const FIT = { clash: ['Kit and fantasy clash', C.red, '#f9d9d6'], fit: ['Kit and fantasy fit', C.good, '#d8f0df'], explored: ['An explored version', '#9a5a06', '#fde9b8'], start: ['Mechanics only', '#23306e', '#dfe6fb'] };
-  ORDER.forEach(k => { const c = CASES[k]; (c.kit || []).forEach(([f]) => load(f)); c.versions.forEach(v => { if (v.img) { load(v.img + '.png'); load(v.img + '_splash.jpg'); } }); });
+  ORDER.forEach(k => { const c = CASES[k]; (c.kit || []).forEach(([f]) => load(f)); c.versions.forEach(v => { if (v.img) load(v.img + '.png'); if (v.art) load('deck/' + v.art); }); });
 
   /* ---------- original concept sketches (no game art) ---------- */
   const PAPER = '#f6eedb', PEN = '#3b3552';
@@ -190,13 +191,19 @@
     const words = v.name.split(' '), half = Math.ceil(words.length / 2);
     if (g.measureText(v.name).width > w - 60) { g.fillText(words.slice(0, half).join(' '), x + w / 2, y + h / 2); g.fillText(words.slice(half).join(' '), x + w / 2, y + h / 2 + 38); }
     else g.fillText(v.name, x + w / 2, y + h / 2 + 10);
-    text(g, 'Text only: no Apex Legends art on this page.', x + w / 2, y + h - 34, 13, C.muted, 600, 'center');
+    text(g, 'The deck describes this version in words only.', x + w / 2, y + h - 34, 13, C.muted, 600, 'center');
   }
 
-  function finalArt(g, v, x, y, w, h) {
-    cover(g, v.img + '_splash.jpg', x, y, w, h, .5, .25);
-    g.fillStyle = 'rgba(21,32,68,.15)'; g.fillRect(x, y, w, h);
-    const s = 96; g.fillStyle = '#fffaf0'; g.fillRect(x + 12, y + h - s - 16, s + 8, s + 8); pic(g, v.img + '.png', x + 16, y + h - s - 12, s, s);
+  // art from the course deck: cover-cropped, or centred on dark for the small early Ori captures
+  function deckArt(g, v, x, y, w, h) {
+    const n = 'deck/' + v.art, i = load(n);
+    if (v.small) {
+      g.fillStyle = '#0d1424'; g.fillRect(x, y, w, h);
+      if (ok(i)) { const k = Math.min((w - 40) / i.naturalWidth, (h - 70) / i.naturalHeight); const dw = i.naturalWidth * k, dh = i.naturalHeight * k; g.imageSmoothingQuality = 'high'; g.drawImage(i, x + (w - dw) / 2, y + (h - 30 - dh) / 2, dw, dh); }
+    } else cover(g, n, x, y, w, h, .5, v.fy ?? .3);
+    if (v.img) { const s = 84; g.fillStyle = '#fffaf0'; g.fillRect(x + 12, y + h - s - 40, s + 8, s + 8); pic(g, v.img + '.png', x + 16, y + h - s - 36, s, s); }
+    g.fillStyle = 'rgba(13,20,36,.72)'; g.fillRect(x, y + h - 26, w, 26);
+    text(g, 'From the course deck', x + 12, y + h - 8, 13, '#fffaf0', 600);
   }
 
   /* ---------- slide 1: the kit strip and the fantasy card ---------- */
@@ -235,8 +242,8 @@
     const ax = cx + 18, ay = cy + 18, aw = 430, ah = ch - 36;
     g.save(); g.translate(ax + aw / 2, 0); g.scale(Math.max(.02, flip), 1); g.translate(-(ax + aw / 2), 0);
     g.save(); rr(g, ax, ay, aw, ah, 10); g.clip();
-    if (c.apex) textCard(g, c, vv, ax, ay, aw, ah);
-    else if (vv.img) finalArt(g, vv, ax, ay, aw, ah);
+    if (vv.art) deckArt(g, vv, ax, ay, aw, ah);
+    else if (c.apex) textCard(g, c, vv, ax, ay, aw, ah);
     else sketch(g, vv.sketch, ax, ay, aw, ah, t);
     g.restore(); g.strokeStyle = '#cdbf9f'; g.lineWidth = 2; rr(g, ax, ay, aw, ah, 10); g.stroke();
     g.restore();
@@ -300,8 +307,15 @@
     { name: 'Caitlyn', way: 'mech', img: 'Caitlyn.png', start: ['CaitlynQ.png', 'Started from a sniper'], kit: ['CaitlynQ.png', 'CaitlynW.png', 'CaitlynE.png', 'CaitlynR.png'], who: 'The Sheriff of Piltover' },
     { name: 'Aurelion Sol', way: 'fan', img: 'AurelionSol.png', start: [null, 'Started from a storm dragon'], kit: ['AurelionSolQ.png', 'AurelionSolW.png', 'AurelionSolE.png', 'AurelionSolR.png'], who: 'A cosmic dragon' },
   ];
-  LANES.forEach(l => { load(l.img); l.kit.forEach(load); if (l.start[0]) load(l.start[0]); });
-  const LANE = 3.4, JIG = 3.2, OR_DUR = LANE * 3 + JIG * 2 + 1;
+  LANES[0].art = 'braum.jpg'; LANES[1].art = 'caitlyn.jpg'; LANES[2].seedArt = 'aurelion-sol-concepts.jpg';
+  // fantasy first from film: games built on characters the films had already defined (kit verbs are illustrative)
+  const FILM = [
+    { name: 'Mountain Troll', game: 'Hogwarts Legacy', way: 'fan', seedFilm: true, start: [null, 'Started from the films'], art: 'mountain-troll.jpg', kitText: ['Club smash', 'Boulder throw', 'Charge'], who: 'The troll the films made famous' },
+    { name: 'The Nazgul', game: 'The Return of the King', way: 'fan', seedArt: 'nazgul.jpg', start: [null, 'Started from the films'], art: 'nazgul-game.jpg', kitText: ['Fell beast swoop', 'Fear screech', 'Morgul blade'], who: 'The Ringwraiths of the films' },
+  ];
+  const SETS = { league: LANES, film: FILM };
+  [...LANES, ...FILM].forEach(l => { if (l.img) load(l.img); (l.kit || []).forEach(load); if (l.start[0]) load(l.start[0]); ['art', 'seedArt'].forEach(k => l[k] && load('deck/' + l[k])); });
+  const LANE = 3.4, JIG = 3.2, OR_DUR = LANE * 5 + JIG * 2 + 1;
 
   function kitRow(g, kit, x, y, a) { kit.forEach((f, i) => { g.fillStyle = '#000'; g.fillRect(x + i * 52 - 1, y - 1, 46, 46); pic(g, f, x + i * 52, y, 44, 44, a); }); }
   function stageBox(g, x, y, w, h, title, a, col) {
@@ -318,40 +332,47 @@
   function dragonSketch(g, x, y, t) {
     g.save(); g.font = font(44, 600); g.fillStyle = '#5562eb'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('⛈', x - 28, y - 4); g.fillStyle = '#8a4fd6'; g.fillText('🐉', x + 26, y + 2 + Math.sin(t * 3) * 3); g.restore();
   }
-  function drawOrigin(g, t, focus, indep) {
+  function drawOrigin(g, t, focus, indep, lanes) {
     T.use(g); g.clearRect(0, 0, W, H);
     g.fillStyle = 'rgba(255,252,244,.9)'; rr(g, 0, 0, W, H, 14); g.fill();
     const SX = [218, 488, 758], SW = 250, LH = 128;
-    LANES.forEach((l, i) => {
+    lanes.forEach((l, i) => {
       const y = 12 + i * (LH + 10);
       // each lane builds in its turn; a focused lane replays and the rest stay complete
       const lt = focus === -1 ? t - i * LANE : focus === i ? t : 99, dim = focus !== -1 && focus !== i;
       g.save(); g.globalAlpha = dim ? .35 : 1;
       g.fillStyle = '#efe6d2'; rr(g, 8, y, W - 16, LH, 12); g.fill();
-      text(g, l.name, 24, y + 36, 20, C.ink, 800, 'left', 'M');
+      text(g, l.name, 24, y + 36, l.name.length > 12 ? 17 : 20, C.ink, 800, 'left', 'M');
+      if (l.game) text(g, l.game, 24, y + 118, 12, C.muted, 600);
       const mech = l.way === 'mech', col = mech ? '#23306e' : '#8a4fd6';
       g.font = font(14, 700); const tag = mech ? 'Mechanics first' : 'Fantasy first', tw = g.measureText(tag).width + 18;
       g.fillStyle = mech ? '#dfe6fb' : '#eadcf8'; g.strokeStyle = col; g.lineWidth = 2; rr(g, 24, y + 50, tw, 26, 8); g.fill(); g.stroke();
       g.fillStyle = col; g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillText(tag, 33, y + 64);
-      text(g, mech ? 'kit, then character' : 'character, then kit', 24, y + 100, 13, C.muted, 600);
+      text(g, mech ? 'kit, then character' : 'character, then kit', 24, y + 98, 13, C.muted, 600);
       const a = k => clamp((lt - k) / .5), by = y + 10, bh = LH - 20;
       // stage 1: the seed
       stageBox(g, SX[0], by, SW, bh, l.start[1], a(.2), col);
-      if (a(.2) > 0) { g.save(); g.globalAlpha *= a(.2); if (l.start[0]) { g.fillStyle = '#000'; g.fillRect(SX[0] + SW / 2 - 29, by + 36, 58, 58); pic(g, l.start[0], SX[0] + SW / 2 - 28, by + 37, 56, 56); } else dragonSketch(g, SX[0] + SW / 2, by + 66, t); g.restore(); }
+      if (a(.2) > 0) { g.save(); g.globalAlpha *= a(.2); if (l.start[0]) { g.fillStyle = '#000'; g.fillRect(SX[0] + SW / 2 - 29, by + 36, 58, 58); pic(g, l.start[0], SX[0] + SW / 2 - 28, by + 37, 56, 56); } else if (l.seedArt) cover(g, 'deck/' + l.seedArt, SX[0] + 10, by + 30, SW - 20, bh - 38, .5, .4); else if (l.seedFilm) filmStrip(g, SX[0] + 10, by + 30, SW - 20, bh - 38); else dragonSketch(g, SX[0] + SW / 2, by + 66, t); g.restore(); }
       arrow(g, SX[0] + SW + 2, by + bh / 2, SX[1] - 4, clamp((lt - .9) / .4));
       // stage 2 and 3: kit then character, or character then kit
       const kitBox = mech ? 1 : 2, charBox = mech ? 2 : 1;
       stageBox(g, SX[kitBox], by, SW, bh, mech ? 'The kit grows from it' : 'A kit built to deliver it', a(kitBox === 1 ? 1.3 : 2.4), '#23306e');
-      if (a(kitBox === 1 ? 1.3 : 2.4) > 0) kitRow(g, l.kit, SX[kitBox] + 24, by + 42, a(kitBox === 1 ? 1.3 : 2.4));
+      if (a(kitBox === 1 ? 1.3 : 2.4) > 0) { if (l.kit) kitRow(g, l.kit, SX[kitBox] + 24, by + 42, a(kitBox === 1 ? 1.3 : 2.4)); else verbChips(g, l.kitText, SX[kitBox] + 12, by + 34, SW - 24, a(2.4)); }
       stageBox(g, SX[charBox], by, SW, bh, mech ? 'A character that explains it' : 'The character comes first', a(charBox === 1 ? 1.3 : 2.4), '#8a4fd6');
-      if (a(charBox === 1 ? 1.3 : 2.4) > 0) { g.save(); g.globalAlpha *= a(charBox === 1 ? 1.3 : 2.4); g.fillStyle = '#fffaf0'; g.fillRect(SX[charBox] + 12, by + 32, 66, 66); pic(g, l.img, SX[charBox] + 14, by + 34, 62, 62); wrap(g, l.who, SX[charBox] + 88, by + 60, SW - 98, 19, 15, C.ink, 600); g.restore(); }
+      if (a(charBox === 1 ? 1.3 : 2.4) > 0) {
+        g.save(); g.globalAlpha *= a(charBox === 1 ? 1.3 : 2.4);
+        if (l.art) { cover(g, 'deck/' + l.art, SX[charBox] + 10, by + 30, 118, bh - 38, .5, .35); wrap(g, l.who, SX[charBox] + 136, by + 54, SW - 144, 18, 14, C.ink, 600); }
+        else { g.fillStyle = '#fffaf0'; g.fillRect(SX[charBox] + 12, by + 32, 66, 66); pic(g, l.img, SX[charBox] + 14, by + 34, 62, 62); wrap(g, l.who, SX[charBox] + 88, by + 60, SW - 98, 19, 15, C.ink, 600); }
+        g.restore();
+      }
       arrow(g, SX[1] + SW + 2, by + bh / 2, SX[2] - 4, clamp((lt - 2) / .4));
       g.restore();
     });
     // the jigsaw: a cohesive character achieves both
     const jy = 12 + 3 * (LH + 10), jh = H - jy - 10;
+    if (lanes.length < 3) { g.fillStyle = 'rgba(138,79,214,.08)'; rr(g, 8, 12 + 2 * (LH + 10), W - 16, LH, 12); g.fill(); wrap(g, 'Licensed games often start fantasy first: the films have already defined who the character is, so the kit is built to make players feel it.', 40, 12 + 2 * (LH + 10) + 54, W - 80, 26, 19, '#5b3a8c', 600); }
     g.fillStyle = '#152044'; rr(g, 8, jy, W - 16, jh, 12); g.fill();
-    const jt = focus === -1 ? t - LANE * 3 : t - .2;
+    const jt = focus === -1 ? t - LANE * lanes.length : t - .2;
     const together = indep ? 0 : ease(clamp(jt / 1.4)), apart = indep ? ease(clamp(jt / 1.4)) : 0;
     const mx = 160 + together * 45 - apart * 30, fx = 400 - together * 45 + apart * 30, py = jy + jh / 2;
     piece(g, mx, py, 'Mechanics', '#2ea3dc', 1, apart);
@@ -362,6 +383,18 @@
       : ['A cohesive character achieves both:', 'who they are matches how they play.'];
     g.save(); g.globalAlpha = clamp((jt - .6) / .5);
     text(g, msg[0], 560, py - 6, 21, '#fffaf0', 800, 'left', 'M'); text(g, msg[1], 560, py + 22, 18, indep ? '#ffb4ae' : '#bfe8cc', 600);
+    g.restore();
+  }
+  function filmStrip(g, x, y, w, h) {
+    g.fillStyle = '#1b1b22'; g.fillRect(x, y, w, h);
+    g.fillStyle = '#fffaf0'; for (let xx = x + 8; xx < x + w - 8; xx += 18) { g.fillRect(xx, y + 5, 9, 7); g.fillRect(xx, y + h - 12, 9, 7); }
+    g.fillStyle = '#3b3552'; for (let k = 0; k < 3; k++) g.fillRect(x + 12 + k * (w - 24) / 3, y + 18, (w - 24) / 3 - 8, h - 36);
+    g.save(); g.font = font(30, 600); g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('🎬', x + w / 2, y + h / 2); g.restore();
+  }
+  function verbChips(g, verbs, x, y, w, a) {
+    g.save(); g.globalAlpha *= a; let cx = x, cy = y + 4;
+    verbs.forEach(v => { g.font = font(14, 700); const vw = g.measureText(v).width + 18; if (cx + vw > x + w) { cx = x; cy += 32; } g.fillStyle = '#dfe6fb'; g.strokeStyle = '#23306e'; g.lineWidth = 1.5; rr(g, cx, cy, vw, 26, 8); g.fill(); g.stroke(); g.fillStyle = '#23306e'; g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillText(v, cx + 9, cy + 13); cx += vw + 6; });
+    text(g, 'illustrative', x + w, y - 12, 12, C.muted, 600, 'right');
     g.restore();
   }
   function piece(g, x, y, name, col, side, apart) {
@@ -383,23 +416,29 @@
     0: 'Braum started as a shield for allies. The character came later, and the one that stuck makes the shield the expression of who he is.',
     1: 'Caitlyn started as a sniper: long range, traps and nets. The Sheriff of Piltover is the character that makes that kit feel inevitable.',
     2: 'Aurelion Sol started as a fantasy: a storm dragon. The kit was built afterwards to make players feel that fantasy.',
+    filmall: 'Hogwarts Legacy and The Return of the King started fantasy first: the films had already defined the Mountain Troll and the Nazgul, so each kit was built to make players feel a character they already knew.',
+    film0: 'The Mountain Troll arrived fully formed from the Harry Potter films. Hogwarts Legacy had to build a fight that delivers that huge, lumbering, club-swinging threat.',
+    film1: 'The Nazgul came straight from the films: Ringwraiths on fell beasts. The Return of the King game had to turn that dread into something the player fights.',
     indep: 'Developing the kit and the fantasy at the same time, but separately, is where they drift apart. Caustic’s trap kit and an aggressive soldier look were made apart and did not fit.',
   };
   canvasDemo('origin', (s, cv, g) => {
-    const st = { t: 0, focus: -1, indep: false, tour: true, held: false, key: '' };
+    const st = { t: 0, focus: -1, indep: false, set: 'league', tour: true, held: false, key: '' };
     const tourBtn = $(s, '.or-tour'), box = $(s, '.or-indep');
     const free = () => { st.held = false; st.tour = false; tourBtn.classList.remove('on'); st.t = 0; };
     $$(s, '.or-focus .btn').forEach(b => b.onclick = () => { free(); st.focus = +b.dataset.f; });
+    $$(s, '.or-set .btn').forEach(b => b.onclick = () => { free(); st.set = b.dataset.s; st.focus = -1; });
     box.onchange = () => { const v = box.checked; free(); st.indep = v; };
     tourBtn.onclick = () => { st.held = false; st.tour = true; st.t = 0; tourBtn.classList.add('on'); };
     function render(t) {
-      let focus = st.focus, indep = st.indep, tt = t;
-      if (st.tour) { focus = -1; indep = t > LANE * 3 + JIG; tt = indep ? t - JIG : t; }
-      drawOrigin(g, tt, focus, indep);
-      const key = [focus, indep].join(); if (key === st.key) return; st.key = key;
-      $$(s, '.or-focus .btn').forEach(b => b.classList.toggle('on', +b.dataset.f === focus));
+      let focus = st.focus, indep = st.indep, tt = t, set = st.set;
+      if (st.tour) { focus = -1; if (t < LANE * 3) { set = 'league'; indep = false; } else { set = 'film'; const tb = t - LANE * 3; indep = tb > LANE * 2 + JIG; tt = indep ? tb - JIG : tb; } }
+      const lanes = SETS[set]; if (focus >= lanes.length) focus = -1;
+      drawOrigin(g, tt, focus, indep, lanes);
+      const key = [focus, indep, set].join(); if (key === st.key) return; st.key = key;
+      $$(s, '.or-set .btn').forEach(b => b.classList.toggle('on', b.dataset.s === set));
+      $$(s, '.or-focus .btn').forEach(b => { const f = +b.dataset.f; b.classList.toggle('on', f === focus); b.hidden = f >= lanes.length; if (f >= 0 && f < lanes.length) b.textContent = lanes[f].name; else if (f === -1) b.textContent = lanes.length === 3 ? 'All three' : 'Both'; });
       box.checked = indep;
-      say($(s, '.or-out'), indep ? OR_OUT.indep : OR_OUT[focus === -1 ? 'all' : focus]);
+      say($(s, '.or-out'), indep ? OR_OUT.indep : set === 'film' ? OR_OUT['film' + (focus === -1 ? 'all' : focus)] : OR_OUT[focus === -1 ? 'all' : focus]);
     }
     scenes.origin = { seek(t) { st.held = true; st.tour = true; render(t); }, dur: () => OR_DUR };
     return dt => { if (st.held) return; st.t += dt; if (st.tour && st.t >= OR_DUR) st.t = 0; render(st.t); };
