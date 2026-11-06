@@ -144,6 +144,8 @@ Page images in `dgms/m8-balance/` and `dgms/m9-game-feel/`: World of Warcraft ic
 | `dgms--m4-character--silhouette-test.svg` | [two-shadows](https://game-icons.net/1x1/lorc/two-shadows.html) | Lorc |
 | `dgms--m4-character--jump-tuner.svg` | [boot-stomp](https://game-icons.net/1x1/lorc/boot-stomp.html) | Lorc |
 | `dgms--m4-character--world-speeds-up.svg` | [walk](https://game-icons.net/1x1/delapouite/walk.html) | Delapouite |
+| `dgms--m4-character--source-of-power.svg` | [focused-lightning](https://game-icons.net/1x1/lorc/focused-lightning.html) | Lorc |
+| `dgms--m4-character--log-line.svg` | [scroll-unfurled](https://game-icons.net/1x1/lorc/scroll-unfurled.html) | Lorc |
 | `dgms--m5-controller--puppet-tracer.svg` | [puppet](https://game-icons.net/1x1/lorc/puppet.html) | Lorc |
 | `dgms--m5-controller--two-jumps.svg` | [jump-across](https://game-icons.net/1x1/delapouite/jump-across.html) | Delapouite |
 | `dgms--m5-controller--attack-windows.svg` | [sword-slice](https://game-icons.net/1x1/lorc/sword-slice.html) | Lorc |
