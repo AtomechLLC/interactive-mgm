@@ -71,6 +71,8 @@ These are flat, simple shapes for sketching a fight, in the style of the Forsake
 | --- | --- |
 | `tokens/` | P1 to P4 player discs, each with a facing triangle (labelled and unlabelled). Enemy, minion, elite and boss faces, an ally NPC, a neutral creature and a facing marker. |
 | `archetypes/` | 24 enemy discs in the same grey-and-red style, each with one prop that names its job in a fight: tank, swarm, archer, sniper, healer, summoner, exploder, charger, assassin, caster, buffer, shielder, splitter, flyer, burrower, turret, trapper, grappler, berserker, regenerator, stalker, mimic, leech and spawner. File names start with `enemy-`. |
+| `modern/` | 12 modern-warfare enemies in the same style: rifleman, heavy gunner, riot shield, marksman, medic, grenadier, rocketeer, drone operator, K9 handler, juggernaut, commander and infiltrator. |
+| `scifi/` | 12 sci-fi enemies in the same style: trooper, mech, hover drone, shield drone, cyborg, xeno swarm, psion, cloaker, repair bot, blinker, laser turret and broodmother. |
 | `arrows/` | Move, dashed path, curve, rotate, two-way, charge, knockback, pull and leap, each in black, ally teal and enemy peach. |
 | `telegraphs/` | Circle, ring, half-circle, crescent, cone, wide cone, line, trapezoid, square, cross, burst, lightning, sweep arc, shield, projectile, puddle, target circle and safe spot, each in ally teal (`-ally`) and enemy peach (`-enemy`). |
 | `status/` | Round condition badges: stun, slow, haste, silence, interrupt, root, taunt, invulnerable, shield, heal, regen, poison, burn, freeze, bleed, vulnerable, blind, sleep, fear, confuse, disarm, knocked down, marked, damage up, damage down, cooldown, channeling, immune, cleanse and dead. |

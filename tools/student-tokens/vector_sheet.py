@@ -4,7 +4,7 @@ from PIL import Image, ImageDraw, ImageFont
 V = sys.argv[1]
 try: F = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf', 11); H = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf', 18)
 except Exception: F = H = ImageFont.load_default()
-groups = ['tokens', 'archetypes', 'arrows', 'telegraphs', 'status', 'props']; T, C = 84, 16; rows = []
+groups = ['tokens', 'archetypes', 'modern', 'scifi', 'arrows', 'telegraphs', 'status', 'props']; T, C = 84, 16; rows = []
 for g in groups:
     fs = sorted(glob.glob(f'{V}/256px/{g}/*.png')); rows.append(('h', g, len(fs)))
     for i in range(0, len(fs), C): rows.append(('r', fs[i:i + C], 0))

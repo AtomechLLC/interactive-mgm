@@ -156,6 +156,102 @@
 "name": "enemy-turret"
 },
 {
+"group": "modern",
+"name": "enemy-commander"
+},
+{
+"group": "modern",
+"name": "enemy-drone-operator"
+},
+{
+"group": "modern",
+"name": "enemy-grenadier"
+},
+{
+"group": "modern",
+"name": "enemy-heavy-gunner"
+},
+{
+"group": "modern",
+"name": "enemy-infiltrator"
+},
+{
+"group": "modern",
+"name": "enemy-juggernaut"
+},
+{
+"group": "modern",
+"name": "enemy-k9-handler"
+},
+{
+"group": "modern",
+"name": "enemy-marksman"
+},
+{
+"group": "modern",
+"name": "enemy-medic"
+},
+{
+"group": "modern",
+"name": "enemy-rifleman"
+},
+{
+"group": "modern",
+"name": "enemy-riot-shield"
+},
+{
+"group": "modern",
+"name": "enemy-rocketeer"
+},
+{
+"group": "scifi",
+"name": "enemy-blinker"
+},
+{
+"group": "scifi",
+"name": "enemy-broodmother"
+},
+{
+"group": "scifi",
+"name": "enemy-cloaker"
+},
+{
+"group": "scifi",
+"name": "enemy-cyborg"
+},
+{
+"group": "scifi",
+"name": "enemy-hover-drone"
+},
+{
+"group": "scifi",
+"name": "enemy-laser-turret"
+},
+{
+"group": "scifi",
+"name": "enemy-mech"
+},
+{
+"group": "scifi",
+"name": "enemy-psion"
+},
+{
+"group": "scifi",
+"name": "enemy-repair-bot"
+},
+{
+"group": "scifi",
+"name": "enemy-shield-drone"
+},
+{
+"group": "scifi",
+"name": "enemy-trooper"
+},
+{
+"group": "scifi",
+"name": "enemy-xeno-swarm"
+},
+{
 "group": "arrows",
 "name": "charge-ally"
 },
