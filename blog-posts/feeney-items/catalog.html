@@ -27,8 +27,19 @@
   .chips label { font: 600 15px Jost, sans-serif; display: flex; gap: 6px; align-items: center; margin-left: 6px; }
   .count { color: var(--muted); font-size: 15px; margin-left: auto; }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 12px; margin-top: 16px; }
-  .it { background: rgba(255, 252, 244, .9); border: 1px solid var(--line); border-left: 6px solid #8ea2e6; border-radius: 10px; padding: 12px 14px; }
+  .it { background: rgba(255, 252, 244, .9); border: 1px solid var(--line); border-left: 6px solid #8ea2e6; border-radius: 10px; padding: 12px 14px; display: grid; grid-template-columns: 84px 1fr; gap: 12px; align-items: start; }
+  .art { width: 84px; height: 84px; display: block; }
+  .gal { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+  .gal .it { grid-template-columns: 1fr; justify-items: center; text-align: center; padding: 12px 8px 10px; cursor: pointer; border-left-width: 1px; border-top: 6px solid #8ea2e6; }
+  .gal .it.feat { border-top-color: #e0a92d; }
+  .gal .art { width: 120px; height: 120px; }
+  .gal .it h3 { font-size: 14.5px; }
+  .gal .meta, .gal .it p { display: none; }
+  .gal .it.open { grid-column: 1 / -1; grid-template-columns: 160px 1fr; justify-items: start; text-align: left; cursor: default; }
+  .gal .it.open .art { width: 160px; height: 160px; }
+  .gal .it.open .meta { display: flex; } .gal .it.open p { display: block; }
   .it.feat { border-left-color: #e0a92d; background: #fffaf0; }
+  .it .tx { min-width: 0; }
   .it h3 { font-family: Montserrat, sans-serif; font-weight: 800; font-size: 17px; margin: 0 0 4px; }
   .meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
   .tag { font-size: 13px; font-weight: 600; padding: 1px 8px; border-radius: 6px; background: #dfe6fb; color: #23306e; }
@@ -38,27 +49,32 @@
   .tag.f:hover { text-decoration: underline; }
   .it p { margin: 0; font-size: 15.5px; line-height: 1.42; color: var(--ink); }
   mark { background: #ffe39a; color: inherit; border-radius: 3px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 13.5px; color: var(--muted); align-items: center; }
+  .legend span { display: inline-flex; align-items: center; gap: 4px; }
+  .legend svg { width: 18px; height: 18px; }
   .none { color: var(--muted); font-size: 18px; padding: 30px 0; }
   footer { max-width: 1180px; margin: 0 auto; padding: 0 24px 40px; color: var(--muted); font-size: 13px; }
-  @media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
+  @media (max-width: 560px) { .tools { position: static; } .grid:not(.gal) { grid-template-columns: 1fr; } .it { grid-template-columns: 64px 1fr; } .art { width: 64px; height: 64px; } .gal .it.open { grid-template-columns: 1fr; } .gal { grid-template-columns: repeat(2, 1fr); } }
 </style>
 </head>
 <body>
 <div class="band"><header>
   <div class="kicker"><a href="../../dnd.html">← D&amp;D Design</a> · Brian Feeney · Riot Games</div>
   <h1>All of Brian Feeney’s <span>Items</span></h1>
-  <p>Every item on Brian Feeney’s <i>D&amp;D Magic Items Megasheet</i>, quoted as he wrote it. Search by name or by what an item does (try “fall”, “door”, “invisible” or “breath”). Gold items are the twenty played out on <a href="index.html">Same Problem, New Answers</a>.</p>
+  <p>Every item on Brian Feeney’s <i>D&amp;D Magic Items Megasheet</i>, quoted as he wrote it. Search by name or by what an item does (try “fall”, “door”, “invisible” or “breath”). Each item has its own illustration; switch to Gallery to browse them as pictures and click one to read it. Gold items are the twenty played out on <a href="index.html">Same Problem, New Answers</a>.</p>
 </header></div>
 <main>
   <div class="tools">
     <input type="search" id="q" placeholder="Search names and descriptions…" autocomplete="off">
     <div class="chips" id="types"></div>
-    <div class="chips"><label><input type="checkbox" id="feat"> Only the twenty on the problems page</label><span class="count" id="count"></span></div>
+    <div class="chips" id="view"><button data-v="cards" class="on">Cards</button><button data-v="gal">Gallery</button><label><input type="checkbox" id="feat"> Only the twenty on the problems page</label><span class="count" id="count"></span></div>
+    <div class="legend" id="legend"></div>
   </div>
   <div class="grid" id="grid"></div>
 </main>
-<footer>Items: Brian Feeney (Riot Games), <i>D&amp;D Magic Items Megasheet</i>, Core Set, quoted with his spelling. The rarity tag shows only Rare, Uncommon and Artifact; the sheet’s other entries in that column are working notes.</footer>
+<footer>Items: Brian Feeney (Riot Games), <i>D&amp;D Magic Items Megasheet</i>, Core Set, quoted with his spelling. Illustrations: game-icons.net (CC BY 3.0) by Lorc, Delapouite and other contributors; the pick of icon for each item, and the effect badge read from its description, are this page’s own. The rarity tag shows only Rare, Uncommon and Artifact; the sheet’s other entries in that column are working notes.</footer>
 <script src="catalog-data.js"></script>
+<script src="catalog-art.js"></script>
 <script src="items.js"></script>
 <script>
 (function () {
@@ -68,21 +84,35 @@
   const FEAT = {};
   Object.values(ITEMS).forEach(it => { const p = PROBLEMS.find(q => q.id === it.problem), b = BINS.find(q => q.id === it.bin); FEAT[norm(it.name)] = `${p.name} · ${b.name.toLowerCase()}`; });
   const types = ['All', ...[...new Set(ALL.map(i => i.t))].sort((a, b) => ALL.filter(i => i.t === b).length - ALL.filter(i => i.t === a).length)];
-  const st = { q: '', t: 'All', feat: false };
+  const st = { q: '', t: 'All', feat: false, v: 'cards', open: null };
+  const ART = window.FEENEY_ART;
+  const TINT = { Armor: ['#dfe5ef', '#8d9bb5'], Potion: ['#f7dede', '#c8686c'], Ring: ['#fbefcf', '#d4a73c'], Rod: ['#e9e2f5', '#8c76bf'], Scroll: ['#f6ead2', '#c49a5a'], Staff: ['#ece2d4', '#9a7650'], Wand: ['#eedff5', '#a46cc2'], Weapon: ['#e2e6ea', '#7d8894'], Wondrous: ['#dcefee', '#4f9e9a'] };
+  let uid = 0;
+  function art(i) {
+    const [ic, bd] = ART.items[i.n] || [], [bg, rim] = TINT[i.t] || TINT.Wondrous, id = 'g' + (uid++);
+    const badge = bd ? `<circle cx="402" cy="402" r="100" fill="${ART.badge[bd][0]}" stroke="#fffaf0" stroke-width="16"/><path transform="translate(337 337) scale(.254)" fill="#fff" d="${ART.icons[bd]}"/>` : '';
+    return `<svg class="art" viewBox="0 0 512 512" role="img" aria-label="${esc(i.n)}${bd ? ' · ' + ART.badge[bd][1] : ''}"><title>${esc(i.n)}${bd ? ' · ' + ART.badge[bd][1] : ''}</title><defs><radialGradient id="${id}" cx=".38" cy=".32" r=".8"><stop offset="0" stop-color="#fffdf6"/><stop offset="1" stop-color="${bg}"/></radialGradient></defs><rect x="8" y="8" width="496" height="496" rx="96" fill="url(#${id})" stroke="${rim}" stroke-width="14"/><path transform="translate(86 80) scale(.664)" fill="#1f2a5c" d="${ART.icons[ic]}"/>${badge}</svg>`;
+  }
   const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const hi = (s, q) => { const e = esc(s); if (!q) return e; const re = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi'); return e.replace(re, '<mark>$1</mark>'); };
   const tEl = document.getElementById('types');
   tEl.innerHTML = types.map(t => `<button data-t="${t}" class="${t === 'All' ? 'on' : ''}">${t} <small>${t === 'All' ? ALL.length : ALL.filter(i => i.t === t).length}</small></button>`).join('');
   tEl.onclick = e => { const b = e.target.closest('button'); if (!b) return; st.t = b.dataset.t; [...tEl.children].forEach(x => x.classList.toggle('on', x === b)); draw(); };
   document.getElementById('q').oninput = e => { st.q = e.target.value.trim(); draw(); };
+  document.getElementById('legend').innerHTML = 'Badge, read from the item’s text:' + Object.entries(ART.badge).map(([k, [c, l]]) => `<span><svg viewBox="0 0 512 512"><circle cx="256" cy="256" r="250" fill="${c}"/><path transform="translate(96 96) scale(.625)" fill="#fff" d="${ART.icons[k]}"/></svg>${l}</span>`).join('');
+  const vEl = document.getElementById('view');
+  vEl.onclick = e => { const b = e.target.closest('button'); if (!b) return; st.v = b.dataset.v; st.open = null; [...vEl.querySelectorAll('button')].forEach(x => x.classList.toggle('on', x === b)); draw(); };
+  document.getElementById('grid').onclick = e => { if (st.v !== 'gal' || e.target.closest('a')) return; const c = e.target.closest('.it'); if (!c) return; st.open = st.open === c.dataset.n ? null : c.dataset.n; draw(); if (st.open) document.querySelector('.it.open').scrollIntoView({ block: 'nearest', behavior: 'smooth' }); };
   document.getElementById('feat').onchange = e => { st.feat = e.target.checked; draw(); };
   function draw() {
     const q = st.q.toLowerCase();
     const list = ALL.filter(i => (st.t === 'All' || i.t === st.t) && (!st.feat || FEAT[norm(i.n)]) && (!q || i.n.toLowerCase().includes(q) || i.d.toLowerCase().includes(q)));
     document.getElementById('count').textContent = `${list.length} of ${ALL.length} items`;
-    document.getElementById('grid').innerHTML = list.length ? list.map(i => {
+    uid = 0;
+    const g = document.getElementById('grid'); g.classList.toggle('gal', st.v === 'gal');
+    g.innerHTML = list.length ? list.map(i => {
       const f = FEAT[norm(i.n)];
-      return `<div class="it${f ? ' feat' : ''}"><h3>${hi(i.n, st.q)}</h3><div class="meta"><span class="tag">${i.t}</span>${i.r ? `<span class="tag r">${i.r}</span>` : ''}${i.u ? `<span class="tag u">${esc(i.u)}</span>` : ''}${f ? `<a class="tag f" href="index.html">On the problems page: ${f}</a>` : ''}</div><p>${hi(i.d, st.q)}</p></div>`;
+      return `<div class="it${f ? ' feat' : ''}${st.open === i.n ? ' open' : ''}" data-n="${esc(i.n)}">${art(i)}<div class="tx"><h3>${hi(i.n, st.q)}</h3><div class="meta"><span class="tag">${i.t}</span>${i.r ? `<span class="tag r">${i.r}</span>` : ''}${i.u ? `<span class="tag u">${esc(i.u)}</span>` : ''}${f ? `<a class="tag f" href="index.html">On the problems page: ${f}</a>` : ''}</div><p>${hi(i.d, st.q)}</p></div></div>`;
     }).join('') : '<div class="none">No item matches.</div>';
   }
   draw();

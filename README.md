@@ -176,7 +176,7 @@ Home page `understand-mechanics/index.html` (cards from `PAGES` + `READY`, extra
   1. Same Problem, New Answers: pick a problem, then watch each answer play out in a top-down scene (rolls, noise, who leads it, what it costs). The walk-through plays all seven answers and moves to the next problem. One script per answer in `ANIM`.
   2. What the Item Changes: the 20 items drop into four groups (removes the roll, moves the roll, changes the scene, changes the stakes). Click one to read its entry from the sheet.
   3. Hand Out the Loot: give each of four players (Fighter, Rogue, Wizard, Bard) one item and see which problems each can lead; answers everyone shares are left out. Model in `answers()`.
-  `catalog.html` lists all 352 items from the sheet (data in `catalog-data.js`), with search, a type filter and the twenty used on the slides marked in gold.
+  `catalog.html` lists all 352 items from the sheet (data in `catalog-data.js`), with search, a type filter and the twenty used on the slides marked in gold. Every item has an illustration (`catalog-art.js`: one game-icons.net icon per item plus an effect badge read from its description), shown on its card and in a Gallery view.
 - GIFs in `gifs/`: rebuild them all with `sh understand-mechanics/tools/record-all.sh` while serving InteractiveMGM on 127.0.0.1:8171.
 - `PROPOSALS.md`: the rest of the deck's interactive and GIF ideas, by section.
 
