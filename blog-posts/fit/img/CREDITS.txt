@@ -1,0 +1,14 @@
+pikachu.png: Pokémon (Nintendo / Game Freak), copied from student-tokens/256px/pokemon/.
+potato.svg: game-icons.net "potato" by Delapouite, CC BY 3.0 (stands in for Portal 2's potato).
+heart.svg: game-icons.net "heart-organ" by Lorc, CC BY 3.0 (stands in for Dishonored's Heart).
+muscle.svg: game-icons.net "muscle-up" by Lorc, CC BY 3.0.
+All of the following are from game-icons.net, CC BY 3.0, recoloured (background removed):
+navi.svg: "fairy" by Lorc (stands in for Navi).
+fi.svg: "spectre" by Lorc (stands in for Fi).
+tear.svg: "portal" by Lorc (stands in for Elizabeth's tears).
+daxter.svg: "squirrel" by Delapouite (stands in for Daxter).
+morgana.svg: "cat" by Lorc (stands in for Morgana).
+jeep.svg: "jeep" by Delapouite (stands in for Halo's Warthog).
+rover.svg: "mars-curiosity" by Delapouite (stands in for Mass Effect's Mako).
+fishing.svg: "fishing-pole", train.svg: "steam-locomotive", mic.svg: "microphone", cards.svg: "card-exchange", castle.svg: "castle", notes.svg: "musical-notes" by Delapouite.
+hood.svg: "hood" by Lorc. knight.svg: "chess-knight" by Skoll.
