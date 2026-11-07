@@ -21,7 +21,7 @@
   <div class="kicker rise">high level meta · other expressions</div>
   <h1 class="rise">Counter Cycles</h1>
   <div class="rule rise" style="margin:22px auto"></div>
-  <p class="lede rise">Rock, paper, scissors hides inside RTS openings, fighting game mix-ups and MOBA team comps. Each of the next slides draws one as a wheel.</p>
+  <p class="lede rise">Rock, paper, scissors hides inside RTS openings, fighting game mix-ups and MOBA team comps. Each gets a wheel, and the RTS one also plays out on a map, for anyone who has never played StarCraft.</p>
   <p class="lede rise" style="font-size:26px">Arrows point from the winner to what it beats. Hover anything; click a node to pin it.</p>
   <aside class="notes">The slide’s text notation, “A &lt; B”, reads “A loses to B”. Every wheel shows that notation underneath, and hovering a “&lt;” lights up its arrow.</aside>
 </section>
@@ -43,6 +43,30 @@
 </section>
 
 <!-- 3 -->
+<section class="slide ro" data-title="Three Openings, One Clock" data-demo="ro-solo">
+  <canvas class="demo bg-canvas" width="1600" height="900" aria-label="Three StarCraft-style bases on one game clock: Rush, Turtle and Expand"></canvas>
+  <div class="kicker">RTS openings, for people who never played one</div>
+  <h2>Three openings, one clock</h2>
+  <div class="ro-ctl"><button class="btn ro-play">❚❚ Pause</button><input class="ro-scrub" type="range" min="0" max="1" step="0.001" value="0" aria-label="game clock"></div>
+  <aside class="notes">Three players, same start: a base and 12 workers mining blue crystals, which is all the money in the game. Everything else is how they spend it. Rush stops making workers at 14 and pours the rest into two Gateways and early zealots that walk across the map at about 2:30. Turtle builds a wall of buildings across its ramp and Photon Cannons behind it, and its army never leaves home; one base caps it at about 22 workers. Expand spends 400 on a second base before it has a single soldier, then a third, and only after 4:00 turns the bigger income into an army four soldiers at a time. Watch the money bar on the right of each row. Timings and costs are illustrative, loosely Protoss.</aside>
+</section>
+
+<!-- 4 -->
+<section class="slide ro" data-title="Each Counter, Played Out" data-demo="ro-match">
+  <canvas class="demo bg-canvas" width="1600" height="900" aria-label="Two StarCraft-style players on one map, playing out a counter"></canvas>
+  <div class="kicker">RTS openings: the wheel, played out</div>
+  <h2>Each counter, played out</h2>
+  <div class="ro-ctl">
+    <button class="btn on" data-match="turtle-rush">Turtle beats Rush</button>
+    <button class="btn" data-match="expand-turtle">Expand beats Turtle</button>
+    <button class="btn" data-match="rush-expand">Rush beats Expand</button>
+    <button class="btn ro-play">❚❚ Pause</button>
+    <input class="ro-scrub" type="range" min="0" max="1" step="0.001" value="0" aria-label="game clock">
+  </div>
+  <aside class="notes">Each button is one arrow of the wheel on the same map. Turtle beats Rush: the zealots arrive at a closed wall with cannons behind it and die without killing anything, and the rusher has 14 workers to the turtle's 22. Expand beats Turtle: nothing punishes the early second base, so by 6:00 Expand has three bases, twice the workers and four Gateways, and walks through four cannons. Rush beats Expand: the zealots arrive while the new base has workers and no defenders, kill nine workers and then the base, before it has paid back its 400. The chart under the map is soldiers (solid) and workers (dashed) over time. Click the map to pause, or drag the clock.</aside>
+</section>
+
+<!-- 5 -->
 <section class="slide cc" data-title="Fighting: Attack, Block, Grab" data-demo="cc-fight">
   <div class="cc-split">
     <svg class="cc-wheel" role="img" aria-label="Fighting game counter wheel"></svg>
@@ -58,7 +82,7 @@
   <aside class="notes">Block beats Attack, Grab beats Block, Attack beats Grab. The RTS cycle plays out over minutes and whole matches; this one plays out every few seconds, which is why fighting games feel like reading minds.</aside>
 </section>
 
-<!-- 4 -->
+<!-- 6 -->
 <section class="slide cc" data-title="MOBA: A Five-Role Cycle" data-demo="cc-moba">
   <div class="cc-split">
     <svg class="cc-wheel" role="img" aria-label="MOBA counter wheel"></svg>
@@ -76,7 +100,7 @@
   <aside class="notes">The slide’s chain, Marksman &lt; Mage &lt; Assassin &lt; Tank &lt; Bruiser &lt; Marksman, is the outer ring. The 2-stage model adds the inner star: Assassin beats Mage and Marksman, Tank beats Assassin and Mage, Bruiser beats Tank and Assassin, Marksman beats Bruiser and Tank, Mage beats Marksman and Bruiser.</aside>
 </section>
 
-<!-- 5 -->
+<!-- 7 -->
 <section class="slide cc" data-title="Why two stages?" data-demo="cc-grid">
   <div class="cc-split">
     <svg class="cc-wheel" role="img" aria-label="MOBA counter wheel"></svg>
@@ -95,7 +119,7 @@
   <aside class="notes">With five options and one stage, half the pairs have no arrow between them, so a pick only matters against two of the four other roles. Two stages connect every pair: each role has two winning matchups and two losing ones, and the cycle stays balanced.</aside>
 </section>
 
-<!-- 6 -->
+<!-- 8 -->
 <section class="slide cc" data-title="Drill: Counter-Pick" data-demo="cc-quiz">
   <div class="cc-split">
     <svg class="cc-wheel" role="img" aria-label="Counter wheel for the current question"></svg>
@@ -110,7 +134,7 @@
   </div>
 </section>
 
-<!-- 7 -->
+<!-- 9 -->
 <section class="slide" data-title="Same Shape, Three Genres" data-demo="cc-sum">
   <div class="kicker">summary</div>
   <h2>Same Shape, Three Genres</h2>
@@ -125,5 +149,6 @@
 <script src="../../assets/deck.js"></script>
 <script src="../../assets/kit.js"></script>
 <script src="cc.js"></script>
+<script src="openings.js"></script>
 </body>
 </html>
