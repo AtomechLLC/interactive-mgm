@@ -115,3 +115,10 @@ svg.cc-wheel { width: 700px; height: 700px; display: block; overflow: visible; f
 .cc-mi { width: 1.15em; height: 1.15em; border-radius: 50%; object-fit: cover; vertical-align: -.2em; margin-right: .3em; }
 svg.cc-mi { border-radius: 0; }
 .cc-grid tr:first-child .cc-mi { display: block; width: 34px; height: 34px; margin: 0 auto 2px; }
+
+/* ---------- what a rush, a turtle and an expand look like (openings.js) ---------- */
+.slide.ro > canvas.demo.bg-canvas { position: absolute !important; inset: 0; width: 1600px; height: 900px; margin: 0; border: 0; border-radius: 0; background: none; z-index: 0; }
+.slide.ro > .ro-ctl { position: absolute !important; right: 30px; top: 66px; z-index: 4; display: flex; gap: 10px; align-items: center; }
+.slide[data-demo="ro-match"] > .ro-ctl { top: 16px; max-width: 640px; flex-wrap: wrap; justify-content: flex-end; }
+.ro-ctl .btn { font-size: 17px; padding: 7px 13px; white-space: nowrap; }
+.ro-scrub { width: 220px; }

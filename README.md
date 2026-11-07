@@ -56,11 +56,15 @@ Each deck's home button goes back to `pvp/index.html`. Add a card there when you
 - `pvp/counter-cycles/`: **Counter Cycles** (high level meta, other expressions).
   1. Title
   2. RTS: rush, turtle, expand as a counter wheel. Hover an opening or an arrow to read what it beats and why; click a node to pin it.
-  3. Fighting: attack, block, grab, the same triangle at the scale of a fraction of a second.
-  4. MOBA: a five-role cycle, in one stage (the ring) or two (each role beats the next two).
-  5. Why two stages?: the full matchup grid, so no matchup is even.
-  6. Drill: counter-pick. The enemy picks; you pick what beats it.
-  7. Same shape, three genres.
+  3. Three openings, one clock: what a rush, a turtle and an expand look like, for students who never played StarCraft. Three players on the same game clock, each on their own half of a map: workers mining crystals (the money), Gateways, zealots, the turtle's wall and Photon Cannons, the expander's second and third bases, plus a bar of where each one's money went. Pause, or drag the clock.
+  4. Each counter, played out: Turtle beats Rush, Expand beats Turtle and Rush beats Expand on one map, with both players' workers, soldiers, cannons and bases, a soldiers / workers chart and a verdict. Both slides are `openings.js`: every scene is a pure function of game time (`player()` builds an opening, `match*()` scripts each fight), so `window.__seek(t, which)` / `__dur(which)` replay them (`which` = `solo`, `turtle-rush`, `expand-turtle`, `rush-expand`). Timings, costs and fights are illustrative and loosely Protoss, not the game's numbers.
+  5. Fighting: attack, block, grab, the same triangle at the scale of a fraction of a second.
+  6. MOBA: a five-role cycle, in one stage (the ring) or two (each role beats the next two).
+  7. Why two stages?: the full matchup grid, so no matchup is even.
+  8. Drill: counter-pick. The enemy picks; you pick what beats it.
+  9. Same shape, three genres.
+
+  GIFs in `pvp/counter-cycles/gifs/`: `slide3-rts-openings-one-clock.gif` and `slide4-rts-turtle-beats-rush.gif`, `slide4-rts-expand-beats-turtle.gif`, `slide4-rts-rush-beats-expand.gif` (1920×1080, controls hidden), rebuilt while serving on 127.0.0.1:8137 with `node tools/record-slide-gif.js http://127.0.0.1:8137/pvp/counter-cycles/index.html#4 turtle-rush pvp/counter-cycles/gifs/slide4-rts-turtle-beats-rush.gif 10 .ro-ctl` (`#3 solo` for the first). The wheel GIFs (`slide2-…`, and `slide3-fighting-…` / `slide4-moba-…`, which are now slides 5 and 6) come from `tools/record-cc-gif.js 2|5|6`.
 
 - `pvp/strike-trades/`: **Strike Trade Balance Techniques**, from the same deck, part 7, slides 265 to 272.
   1. Title: armor, super armor, immunity.
