@@ -1,0 +1,352 @@
+Meteor Plate|meteor-impact
+Toadskin|frog
+Wooly Floof|sheep
+Bull Hide|bull
+Cavalier's Guard|knight-banner
+Deathbone Armor|ribcage
+Fungicraft Armor|mushrooms
+Lifesense Heartpiece|heart-beats
+Buoyant Armor|life-buoy
+Stoneplate|stone-wall
+Armor of Fangs|fangs
+Armor of Repose|night-sleep
+Armor of War|breastplate
+Stormeye Splint|lightning-storm
+Chargemetal Armor|battery-pack
+Trollskin Suit|troll
+Acoustic Weave|sound-waves
+The Dome|lightning-dome
+Kinetic Shield|shield-bounces
+Desert Skin Bracers|desert
+Bloodrage Armor|bloody-stash
+Righteous Bear Arms|bear-face
+Frozen Shield|ice-shield
+Incubi's Vest|imp-laugh
+Cosmic Hide|galaxy
+Wrappings of the Mummy|mummy-head
+Ropeplate|rope-coil
+Plated Superarmor|mecha-head
+Flaerrinton's Mercurial Solution|drop
+Odh's Green Tea|teapot
+Elixir of Magic Resistance|magic-shield
+Bottled Lightning|bottled-bolt
+Sensual Slippery Soap|soap
+Powder of Unmaking|powder
+Soldier Serum|syringe
+Soul of the Arbiter|scales
+Soul of the Savage|beast-eye
+Soul of the Champion|laurel-crown
+Elixir of Profuse Sweating|droplets
+God's Healing Elixir|health-potion
+Animal Snax|dog-bowl
+Sphere of Insanity|brain-tentacle
+Bear Claw|claw-slashes
+Bloodhound Juice|sniffing-dog
+Potion of Extreme Belching|screaming
+Zombification|shambling-zombie
+Elixir of Death|poison-bottle
+Pain Reducer|pill
+Ring of Arrow Deflection|arrows-shield
+Cantrip Focus Ring|ring
+Ring of Spell Absorption|vortex
+Ring of Undying Fury|enrage
+Fey Spirit Ring|fairy
+The Resilience of Earth|stone-sphere
+The Fury of Flame|fire-ring
+The Grace of Air|tornado
+The Serenity of Water|water-drop
+The Eternity of Spirit|spectre
+Ring of Fireflies|fly
+Ring of Reasonable Wishes|magic-lamp
+Ring of Retrieval|return-arrow
+Ring of the Betrothed|diamond-ring
+Ring of Temptation|apple-seeds
+Riding Whistle|whistle
+Ring of the Mother Spider|spider-alt
+Scepter of the Damned Army|skull-staff
+Slow Cooker|cauldron
+Multitool|swiss-army-knife
+Rod of Electrical Control|lightning-trio
+Scroll of Magic for Dunces|dunce-cap
+Note of Repayment|cash
+Martial Technique|black-belt
+Autocartrographer|treasure-map
+Trivial Scroll|scroll-unfurled
+Infiniscroll|infinity
+Siphoning Scroll|scroll-quill
+Ninja Scroll|ninja-heroic-stance
+Decree of Law|gavel
+Scroll of Repetition|cycle
+The Nope Stick|wood-stick
+Staff of the Storm|lightning-storm
+Staff of Hail|snowing
+Pitfall Shovel|spade
+Oaken Staff of the Treant|tree-face
+Staff of Snakes|snake-totem
+Wand of Instant Regret|fairy-wand
+Wand of Hidden Truths|crystal-wand
+Wand of the Glutton|meat
+Wand of Nightmares|dream-catcher
+Wand of Tears|tear-tracks
+Pitchfork of Revolution|pitchfork
+Blade of Alarm|alarm-clock
+Scythe of the Damned|scythe
+Vinelash|vine-whip
+Chef Knife|chef-toque
+Stilleto of Possession|dripping-knife
+Fork of Furious Stabbing|fork-knife-spoon
+Butcher's Knife|meat-cleaver
+Portal Bow|portal
+Bolts of Madness|crossbow
+Boltsurge Crossbow|crossbow
+Blades of the Huntsman|thrown-daggers
+Tordle's Explosive Mushrooms|mushroom-cloud
+Dart's of Eternal Love|heart-tower
+Mageseeker's Talon|bird-claw
+Glacialfreeze Bow|bow-arrow
+The Party Whip|party-popper
+Duelists' Blade|crossed-swords
+Showman's Axe|axe-swing
+Soul Render's Grasp|whip
+Dwarven Handcannon of Patience|cannon
+Echo Wraps|punch
+Blade of Radiance|sun
+Hammers of Light|thor-hammer
+Hunting Blade|stag-head
+The PentaGauntlet|mailed-fist
+Knife of Wind|wind-slap
+Axe of Lightning|battle-axe
+The Storm Herald|halberd
+Winged Arrows|winged-arrow
+Crystalline Sling|sling
+Devastating Bottle|broken-bottle
+Golden Knuckles of Freedom|brass-knuckles
+Shockstick|flanged-mace
+Crow Bar|raven
+Boulder of Surprise|falling-boulder
+Injector|syringe
+Traitor's Blade|backstab
+Terrorhook|sickle
+Quipper Needler|fish-monster
+Shark Cannon|shark-jaws
+Curse Eater|spiked-mace
+Skylancers Pike|spear-feather
+Flourishing Rapier|piercing-sword
+Hookboots|boots
+Fang of Corruption|dragon-head
+Arm of DarkIce|frozen-orb
+Spiked Tail of Inferno|spiked-dragon-head
+Claw of Venom|claws
+Horn of Storm|horn-internal
+Warpstar|barbed-star
+Club of Celebratation|party-flags
+Spellcleaver|battle-axe
+Mirageblade|energy-sword
+Flail of Arcane Vampirism|flail
+Wilting Flower|grave-flowers
+Arm of God|hand-of-god
+Omniglaive|glaive
+Greatsword of Glass|broadsword
+Torvald's Brain Jar|brain
+Globe of Goblin Insight|crystal-ball
+Malleable Ingot|metal-bar
+Arsonist's Torch|torch
+Shadow Torch|torch
+Twinevine|vine-flower
+Manacles of Honorable Combat|manacles
+Glow Torch|torch
+(Language) Bifocals|spectacles
+Charming Monocle|magnifying-glass
+Onyx Pendant|gem-pendant
+Badge of Authority|police-badge
+Goblin Sniffer|nose-side
+Prismatic Goggles|steampunk-goggles
+Bangle of Invisibility|invisible
+Bowtie of Swagger|bow-tie
+Oak Beehive|beehive
+Hexbag|swap-bag
+Malekin's Magnificent Egg|egg-clutch
+Boots of Animal Tracks|paw-print
+Lamp of Distraction|desk-lamp
+Pillow of Wonderful Dreams|pillow
+Boots of Reversed Momentum|boot-kick
+Magnetic Boots|magnet
+Gloves of Greed|gloves
+Cloak of Beetles|beetle-shell
+Torch of the Abyss|torch
+Tag of Recall|price-tag
+Ladle of the Frosted Peak|ladle
+Robe of the Moon|moon
+Oven Gloves|cooking-glove
+Performers Mask|drama-masks
+Robe of Scrolls|robe
+Bearded Helmet|dwarf-helmet
+Bracers of the Wolf|wolf-head
+Demon Eyes|daemon-skull
+Angel Eyes|angel-wings
+Belt of Quickdraw|belt
+Belt of Extreme Size Differential|giant
+Bodybag|duffel-bag
+Paint of the Beast|paint-brush
+Collar of Tiny Reanimation|dog-house
+Steelgrate Gills|fish-scales
+Stocking of Stretching|socks
+Lover's Earrings|heart-earrings
+Guardian's Bandages|bandage-roll
+Dominator's Bandages|bandage-roll
+Riftwalk Greaves|leg-armor
+Infernal Dino Guardian|dinosaur-rex
+Mark of Combustion|fire-silhouette
+Mark of Vines|seedling
+Mark of Teleportation|teleport
+Tiny Iron Mark-et|piggy-bank
+Mark of Thievery|swap-bag
+Prismatic Torch|rainbow-star
+Bardic Journal|book-cover
+Mark of Dangerous Flight|wingfoot
+Amulet of Banishment|gem-necklace
+Arcane Fragmenter|crystal-cluster
+Portable Window|window
+Stunning Robe|robe
+Comet of Ruin|comet-spark
+Blanket of Slumber|sleepy
+Merfolk Girdle|mermaid
+Bandana of Cowardice|flying-flag
+Skeleton Key of Ownership|skeleton-key
+Rat Tail|rat
+Flamespitter Mask|fire-breath
+Emerald Snugg|bad-gnome
+Gloves of the Mime|invisible-face
+Farsight Crystal|spyglass
+Inferno Cart|mine-wagon
+Facial Razor|razor
+Tarrasque Paper|paper
+Harnait's Overnight Forest|forest
+Stonecutter's Handbook|stone-block
+Stormboard|surfer-van
+Surgepack|battery-pack
+Headband of Excessive Beauty|lipstick
+Paint of Wonder|paint-bucket
+Bonfire of Revival|campfire
+Medallion of Eternal Glory|medal
+Flutterwings|butterfly
+Handkerchief of Misery|tear-tracks
+Ponaise Disturbing Servant|scarecrow
+Extremely Absorbent Cloak|cloak
+Scouts Eye|eyeball
+Shock Choker|necklace
+Eyebrows of Excessive Expressiveness|surprised
+Sash of Focus|meditation
+Orb of Seasons|sun-cloud
+JibJab's Instant Staircase|stairs
+Slowsand|sands-of-time
+Bracers of Incredible Confidence|biceps
+Saltstick|salt-shaker
+Tombstone of Eternal Remembrance|tombstone
+Greedsbane|two-coins
+Flag of Incredibly Victory|flag-objective
+Chest of Glorious Battle|locked-chest
+Toxin Mask|gas-mask
+Irresistible Spices|powder-bag
+Skull of Servitude|skull-crack
+Accordian of Discomfort|accordion
+Slippers and Tassels of Epic Dancing|ballerina-shoes
+Flute of Inspiration|flute
+Bagpipes of Distraction|bagpipes
+Band of the Dance|spinning-ribbons
+Augmented Armbelt|mechanical-arm
+Cowl of Silence|silenced
+Amulet of the Warmaster|gem-necklace
+Boots of Water Mastery|water-splash
+Crown of Knowledge's Burden|crown
+Scabbard of Flames|flaming-sheet
+Shawl of Doves|dove
+Siphoning Manacles|manacles
+Supporting Structure|bar-stool
+Weapon of Mass Destruction|warhammer
+Augmentation Kit|toolbox
+Blowgun|dart
+Super Fungi|mushroom-gills
+Shimmercloak|cape
+Medallion of Impeccable Courage|medal
+Cloak of the Swamp Hag|witch-face
+Memory Bead|pearl-necklace
+Experience Bead|upgrade
+Shepard's Knapsack|knapsack
+Nobberosh's Correction Apparatus|gears
+Tanglefoot's Scrumptious Edibles|cupcake
+Liquid Ink|ink-swirl
+Buttery Mail|envelope
+Brand of Communal Judgement|soldering-iron
+Wheels of Perpetual Motion|cartwheel
+Iron Turtle|turtle-shell
+Scrollwheel|scroll-unfurled
+Wings of Knowledge|feathered-wing
+Feather of Authenticity|quill-ink
+Lantaro of Introduction|shaking-hands
+Lantaro of Beratement|shouting
+Lantaro of Whispers|chat-bubble
+Lantaro of Life|curled-leaf
+Lantaro of Flickering|candle-flame
+Lantaro of Burden|weight-lifting-up
+Mask of Words|talk
+Samuels Stupendous Suit|suits
+Halflings Scout Belt|teapot
+Stein of Endless Ale|beer-stein
+Aquara Helm|diving-helmet
+Archbakers Infinidough|bread
+Donut of Holding|donut
+Muffin of Death|cupcake
+Shoes of Not-So Brave|running-shoe
+Jellydonut of Infinite Filling|covered-jar
+Gloves and Sandals of Control|sandal
+Oxygen Pebble|bubbles
+Cloak of the Deep Wilds|thorny-vine
+Portal Potty|magic-portal
+Rogue's Haybale|grain-bundle
+Wishseed|sprout
+Arthul's Frozen Throne|throne-king
+Torturer's Hooks|lockpicks
+Moneytree|money-stack
+Wildred's Wonderful Wagon|old-wagon
+Mound of 1 Million Ants|ant
+Pendant of Water Repulsion|water-drop
+Cloak of the Flapping Bird|parrot-head
+Thinskin Compass|compass
+Recycler|recycle
+Bell of Paranoia|ringing-bell
+Bauble of Explosives|dynamite
+Bauble of Light Inversion|eclipse
+Accordian of Echoes|accordion
+Bauble of Cats|cat
+Bauble of Soup|cooking-pot
+Ancenstral Charm|amber-mosquito
+Burden of Pain|weight
+Helm of Extreme Bravery|visored-helm
+Vest of Healing|heart-plus
+DoppleGolem|golem-head
+Door of Excessive Shutting|door
+Golemling|robot-golem
+Sporting Slingstaff|bo
+Pipe of Illusions|smoking-pipe
+Pauldrons of Feedback|shoulder-armor
+Slimplate|chest-armor
+Infernal Heart|heart-organ
+Lightning Stone|glass-ball
+Inciting Dummy|target-dummy
+Cloak of Images|mirror-mirror
+Sandals of Momentum|winged-leg
+Vision of the Dead, can only use while dead. can fly, invisibility, incorp, etc|ghost
+Thundercage|bird-cage
+Bauble of Snap Traps|wolf-trap
+Balloon of Limited Freedom|balloons
+Gravity Cube|cube
+Orb of Mass Destruction|nuclear
+Friendly Familiar|owl
+Orangebeards Useful Keg|barrel
+Radiant Sheath|scabbard
+Swordbreaker Gauntlet|sword-break
+Spelleater Gloves|spell-book
+Conductors Gloves|glowing-hands
+Amulet of Deception|domino-mask
+Coin of Immense Value|coins
