@@ -80,7 +80,6 @@ From [game-icons.net](https://game-icons.net), licensed [CC BY 3.0](https://crea
 | `blog-posts--warlock-talents.svg` | [scales](https://game-icons.net/1x1/lorc/scales.html) | Lorc |
 | `blog-posts--nightbane-tools.svg` | [rabbit](https://game-icons.net/1x1/delapouite/rabbit.html) | Delapouite |
 | `blog-posts--dnd-advantage.svg` | [dice-twenty-faces-twenty](https://game-icons.net/1x1/delapouite/dice-twenty-faces-twenty.html) | Delapouite |
-| `blog-posts--counter-strafe.svg` | [crosshair](https://game-icons.net/1x1/delapouite/crosshair.html) | Delapouite |
 | `blog-posts--gacha-pity.svg` | [locked-chest](https://game-icons.net/1x1/lorc/locked-chest.html) | Lorc |
 | `student-tokens.svg` | [pin](https://game-icons.net/1x1/delapouite/pin.html) | Delapouite |
 | `blog-posts--games-played.svg` | [gamepad](https://game-icons.net/1x1/delapouite/gamepad.html) | Delapouite |
