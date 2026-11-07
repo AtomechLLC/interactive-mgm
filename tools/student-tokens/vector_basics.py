@@ -335,6 +335,168 @@ ARCH = {
 }
 for n, b in ARCH.items(): svg('archetypes', f'enemy-{n}', b)
 
+# ---------------------------------------------------------------- modern and sci-fi enemies
+# Same disc, brows and mouth as the archetypes, dressed for a modern shooter or a sci-fi setting.
+OLIVE, OLIVE_DK, TAN, BLACK = '#5f6b45', '#46512f', '#b39b6b', '#2b2f38'
+WHITE_ARM, CYAN, VIOLET = '#dfe4ec', '#3fe0ff', '#8a4fd6'
+
+def helmet(cx, cy, r, col=OLIVE):  # combat helmet dome over a disc of radius r at (cx, cy), leaving the brows visible
+    b = cy - r * .3; rx = r + 4; ry = r * .78
+    return (f'<path d="M{cx - rx:.1f} {b:.1f} A{rx:.1f} {ry:.1f} 0 0 1 {cx + rx:.1f} {b:.1f} Z" fill="{col}" {L}/>'
+            f'<path d="M{cx - rx - 2:.1f} {b:.1f} H{cx + rx + 2:.1f}" stroke="{INK}" stroke-width="4" stroke-linecap="round"/>'
+            f'<path d="M{cx - r * .55:.1f} {b - ry * .45:.1f} Q{cx} {b - ry * .65:.1f} {cx + r * .55:.1f} {b - ry * .45:.1f}" fill="none" stroke="{OLIVE_DK if col == OLIVE else INK}" stroke-width="2" opacity=".6"/>')
+
+def rifle(x, y, ln=40, col=BLACK):  # a horizontal rifle with its muzzle at x + ln
+    return (f'<rect x="{x}" y="{y}" width="{ln}" height="6" rx="1.5" fill="{col}" {L}/>'
+            f'<rect x="{x + 6}" y="{y + 6}" width="6" height="10" fill="{col}" {L}/><rect x="{x + 18}" y="{y + 6}" width="5" height="8" fill="{col}" {L}/>'
+            f'<rect x="{x - 8}" y="{y + 1}" width="10" height="8" rx="2" fill="{WOOD}" {L}/>')
+
+def visor(cx, cy, w, h, col=CYAN, rx=6):  # glowing sci-fi visor band; the red brows sit inside it
+    return f'<rect x="{cx - w / 2}" y="{cy - h / 2}" width="{w}" height="{h}" rx="{rx}" fill="{BLACK}" {L}/>'
+
+def brows(cx, cy, s=1, col=RED):  # the enemy brows alone, scaled around (cx, cy) like face()
+    return (f'<g transform="translate({cx} {cy}) scale({s}) translate(-50 -50)">'
+            f'<polygon points="{pts([(24, 40), (44, 45), (41, 51), (27, 48)])}" fill="{col}"/>'
+            f'<polygon points="{pts([(76, 40), (56, 45), (59, 51), (73, 48)])}" fill="{col}"/></g>')
+
+MODERN = {
+    # the baseline soldier: helmet and assault rifle
+    'rifleman': face(42, 56, 32, '#8a8f9c') + helmet(42, 56, 32) + rifle(52, 70, 44),
+    # suppresses an area: big gun and an ammo belt
+    'heavy-gunner': face(44, 52, 34, '#7d8288') + helmet(44, 52, 34)
+        + f'<path d="M14 62 L74 92" stroke="{GOLD}" stroke-width="7"/><path d="M14 62 L74 92" stroke="{INK}" stroke-width="7" stroke-dasharray="2 4" opacity=".55"/>'
+        + f'<rect x="40" y="74" width="58" height="10" rx="2" fill="{BLACK}" {L}/><rect x="86" y="72" width="12" height="14" rx="2" fill="#4a4f5c" {L}/>'
+        + ''.join(f'<line x1="{x}" y1="76" x2="{x}" y2="82" stroke="#7b8496" stroke-width="2"/>' for x in (48, 54, 60, 66)),
+    # blocks the front: transparent riot shield with a viewing slot
+    'riot-shield': face(40, 48, 32, '#8a8f9c') + helmet(40, 48, 32, BLACK)
+        + f'<rect x="52" y="20" width="44" height="74" rx="6" fill="#bfe3f2" fill-opacity=".75" {L}/>'
+        + f'<rect x="58" y="34" width="32" height="7" rx="2" fill="{BLACK}" opacity=".7"/><text x="74" y="66" font-family="Arial Black,Arial,sans-serif" font-size="11" text-anchor="middle" fill="{INK}" opacity=".7">RIOT</text>',
+    # long-range threat: ghillie hood, scope glint
+    'marksman': face(46, 56, 32, '#8a8f9c')
+        + f'<path d="M10 62 Q6 18 46 14 Q86 18 82 62 Q74 30 46 30 Q18 30 10 62 Z" fill="#6b7a3a" {L}/>'
+        + ''.join(f'<path d="M{x} {y} l-3 8 M{x} {y} l3 8" stroke="#4f5a2a" stroke-width="2"/>' for x, y in ((20, 30), (34, 20), (58, 20), (72, 30), (14, 46), (80, 46)))
+        + f'<rect x="4" y="80" width="70" height="6" rx="2" fill="{BLACK}" {L}/><rect x="30" y="72" width="22" height="8" rx="3" fill="#4a4f5c" {L}/>'
+        + f'<polygon points="{star(26, 76, 4, 8, 2)}" fill="#fff" stroke="{INK}" stroke-width="1"/>',
+    # patches up the squad: medic cross armband and a kit
+    'medic': face(44, 54, 32, '#8a8f9c') + helmet(44, 54, 32, '#e9e6dc')
+        + f'<rect x="38" y="20" width="12" height="12" fill="#fff"/><path d="M41 21 H47 V24 H50 V29 H47 V32 H41 V29 H38 V24 H41 Z" fill="{RED}"/>'
+        + f'<rect x="70" y="64" width="28" height="22" rx="4" fill="#fff" {L}/><rect x="80" y="60" width="8" height="5" fill="{INK}"/>'
+        + f'<path d="M81 68 H87 V72 H91 V78 H87 V82 H81 V78 H77 V72 H81 Z" fill="{RED}"/>',
+    # flushes you out of cover: grenade in hand, arc trail
+    'grenadier': face(40, 58, 32, '#8a8f9c') + helmet(40, 58, 32)
+        + f'<path d="M66 70 Q72 22 84 36" fill="none" stroke="{INK}" stroke-width="2.5" stroke-dasharray="4 4"/>'
+        + f'<ellipse cx="84" cy="26" rx="9" ry="11" fill="{OLIVE}" {L}/><path d="M76 24 H92 M76 30 H92" stroke="{OLIVE_DK}" stroke-width="2"/>'
+        + f'<rect x="80" y="11" width="8" height="5" fill="#7b8496" {L}/><path d="M88 14 q6 -4 4 4" fill="none" stroke="#7b8496" stroke-width="2"/>',
+    # one big hit on a timer: rocket launcher on the shoulder
+    'rocketeer': face(40, 60, 30, '#8a8f9c') + helmet(40, 60, 30)
+        + f'<rect x="6" y="20" width="84" height="14" rx="3" fill="#5f6b45" {L}/><rect x="2" y="18" width="10" height="18" rx="2" fill="{BLACK}" {L}/>'
+        + f'<polygon points="{pts([(90, 20), (100, 27), (90, 34)])}" fill="{RED}" {L}/><rect x="40" y="34" width="6" height="8" fill="{BLACK}"/>',
+    # sends machines in its place: tablet and a quad drone
+    'drone-operator': face(36, 60, 30, '#8a8f9c')
+        + f'<path d="M6 58 A30 30 0 0 1 66 58" fill="none" stroke="{BLACK}" stroke-width="5"/><rect x="62" y="52" width="10" height="14" rx="3" fill="{BLACK}"/>'
+        + f'<rect x="14" y="80" width="26" height="16" rx="2" fill="{BLACK}" {L}/><rect x="17" y="83" width="20" height="10" fill="{CYAN}"/>'
+        + f'<path d="M64 22 L92 22 M64 22 l-4 -4 M92 22 l4 -4" stroke="{INK}" stroke-width="3" stroke-linecap="round"/>'
+        + f'<ellipse cx="60" cy="16" rx="8" ry="2.5" fill="#7b8496" {L}/><ellipse cx="96" cy="16" rx="8" ry="2.5" fill="#7b8496" {L}/>'
+        + f'<rect x="70" y="20" width="16" height="10" rx="3" fill="#4a4f5c" {L}/><circle cx="78" cy="25" r="2.5" fill="{RED}"/>'
+        + f'<path d="M78 34 V44" stroke="{RED}" stroke-width="2" stroke-dasharray="3 2"/>',
+    # brings a dog that runs you down
+    'k9-handler': face(34, 46, 28, '#8a8f9c') + helmet(34, 46, 28, BLACK)
+        + f'<path d="M44 70 Q54 64 64 72" fill="none" stroke="{WOOD}" stroke-width="3"/>'
+        + f'<path d="M60 70 Q64 58 74 60 L82 52 L86 62 Q96 66 94 76 Q90 88 76 88 Q62 88 60 80 Z" fill="#8a5a2b" {L}/>'
+        + f'<path d="M82 52 L80 62 M74 60 L72 68" stroke="{INK}" stroke-width="1.5"/>'
+        + f'<polygon points="{pts([(70, 70), (78, 72), (76, 76)])}" fill="{RED}"/><polygon points="{pts([(88, 70), (82, 72), (84, 76)])}" fill="{RED}"/>'
+        + f'<path d="M74 82 L77 86 L80 82 L83 86 L86 82" fill="#fff" stroke="{INK}" stroke-width="1.2"/>',
+    # soaks damage: full bomb-suit armour, slow
+    'juggernaut': face(50, 54, 40, '#4a4f5c', mouth=False)
+        + f'<rect x="20" y="36" width="60" height="22" rx="6" fill="{BLACK}" {L}/>'
+        + brows(50, 47, .9)
+        + f'<path d="M24 66 H76 M26 74 H74 M30 82 H70" stroke="#6b7180" stroke-width="3"/>'
+        + f'<rect x="4" y="44" width="12" height="30" rx="4" fill="#5d6170" {L}/><rect x="84" y="44" width="12" height="30" rx="4" fill="#5d6170" {L}/>',
+    # makes the squad sharper: beret, radio, stars
+    'commander': face(42, 58, 32, '#8a8f9c')
+        + f'<path d="M10 40 Q12 18 42 18 Q76 16 78 34 Q72 42 58 38 Q36 34 10 40 Z" fill="#a8201c" {L}/><circle cx="60" cy="28" r="4" fill="{GOLD}" {L}/>'
+        + f'<rect x="76" y="46" width="16" height="30" rx="3" fill="{BLACK}" {L}/><line x1="88" y1="46" x2="94" y2="14" stroke="{INK}" stroke-width="2.5"/>'
+        + f'<path d="M78 54 h12 M78 60 h12" stroke="#7b8496" stroke-width="2"/>'
+        + f'<path d="M58 6 q10 6 0 14 M64 2 q14 10 0 22" fill="none" stroke="{GOLD}" stroke-width="2.5" stroke-linecap="round"/>',
+    # gets behind you: balaclava, suppressed pistol
+    'infiltrator': face(44, 52, 34, BLACK, mouth=False)
+        + f'<rect x="18" y="38" width="52" height="16" rx="7" fill="#c9a98a" {L}/>' + brows(44, 47, .75)
+        + f'<rect x="60" y="76" width="22" height="7" rx="2" fill="#4a4f5c" {L}/><rect x="82" y="76" width="16" height="7" rx="3" fill="{INK}"/><rect x="62" y="83" width="7" height="12" rx="2" fill="#4a4f5c" {L}/>',
+}
+
+SCIFI = {
+    # the rank-and-file soldier: white armour, visor, blaster
+    'trooper': face(42, 54, 34, WHITE_ARM, mouth=False)
+        + f'<path d="M16 40 Q42 28 68 40 L66 56 Q42 50 18 56 Z" fill="{BLACK}" {L}/>' + brows(42, 46, .8, CYAN)
+        + f'<path d="M30 70 H54 M34 76 H50" stroke="#9aa1ad" stroke-width="3" stroke-linecap="round"/>'
+        + f'<rect x="58" y="70" width="38" height="9" rx="3" fill="#4a4f5c" {L}/><rect x="88" y="68" width="8" height="13" rx="2" fill="{CYAN}" {L}/><rect x="64" y="79" width="7" height="12" rx="2" fill="#4a4f5c" {L}/>',
+    # a walking vehicle: square cockpit on legs, arm cannons
+    'mech': f'<path d="M34 72 L24 96 M66 72 L76 96" stroke="#5d6170" stroke-width="9" stroke-linecap="round"/>'
+        + f'<rect x="20" y="24" width="60" height="50" rx="8" fill="#8a8f9c" {L}/>'
+        + f'<rect x="28" y="34" width="44" height="18" rx="4" fill="{BLACK}" {L}/>' + brows(50, 48, .7)
+        + f'<path d="M30 62 H70" stroke="#5d6170" stroke-width="3"/>'
+        + f'<rect x="2" y="36" width="18" height="12" rx="3" fill="#5d6170" {L}/><rect x="80" y="36" width="18" height="12" rx="3" fill="#5d6170" {L}/>'
+        + f'<circle cx="4" cy="42" r="3" fill="{GOLD}"/><circle cx="96" cy="42" r="3" fill="{GOLD}"/><rect x="46" y="12" width="8" height="12" fill="#5d6170" {L}/>',
+    # small, fast, fragile: hovering eye-bot with thrusters
+    'hover-drone': f'<ellipse cx="50" cy="94" rx="18" ry="3.5" fill="{INK}" opacity=".25"/>'
+        + f'<path d="M18 50 H4 M82 50 H96" stroke="#5d6170" stroke-width="5" stroke-linecap="round"/>'
+        + f'<ellipse cx="8" cy="44" rx="8" ry="3" fill="#7b8496" {L}/><ellipse cx="92" cy="44" rx="8" ry="3" fill="#7b8496" {L}/>'
+        + face(50, 50, 30, '#9aa1ad', mouth=False)
+        + f'<circle cx="50" cy="60" r="8" fill="{BLACK}" {L}/><circle cx="50" cy="60" r="4" fill="{RED}"/>'
+        + f'<path d="M42 82 L50 90 L58 82" fill="none" stroke="{CYAN}" stroke-width="3" stroke-linecap="round"/>',
+    # projects a barrier over others: dish emitter and an energy hex
+    'shield-drone': f'<path d="M50 4 L90 27 L90 73 L50 96 L10 73 L10 27 Z" fill="{CYAN}" fill-opacity=".18" stroke="{CYAN}" stroke-width="3"/>'
+        + face(50, 56, 26, '#9aa1ad')
+        + f'<path d="M36 26 Q50 14 64 26 Z" fill="#5d6170" {L}/><line x1="50" y1="22" x2="50" y2="10" stroke="{INK}" stroke-width="2.5"/><circle cx="50" cy="9" r="4" fill="{CYAN}" {L}/>',
+    # part machine: metal half-face and a glowing eye
+    'cyborg': face(50, 52, 38, '#8a8f9c')
+        + f'<path d="M50 14 A38 38 0 0 1 50 90 Z" fill="#5d6170" opacity=".85"/>'
+        + f'<path d="M50 14 V90" stroke="{INK}" stroke-width="2"/>'
+        + ''.join(f'<circle cx="{x}" cy="{y}" r="1.8" fill="{INK}"/>' for x, y in ((58, 24), (80, 36), (82, 66), (60, 82)))
+        + f'<circle cx="66" cy="46" r="8" fill="{RED}" {L}/><circle cx="66" cy="46" r="3" fill="#fff"/>'
+        + f'<path d="M74 46 H98" stroke="{RED}" stroke-width="2" stroke-dasharray="3 3"/>',
+    # alien brood: many small clawed bodies
+    'xeno-swarm': ''.join(f'<path d="M{x - r} {y + r * .3} l-{r * .5} {r * .4} M{x + r} {y + r * .3} l{r * .5} {r * .4}" stroke="{INK}" stroke-width="2.5" stroke-linecap="round"/>' for x, y, r in ((30, 36, 18), (72, 34, 16), (52, 70, 20), (18, 76, 12), (86, 72, 11)))
+        + face(30, 36, 18, '#7d8a5a') + face(72, 34, 16, '#7d8a5a') + face(52, 70, 20, '#6f7d4e') + face(18, 76, 12, '#8d9a6a') + face(86, 72, 11, '#8d9a6a'),
+    # mind powers: exposed glowing brain and psi waves
+    'psion': f'<circle cx="50" cy="58" r="44" fill="{VIOLET}" opacity=".14"/>' + face(50, 60, 32, '#9a8fae')
+        + f'<path d="M26 40 Q24 20 40 18 Q50 8 60 18 Q76 20 74 40 Z" fill="#e99cc4" {L}/>'
+        + f'<path d="M50 18 V40 M36 26 Q42 30 38 36 M64 26 Q58 30 62 36" fill="none" stroke="#b5638d" stroke-width="2"/>'
+        + f'<path d="M12 22 Q6 32 12 42 M88 22 Q94 32 88 42" fill="none" stroke="{VIOLET}" stroke-width="3" stroke-linecap="round"/>',
+    # active camouflage: half the disc shimmers away
+    'cloaker': face(50, 50, 38, '#8a8f9c')
+        + f'<path d="M50 10 A40 40 0 0 1 50 90 Z" fill="#fff" opacity=".7"/>'
+        + ''.join(f'<path d="M{54 + i * 8} {18 + (i % 2) * 6} V{82 - (i % 2) * 6}" stroke="{CYAN}" stroke-width="2" stroke-dasharray="6 5" opacity=".9"/>' for i in range(5))
+        + f'<path d="M50 10 A40 40 0 0 1 50 90" fill="none" stroke="{INK}" stroke-width="3" stroke-dasharray="6 6"/>',
+    # repairs other machines: wrench arm and a spark
+    'repair-bot': face(42, 56, 32, '#c9b23a')
+        + f'<rect x="30" y="16" width="24" height="10" rx="3" fill="#5d6170" {L}/><circle cx="42" cy="12" r="4" fill="#2fb36a" {L}/>'
+        + f'<path d="M72 64 L88 40" stroke="#5d6170" stroke-width="6" stroke-linecap="round"/>'
+        + f'<path d="M84 30 a9 9 0 1 0 12 12 l-5 -3 l-2 -6 Z" fill="{STEEL}" {L}/>'
+        + f'<polygon points="{star(78, 84, 6, 10, 4)}" fill="{GOLD}" stroke="{INK}" stroke-width="1"/>'
+        + f'<path d="M12 70 H16 V66 H20 V70 H24 V74 H20 V78 H16 V74 H12 Z" fill="#2fb36a" {L}/>',
+    # teleports short distances: after-image and blink trail
+    'blinker': f'<g opacity=".3">{face(24, 66, 22, VIOLET, shade=False)}</g>'
+        + f'<path d="M30 52 Q44 34 58 40" fill="none" stroke="{VIOLET}" stroke-width="3" stroke-dasharray="4 4"/>'
+        + face(64, 40, 30, '#8f86a8')
+        + ''.join(f'<polygon points="{star(x, y, 4, r, r / 3)}" fill="{CYAN}" stroke="{INK}" stroke-width="1"/>' for x, y, r in ((12, 36, 6), (44, 86, 5), (90, 80, 7)))
+        + f'<circle cx="24" cy="66" r="24" fill="none" stroke="{VIOLET}" stroke-width="2.5" stroke-dasharray="5 4"/>',
+    # fixed emplacement with a charging beam
+    'laser-turret': f'<polygon points="{pts([(14, 94), (24, 72), (76, 72), (86, 94)])}" fill="#4a4f5c" {L}/>'
+        + f'<path d="M30 84 H70" stroke="{CYAN}" stroke-width="3"/>'
+        + f'<rect x="58" y="36" width="26" height="12" rx="4" fill="#5d6170" {L}/><circle cx="88" cy="42" r="6" fill="{CYAN}" {L}/>'
+        + f'<path d="M92 32 l3 -5 M95 42 h3 M92 52 l3 5" stroke="{CYAN}" stroke-width="2.5" stroke-linecap="round"/>'
+        + face(44, 46, 28, '#9aa1ad'),
+    # alien queen: crest, egg sacs, keeps spawning
+    'broodmother': f'<ellipse cx="18" cy="84" rx="10" ry="12" fill="#c7d18c" {L}/><ellipse cx="82" cy="84" rx="10" ry="12" fill="#c7d18c" {L}/>'
+        + f'<ellipse cx="50" cy="92" rx="8" ry="7" fill="#c7d18c" {L}/>'
+        + f'<path d="M14 40 Q10 10 30 4 Q34 22 40 24 Q48 0 50 0 Q52 0 60 24 Q66 22 70 4 Q90 10 86 40 Z" fill="#46512f" {L}/>'
+        + face(50, 50, 32, '#6f7d4e')
+        + f'<path d="M22 70 l-10 8 M78 70 l10 8 M30 78 l-6 12 M70 78 l6 12" stroke="{INK}" stroke-width="3" stroke-linecap="round"/>',
+}
+for n, b in MODERN.items(): svg('modern', f'enemy-{n}', b)
+for n, b in SCIFI.items(): svg('scifi', f'enemy-{n}', b)
+
 for k, v in files.items():
     p = f'{OUT}/svg/{k}.svg'; os.makedirs(os.path.dirname(p), exist_ok=True); open(p, 'w').write(v)
 print(len(files), 'svgs')

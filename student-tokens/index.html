@@ -58,9 +58,9 @@
 </header></div>
 <main>
   <h2>Vector basics</h2>
-  <p class="lead">Flat, simple shapes for sketching a fight: player and enemy discs, 24 enemy archetypes (tank, healer, summoner, exploder and more), arrows, telegraphs in ally teal and enemy peach, status badges and props. Each one is an editable SVG and also comes as a PNG.</p>
+  <p class="lead">Flat, simple shapes for sketching a fight: player and enemy discs, 24 enemy archetypes (tank, healer, summoner, exploder and more), 12 modern and 12 sci-fi enemies, arrows, telegraphs in ally teal and enemy peach, status badges and props. Each one is an editable SVG and also comes as a PNG.</p>
   <div class="downloads">
-    <a class="btn" href="vector-basics.zip" download>⬇ Download all vector basics (.zip, 5.1 MB)</a>
+    <a class="btn" href="vector-basics.zip" download>⬇ Download all vector basics (.zip, 6.5 MB)</a>
     <a class="btn alt" href="vector-basics/contact-sheet.png" target="_blank">Contact sheet</a>
   </div>
 
@@ -93,8 +93,9 @@
   // one list of groups: vector basics first, then the deck themes in index order
   const groups = [];
   const add = (key, label, items) => groups.push({ key, label, items });
-  ['tokens', 'archetypes', 'arrows', 'telegraphs', 'status', 'props'].forEach(g =>
-    add('v-' + g, 'Vector ' + g, vec.filter(v => v.group === g).map(v => ({ name: v.name, vector: true, png: `vector-basics/256px/${g}/${v.name}.png`, svg: `vector-basics/svg/${g}/${v.name}.svg` }))));
+  const vlabel = { modern: 'modern enemies', scifi: 'sci-fi enemies' };
+  ['tokens', 'archetypes', 'modern', 'scifi', 'arrows', 'telegraphs', 'status', 'props'].forEach(g =>
+    add('v-' + g, 'Vector ' + (vlabel[g] || g), vec.filter(v => v.group === g).map(v => ({ name: v.name, vector: true, png: `vector-basics/256px/${g}/${v.name}.png`, svg: `vector-basics/svg/${g}/${v.name}.svg` }))));
   [...new Set(deck.map(d => d.theme))].forEach(t =>
     add(t, nice(t), deck.filter(d => d.theme === t).map(d => ({ name: d.name, files: d.files, theme: t }))));
 
