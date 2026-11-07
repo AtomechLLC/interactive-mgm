@@ -1,0 +1,4 @@
+// Speaker notes. Source: xelnath.com, "Learning From My Past": "Ennui: Repetition and Dissatisfaction" (Alex Brazie, 2012), cross-referenced with the Design Scripture (Contrast Drives Attention, Reward Pacing, Pattern-Breakers, Late-Stage Retention Problems).
+window.NOTES = [
+  { script: 'Repeated stimuli lose their effect. The post says ennui can be slowed but never stopped. Every World of Warcraft expansion improved the game, yet players left, partly because their own lives changed: college gave way to 40 to 60 hour weeks, and the bar to keep playing went up. The post names three tools: more stimulation, an almost unreachable ceiling with steady growth, and allowing breaks. Try them here. Each tool lifts the curve, and each kind lifts less every time it repeats, so a season reset every four months fades. Varying the kind of change works better than raising its size, which is the Design Scripture’s point about contrast: the brain tunes out anything steady.' },
+];
