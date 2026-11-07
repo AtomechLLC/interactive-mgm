@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Give Players a Response · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="../shared/blog.css">
+<style>
+  .dr-guess .btn[data-t="react"] { border-color: #2e7fd6; color: #1d5aa0; }
+  .dr-guess .btn[data-t="prep"] { border-color: #c07a0c; color: #8a5508; }
+  .dr-guess .btn[data-t="recup"] { border-color: #2f9e5a; color: #1f6e3e; }
+  .so-head { display: flex; align-items: baseline; gap: 18px; margin: 4px 0 12px; }
+  .so-head .so-score { font: 600 18px Jost, sans-serif; color: var(--ink); }
+  .so-legend { display: flex; gap: 10px; font: 600 15px Jost, sans-serif; }
+  .so-legend span { padding: 3px 10px; border-radius: 8px; color: #fff; }
+  .so-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .so-card { display: grid; grid-template-columns: 48px 1fr; gap: 12px; padding: 12px; border-radius: 12px; background: rgba(255, 252, 244, .9); border: 2px solid #cdbf9f; border-left-width: 8px; min-height: 150px; }
+  .so-card.react { border-left-color: #2e7fd6; } .so-card.prep { border-left-color: #c07a0c; } .so-card.recup { border-left-color: #2f9e5a; }
+  .so-card img, .so-card .so-ph { width: 48px; height: 48px; border-radius: 8px; border: 2px solid #152044; }
+  .so-card .so-ph { display: grid; place-items: center; background: #152044; color: #ffb951; font: 800 22px Montserrat, sans-serif; }
+  .so-card b { font: 700 17px Montserrat, sans-serif; color: var(--ink); display: block; line-height: 1.2; }
+  .so-card small { font-size: 14px; color: var(--muted); }
+  .so-btns { display: flex; gap: 5px; margin-top: 8px; flex-wrap: wrap; }
+  .so-btns button { font: 600 13px Jost, sans-serif; padding: 3px 8px; border-radius: 7px; border: 2px solid #cdbf9f; background: #fffaf0; color: var(--ink); cursor: pointer; }
+  .so-btns button.on { background: #152044; border-color: #152044; color: #fff; }
+  .so-card .so-why b { display: inline; font: 700 14px Jost, sans-serif; }
+  .slide .so-why { font-size: 14px !important; line-height: 1.35 !important; margin: 6px 0 0; color: var(--ink); }
+</style>
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · Blog Posts · Lesson 3: Response', home: '../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<section class="slide" data-title="Dragon of four answers" data-demo="dragon">
+  <div class="kicker">lesson 3 · response</div>
+  <h2 class="sm">A dragon with <span class="accent">an answer for everything</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Scene</h4>
+      <div class="row wrap dr-menu"></div>
+      <div class="row wrap"><button class="btn dr-tour on">▶ Walk-through</button></div>
+      <h4>What kind of answer?</h4>
+      <div class="row wrap dr-guess"><button class="btn" data-t="react">React</button><button class="btn" data-t="prep">Prepare</button><button class="btn" data-t="recup">Recuperate</button></div>
+      <div class="mt-stats dr-score"></div>
+      <p class="mt-out dr-out"></p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Sort the answers" data-demo="sortr">
+  <div class="kicker">lesson 3 · response</div>
+  <h2 class="sm">Sort the <span class="accent">answers</span></h2>
+  <div class="so-head"><div class="so-legend"><span style="background:#2e7fd6">React: counter it now</span><span style="background:#c07a0c">Prepare: act before it</span><span style="background:#2f9e5a">Recuperate: recover after</span></div><span class="so-score"></span><button class="btn so-reset">Clear</button></div>
+  <div class="so-grid"></div>
+</section>
+
+<section class="slide" data-title="Swap the tool" data-demo="tools">
+  <div class="kicker">lesson 3 · response · reactions</div>
+  <h2 class="sm">Swap the <span class="accent">tool</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Your tool</h4>
+      <div class="row wrap tl-tool"><button class="btn on" data-t="sword">Sword</button><button class="btn" data-t="bomb">Bombs</button><button class="btn" data-t="fire">Fire Rod</button><button class="btn" data-t="ice">Ice Rod</button></div>
+      <p class="tip">Pick a tool, then click a head.</p>
+      <div class="row wrap"><button class="btn tl-tour on">▶ Walk-through</button><button class="btn tl-reset">Start over</button></div>
+      <p class="mt-out">One kind of reaction is a tool change: the fire head only answers to ice, the ice head to fire, the stone head to a blade or a bomb. A wrong tool bounces off with a ting, and the sound teaches the rule. The post counts this idea under about 90% of the arcade and platforming era.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Kick practice" data-demo="kick" data-touch-keys="KeyK:Kick">
+  <div class="kicker">lesson 3 · response · reactions</div>
+  <h2 class="sm">Practice <span class="accent">the interrupt</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Your turn</h4>
+      <div class="row wrap"><button class="btn kk-start">Start practice</button><button class="btn kk-btn">Kick (K)</button></div>
+      <p class="tip">The caster starts a 1.6 second spell every few seconds. Kick while the bar fills. A Kick with nothing to interrupt is wasted for 2 seconds.</p>
+      <div class="row wrap"><button class="btn kk-tour on">▶ Walk-through</button></div>
+      <p class="mt-out">The walk-through is a simulated learner whose reaction time falls with practice; the curve is illustrative.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="First meeting, second meeting" data-demo="meet">
+  <div class="kicker">lesson 3 · response · preparation</div>
+  <h2 class="sm">First meeting, <span class="accent">second meeting</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <div class="row wrap"><button class="btn mt-tour on">▶ Walk-through</button></div>
+      <p class="mt-out mt-out2"></p>
+      <p class="mt-out" style="font-size:16px">“If you want players to use a tool, they need to be already using it.” Metroid hands over the Ice Beam early, so it is in hand before the enemy that needs it.</p>
+      <p class="mt-out" style="font-size:16px">Recuperation needs a chance and a calm head. After a famous comeback, Daigo said: “I just didn’t panic.”</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="../shared/topdown.js"></script>
+<script src="../shared/lp.js"></script>
+<script src="response.js"></script>
+</body>
+</html>
