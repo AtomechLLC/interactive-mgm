@@ -172,7 +172,7 @@ Page images in `dgms/m8-balance/` and `dgms/m9-game-feel/`: World of Warcraft ic
 | `dgms--m7-sound--consonant-menu.svg` | [piano-keys](https://game-icons.net/1x1/delapouite/piano-keys.html) | Delapouite |
 | `dgms--m7-sound--boss-telegraph.svg` | [dodging](https://game-icons.net/1x1/lorc/dodging.html) | Lorc |
 
-Page images in `dgms/m4-character/` and `dgms/m5-controller/`: see each page's `img/SOURCES.txt` (Riot Data Dragon, League wiki renders, mariowiki sprites, WoW icons).
+Page images in `dgms/m4-character/` and `dgms/m5-controller/`: see each page's `img/SOURCES.txt` (Riot Data Dragon, League wiki renders, mariowiki sprites, WoW icons). Log Line and Source of Power also use Steam store art for God of War (Santa Monica Studio), Red Dead Redemption 2 (Rockstar Games), The Witcher 3: Wild Hunt (CD PROJEKT RED), Hades (Supergiant Games), Celeste (Maddy Makes Games), Stardew Valley (ConcernedApe), DOOM (id Software) and Horizon Zero Dawn (Guerrilla Games), resized for the web.
 | `dgms--m0-power-of-polish.svg` | [gem-pendant](https://game-icons.net/1x1/lorc/gem-pendant.html) | Lorc |
 | `dgms--m1-pillars.svg` | [greek-temple](https://game-icons.net/1x1/delapouite/greek-temple.html) | Delapouite |
 | `dgms--m2-audience.svg` | [crowned-heart](https://game-icons.net/1x1/lorc/crowned-heart.html) | Lorc |
