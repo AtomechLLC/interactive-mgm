@@ -10,7 +10,11 @@
   const W = 1040, H = 585, TAU = Math.PI * 2, F = (w, s) => `${w} ${s}px Jost, sans-serif`, M = (w, s) => `${w} ${s}px Montserrat, Jost, sans-serif`;
 
   /* ---------------- 1. Into the Breach ---------------- */
-  const T = 74, GX = 40, GY = 66, tile = (c, r) => [GX + c * T, GY + r * T], mid = (c, r) => [GX + c * T + T / 2, GY + r * T + T / 2];
+  // 3/4 (isometric) board: column c runs down-right, row r runs down-left
+  const TW = 96, TH = 48, OX = 308, OY = 118, SLAB = 18, US = 1.25;
+  const scaled = (g, x, y, f) => { g.save(); g.translate(x, y); g.scale(US, US); g.translate(-x, -y); f(); g.restore(); };
+  const mid = (c, r) => [OX + (c - r) * TW / 2, OY + (c + r) * TH / 2 + TH / 2];
+  const diamond = (g, c, r, inset = 0) => { const [x, y] = mid(c, r), w = TW / 2 - inset, h = TH / 2 - inset / 2; g.beginPath(); g.moveTo(x, y - h); g.lineTo(x + w, y); g.lineTo(x, y + h); g.lineTo(x - w, y); g.closePath(); };
   const CUES = {
     target: { label: 'Tiles they will hit', w: .3 },
     arrow: { label: 'Attack direction', w: .1 },
@@ -25,69 +29,92 @@
     x: { label: 'Shoot bug 2', to: [2, 2], other: [0, 1], out: 'Bug 2 slides away, but bug 1 still bites the building you meant to protect.', saved: 1 },
   };
   const PX = (g, x, y, w, h, c) => { g.fillStyle = c; g.fillRect(Math.round(x), Math.round(y), w, h); };
-  function bug(g, x, y, n, a = 1) { // blocky, hard-edged insect with a dark outline
-    g.globalAlpha = a; x = Math.round(x); y = Math.round(y);
-    PX(g, x - 20, y - 4, 40, 28, '#1d1208'); PX(g, x - 16, y - 20, 32, 20, '#1d1208'); // outline
-    for (let i = 0; i < 3; i++) { PX(g, x - 30, y + 2 + i * 9, 12, 4, '#1d1208'); PX(g, x + 18, y + 2 + i * 9, 12, 4, '#1d1208'); }
-    PX(g, x - 16, y, 32, 22, '#d9772f'); PX(g, x - 16, y + 16, 32, 6, '#a4501a'); PX(g, x - 12, y + 4, 8, 6, '#f0a15a'); // shell with shading
-    PX(g, x - 12, y - 16, 24, 16, '#b05a1e'); PX(g, x - 8, y - 12, 6, 6, '#ffe36e'); PX(g, x + 2, y - 12, 6, 6, '#ffe36e'); PX(g, x - 6, y - 10, 2, 2, '#1d1208'); PX(g, x + 4, y - 10, 2, 2, '#1d1208');
-    PX(g, x - 18, y - 22, 4, 8, '#1d1208'); PX(g, x + 14, y - 22, 4, 8, '#1d1208'); // antennae
-    text(g, `bug ${n}`, x, y + 42, M(700, 12), '#fff', 'center'); g.globalAlpha = 1;
+  const poly = (g, pts, c) => { g.fillStyle = c; g.beginPath(); pts.forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y)); g.closePath(); g.fill(); };
+  // an iso block standing on a tile: top face, left face, right face
+  function block(g, x, y, w, d, h, top, left, right) {
+    const hw = w / 2, hd = d / 2;
+    poly(g, [[x - hw, y - h], [x, y - h + hd], [x, y + hd], [x - hw, y]], left);
+    poly(g, [[x + hw, y - h], [x, y - h + hd], [x, y + hd], [x + hw, y]], right);
+    poly(g, [[x, y - h - hd], [x + hw, y - h], [x, y - h + hd], [x - hw, y - h]], top);
+  }
+  function bug(g, x, y, n, a = 1) { // our own blocky beetle, standing on the tile (x, y = feet)
+    g.globalAlpha = a;
+    g.fillStyle = 'rgba(0,0,0,.3)'; g.beginPath(); g.ellipse(x, y, 24, 10, 0, 0, TAU); g.fill();
+    g.strokeStyle = '#1d1208'; g.lineWidth = 3; for (let i = -1; i <= 1; i++) { g.beginPath(); g.moveTo(x - 10, y - 10 + i * 4); g.lineTo(x - 24, y - 2 + i * 5); g.moveTo(x + 10, y - 10 + i * 4); g.lineTo(x + 24, y - 2 + i * 5); g.stroke(); }
+    block(g, x, y - 6, 36, 18, 20, '#f0a15a', '#d9772f', '#a4501a'); // shell
+    block(g, x - 8, y - 22, 20, 10, 12, '#c96c28', '#b05a1e', '#8a4416'); // head, turned toward the viewer's left
+    PX(g, x - 16, y - 34, 5, 5, '#ffe36e'); PX(g, x - 8, y - 32, 5, 5, '#ffe36e');
+    g.strokeStyle = '#1d1208'; g.lineWidth = 2; g.beginPath(); g.moveTo(x - 12, y - 40); g.lineTo(x - 18, y - 52); g.moveTo(x - 4, y - 38); g.lineTo(x - 2, y - 50); g.stroke();
+    text(g, `bug ${n}`, x, y + 22, M(700, 12), '#fff', 'center'); g.globalAlpha = 1;
   }
   function building(g, c, r, alive) {
-    const [x, y] = tile(c, r);
-    if (!alive) { PX(g, x + 10, y + 50, 54, 12, '#2b2b2b'); for (let i = 0; i < 5; i++) PX(g, x + 12 + i * 10, y + 40 - (i % 2) * 8, 8, 12 + (i % 2) * 8, '#555a60'); PX(g, x + 26, y + 30, 8, 8, '#8a4b2a'); return; }
-    PX(g, x + 10, y + 12, 54, 54, '#1b2128'); PX(g, x + 12, y + 14, 50, 50, '#8f9aa6'); PX(g, x + 12, y + 14, 8, 50, '#adb7c2'); PX(g, x + 54, y + 14, 8, 50, '#6c7682'); PX(g, x + 12, y + 8, 50, 8, '#d3dae2'); PX(g, x + 12, y + 14, 50, 3, '#4b535c');
-    for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) PX(g, x + 22 + i * 13, y + 24 + j * 13, 8, 8, (i + j) % 2 ? '#ffe08a' : '#ffc34a');
+    const [x, y] = mid(c, r);
+    if (!alive) { block(g, x, y, 56, 28, 10, '#6a6e74', '#4a4e54', '#383c42'); for (let i = 0; i < 4; i++) block(g, x - 16 + i * 10, y - 8 - (i % 2) * 4, 10, 5, 8 + (i % 2) * 8, '#7d8288', '#5a5e64', '#45494f'); return; }
+    block(g, x, y, 56, 28, 58, '#d3dae2', '#a3adb8', '#78828e');
+    for (let i = 0; i < 2; i++) for (let j = 0; j < 3; j++) { // windows on both faces
+      const lx = x - 22 + i * 10, ly = y - 48 + j * 15 + i * 5; poly(g, [[lx, ly], [lx + 6, ly + 3], [lx + 6, ly + 10], [lx, ly + 7]], j % 2 ? '#ffe08a' : '#ffc34a');
+      const rx = x + 6 + i * 10, ry = y - 45 + j * 15 - i * 5; poly(g, [[rx, ry + 3], [rx + 6, ry], [rx + 6, ry + 7], [rx, ry + 10]], j % 2 ? '#e8b850' : '#d9a23a');
+    }
   }
   function mech(g, c, r) {
-    const [x, y] = mid(c, r); const X = Math.round(x), Y = Math.round(y);
-    PX(g, X - 22, Y - 20, 44, 40, '#0e2438'); PX(g, X - 18, Y - 16, 36, 32, '#2e7fd6'); PX(g, X - 18, Y + 8, 36, 8, '#1b4f8a'); PX(g, X - 14, Y - 12, 12, 8, '#8fd0ff'); // body, shading, visor
-    PX(g, X + 2, Y - 36, 8, 24, '#0e2438'); PX(g, X + 4, Y - 34, 4, 20, '#bfe0ff'); // cannon
-    PX(g, X - 26, Y + 14, 10, 10, '#0e2438'); PX(g, X + 16, Y + 14, 10, 10, '#0e2438'); // feet
-    text(g, 'your mech', x, y + 40, M(700, 12), '#fff', 'center');
+    const [x, y] = mid(c, r);
+    g.fillStyle = 'rgba(0,0,0,.3)'; g.beginPath(); g.ellipse(x, y, 26, 11, 0, 0, TAU); g.fill();
+    block(g, x - 12, y - 2, 12, 6, 14, '#3b4c60', '#26323f', '#1a232d'); block(g, x + 12, y - 2, 12, 6, 14, '#3b4c60', '#26323f', '#1a232d'); // legs
+    block(g, x, y - 14, 40, 20, 26, '#5a9fe6', '#2e7fd6', '#1b4f8a'); // body
+    poly(g, [[x - 16, y - 34], [x - 4, y - 28], [x - 4, y - 22], [x - 16, y - 28]], '#bfe8ff'); // visor
+    block(g, x + 6, y - 40, 8, 4, 22, '#bfe0ff', '#7fa8cc', '#5a7fa0'); // cannon
+    text(g, 'your mech', x, y + 24, M(700, 12), '#fff', 'center');
+  }
+  function hatch(g, c, r) {
+    g.save(); diamond(g, c, r, 2); g.fillStyle = 'rgba(240,120,30,.55)'; g.fill(); g.clip();
+    const [x, y] = mid(c, r); g.strokeStyle = 'rgba(255,214,120,.85)'; g.lineWidth = 4; for (let k = -60; k < 60; k += 12) { g.beginPath(); g.moveTo(x + k - 20, y + 30); g.lineTo(x + k + 40, y - 30); g.stroke(); }
+    g.restore(); diamond(g, c, r, 3); g.strokeStyle = '#ffae3a'; g.lineWidth = 3; g.stroke();
   }
   function breachScene(g, cues, shot, play) {
     g.clearRect(0, 0, W, H);
     g.fillStyle = '#20262e'; rr(g, 10, 10, W - 20, H - 20, 14); g.fill();
     text(g, 'ENEMY TURN NEXT', 40, 46, M(800, 16), '#c9d1d9');
-    for (let c = 0; c < 6; c++) for (let r = 0; r < 6; r++) { const [x, y] = tile(c, r); PX(g, x, y, T - 2, T - 2, (c + r) % 2 ? '#5a6a4e' : '#62724f'); PX(g, x, y, T - 2, 3, '#7d8f66'); PX(g, x, y, 3, T - 2, '#7d8f66'); PX(g, x, y + T - 5, T - 2, 3, '#3d4a35'); PX(g, x + T - 5, y, 3, T - 2, '#3d4a35'); }
+    // the board slab, then the tiles
+    const [lx, ly] = mid(0, 5), [rx, ry] = mid(5, 0), [bx, by] = mid(5, 5);
+    poly(g, [[lx - TW / 2, ly], [bx, by + TH / 2], [bx, by + TH / 2 + SLAB], [lx - TW / 2, ly + SLAB]], '#3a3226');
+    poly(g, [[rx + TW / 2, ry], [bx, by + TH / 2], [bx, by + TH / 2 + SLAB], [rx + TW / 2, ry + SLAB]], '#2a241b');
+    for (let c = 0; c < 6; c++) for (let r = 0; r < 6; r++) { diamond(g, c, r); g.fillStyle = (c + r) % 2 ? '#5a6a4e' : '#62724f'; g.fill(); g.strokeStyle = 'rgba(30,38,24,.6)'; g.lineWidth = 1.5; g.stroke(); diamond(g, c, r, 8); g.strokeStyle = 'rgba(140,160,110,.25)'; g.stroke(); }
     const S = shot ? SHOTS[shot] : null, p = play == null ? -1 : play;
     const pushK = ease(clamp(p / .6)), e1 = S && p >= 0 ? [lerp(2, S.to[0], pushK), lerp(2, S.to[1], pushK)] : [2, 2];
     const e2pos = S && S.other && p >= 0 ? [lerp(1, S.other[0], pushK), lerp(1, S.other[1], pushK)] : [1, 1];
     const e1t = [Math.round(e1[0]), Math.round(e1[1]) - 1], e2t = [Math.round(e2pos[0]) - 1, Math.round(e2pos[1])];
     const e2dead = S && S.bonus && p > 1.3, b1dead = S && S.saved === 1 && shot !== 'e' && p > 1.3, b2dead = shot === 'e' && p > 1.3;
-    // what the player can see before the turn
     const showPlan = p < 0, ghost = p < 0 && S && cues.preview;
     const targets = [[e1t, 1, e1], ...(e2dead ? [] : [[e2t, 2, e2pos]])];
-    if (cues.target && p < .6) targets.forEach(([t]) => { const [x, y] = tile(t[0], t[1]); g.fillStyle = 'rgba(240,120,30,.5)'; g.fillRect(x, y, T - 2, T - 2); g.save(); g.beginPath(); g.rect(x, y, T - 2, T - 2); g.clip(); g.strokeStyle = 'rgba(255,214,120,.8)'; g.lineWidth = 4; for (let k = -T; k < T * 2; k += 14) { g.beginPath(); g.moveTo(x + k, y + T); g.lineTo(x + k + T, y); g.stroke(); } g.restore(); g.strokeStyle = '#ffae3a'; g.lineWidth = 4; g.strokeRect(x + 2, y + 2, T - 6, T - 6); });
-    building(g, 2, 1, !b1dead); building(g, 3, 1, !b2dead); mech(g, 2, 5);
-    if (cues.arrow && p < .6) targets.forEach(([t, , from]) => { const [x0, y0] = mid(from[0], from[1]), [x1, y1] = mid(t[0], t[1]); g.strokeStyle = '#ffb36b'; g.lineWidth = 5; g.beginPath(); g.moveTo(x0, y0); g.lineTo(lerp(x0, x1, .8), lerp(y0, y1, .8)); g.stroke(); const a = Math.atan2(y1 - y0, x1 - x0); g.fillStyle = '#ffb36b'; g.beginPath(); g.moveTo(x1 - Math.cos(a) * 8, y1 - Math.sin(a) * 8); g.lineTo(x1 - Math.cos(a) * 24 + Math.sin(a) * 10, y1 - Math.sin(a) * 24 - Math.cos(a) * 10); g.lineTo(x1 - Math.cos(a) * 24 - Math.sin(a) * 10, y1 - Math.sin(a) * 24 + Math.cos(a) * 10); g.fill(); });
-    if (cues.dmg && p < .6) targets.forEach(([t]) => { const [x, y] = tile(t[0], t[1]); g.fillStyle = '#d8402f'; g.beginPath(); g.arc(x + T - 16, y + 14, 11, 0, TAU); g.fill(); text(g, '1', x + T - 16, y + 19, M(800, 14), '#fff', 'center'); });
-    if (ghost) { // the shot preview
-      const [mx, my] = mid(2, 5), tgt = shot === 'x' ? [1, 1] : [2, 2], [tx, ty] = mid(tgt[0], tgt[1]);
-      g.setLineDash([6, 5]); g.strokeStyle = '#8fd0ff'; g.lineWidth = 3; g.beginPath(); g.moveTo(mx, my - 30); g.quadraticCurveTo((mx + tx) / 2, Math.min(my, ty) - 80, tx, ty); g.stroke(); g.setLineDash([]);
-      const to = shot === 'x' ? S.other : S.to, [gx, gy] = mid(to[0], to[1]); bug(g, gx, gy, shot === 'x' ? 2 : 1, .35);
-      const nt = shot === 'x' ? [to[0] - 1, to[1]] : [to[0], to[1] - 1]; if (nt[0] >= 0) { const [x, y] = tile(nt[0], nt[1]); g.setLineDash([5, 4]); g.strokeStyle = '#8fd0ff'; g.lineWidth = 3; g.strokeRect(x + 4, y + 4, T - 10, T - 10); g.setLineDash([]); }
-    }
-    // the bugs, lunging during their attack
+    if (cues.target && p < .6) targets.forEach(([t]) => hatch(g, t[0], t[1]));
+    let nt = null;
+    if (ghost) { nt = shot === 'x' ? [S.other[0] - 1, S.other[1]] : [S.to[0], S.to[1] - 1]; if (nt[0] >= 0) { g.setLineDash([5, 4]); diamond(g, nt[0], nt[1], 6); g.strokeStyle = '#8fd0ff'; g.lineWidth = 3; g.stroke(); g.setLineDash([]); } }
+    // units, back to front
     const lunge = (k, from, t) => { const s = Math.sin(clamp(k) * Math.PI) * .35; return [from[0] + (t[0] - from[0]) * s, from[1] + (t[1] - from[1]) * s]; };
     const a1 = lunge((p - .6) / .7, e1, e1t), a2 = lunge((p - 1.4) / .7, e2pos, e2t);
-    if (!e2dead) { const [x, y] = mid(a2[0], a2[1]); bug(g, x, y, 2); if (cues.order && showPlan) { g.fillStyle = '#ffde59'; g.beginPath(); g.arc(x + 20, y - 26, 11, 0, TAU); g.fill(); text(g, '2', x + 20, y - 21, M(800, 14), '#20262e', 'center'); } }
-    { const [x, y] = mid(a1[0], a1[1]); bug(g, x, y, 1); if (cues.order && showPlan) { g.fillStyle = '#ffde59'; g.beginPath(); g.arc(x + 20, y - 26, 11, 0, TAU); g.fill(); text(g, '1', x + 20, y - 21, M(800, 14), '#20262e', 'center'); } }
-    [[.6, e1t], [1.4, e2t]].forEach(([t0, t]) => { const k = (p - t0) / .7; if (k > .3 && k < .8) { const [x, y] = mid(t[0], t[1]); g.fillStyle = 'rgba(255,240,200,.75)'; g.beginPath(); g.arc(x, y, 30, 0, TAU); g.fill(); } });
+    const at = (c, r, f) => { const [x, y] = mid(c, r); scaled(g, x, y, () => f(x, y)); };
+    const units = [[2 + 1 + .01, () => at(2, 1, () => building(g, 2, 1, !b1dead))], [3 + 1 + .01, () => at(3, 1, () => building(g, 3, 1, !b2dead))], [2 + 5, () => at(2, 5, () => mech(g, 2, 5))], [a1[0] + a1[1], () => at(a1[0], a1[1], (x, y) => bug(g, x, y, 1))]];
+    if (!e2dead) units.push([a2[0] + a2[1], () => at(a2[0], a2[1], (x, y) => bug(g, x, y, 2))]);
+    if (ghost) { const to = shot === 'x' ? S.other : S.to; units.push([to[0] + to[1] - .01, () => at(to[0], to[1], (x, y) => bug(g, x, y, shot === 'x' ? 2 : 1, .35))]); }
+    units.sort((a, b) => a[0] - b[0]).forEach(u => u[1]());
+    // cues drawn over the units
+    if (cues.arrow && p < .6) targets.forEach(([t, , from]) => { const [x0, y0] = mid(from[0], from[1]), [x1, y1] = mid(t[0], t[1]), Y = -30; g.strokeStyle = '#ffb36b'; g.lineWidth = 5; g.beginPath(); g.moveTo(x0, y0 + Y); g.lineTo(lerp(x0, x1, .75), lerp(y0, y1, .75) + Y); g.stroke(); const a = Math.atan2(y1 - y0, x1 - x0), hx = lerp(x0, x1, .9), hy = lerp(y0, y1, .9) + Y; g.fillStyle = '#ffb36b'; g.beginPath(); g.moveTo(hx, hy); g.lineTo(hx - Math.cos(a) * 16 + Math.sin(a) * 9, hy - Math.sin(a) * 16 - Math.cos(a) * 9); g.lineTo(hx - Math.cos(a) * 16 - Math.sin(a) * 9, hy - Math.sin(a) * 16 + Math.cos(a) * 9); g.fill(); });
+    if (cues.dmg && p < .6) targets.forEach(([t]) => { const [x, y] = mid(t[0], t[1]); g.fillStyle = '#d8402f'; g.beginPath(); g.arc(x + 30, y - 4, 12, 0, TAU); g.fill(); text(g, '1', x + 30, y + 1, M(800, 14), '#fff', 'center'); });
+    if (cues.order && showPlan) [[a1, '1'], ...(e2dead ? [] : [[a2, '2']])].forEach(([a, l]) => { const [x, y] = mid(a[0], a[1]); g.fillStyle = '#ffde59'; g.beginPath(); g.arc(x + 26, y - 58, 12, 0, TAU); g.fill(); text(g, l, x + 26, y - 53, M(800, 14), '#20262e', 'center'); });
+    if (ghost) { const [mx, my] = mid(2, 5), tgt = shot === 'x' ? [1, 1] : [2, 2], [tx, ty] = mid(tgt[0], tgt[1]); g.setLineDash([6, 5]); g.strokeStyle = '#8fd0ff'; g.lineWidth = 3; g.beginPath(); g.moveTo(mx + 8, my - 78); g.quadraticCurveTo((mx + tx) / 2, Math.min(my, ty) - 130, tx, ty - 36); g.stroke(); g.setLineDash([]); }
+    [[.6, e1t], [1.4, e2t]].forEach(([t0, t]) => { const k = (p - t0) / .7; if (k > .3 && k < .8) { const [x, y] = mid(t[0], t[1]); g.fillStyle = 'rgba(255,240,200,.75)'; g.beginPath(); g.ellipse(x, y - 16, 42, 26, 0, 0, TAU); g.fill(); } });
     // right panel
-    const R = 510; g.fillStyle = 'rgba(255,255,255,.06)'; rr(g, R, 30, 510, 525, 12); g.fill();
+    const R = 620; g.fillStyle = 'rgba(255,255,255,.06)'; rr(g, R, 30, 400, 525, 12); g.fill();
     text(g, 'Save the two buildings.', R + 20, 66, M(800, 20), '#fff');
     text(g, 'You get one shot, then the bugs act.', R + 20, 92, F(500, 16), '#c9d1d9');
     text(g, 'WHAT THE SCREEN TELLS YOU', R + 20, 132, M(800, 13), '#9aa3ad');
     Object.entries(CUES).forEach(([k, c], i) => { const on = cues[k], y = 160 + i * 30; g.fillStyle = on ? C.gold : '#4a525c'; rr(g, R + 20, y - 14, 18, 18, 4); g.fill(); if (on) text(g, '✓', R + 29, y, M(800, 14), '#20262e', 'center'); text(g, c.label, R + 48, y, F(600, 16), on ? '#fff' : '#7d8590'); });
     const share = clamp(.15 + Object.entries(CUES).reduce((a, [k, c]) => a + (cues[k] ? c.w : 0), 0)), n = Math.round(share * 20);
-    text(g, 'Of 20 players, how many find a save (illustrative)', R + 20, 330, F(600, 15), '#c9d1d9');
-    for (let i = 0; i < 20; i++) { const x = R + 34 + i * 23, y = 360; g.fillStyle = i < n ? C.green : '#4a525c'; g.beginPath(); g.arc(x, y - 8, 6, 0, TAU); g.fill(); rr(g, x - 7, y - 1, 14, 14, 5); g.fill(); }
-    text(g, `${n} of 20`, R + 490, 392, M(800, 18), n > 12 ? C.green : n > 6 ? C.gold : '#ff7a6b', 'right');
-    if (S && p > 2.2) { g.fillStyle = S.saved === 2 ? 'rgba(47,158,90,.25)' : 'rgba(216,64,47,.25)'; rr(g, R + 20, 420, 470, 116, 10); g.fill(); text(g, S.saved === 2 ? 'BOTH BUILDINGS STAND' : 'ONE BUILDING LOST', R + 36, 448, M(800, 16), S.saved === 2 ? '#7ee2a0' : '#ff8a7a'); g.font = F(600, 16); g.fillStyle = '#fff'; g.textAlign = 'left'; wrap(g, S.out, R + 36, 474, 440, 21); }
-    else { g.font = F(500, 15); g.fillStyle = '#c9d1d9'; g.textAlign = 'left'; wrap(g, Object.values(cues).some(Boolean) ? 'Every cue you add answers a question before the player has to ask it.' : 'With no cues, you are guessing what the bugs will do.', R + 20, 440, 470, 21); }
+    text(g, 'Of 20 players, how many find a save', R + 20, 330, F(600, 15), '#c9d1d9');
+    for (let i = 0; i < 20; i++) { const x = R + 30 + i * 18, y = 360; g.fillStyle = i < n ? C.green : '#4a525c'; g.beginPath(); g.arc(x, y - 8, 6, 0, TAU); g.fill(); rr(g, x - 7, y - 1, 14, 14, 5); g.fill(); }
+    text(g, `${n} of 20`, R + 380, 392, M(800, 18), n > 12 ? C.green : n > 6 ? C.gold : '#ff7a6b', 'right');
+    if (S && p > 2.2) { g.fillStyle = S.saved === 2 ? 'rgba(47,158,90,.25)' : 'rgba(216,64,47,.25)'; rr(g, R + 16, 420, 368, 120, 10); g.fill(); text(g, S.saved === 2 ? 'BOTH BUILDINGS STAND' : 'ONE BUILDING LOST', R + 36, 448, M(800, 16), S.saved === 2 ? '#7ee2a0' : '#ff8a7a'); g.font = F(600, 16); g.fillStyle = '#fff'; g.textAlign = 'left'; wrap(g, S.out, R + 32, 474, 340, 21); }
+    else { g.font = F(500, 15); g.fillStyle = '#c9d1d9'; g.textAlign = 'left'; wrap(g, Object.values(cues).some(Boolean) ? 'Every cue you add answers a question before the player has to ask it.' : 'With no cues, you are guessing what the bugs will do.', R + 20, 440, 360, 21); }
   }
   canvasDemo('breach', (sl, cv, g) => {
     const cBox = $(sl, '.br-cues'), sSeg = $(sl, '.br-shot'), out = $(sl, '.br-out'), tourBtn = $(sl, '.br-tour');
@@ -246,5 +273,65 @@
     LP.runners.names = { seek(t) { st.held = true; st.tour = true; st.t = t; st.stage = -1; frame(); }, dur: () => DUR };
     return dt => { if (st.held) return; if (st.tour) st.t = (st.t + Math.max(0, Math.min(dt, .1))) % DUR; frame(); };
   });
+
+  /* ---------------- 1b. Reading a real Into the Breach turn ----------------
+     Official screenshots from the game's Steam store page, loaded from Steam's servers (not copied into this repo).
+     The overlays are our analysis. Coordinates are in the screenshots' 1920 x 1080 space. */
+  const STEAM = 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/590380/';
+  const SHOTS_ITB = [
+    { label: 'A five-enemy turn', src: STEAM + 'ss_4b985c7747c1ff0b7fbbf3eaf8ca5a1272f0dadb.1920x1080.jpg', notes: [
+      { r: [770, 450, 560, 450], h: 'Attack order', t: 'Every enemy carries a number: the order it will act in. You can plan a chain, or kill number 1 before it swings.' },
+      { r: [1075, 700, 290, 215], h: 'What comes next turn', t: 'Red arrows mark tiles where new enemies will dig up. Park a unit on one and the spawn is blocked.' },
+      { r: [1160, 455, 95, 50], h: 'Health you can count', t: 'Health is a row of pips, not a number. One glance tells you whether a hit kills.' },
+      { r: [95, 10, 580, 70], h: 'The stakes, in blocks', t: 'The power grid is the run’s life total, drawn as a few chunky blocks. Losing one is impossible to miss.' },
+      { r: [1370, 910, 530, 125], h: 'Rules on hover', t: 'Point at any tile and its rule appears in one line: water stops most ground units from attacking.' },
+    ] },
+    { label: 'A push near a chasm', src: STEAM + 'ss_6113590509c195f98fa64cd738df534762e0c358.1920x1080.jpg', notes: [
+      { r: [1105, 380, 420, 250], h: 'Where the bites land', t: 'Striped red tiles show exactly where each enemy will strike, with an arrow from the attacker.' },
+      { r: [1110, 640, 150, 100], h: 'Your shot, previewed', t: 'The bent arrow shows which way your shot will push the target, before you commit to it.' },
+      { r: [1415, 915, 485, 140], h: 'A rule worth reading', t: 'Chasm: ground units pushed in are destroyed. The tooltip turns terrain into a weapon you can plan with.' },
+      { r: [1515, 15, 390, 355], h: 'The goal never moves', t: 'Victory is a countdown of turns to survive, and bonus objectives sit right under it, crossed off as you go.' },
+    ] },
+  ];
+  function itbScene(g, si, ni, k) {
+    const S0 = SHOTS_ITB[si], im = IM(S0.src), sc = W / 1920;
+    g.clearRect(0, 0, W, H); g.save(); rr(g, 10, 10, W - 20, H - 20, 14); g.clip();
+    g.fillStyle = '#14161c'; g.fillRect(0, 0, W, H);
+    if (ready(im)) g.drawImage(im, 0, 0, W, H);
+    else { text(g, 'Loading the screenshot from Steam…', W / 2, H / 2, F(600, 18), '#c9d1d9', 'center'); text(g, 'It needs an internet connection; the overlays are ours.', W / 2, H / 2 + 26, F(500, 14), '#8a93a0', 'center'); }
+    const n = S0.notes[ni], [x, y, w, h] = n.r.map(v => v * sc), e = ease(clamp(k / .4)), pad = 6 * (1 - e);
+    g.fillStyle = `rgba(8,10,16,${.62 * e})`; g.beginPath(); g.rect(0, 0, W, H); g.rect(x - 4 - pad, y - 4 - pad, w + 8 + pad * 2, h + 8 + pad * 2); g.fill('evenodd');
+    g.strokeStyle = C.gold; g.lineWidth = 3; g.strokeRect(x - 4 - pad, y - 4 - pad, w + 8 + pad * 2, h + 8 + pad * 2);
+    const bw = 300, bh = 112, right = x + w / 2 > W / 2, bx = right ? Math.max(24, x - bw - 40) : Math.min(W - bw - 24, x + w + 40), by = clamp(y + h / 2 - bh / 2, 24, H - bh - 40);
+    const ax = right ? bx + bw : bx, ay = by + bh / 2, tx = right ? x - 4 : x + w + 4, ty = clamp(ay, y, y + h);
+    g.globalAlpha = ease(clamp((k - .2) / .4));
+    g.strokeStyle = C.gold; g.lineWidth = 2; g.beginPath(); g.moveTo(ax, ay); g.lineTo(tx, ty); g.stroke(); g.fillStyle = C.gold; g.beginPath(); g.arc(tx, ty, 5, 0, TAU); g.fill();
+    g.fillStyle = 'rgba(255,252,244,.96)'; rr(g, bx, by, bw, bh, 10); g.fill();
+    g.fillStyle = C.gold; g.beginPath(); g.arc(bx + 22, by + 24, 13, 0, TAU); g.fill(); text(g, String(ni + 1), bx + 22, by + 29, M(800, 14), C.ink, 'center');
+    text(g, n.h, bx + 44, by + 30, M(800, 16), C.ink); g.font = F(500, 14); g.fillStyle = '#3a3f66'; g.textAlign = 'left'; wrap(g, n.t, bx + 16, by + 56, bw - 32, 19);
+    g.globalAlpha = 1;
+    S0.notes.forEach((_, i) => { g.fillStyle = i === ni ? C.gold : 'rgba(255,255,255,.45)'; g.beginPath(); g.arc(W / 2 - (S0.notes.length - 1) * 9 + i * 18, H - 24, 5, 0, TAU); g.fill(); });
+    g.restore();
+  }
+  canvasDemo('itb', (sl, cv, g) => {
+    const out = $(sl, '.it-out'), tourBtn = $(sl, '.it-tour'), sSeg = $(sl, '.it-shot');
+    sSeg.innerHTML = SHOTS_ITB.map((s, i) => `<button class="btn" data-i="${i}">${s.label}</button>`).join('');
+    const FLAT = SHOTS_ITB.flatMap((s, si) => s.notes.map((_, ni) => [si, ni])), LEN = 4.5, DUR = FLAT.length * LEN;
+    const st = { tour: true, held: false, t: 0, stage: -1, si: 0, ni: 0, k: 0 };
+    const manual = () => { st.tour = false; tourBtn.classList.remove('on'); };
+    const show = () => { const n = SHOTS_ITB[st.si].notes[st.ni]; say(out, `<b>${st.ni + 1}. ${n.h}.</b> ${n.t}`); };
+    const step = d => { manual(); const L = SHOTS_ITB[st.si].notes.length; st.ni = (st.ni + d + L) % L; st.k = 0; show(); };
+    $(sl, '.it-prev').onclick = () => step(-1); $(sl, '.it-next').onclick = () => step(1);
+    $$(sSeg, '.btn').forEach(b => b.onclick = () => { manual(); st.si = +b.dataset.i; st.ni = 0; st.k = 0; show(); });
+    tourBtn.onclick = () => { st.tour = true; st.t = 0; st.stage = -1; tourBtn.classList.add('on'); };
+    function frame() {
+      if (st.tour) { const k = Math.floor((st.t % DUR) / LEN); st.k = (st.t % DUR) - k * LEN; if (k !== st.stage) { st.stage = k; [st.si, st.ni] = FLAT[k]; show(); } }
+      $$(sSeg, '.btn').forEach(b => b.classList.toggle('on', +b.dataset.i === st.si));
+      itbScene(g, st.si, st.ni, st.k);
+    }
+    LP.runners.itb = { seek(t) { st.held = true; st.tour = true; st.t = t; st.stage = -1; frame(); }, dur: () => DUR };
+    return dt => { if (st.held) return; dt = Math.max(0, Math.min(dt, .1)); if (st.tour) st.t = (st.t + dt) % DUR; else st.k += dt; frame(); };
+  });
+  SHOTS_ITB.forEach(s => IM(s.src));
   GK.forEach(k => IM(`img/${k}.svg`));
 })();
