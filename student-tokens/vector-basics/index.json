@@ -60,6 +60,102 @@
 "name": "player-4"
 },
 {
+"group": "archetypes",
+"name": "enemy-archer"
+},
+{
+"group": "archetypes",
+"name": "enemy-assassin"
+},
+{
+"group": "archetypes",
+"name": "enemy-berserker"
+},
+{
+"group": "archetypes",
+"name": "enemy-buffer"
+},
+{
+"group": "archetypes",
+"name": "enemy-burrower"
+},
+{
+"group": "archetypes",
+"name": "enemy-caster"
+},
+{
+"group": "archetypes",
+"name": "enemy-charger"
+},
+{
+"group": "archetypes",
+"name": "enemy-exploder"
+},
+{
+"group": "archetypes",
+"name": "enemy-flyer"
+},
+{
+"group": "archetypes",
+"name": "enemy-grappler"
+},
+{
+"group": "archetypes",
+"name": "enemy-healer"
+},
+{
+"group": "archetypes",
+"name": "enemy-leech"
+},
+{
+"group": "archetypes",
+"name": "enemy-mimic"
+},
+{
+"group": "archetypes",
+"name": "enemy-regenerator"
+},
+{
+"group": "archetypes",
+"name": "enemy-shielder"
+},
+{
+"group": "archetypes",
+"name": "enemy-sniper"
+},
+{
+"group": "archetypes",
+"name": "enemy-spawner"
+},
+{
+"group": "archetypes",
+"name": "enemy-splitter"
+},
+{
+"group": "archetypes",
+"name": "enemy-stalker"
+},
+{
+"group": "archetypes",
+"name": "enemy-summoner"
+},
+{
+"group": "archetypes",
+"name": "enemy-swarm"
+},
+{
+"group": "archetypes",
+"name": "enemy-tank"
+},
+{
+"group": "archetypes",
+"name": "enemy-trapper"
+},
+{
+"group": "archetypes",
+"name": "enemy-turret"
+},
+{
 "group": "arrows",
 "name": "charge-ally"
 },
