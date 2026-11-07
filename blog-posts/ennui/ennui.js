@@ -220,24 +220,24 @@
     bolt2: ['Firebolt', 'spell_fire_firebolt02'], seal: ['Seal of Fire', 'spell_fire_sealoffire'], start: ['Firestarter', 'ability_mage_firestarter'] };
   const SI = k => `../img/${SP[k][1]}.jpg`;
   const FIXES = {
-    procs: { label: 'Procs', say: 'Procs: Hot Streak (WoW) lights Pyroblast at random after a critical hit, like Lock and Load for hunters. You still know what to press, but not when, so the bar asks you to watch it again.' },
-    draw: { label: 'Card draw', say: 'Card draw: only three of your five buttons are lit each turn, the way Slay the Spire deals you a hand. You can never play the same hand twice.' },
-    boons: { label: 'Random offers', say: 'Random offers: every few seconds one button is swapped for a new spell, the way Hades offers boons. The best sequence keeps changing under you.' },
+    procs: { label: 'Procs', say: 'Procs: a proc is a random chance for something to trigger. With Hot Streak, a critical hit can light up Pyroblast for one free cast (a hunter’s Lock and Load works the same way). You know what to press, but not when, so you have to watch the bar again.' },
+    draw: { label: 'Card draw', say: 'A hand of cards: only three of your five buttons are available each turn, the way Slay the Spire deals you a hand. You can never play the same hand twice.' },
+    boons: { label: 'Random offers', say: 'Random offers: every few turns one button is swapped for a different one, the way Hades offers boons. The best sequence keeps changing under you.' },
   };
   function rotSim(fix, steps) {
     // returns the cast log for `steps` global cooldowns
     let cd = { blast: 0, bomb: 0, pyro: 0, scorch: 0 }, hot = false, slots = ['fb', 'blast', 'scorch', 'bomb', 'pyro'], log = [], seed = 1;
-    const CD = { blast: 2, bomb: 5, scorch: 3, pyro: 6 }, PRI = ['pyro', 'bomb', 'blast', 'scorch', 'fb', 'bolt2', 'seal', 'start'];
+    const CD = ROT_CD, PRI = ['pyro', 'bomb', 'blast', 'scorch', 'fb', 'bolt2', 'seal', 'start'];
     for (let s = 0; s < steps; s++) {
       if (fix.boons && s > 0 && s % 7 === 0) { const i = Math.floor(rnd(s * 3.1) * 4), opts = ['bolt2', 'seal', 'start', 'fb', 'blast', 'scorch']; slots[i] = opts[Math.floor(rnd(s * 5.7) * opts.length)]; }
       const lit = slots.map((k, i) => { let ok = !(cd[k] > 0); if (k === 'pyro') ok = fix.procs ? hot : ok; return ok; });
       if (fix.draw) { const hand = [0, 1, 2, 3, 4].sort((a, b) => rnd(s * 11 + a) - rnd(s * 11 + b)).slice(0, 3); slots.forEach((_, i) => { if (!hand.includes(i)) lit[i] = false; }); }
       let pick = -1; PRI.forEach(k => { const i = slots.indexOf(k); if (pick < 0 && i >= 0 && lit[i]) pick = i; });
       if (pick < 0) pick = lit.findIndex(Boolean);
-      const k = pick >= 0 ? slots[pick] : null;
+      const k = pick >= 0 ? slots[pick] : null, cdBefore = { ...cd };
       Object.keys(cd).forEach(c => cd[c] = Math.max(0, cd[c] - 1));
       if (k) { if (CD[k] && !(k === 'pyro' && fix.procs)) cd[k] = CD[k]; if (k === 'pyro') hot = false; if (fix.procs && (k === 'fb' || k === 'blast' || k === 'scorch') && rnd(s * 13.3 + 7) < .3) hot = true; }
-      log.push({ k, slots: slots.slice(), lit });
+      log.push({ k, slots: slots.slice(), lit, cd: cdBefore });
     }
     // decisions: was this cast predicted by the same position in the last cycle? try the best period up to 12
     const dec = log.map((e, i) => {
@@ -247,41 +247,62 @@
     });
     return { log, dec };
   }
+  const ROT_CD = { blast: 2, scorch: 3, bomb: 5, pyro: 6 };
   function rotScene(g, fix, step, frac) {
     const { log, dec } = rotSim(fix, step + 40), cur = log[log.length - 1];
     g.clearRect(0, 0, W, H);
     g.fillStyle = '#1d2236'; rr(g, 10, 10, W - 20, H - 20, 14); g.fill();
-    text(g, 'TRAINING DUMMY', 30, 44, M(800, 16), '#aab3d6');
+    const lite = '#aab3d6';
+    text(g, 'A FIRE MAGE’S ROTATION', 30, 42, M(800, 16), lite);
     const on = Object.entries(fix).filter(([, v]) => v).map(([k]) => FIXES[k].label);
-    text(g, on.length ? `fixes on: ${on.join(', ')}` : 'fixed cooldowns, no randomness', W - 30, 44, F(600, 15), on.length ? C.gold : '#aab3d6', 'right');
-    // cast log
-    text(g, 'cast log (newest on the right)', 30, 82, F(600, 14), '#aab3d6');
+    text(g, on.length ? `fix on: ${on.join(', ')}` : 'fixed cooldowns, no procs', W - 30, 42, F(600, 15), on.length ? C.gold : lite, 'right');
+    text(g, 'The rule: each turn (one global cooldown), cast the strongest spell that is off cooldown, meaning recharged and ready.', 30, 68, F(600, 15), '#fff');
+    // what was pressed
+    text(g, 'the rotation so far: what was cast, newest on the right', 30, 100, F(600, 14), lite);
     const lg = log.slice(-20), d20 = dec.slice(-20);
-    lg.forEach((e, i) => { const x = 30 + i * 49; if (e.k) icon(g, SI(e.k), x, 94, 42); if (d20[i]) { g.strokeStyle = C.gold; g.lineWidth = 3; rr(g, x - 3, 91, 48, 48, 8); g.stroke(); } });
-    text(g, 'gold frame: a cast the last cycle did not predict, a real decision', 30, 160, F(500, 13), '#aab3d6');
-    // the dummy
-    g.fillStyle = '#8a6a3a'; g.fillRect(500, 290, 40, 120); g.fillStyle = '#c9a36a'; g.beginPath(); g.arc(520, 268, 34, 0, Math.PI * 2); g.fill(); g.fillRect(470, 315, 100, 16);
-    if (cur && cur.k) { const p = clamp(frac); g.fillStyle = `rgba(255,140,30,${1 - p})`; g.beginPath(); g.arc(520 - 260 * (1 - p), 300, 16, 0, Math.PI * 2); g.fill(); }
-    // action bar
-    const by = 430; text(g, 'action bar', 30, by - 10, F(600, 14), '#aab3d6');
-    cur.slots.forEach((k, i) => { const x = 30 + i * 70; g.globalAlpha = cur.lit[i] ? 1 : .3; icon(g, SI(k), x, by, 60); g.globalAlpha = 1; text(g, String(i + 1), x + 6, by + 18, M(800, 14), '#fff');
-      if (k === 'pyro' && fix.procs && cur.lit[i]) { g.strokeStyle = C.gold; g.lineWidth = 4; rr(g, x - 3, by - 3, 66, 66, 8); g.stroke(); } });
+    lg.forEach((e, i) => { const x = 30 + i * 49; if (e.k) { icon(g, SI(e.k), x, 110, 42); text(g, String(e.slots.indexOf(e.k) + 1), x + 21, 172, M(800, 15), '#fff', 'center'); } else text(g, 'pass', x + 21, 138, F(600, 13), lite, 'center');
+      if (d20[i] && e.k) { g.strokeStyle = C.gold; g.lineWidth = 3; rr(g, x - 3, 107, 48, 48, 8); g.stroke(); } });
+    // brackets when the last cycle repeats exactly
+    const p = lg[lg.length - 1].p, quiet = d20.slice(-14).every(d => !d);
+    if (p && quiet) {
+      for (let end = 20, k = 0; end - p >= 0 && k < 3; end -= p, k++) {
+        const x0 = 30 + (end - p) * 49, x1 = 30 + end * 49 - 7;
+        g.strokeStyle = C.gold; g.lineWidth = 2; g.beginPath(); g.moveTo(x0, 182); g.lineTo(x0, 190); g.lineTo(x1, 190); g.lineTo(x1, 182); g.stroke();
+        text(g, k ? 'the same again' : `the same ${p} casts`, (x0 + x1) / 2, 210, F(700, 14), C.gold, 'center');
+      }
+    } else text(g, 'gold frame: a cast you could not have guessed by repeating the last cycle', 30, 206, F(600, 14), C.gold);
+    // the buttons
+    const by = 250; text(g, 'your action bar', 30, by - 8, F(600, 14), lite);
+    cur.slots.forEach((k, i) => {
+      const x = 30 + i * 196, lit = cur.lit[i], left = cur.cd ? cur.cd[k] || 0 : 0;
+      g.fillStyle = lit ? '#2c3456' : '#232943'; rr(g, x, by, 184, 112, 10); g.fill();
+      if (k === 'pyro' && fix.procs && lit) { g.strokeStyle = C.gold; g.lineWidth = 3; rr(g, x, by, 184, 112, 10); g.stroke(); }
+      g.globalAlpha = lit ? 1 : .35; icon(g, SI(k), x + 10, by + 10, 52); g.globalAlpha = 1;
+      text(g, `${i + 1}`, x + 16, by + 28, M(800, 15), '#fff');
+      text(g, SP[k][0], x + 72, by + 30, M(700, 15), '#fff');
+      const rule = k === 'pyro' && fix.procs ? 'when a proc lights it' : ROT_CD[k] ? `cooldown: ${ROT_CD[k]} turns` : 'no cooldown';
+      text(g, rule, x + 72, by + 52, F(500, 13), lite);
+      const state = !lit ? (fix.draw && !left ? 'not in your hand' : left ? `ready in ${left}` : 'waiting') : 'ready';
+      text(g, state, x + 12, by + 92, M(700, 14), lit ? C.green : '#7a83a8');
+      if (cur.k === k) text(g, '← pressed', x + 172, by + 92, M(700, 14), C.gold, 'right');
+    });
+    text(g, 'strongest first: Pyroblast > Living Bomb > Fire Blast > Scorch > Fireball', 30, by + 136, F(500, 13), lite);
     // meter
-    const n = d20.filter(Boolean).length, mx0 = 420;
-    text(g, 'decisions in the last 20 casts', mx0, by + 4, F(600, 15), '#aab3d6');
-    g.fillStyle = '#323a5c'; rr(g, mx0, by + 18, 580, 22, 11); g.fill(); g.fillStyle = n > 6 ? C.green : n > 2 ? C.gold : C.red; rr(g, mx0, by + 18, Math.max(22, 580 * n / 20), 22, 11); g.fill();
-    text(g, `${n} / 20`, mx0 + 590, by + 36, M(800, 18), '#fff', 'right');
-    text(g, 'damage', mx0, by + 72, F(600, 15), '#aab3d6');
-    g.fillStyle = '#323a5c'; rr(g, mx0, by + 84, 580, 22, 11); g.fill(); g.fillStyle = '#e07b2a'; rr(g, mx0, by + 84, 580 * .96, 22, 11); g.fill();
-    text(g, 'the bot always presses the best button', mx0 + 590, by + 102, F(600, 13), '#fff', 'right');
-    if (n === 0) text(g, 'Solved: the game is playing you.', 520, 212, M(800, 22), C.gold, 'center');
+    const n = d20.filter(Boolean).length, my = 440;
+    text(g, 'real decisions in the last 20 casts', 30, my, F(600, 15), lite);
+    g.fillStyle = '#323a5c'; rr(g, 30, my + 12, 860, 24, 12); g.fill(); g.fillStyle = n > 6 ? C.green : n > 2 ? C.gold : C.red; rr(g, 30, my + 12, Math.max(24, 860 * n / 20), 24, 12); g.fill();
+    text(g, `${n} / 20`, 1010, my + 32, M(800, 20), '#fff', 'right');
+    g.font = F(600, 16); g.fillStyle = '#fff'; g.textAlign = 'left';
+    wrap(g, n === 0 ? 'Solved rotation. Playing perfectly is now replaying a memorised tune: you are not choosing anything, the game is playing you.' : n < 6 ? 'Mostly predictable: a little to watch for, a lot to repeat.' : 'You have to look at the buttons again: the best cast keeps changing.', 30, my + 70, 980, 22);
   }
   canvasDemo('rot', (sl, cv, g) => {
     const fSeg = $(sl, '.ro-fix'), out = $(sl, '.ro-out'), tourBtn = $(sl, '.ro-tour');
     fSeg.innerHTML = Object.entries(FIXES).map(([k, f]) => `<button class="btn" data-f="${k}">${f.label}</button>`).join('');
-    const GCD = .45, STAGES = [[{}, 'Fixed cooldowns, a bot that always presses the best button. Within a few casts the log repeats exactly, and the decisions meter falls to zero while damage stays at its maximum.'],
-      [{ procs: true }, FIXES.procs.say], [{ draw: true }, FIXES.draw.say], [{ boons: true }, FIXES.boons.say],
-      [{}, 'Chess has the same problem at the scale of a whole game: memorised openings. Bobby Fischer’s answer, Chess960, shuffles the back row. And the scripture’s caveat: some players love a rotation the way a musician loves scales. It is an audience choice.']];
+    const GCD = .45, STAGES = [[{}, 'A rotation is the order you cast your spells. A cooldown is how long a spell needs to recharge before you can cast it again. Here the rule is simple: each turn, cast the strongest spell that is off cooldown. Because the cooldowns never change, the rule produces the same 7 casts over and over. Once you notice, you are not deciding anything; you are replaying a memorised tune.'],
+      [{ procs: true }, 'Fix 1, procs. A proc is a random trigger: here a critical hit can light up Pyroblast for one free cast (WoW’s Hot Streak). You know what to press, but not when, so you have to watch the bar again.'],
+      [{ draw: true }, 'Fix 2, card draw: only three of the five buttons are available each turn, the way Slay the Spire deals you a hand. The best press changes every turn.'],
+      [{ boons: true }, 'Fix 3, random offers: every few turns one button is swapped for a different one, the way Hades offers boons. The old sequence stops working.'],
+      [{}, 'Chess has the same problem across a whole game: memorised openings. Bobby Fischer’s answer, Chess960, shuffles the back row. One caveat from the scripture: some players love a fixed sequence the way a musician loves scales, so this is a choice about your audience.']];
     const LEN = 11, DUR = STAGES.length * LEN;
     const st = { tour: true, held: false, t: 0, fix: {}, tt: 0, stage: -1 };
     const manual = () => { st.tour = false; tourBtn.classList.remove('on'); };
