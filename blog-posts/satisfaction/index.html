@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Satisfaction · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="../shared/blog.css">
+<style>
+  .mt-side .seg.tight .btn { font-size: 14px; padding: 4px 8px; }
+  .mt-side .btn:disabled { opacity: .4; cursor: default; }
+</style>
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · Blog Posts · Lesson 4: Satisfaction', home: '../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<section class="slide" data-title="The ceremony dial" data-demo="ceremony">
+  <div class="kicker">lesson 4 · satisfaction · Balatro</div>
+  <h2 class="sm">The same points, <span class="accent">a different win</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Ceremony layers</h4>
+      <div class="ce-layers"></div>
+      <div class="row wrap"><button class="btn ce-all">All on</button><button class="btn ce-none">All off</button></div>
+      <h4>The hand</h4>
+      <div class="seg tight ce-hand"></div>
+      <div class="row wrap"><button class="btn ce-play">♪ Play hand</button><button class="btn ce-tour on">▶ Walk-through</button></div>
+      <p class="mt-out ce-out"></p>
+      <p class="src">Hand values follow Balatro (LocalThunk, 2024): a Flush is 35 chips × 4 mult, a Straight Flush 100 × 8, and the plain Joker adds 4 mult. Play hand makes sound when rising pitch is on. Felt it is illustrative. The post’s phrase is Tom Cadwell’s: “the expectation of ceremony.”</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Spelunky's ghost" data-demo="ghost">
+  <div class="kicker">lesson 4 · satisfaction · negative reinforcement</div>
+  <h2 class="sm">The ghost <span class="accent">sets the pace</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>The push</h4>
+      <div class="seg tight gh-mode"></div>
+      <label class="rng">Arrives at <b class="gh-tv">3:00</b><input class="gh-time" type="range" min="40" max="480" step="10" value="180"></label>
+      <div class="row wrap"><button class="btn gh-tour on">▶ Walk-through</button></div>
+      <p class="mt-out gh-out"></p>
+      <p class="src">Spelunky (Mossmouth) sends a ghost after a few minutes on one level, with a warning first, and gems it passes turn into diamonds. Thirty players are simulated with made-up speeds; “Make it a bonus” is a hypothetical, from the post. Ghost icon by Lorc, game-icons.net, CC BY 3.0.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="The stress line" data-demo="stress">
+  <div class="kicker">lesson 4 · satisfaction · pacing</div>
+  <h2 class="sm">Difficulty is not <span class="accent">stress</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Layouts</h4>
+      <div class="seg tight sr-pre"></div>
+      <label class="rng">Player skill <b class="sr-sv">1.5</b><input class="sr-skill" type="range" min="0" max="4" step="0.5" value="1.5"></label>
+      <div class="row wrap"><button class="btn sr-tour on">▶ Walk-through</button></div>
+      <p class="mt-out sr-out"></p>
+      <p class="src">Click a room to change its type. Felt stress is an illustrative model: it jumps when a room is harder than what you just adapted to, and sinks when it isn’t. Layout in the style of a Hades (Supergiant Games, 2020) region, not a map of one.</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="../shared/lp.js"></script>
+<script src="satisfaction.js"></script>
+</body>
+</html>
