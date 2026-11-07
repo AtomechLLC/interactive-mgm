@@ -21,13 +21,13 @@
   const TREE = { x: 318, y: 150 };
   const LEDGE_Y = 112, CLIFF_X = 690, DROP = 4.676 * PXV;                // the plateau's south edge, its west end, its height
   const STAIR = { top: [742, LEDGE_Y - 6], bot: [742, LEDGE_Y + DROP + 8] };
-  const SPOT = { open: [470, 246], tree: [228, 172], ledge: [880, LEDGE_Y], lane: [150, 300], start: [500, 246] };
+  const SPOT = { open: [470, 246], tree: [172, 172], ledge: [880, LEDGE_Y], lane: [150, 300], start: [500, 246] };
   const high = (x, y) => x > CLIFF_X && y <= LEDGE_Y + 2;
 
   // the four outcomes, with the game's frame data for the Axes class (60 fps simulation frames)
   const ACT = {
     combo: { clip: 'combo', name: 'Combo swing', move: 'Combo 1 · A1', startup: 33, hit: [33, 53], total: 118, push: 1 },
-    chop: { clip: 'chop', name: 'Chop the tree', move: 'Combo 1 · B1 swing', startup: 33, hit: [33, 43], total: 114, push: .25 },
+    chop: { clip: 'chop', name: 'Chop the tree', move: 'Gathering · Chop Tree', startup: 59, hit: [59, 65], total: 149, push: 0 },   // no hitbox data: the bite into the trunk, read off the clip
     rollAtk: { clip: 'roll-attack', name: 'Roll attack', move: 'Rolling · Roll Attack A1', startup: 30, hit: [30, 80], total: 112, push: .75 },
     plunge: { clip: 'plunge', name: 'Plunge attack', move: 'Plunge · Crushing Plunge', startup: 27, hit: [27, 38], total: 155, push: 1 },
   };
@@ -45,7 +45,7 @@
   function whereOf(h) {
     if (high(h.x, h.y)) return h.y > LEDGE_Y - 16 && h.x > 790 ? 'ledge' : 'plateau';
     const dx = TREE.x - h.x, dy = TREE.y + 20 - h.y;
-    if (Math.abs(dy) < 44 && Math.abs(dx) < 110 && Math.abs(dx) > 40) return 'tree';
+    if (Math.abs(dy) < 44 && Math.abs(dx) < 175 && Math.abs(dx) > 40) return 'tree';
     return 'open';
   }
   const stateOf = h => h.mode === 'roll' ? 'Rolling' : h.mode === 'act' ? 'Attacking' : h.mode === 'walk' ? 'Walking' : 'Standing';
@@ -100,12 +100,12 @@
   const TOUR = [
     [.5, 'say', 'Open ground. The hero stands still and the player presses Attack.'],
     [1.0, 'attack'],
-    [3.3, 'walk', SPOT.tree], [5.2, 'say', 'Same key, next to a tree.'], [5.5, 'attack'],
-    [7.8, 'walk', SPOT.lane], [8.9, 'say', 'Same key, in the middle of a dodge roll.'], [9.2, 'dodge'], [9.55, 'attack'],
-    [11.8, 'walk', SPOT.ledge], [15.6, 'say', 'Same key, standing at a ledge.'], [15.9, 'attack'],
-    [19.4, 'walk', SPOT.start], [19.6, 'say', 'Four presses of one key, four actions. The input never changed; the context did.'],
+    [3.3, 'walk', SPOT.tree], [5.8, 'say', 'Same key, next to a tree.'], [6.0, 'attack'],
+    [8.6, 'walk', SPOT.lane], [9.7, 'say', 'Same key, in the middle of a dodge roll.'], [10.0, 'dodge'], [10.35, 'attack'],
+    [12.6, 'walk', SPOT.ledge], [16.4, 'say', 'Same key, standing at a ledge.'], [16.7, 'attack'],
+    [20.2, 'walk', SPOT.start], [20.4, 'say', 'Four presses of one key, four actions. The input never changed; the context did.'],
   ];
-  const DUR = 23;
+  const DUR = 23.8;
 
   canvasDemo('axe', (s, cv, g) => {
     const st = { tour: true, t: 0, held: false, h: fresh(), simT: 0, cap: '', key: '' };
@@ -240,7 +240,7 @@
     // reach zones, drawn faintly: the tree's reach and the ledge's edge
     const w = whereOf(h);
     g.save(); g.setLineDash([6, 6]); g.lineWidth = 2;
-    g.strokeStyle = w === 'tree' ? 'rgba(255,245,200,.95)' : 'rgba(255,245,200,.35)'; g.beginPath(); g.ellipse(TREE.x, TREE.y + 20, 112, 46, 0, 0, TAU); g.stroke();
+    g.strokeStyle = w === 'tree' ? 'rgba(255,245,200,.95)' : 'rgba(255,245,200,.35)'; g.beginPath(); g.ellipse(TREE.x, TREE.y + 20, 176, 50, 0, 0, TAU); g.stroke();
     g.strokeStyle = w === 'ledge' ? 'rgba(255,245,200,.95)' : 'rgba(255,245,200,.35)'; g.strokeRect(792, LEDGE_Y - 18, W - 810, 24);
     g.restore();
     // the tree shakes and sheds chips while a chop is in its hit window
