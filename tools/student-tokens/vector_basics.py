@@ -182,6 +182,159 @@ PROPS = {
 }
 for n, b in PROPS.items(): svg('props', n, b)
 
+# ---------------------------------------------------------------- enemy archetypes
+# The same grey disc with red brows and a jagged mouth as the enemy token, plus one prop or silhouette change that
+# names its job in a fight. Each disc gets a soft shadow crescent and a highlight, a step more detail than `enemy`.
+RED = '#e5322d'; STEEL = '#9aa1ad'; WOOD = '#8a5a2b'; GOLD = '#ffb951'
+L = f'stroke="{INK}" stroke-width="2" stroke-linejoin="round"'
+
+def face(cx=50, cy=50, r=40, fill='#8a8f9c', eyes=RED, mouth=True, shade=True):
+    """Enemy disc of radius r at (cx, cy): body, shading, brows and mouth (all drawn in the 100-unit base and scaled)."""
+    s = r / 40
+    body = f'<circle cx="50" cy="50" r="40" fill="{fill}" stroke="{INK}" stroke-width="{3 / s:.2f}"/>'
+    if shade:
+        body += (f'<path d="M18 74 A40 40 0 0 0 82 74 A44 30 0 0 1 18 74 Z" fill="{INK}" opacity=".16"/>'
+                 f'<ellipse cx="36" cy="26" rx="10" ry="5" transform="rotate(-30 36 26)" fill="#fff" opacity=".35"/>')
+    sw = f'stroke="{INK}" stroke-width="{2 / s:.2f}" stroke-linejoin="round"'
+    body += (f'<polygon points="{pts([(22, 38), (46, 44), (42, 52), (26, 48)])}" fill="{eyes}" {sw}/>'
+             f'<polygon points="{pts([(78, 38), (54, 44), (58, 52), (74, 48)])}" fill="{eyes}" {sw}/>')
+    if mouth:
+        body += f'<polygon points="{pts([(34, 64), (66, 64), (62, 72), (56, 68), (50, 73), (44, 68), (38, 72)])}" fill="{eyes}" {sw}/>'
+    return f'<g transform="translate({cx} {cy}) scale({s:.3f}) translate(-50 -50)">{body}</g>'
+
+def disc_only(cx, cy, r, fill):  # a body with no face, for things drawn on top
+    return f'<circle cx="{cx}" cy="{cy}" r="{r}" fill="{fill}" stroke="{INK}" stroke-width="3"/>'
+
+def speed(x, y, n=3, gap=9, w=16):
+    return ''.join(f'<line x1="{x}" y1="{y + i * gap}" x2="{x - w + (i % 2) * 6}" y2="{y + i * gap}" stroke="{INK}" stroke-width="3" stroke-linecap="round"/>' for i in range(n))
+
+ARCH = {
+    # holds the line: thick helmet and a tower shield
+    'tank': face(46, 54, 36, '#6f7686')
+        + f'<path d="M12 50 A34 34 0 0 1 80 50 L80 44 H12 Z" fill="{STEEL}" {L}/>'
+        + f'<path d="M14 46 A32 32 0 0 1 78 46" fill="none" stroke="{INK}" stroke-width="2"/><rect x="43" y="16" width="6" height="30" fill="#7b8496" {L}/>'
+        + ''.join(f'<circle cx="{x}" cy="44" r="1.8" fill="{INK}"/>' for x in (20, 32, 60, 72))
+        + f'<path d="M64 52 H94 V78 Q94 92 79 98 Q64 92 64 78 Z" fill="{STEEL}" {L}/><path d="M79 56 V94 M68 70 H90" stroke="#7b8496" stroke-width="4"/><circle cx="79" cy="70" r="4" fill="{GOLD}" {L}/>',
+    # many small bodies that arrive together
+    'swarm': face(30, 36, 20, '#b3b7c2') + face(72, 34, 18, '#b3b7c2') + face(52, 70, 22, '#a3a8b4') + face(20, 74, 13, '#c3c6cf') + face(84, 70, 12, '#c3c6cf'),
+    # hits from range: hood and bow
+    'archer': face(44, 54, 34, '#8a8f9c')
+        + f'<path d="M10 58 Q8 16 44 14 Q80 16 78 58 Q70 30 44 28 Q18 30 10 58 Z" fill="#4f6b3a" {L}/>'
+        + f'<path d="M78 12 Q98 50 78 92" fill="none" stroke="{WOOD}" stroke-width="6" stroke-linecap="round"/><line x1="78" y1="12" x2="78" y2="92" stroke="{INK}" stroke-width="1.5"/>'
+        + f'<line x1="68" y1="52" x2="94" y2="52" stroke="{INK}" stroke-width="2.5"/><polygon points="{pts([(95, 52), (87, 47), (87, 57)])}" fill="{STEEL}" {L}/>',
+    # one long, telegraphed shot: scope over one eye and a laser line
+    'sniper': face(42, 56, 34, '#8a8f9c')
+        + f'<line x1="56" y1="50" x2="100" y2="10" stroke="{RED}" stroke-width="2.5" stroke-dasharray="5 3"/>'
+        + f'<circle cx="56" cy="50" r="11" fill="#fff" fill-opacity=".55" stroke="{INK}" stroke-width="4"/><path d="M56 41 V59 M47 50 H65" stroke="{RED}" stroke-width="2"/>'
+        + f'<rect x="10" y="20" width="44" height="7" rx="2" fill="#4a4f5c" {L}/><polygon points="{pts([(10, 20), (4, 18), (4, 29), (10, 27)])}" fill="{INK}"/>',
+    # keeps the others alive: green cross and a soft glow
+    'healer': f'<circle cx="50" cy="56" r="42" fill="#2fb36a" opacity=".18"/>' + face(50, 56, 34, '#8a8f9c')
+        + f'<circle cx="50" cy="16" r="14" fill="#fff" {L}/><path d="M45 6 H55 V11 H60 V21 H55 V26 H45 V21 H40 V11 H45 Z" fill="#2fb36a" {L}/>'
+        + f'<path d="M86 40 l3 -6 l3 6 l-3 6 Z M10 72 l3 -6 l3 6 l-3 6 Z" fill="#2fb36a" stroke="{INK}" stroke-width="1"/>',
+    # brings more enemies: hood, and two small minions climbing out of portals
+    'summoner': face(50, 42, 30, '#7d7590')
+        + f'<path d="M18 52 Q16 6 50 6 Q84 6 82 52 Q74 22 50 22 Q26 22 18 52 Z" fill="#4a2c7a" {L}/>'
+        + f'<ellipse cx="22" cy="86" rx="18" ry="6" fill="#8a4fd6" {L}/><ellipse cx="78" cy="86" rx="18" ry="6" fill="#8a4fd6" {L}/>'
+        + face(22, 78, 10, '#b3b7c2', shade=False) + face(78, 78, 10, '#b3b7c2', shade=False)
+        + f'<rect x="12" y="84" width="20" height="8" fill="#8a4fd6"/><rect x="68" y="84" width="20" height="8" fill="#8a4fd6"/>'
+        + f'<path d="M12 84 Q22 92 32 84 M68 84 Q78 92 88 84" fill="none" stroke="{INK}" stroke-width="2"/>',
+    # dies loudly: bomb body, lit fuse, warning ring
+    'exploder': f'<circle cx="48" cy="56" r="44" fill="none" stroke="{RED}" stroke-width="2.5" stroke-dasharray="6 5"/>' + face(48, 56, 34, '#4a4f5c', eyes=GOLD)
+        + f'<rect x="58" y="16" width="14" height="10" rx="2" fill="#7b8496" transform="rotate(35 65 21)" {L}/>'
+        + f'<path d="M70 16 Q78 4 88 10" fill="none" stroke="{WOOD}" stroke-width="3.5"/><polygon points="{star(89, 9, 7, 9, 3.5)}" fill="{GOLD}" stroke="{INK}" stroke-width="1"/>',
+    # closes distance in a straight line: horns and speed lines
+    'charger': face(56, 54, 34, '#8f7a6a')
+        + f'<path d="M30 34 Q14 28 12 8 Q24 22 38 24 Z" fill="#efe6d2" {L}/><path d="M82 34 Q96 28 96 8 Q86 22 74 24 Z" fill="#efe6d2" {L}/>'
+        + speed(18, 48, 4, 9, 14) + f'<path d="M44 86 Q56 92 68 86" fill="none" stroke="{INK}" stroke-width="2"/>',
+    # strikes the back line: mask across the eyes, dagger
+    'assassin': face(48, 52, 36, '#5d6170')
+        + f'<path d="M12 40 Q48 32 84 40 L84 56 Q48 50 12 56 Z" fill="#262c3a" {L}/>'
+        + f'<polygon points="{pts([(22, 42), (42, 46), (40, 52), (24, 50)])}" fill="{RED}"/><polygon points="{pts([(74, 42), (54, 46), (56, 52), (72, 50)])}" fill="{RED}"/>'
+        + f'<path d="M84 44 Q96 50 98 62" fill="none" stroke="#262c3a" stroke-width="5" stroke-linecap="round"/>'
+        + f'<polygon points="{pts([(80, 96), (76, 72), (80, 64), (84, 72)])}" fill="{STEEL}" {L}/><rect x="72" y="72" width="16" height="4" fill="{INK}"/>',
+    # casts spells: pointed hat and an orb
+    'caster': face(46, 60, 32, '#8a8f9c')
+        + f'<path d="M14 40 L58 2 L56 18 L64 36 Z" fill="#3d5fb0" {L}/><path d="M8 42 Q46 28 84 40 Q46 46 8 42 Z" fill="#2c467f" {L}/>'
+        + f'<polygon points="{star(46, 22, 5, 5, 2)}" fill="{GOLD}"/>'
+        + f'<circle cx="86" cy="74" r="10" fill="#57b6ff" {L}/><circle cx="83" cy="71" r="3" fill="#fff" opacity=".8"/>'
+        + f'<path d="M74 60 l2 -5 l2 5 l5 2 l-5 2 l-2 5 l-2 -5 l-5 -2 Z" fill="#fff" stroke="{INK}" stroke-width="1"/>',
+    # makes the others stronger: war banner with up arrows
+    'buffer': face(40, 58, 32, '#8a8f9c')
+        + f'<rect x="70" y="6" width="5" height="90" fill="{WOOD}" {L}/><path d="M75 8 H95 V44 L85 38 L75 44 Z" fill="{RED}" {L}/>'
+        + f'<path d="M81 30 L85 24 L89 30 M81 22 L85 16 L89 22" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>'
+        + f'<path d="M10 22 L18 12 L26 22 M30 14 L38 4 L46 22" fill="none" stroke="{GOLD}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>',
+    # protects others: a bubble around itself and an ally slot
+    'shielder': f'<circle cx="50" cy="52" r="46" fill="#57b6ff" fill-opacity=".22" stroke="#3d8bff" stroke-width="3"/>'
+        + f'<path d="M16 40 A38 38 0 0 1 40 12" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8"/>'
+        + face(50, 56, 30, '#8a8f9c')
+        + f'<path d="M50 4 l6 3 V13 Q56 19 50 22 Q44 19 44 13 V7 Z" fill="#3d8bff" {L}/>',
+    # breaks into smaller copies when hit
+    'splitter': face(36, 40, 30, '#8a8f9c')
+        + f'<polyline points="{pts([(40, 10), (32, 26), (42, 36), (30, 52), (38, 70)])}" fill="none" stroke="{INK}" stroke-width="3" stroke-linejoin="round"/>'
+        + f'<path d="M66 66 L74 74 M60 74 L66 80" stroke="{INK}" stroke-width="2.5" stroke-linecap="round"/>'
+        + face(80, 78, 14, '#b3b7c2') + face(62, 92, 8, '#c3c6cf', shade=False),
+    # ignores the ground: bat wings and a shadow below
+    'flyer': f'<ellipse cx="50" cy="94" rx="22" ry="4" fill="{INK}" opacity=".25"/>'
+        + f'<path d="M30 46 Q14 22 2 30 Q10 38 6 48 Q14 44 16 54 Q22 46 30 56 Z" fill="#5d6170" {L}/>'
+        + f'<path d="M70 46 Q86 22 98 30 Q90 38 94 48 Q86 44 84 54 Q78 46 70 56 Z" fill="#5d6170" {L}/>'
+        + face(50, 50, 28, '#8a8f9c'),
+    # hides underground and pops up: half-buried with dirt
+    'burrower': face(50, 58, 34, '#8f7a6a', mouth=False)
+        + f'<path d="M2 74 Q14 62 26 70 Q38 58 50 68 Q62 58 74 70 Q86 62 98 74 V98 H2 Z" fill="#7a6250" {L}/>'
+        + f'<circle cx="20" cy="84" r="3" fill="#a08a78"/><circle cx="56" cy="88" r="4" fill="#a08a78"/><circle cx="82" cy="82" r="2.5" fill="#a08a78"/>'
+        + f'<path d="M14 54 L8 44 M86 54 L92 44 M50 26 V16" stroke="{INK}" stroke-width="3" stroke-linecap="round"/>',
+    # does not move, covers an area: bolted base and a barrel
+    'turret': f'<rect x="14" y="72" width="72" height="22" rx="4" fill="#4a4f5c" {L}/>'
+        + ''.join(f'<circle cx="{x}" cy="83" r="2.5" fill="{STEEL}"/>' for x in (24, 40, 60, 76))
+        + f'<rect x="56" y="34" width="42" height="14" rx="3" fill="#4a4f5c" {L}/><rect x="92" y="32" width="6" height="18" rx="2" fill="{INK}"/>'
+        + face(44, 46, 30, '#7b8496'),
+    # controls space: sets snares around it
+    'trapper': face(50, 40, 30, '#7d8a72')
+        + f'<path d="M6 86 H42 M58 86 H94" stroke="{INK}" stroke-width="3" stroke-linecap="round"/>'
+        + f'<path d="M8 86 L12 76 L16 86 L20 76 L24 86 L28 76 L32 86 L36 76 L40 86" fill="none" stroke="{STEEL}" stroke-width="3" stroke-linejoin="round"/>'
+        + f'<path d="M60 86 L64 76 L68 86 L72 76 L76 86 L80 76 L84 86 L88 76 L92 86" fill="none" stroke="{STEEL}" stroke-width="3" stroke-linejoin="round"/>'
+        + f'<circle cx="24" cy="90" r="3" fill="{INK}"/><circle cx="76" cy="90" r="3" fill="{INK}"/>'
+        + f'<path d="M50 70 V80" stroke="{INK}" stroke-width="2" stroke-dasharray="3 2"/>',
+    # pulls you in: chain and hook
+    'grappler': face(36, 54, 32, '#8a8f9c')
+        + ''.join(f'<ellipse cx="{66 + i * 8}" cy="{50 - i * 8}" rx="5" ry="3.2" transform="rotate(-45 {66 + i * 8} {50 - i * 8})" fill="none" stroke="#7b8496" stroke-width="2.5"/>' for i in range(4))
+        + f'<path d="M94 14 V24 Q94 34 84 34 Q76 34 76 26" fill="none" stroke="{STEEL}" stroke-width="5" stroke-linecap="round"/><polygon points="{pts([(76, 26), (72, 20), (80, 22)])}" fill="{STEEL}" {L}/>',
+    # hits harder as it gets hurt: red tint, rage marks, axe
+    'berserker': face(44, 56, 34, '#b06a64')
+        + f'<path d="M18 22 L24 30 M30 14 L32 24 M8 34 L18 38" stroke="{RED}" stroke-width="4" stroke-linecap="round"/>'
+        + f'<path d="M36 30 l4 -6 l4 6 M50 28 l4 -6 l4 6" fill="none" stroke="{INK}" stroke-width="2.5" stroke-linecap="round"/>'
+        + f'<rect x="80" y="16" width="6" height="80" rx="2" fill="{WOOD}" {L}/><path d="M86 18 Q98 22 96 42 Q91 36 86 38 Z M80 18 Q68 22 70 42 Q75 36 80 38 Z" fill="{STEEL}" {L}/>',
+    # heals itself over time: green tint and a loop arrow
+    'regenerator': face(50, 54, 34, '#6f9a6a')
+        + f'<path d="M14 30 A40 40 0 0 1 82 20" fill="none" stroke="#2fb36a" stroke-width="5" stroke-linecap="round"/><polygon points="{pts([(90, 26), (76, 12), (74, 28)])}" fill="#2fb36a" {L}/>'
+        + f'<path d="M86 66 H92 V60 H98 V66 H104 V72 H98 V78 H92 V72 H86 Z" transform="translate(-10 0)" fill="#fff" {L}/>'
+        + f'<path d="M12 68 H16 V64 H20 V68 H24 V72 H20 V76 H16 V72 H12 Z" fill="#fff" {L}/>',
+    # unseen until it strikes: dashed, faded outline
+    'stalker': f'<g opacity=".45">{face(50, 50, 38, "#8a8f9c", shade=False)}</g>'
+        + f'<circle cx="50" cy="50" r="40" fill="none" stroke="{INK}" stroke-width="3" stroke-dasharray="7 6"/>'
+        + f'<polygon points="{pts([(22, 38), (46, 44), (42, 52), (26, 48)])}" fill="{RED}" {L}/><polygon points="{pts([(78, 38), (54, 44), (58, 52), (74, 48)])}" fill="{RED}" {L}/>',
+    # looks like loot: a chest with the face inside the lid
+    'mimic': f'<rect x="12" y="52" width="76" height="40" rx="3" fill="#c08a4a" {L}/><path d="M12 64 H88" stroke="#8a5a2b" stroke-width="4"/>'
+        + f'<path d="M12 52 L18 46 L24 52 L30 46 L36 52 L42 46 L48 52 L54 46 L60 52 L66 46 L72 52 L78 46 L84 52 L88 48" fill="#fff" {L}/>'
+        + f'<path d="M14 40 Q10 8 50 6 Q90 8 86 40 Z" fill="#a8743a" {L}/>'
+        + f'<path d="M16 40 L22 46 L28 40 L34 46 L40 40 L46 46 L52 40 L58 46 L64 40 L70 46 L76 40 L82 46 L86 40" fill="#fff" {L}/>'
+        + f'<polygon points="{pts([(26, 22), (44, 28), (40, 34), (28, 30)])}" fill="{RED}" {L}/><polygon points="{pts([(74, 22), (56, 28), (60, 34), (72, 30)])}" fill="{RED}" {L}/>'
+        + f'<rect x="44" y="60" width="12" height="14" fill="#ffd23f" {L}/><path d="M40 44 Q50 54 60 44" fill="none" stroke="#8a3a52" stroke-width="5" stroke-linecap="round"/>',
+    # steals health: fangs and a drop
+    'leech': face(46, 50, 36, '#7d6a82', mouth=False)
+        + f'<path d="M30 64 Q46 74 62 64" fill="none" stroke="{INK}" stroke-width="3" stroke-linecap="round"/>'
+        + f'<polygon points="{pts([(36, 66), (40, 80), (44, 68)])}" fill="#fff" {L}/><polygon points="{pts([(48, 68), (52, 80), (56, 66)])}" fill="#fff" {L}/>'
+        + f'<path d="M86 60 C80 72 76 78 76 84 C76 90 81 94 86 94 C91 94 96 90 96 84 C96 78 92 72 86 60 Z" fill="#a8201c" {L}/>'
+        + f'<path d="M84 50 L86 42 L88 50" fill="none" stroke="#a8201c" stroke-width="2"/>',
+    # a structure that keeps producing enemies until destroyed
+    'spawner': f'<path d="M8 94 Q6 40 30 22 Q50 6 70 22 Q94 40 92 94 Z" fill="#7a6250" {L}/>'
+        + f'<path d="M14 60 Q50 50 86 60 M10 78 Q50 68 90 78 M20 40 Q50 30 80 40" fill="none" stroke="#5e4a3c" stroke-width="2.5"/>'
+        + f'<ellipse cx="50" cy="86" rx="16" ry="9" fill="{INK}"/><ellipse cx="28" cy="50" rx="6" ry="4" fill="{INK}"/><ellipse cx="70" cy="46" rx="6" ry="4" fill="{INK}"/>'
+        + face(50, 80, 9, '#b3b7c2', shade=False)
+        + f'<polygon points="{pts([(36, 32), (46, 36), (44, 40), (38, 38)])}" fill="{RED}" {L}/><polygon points="{pts([(64, 32), (54, 36), (56, 40), (62, 38)])}" fill="{RED}" {L}/>',
+}
+for n, b in ARCH.items(): svg('archetypes', f'enemy-{n}', b)
+
 for k, v in files.items():
     p = f'{OUT}/svg/{k}.svg'; os.makedirs(os.path.dirname(p), exist_ok=True); open(p, 'w').write(v)
 print(len(files), 'svgs')
