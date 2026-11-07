@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Five Gates · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="../shared/blog.css">
+<style>
+  .fg-own { display: none; margin: 4px 0 10px; }
+  .fg-own input { width: 100%; font: 500 17px Jost, sans-serif; padding: 6px 10px; border: 2px solid #cdbf9f; border-radius: 8px; color: var(--ink); background: #fffaf0; }
+  .fg-guess { display: none; }
+  .fg-guess.show { display: flex; }
+  .fg-pass { background: #d8f0df !important; border-color: #5fb47c !important; color: #145c33 !important; }
+  .fg-stop { background: #f9d9d6 !important; border-color: #e07b72 !important; color: #8a1c15 !important; }
+  .fg-list { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-top: 18px; }
+  .fg-list a { display: flex; flex-direction: column; gap: 8px; padding: 18px 16px; border-radius: 14px; background: rgba(255, 252, 244, .85); border: 2px solid #cdbf9f; color: var(--ink); text-decoration: none; transition: border-color .2s, transform .15s; }
+  .fg-list a:hover { border-color: var(--navy); transform: translateY(-3px); }
+  .fg-list img { width: 72px; height: 72px; border-radius: 50%; background: #152044; padding: 12px; }
+  .fg-list .n { font: 600 14px Jost, sans-serif; color: #9a5a06; text-transform: uppercase; letter-spacing: .08em; }
+  .fg-list b { font: 800 24px Montserrat, sans-serif; }
+  .fg-list q { font-size: 18px; line-height: 1.35; quotes: none; font-weight: 600; }
+  .fg-list small { font-size: 15px; line-height: 1.4; color: var(--muted); }
+  .fg-list .post { margin-top: auto; font-size: 14px; color: #9a5a06; font-weight: 600; }
+</style>
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · Blog Posts · Five Gates', home: '../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<section class="slide" data-title="Five gates" data-demo="gates">
+  <div class="kicker">learning from my past</div>
+  <h2 class="sm">Five gates, <span class="accent">in order</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Mechanic</h4>
+      <div class="row wrap fg-menu"></div>
+      <div class="fg-own"><input type="text" maxlength="40" placeholder="Name your mechanic" aria-label="Name your mechanic"></div>
+      <div class="seg fg-mode"><button class="btn on" data-m="guess">Guess first</button><button class="btn" data-m="show">Just show me</button></div>
+      <div class="row wrap"><button class="btn fg-tour on">▶ Walk-through</button><button class="btn fg-next">Next gate →</button></div>
+      <div class="row wrap fg-guess"><button class="btn fg-pass" data-g="1">✓ Passes</button><button class="btn fg-stop" data-g="0">✕ Stops here</button></div>
+      <div class="mt-stats fg-stats"></div>
+      <p class="mt-out fg-out"></p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Where each gate comes from" data-demo="none">
+  <div class="kicker">learning from my past</div>
+  <h2 class="sm">Where each gate <span class="accent">comes from</span></h2>
+  <p class="out">“Don’t move on to the next step until the previous has been satisfied.” Each gate is one lesson in Alex Brazie’s series, written in 2012 after Burning Crusade.</p>
+  <div class="fg-list">
+    <a href="https://xelnath.com/2012/07/07/lesson-1-clarity/" target="_blank" rel="noopener"><img src="../../assets/img/home/learning-past--clarity.svg" alt=""><span class="n">Gate 1 · Lesson 1</span><b>Clarity</b><q>Can the player tell what it is and what it will do?</q><small>The tool is communication: unique art, sound and a telegraph, like StarCraft II’s nuclear launch or Super Mario World’s timer warning.</small><span class="post">Lesson 1. Clarity →</span></a>
+    <a href="https://xelnath.com/2012/07/22/lesson-2-care/" target="_blank" rel="noopener"><img src="../../assets/img/home/learning-past--care.svg" alt=""><span class="n">Gate 2 · Lesson 2</span><b>Care</b><q>Does the player have a reason to act on it?</q><small>Tuning and emotion set how much players care. The Super Mushroom was unclear, yet players chased it because it saved a life.</small><span class="post">Lesson 2. Care →</span></a>
+    <a href="https://xelnath.com/2012/08/11/lesson-3-response/" target="_blank" rel="noopener"><img src="../../assets/img/home/learning-past--response.svg" alt=""><span class="n">Gate 3 · Lesson 3</span><b>Response</b><q>Is there something the player can do about it?</q><small>Three kinds: react as it happens, prepare before it happens, recuperate after it happened.</small><span class="post">Lesson 3. Response →</span></a>
+    <a href="https://xelnath.com/2012/09/02/lesson-4-satisfaction/" target="_blank" rel="noopener"><img src="../../assets/img/home/learning-past--satisfaction.svg" alt=""><span class="n">Gate 4 · Lesson 4</span><b>Satisfaction</b><q>Does doing it feel rewarding?</q><small>Reward the intended action, pace peaks and valleys, and give a win its ceremony.</small><span class="post">Lesson 4: Satisfaction →</span></a>
+    <a href="https://xelnath.com/2012/12/22/fit-make-it-appropriate-for-your-game/" target="_blank" rel="noopener"><img src="../../assets/img/home/learning-past--fit.svg" alt=""><span class="n">Gate 5 · Lesson 5</span><b>Fit</b><q>Does it belong in this game, its theme and its audience?</q><small>Fit the theme, fit the audience, and keep the game’s own identity: no arm wrestling in chess.</small><span class="post">Fit →</span></a>
+  </div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="gates.js"></script>
+</body>
+</html>
