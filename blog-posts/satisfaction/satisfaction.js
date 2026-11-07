@@ -34,10 +34,10 @@
   function felt(h, L) { const base = .1 + Object.entries(LAYERS).reduce((a, [k, l]) => a + (L[k] ? l.w : 0), 0), big = handTotals(h).score >= BLIND; return clamp(L.flame && !big ? base - .15 : base); }
   function card(g, x, y, c, lift, rot, dim) {
     g.save(); g.translate(x + 40, y + 56 - lift); g.rotate(rot); g.globalAlpha = dim ? .45 : 1;
-    g.fillStyle = 'rgba(0,0,0,.35)'; rr(g, -38, -52, 80, 112, 8); g.fill();
-    g.fillStyle = '#f6f1e6'; rr(g, -40, -56, 80, 112, 8); g.fill(); g.strokeStyle = '#c9bfa8'; g.lineWidth = 2; g.stroke();
+    g.fillStyle = 'rgba(0,0,0,.45)'; g.fillRect(-36, -50, 80, 112); // hard offset shadow
+    g.fillStyle = '#1a1424'; g.fillRect(-42, -58, 84, 116); g.fillStyle = '#f4ecd8'; g.fillRect(-39, -55, 78, 110); g.fillStyle = '#d9cdb0'; g.fillRect(-39, 49, 78, 6);
     const red = c[1] === '♥' || c[1] === '♦', col = red ? '#d8402f' : '#26304a';
-    text(g, c[0], -30, -30, M(800, 20), col); text(g, c[1], 0, 22, F(600, 40), col, 'center');
+    text(g, c[0], -30, -30, M(800, 22), col); text(g, c[1], -30, -8, F(700, 20), col); text(g, c[1], 0, 28, F(700, 46), col, 'center');
     g.restore(); g.globalAlpha = 1;
   }
   function flame(g, x, y, w, t) {
@@ -53,12 +53,12 @@
     const shown = showTotal ? Math.round(tot.score * ease(kTot)) : 0, done = t >= tl.totalEnd;
     let sx = 0, sy = 0; if (L.shake && showTotal && t - tl.pauseEnd < .35) { const a = 9 * (1 - (t - tl.pauseEnd) / .35); sx = Math.sin(t * 90) * a; sy = Math.cos(t * 77) * a; }
     g.clearRect(0, 0, W, H); g.save(); g.translate(sx, sy);
-    g.fillStyle = '#1f4a3c'; rr(g, 10, 10, W - 20, H - 20, 14); g.fill();
+    g.fillStyle = '#1f4a3c'; rr(g, 10, 10, W - 20, H - 20, 14); g.fill(); g.save(); rr(g, 10, 10, W - 20, H - 20, 14); g.clip(); g.fillStyle = 'rgba(255,255,255,.04)'; for (let yy = 0; yy < H; yy += 40) for (let xx = (yy / 40) % 2 ? 20 : 0; xx < W; xx += 40) { g.beginPath(); g.moveTo(xx, yy + 10); g.lineTo(xx + 10, yy); g.lineTo(xx + 20, yy + 10); g.lineTo(xx + 10, yy + 20); g.fill(); } g.restore();
     g.fillStyle = 'rgba(0,0,0,.18)'; rr(g, 26, 26, 250, 456, 12); g.fill();
     text(g, 'BIG BLIND', 46, 62, M(800, 15), '#ffb951'); text(g, 'Score at least', 46, 90, F(500, 15), '#cfe3da'); text(g, String(BLIND), 46, 124, M(800, 30), '#ff7a5c');
     text(g, 'THIS HAND', 46, 176, M(800, 15), '#ffb951'); text(g, H0.label, 46, 204, M(800, 22), '#fff');
     // chips x mult
-    g.fillStyle = '#2e7fd6'; rr(g, 46, 226, 96, 54, 8); g.fill(); g.fillStyle = '#d8402f'; rr(g, 160, 226, 96, 54, 8); g.fill();
+    g.fillStyle = '#0d2a52'; g.fillRect(46, 230, 96, 54); g.fillStyle = '#2e7fd6'; g.fillRect(46, 226, 96, 52); g.fillStyle = '#5a9fe6'; g.fillRect(46, 226, 96, 4); g.fillStyle = '#5a1410'; g.fillRect(160, 230, 96, 54); g.fillStyle = '#d8402f'; g.fillRect(160, 226, 96, 52); g.fillStyle = '#f06a58'; g.fillRect(160, 226, 96, 4);
     text(g, String(chips), 94, 262, M(800, 26), '#fff', 'center'); text(g, String(mult), 208, 262, M(800, 26), '#fff', 'center'); text(g, '×', 151, 262, M(800, 22), '#fff', 'center');
     text(g, 'chips', 94, 298, F(600, 13), '#cfe3da', 'center'); text(g, 'mult', 208, 298, F(600, 13), '#cfe3da', 'center');
     // round score box with optional flame
@@ -70,7 +70,7 @@
     if (done) text(g, big ? 'Blind beaten in one hand' : `Short of ${BLIND} by ${BLIND - tot.score}`, 151, 464, F(600, 15), big ? '#7ee2a0' : '#ffb3a6', 'center');
     // the joker
     const jx = 330, jy = 60, jOn = t >= tl.jokerT, jl = L.shake && jOn && t - tl.jokerT < .3 ? Math.sin((t - tl.jokerT) * 40) * .12 : 0;
-    g.save(); g.translate(jx + 40, jy + 56); g.rotate(jl); g.fillStyle = '#5b3a8c'; rr(g, -40, -56, 80, 112, 8); g.fill(); g.strokeStyle = '#c9a0ff'; g.lineWidth = 2; g.stroke();
+    g.save(); g.translate(jx + 40, jy + 56); g.rotate(jl); g.fillStyle = 'rgba(0,0,0,.45)'; g.fillRect(-36, -50, 80, 112); g.fillStyle = '#1a1424'; g.fillRect(-42, -58, 84, 116); g.fillStyle = '#5b3a8c'; g.fillRect(-39, -55, 78, 110); g.fillStyle = '#7a52b0'; g.fillRect(-39, -55, 78, 6); g.strokeStyle = '#c9a0ff'; g.lineWidth = 2; g.strokeRect(-33, -49, 66, 98);
     text(g, 'Joker', 0, -20, M(800, 15), '#fff', 'center'); text(g, '+4 Mult', 0, 20, F(600, 14), '#ffd2d2', 'center'); g.restore();
     if (jOn && L.count && t - tl.jokerT < .9) text(g, '+4 Mult', jx + 40, jy - 4 - (t - tl.jokerT) * 30, M(800, 18), '#ff8a7a', 'center');
     text(g, 'Joker slot', jx, jy + 136, F(500, 13), '#cfe3da');
@@ -85,6 +85,7 @@
     });
     text(g, H0.cards.some(c => !c[3]) ? 'Faded cards do not score in a High Card hand.' : 'Every card scores.', 330, 430, F(500, 14), '#cfe3da');
     g.restore();
+    g.save(); rr(g, 10, 10, W - 20, H - 20, 14); g.clip(); g.fillStyle = 'rgba(0,0,0,.10)'; for (let yy = 12; yy < H; yy += 4) g.fillRect(10, yy, W - 20, 2); const vg = g.createRadialGradient(W / 2, H / 2, 200, W / 2, H / 2, 620); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,.35)'); g.fillStyle = vg; g.fillRect(0, 0, W, H); g.restore();
     // felt-it meter, outside the shake
     const v = felt(h, L), secs = tl.totalEnd;
     g.fillStyle = 'rgba(255,252,244,.94)'; rr(g, 700, 34, 316, 96, 10); g.fill();
