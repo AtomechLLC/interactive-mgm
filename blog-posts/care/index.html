@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Make It Important · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="../shared/blog.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · Blog Posts · Lesson 2: Care', home: '../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<section class="slide" data-title="Why chase a mushroom?" data-demo="mush">
+  <div class="kicker">lesson 2 · care</div>
+  <h2 class="sm">Why chase a <span class="accent">mushroom?</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Your call</h4>
+      <p class="tip">The thing on the left, sliding toward Mario: would you touch it?</p>
+      <div class="row wrap mu-quiz"><button class="btn" data-a="touch">Touch it</button><button class="btn" data-a="dodge">Dodge it</button></div>
+      <p class="mt-out mu-ans"></p>
+      <h4>Scene</h4>
+      <div class="row wrap mu-menu"></div>
+      <div class="seg mu-ver"><button class="btn on" data-v="1985">1985 mushroom</button><button class="btn" data-v="later">Later mushroom</button></div>
+      <div class="row wrap"><button class="btn mu-tour on">▶ Walk-through</button></div>
+      <p class="mt-out mu-out"></p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Tuning bench" data-demo="tune">
+  <div class="kicker">lesson 2 · care · tuning</div>
+  <h2 class="sm">Tune it until <span class="accent">they care</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>The six steps</h4>
+      <div class="row wrap tn-steps"></div>
+      <label class="rng">Fireball power <b class="tn-pfv">1.0×</b><input class="tn-pf" type="range" min="0.2" max="5" step="0.1" value="1"></label>
+      <label class="rng">Target dies after <b class="tn-lifev">10 s</b><input class="tn-life" type="range" min="1" max="30" step="0.5" value="10"></label>
+      <div class="row wrap"><button class="btn tn-tour on">▶ Walk-through</button></div>
+      <p class="mt-out">The post compares Fireball (100 damage, instant, 10 second cooldown) with Corruption (15 damage a second, one per target). “50% better” only holds when the target lives ten seconds. How the 20 players split is an illustration, not data.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Fire that heals" data-demo="fire">
+  <div class="kicker">lesson 2 · care · emotion</div>
+  <h2 class="sm">Fire that <span class="accent">heals</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>The fire</h4>
+      <div class="row wrap fi-menu"></div>
+      <div class="row wrap"><button class="btn fi-tour on">▶ Walk-through</button></div>
+      <p class="mt-out fi-out"></p>
+      <p class="mt-out" style="font-size:15px;opacity:.8">From “Emotional Resonance”: care can come from familiar cues instead of mechanics. “Look for ways to shortcut your designs by appealing to the heart.”</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="../shared/topdown.js"></script>
+<script src="../shared/lp.js"></script>
+<script src="care.js"></script>
+</body>
+</html>
