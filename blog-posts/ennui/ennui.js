@@ -2,11 +2,13 @@
    (Contrast Drives Attention, Reward Pacing, Late-Stage Retention Problems, Endings Trigger Quitting).
    Novelty budget: one player's interest across eight years of World of Warcraft, Nov 2004 to Oct 2012. Interest decays as
    the game repeats; each tool the learner places lifts it, and every tool habituates (the same kind lifts less each time).
-   A "life" line rises when the player leaves college for 40-60 hour weeks: below it, the player stops. Everything here
+   A "life" line rises when the player leaves college for 40-60 hour weeks: below it, the player stops. Slides 2-4 (the
+   900th Korok, Solved rotation, The unreachable mountain) follow below. Everything here
    is an illustrative model, not data. The expansion dates are real. */
 (function () {
   const { $, $$, canvasDemo, say } = FPF.kit;
-  const { C, clamp, ease, rr, wrap, text } = LP;
+  const { C, clamp, ease, rr, wrap, text, icon } = LP;
+  const rnd = s => { const x = Math.sin(s * 91.7 + 17.3) * 43758.5453; return x - Math.floor(x); };
   const W = 1040, H = 585, F = (w, s) => `${w} ${s}px Jost, sans-serif`, M = (w, s) => `${w} ${s}px Montserrat, Jost, sans-serif`;
   const N = 96; // months from Nov 2004
   const X0 = 70, X1 = 1010, YT = 96, YB = 380, mx = m => X0 + (X1 - X0) * m / N, iy = v => YB - (YB - YT) * v / 100;
@@ -118,6 +120,249 @@
       $$(tSeg, '.btn').forEach(b => b.classList.toggle('on', !st.tour && b.dataset.t === st.tool));
     }
     LP.runners.ennui = { seek(t) { st.held = true; st.tour = true; st.t = t; st.stage = -1; frame(); }, dur: () => DUR };
+    return dt => { if (st.held) return; if (st.tour) st.t = (st.t + Math.max(0, Math.min(dt, .1))) % DUR; frame(); };
+  });
+
+  /* ---------------- 2. The 900th Korok (habituation lab) ----------------
+     Felt value of a reward falls with every repeat of the same kind (Contrast Drives Attention). Four ways to fight it.
+     The numbers are an illustrative model. */
+  const KMODES = {
+    same: { label: 'Same seed', say: 'Every Korok gives one seed. Breath of the Wild has 900 of them, and the reward for finding all 900 is Hestu’s golden poop. The felt value (filled) falls away from the actual value (outline) with every repeat.' },
+    big: { label: 'Bigger numbers', say: 'Make each reward bigger: 1, 3, 9, 27, like Disgaea’s billion-point damage or Cookie Clicker. Felt value holds a little longer, then flattens, because the size of a number stops meaning anything (the scripture’s Incremental Games and Magnitude).' },
+    rare: { label: 'Random rarity', say: 'Mostly small drops, with a rare orange beam (Diablo) or a Borderlands legendary. The rare one still lands, the common ones fade, and the pull toward the next roll is the uncertainty dependence the scripture lists as a retention trap.' },
+    kind: { label: 'Change the kind', say: 'Change what the reward is, not how big it is: a mimic chest, a new ability, a shrine. Each new kind starts fresh, so felt value keeps coming back (the scripture’s Pattern-Breakers).' },
+  };
+  const KINDS = ['seed', 'seed', 'seed', 'mimic', 'seed', 'seed', 'ability', 'seed', 'seed', 'shrine', 'seed', 'seed', 'seed', 'mimic', 'seed', 'ability'];
+  function korokRun(mode, n) {
+    const out = [], seen = {}; let total = 0;
+    for (let i = 0; i < n; i++) {
+      let actual = 1, kind = 'seed', felt;
+      if (mode === 'same') felt = Math.pow(.84, i);
+      else if (mode === 'big') { actual = Math.pow(3, i); felt = Math.pow(.9, i) * (i ? .8 : 1); }
+      else if (mode === 'rare') { const r = rnd(i * 7 + 3) < .12; kind = r ? 'legend' : 'seed'; const k = seen[kind] = (seen[kind] || 0) + 1; felt = r ? .95 * Math.pow(.93, k - 1) : Math.pow(.84, k - 1); actual = r ? 10 : 1; }
+      else { kind = KINDS[i % KINDS.length]; const k = seen[kind] = (seen[kind] || 0) + 1; felt = Math.pow(.8, k - 1) * (kind === 'seed' ? 1 : .95); actual = kind === 'seed' ? 1 : 3; }
+      total += actual; out.push({ actual, felt, kind, total });
+    }
+    return out;
+  }
+  const fmt = v => v >= 1e9 ? (v / 1e9).toFixed(1) + ' billion' : v >= 1e6 ? (v / 1e6).toFixed(1) + ' million' : Math.round(v).toLocaleString('en-US');
+  function korok(g, x, y, s, t) { // a little leaf spirit, drawn
+    g.save(); g.translate(x, y); g.scale(s, s);
+    g.fillStyle = '#3f9b3a'; g.beginPath(); g.ellipse(0, -38, 16, 28, Math.sin(t * 3) * .2, 0, Math.PI * 2); g.fill();
+    g.strokeStyle = '#2b6e27'; g.lineWidth = 2; g.beginPath(); g.moveTo(0, -12); g.lineTo(0, -60); g.stroke();
+    g.fillStyle = '#c99a5b'; g.beginPath(); g.arc(0, 0, 22, 0, Math.PI * 2); g.fill(); g.strokeStyle = '#7a5a2c'; g.lineWidth = 3; g.stroke();
+    g.fillStyle = '#2b1d0e'; [-8, 8].forEach(ex => { g.beginPath(); g.arc(ex, -3, 4, 0, Math.PI * 2); g.fill(); }); g.beginPath(); g.arc(0, 8, 4, 0, Math.PI); g.fill();
+    g.restore();
+  }
+  function korokScene(g, mode, n, since, t) {
+    const run = korokRun(mode, Math.max(n, 1)), last = n ? run[n - 1] : null;
+    g.clearRect(0, 0, W, H);
+    // the find
+    const gr = g.createLinearGradient(0, 10, 0, 575); gr.addColorStop(0, '#cfe9b0'); gr.addColorStop(1, '#6fae4c');
+    g.save(); rr(g, 10, 10, 420, 565, 14); g.clip(); g.fillStyle = gr; g.fillRect(10, 10, 420, 565);
+    g.fillStyle = 'rgba(40,90,30,.35)'; for (let k = 0; k < 9; k++) { g.beginPath(); g.ellipse(30 + k * 50, 470 + (k % 2) * 16, 40, 60, 0, 0, Math.PI * 2); g.fill(); }
+    g.restore(); g.strokeStyle = C.line; g.lineWidth = 2; rr(g, 10, 10, 420, 565, 14); g.stroke();
+    text(g, `find #${n}`, 30, 44, M(800, 18), C.navy);
+    const pop = ease(clamp(since / .35)), fade = clamp(1.4 - since);
+    if (last) {
+      const cx = 220, cy = 270, k = last.kind;
+      if (k === 'mimic') { g.fillStyle = '#7a4a1e'; rr(g, cx - 70, cy - 20, 140, 80, 10); g.fill(); g.fillStyle = '#a8692c'; rr(g, cx - 74, cy - 70 - 30 * pop, 148, 54, 12); g.fill(); g.fillStyle = '#fff'; for (let i = 0; i < 7; i++) { g.beginPath(); g.moveTo(cx - 63 + i * 20, cy - 20); g.lineTo(cx - 53 + i * 20, cy - 36); g.lineTo(cx - 43 + i * 20, cy - 20); g.fill(); } g.fillStyle = '#d8402f'; g.beginPath(); g.arc(cx - 30, cy - 50 - 30 * pop, 6, 0, Math.PI * 2); g.arc(cx + 30, cy - 50 - 30 * pop, 6, 0, Math.PI * 2); g.fill(); }
+      else if (k === 'legend') { g.fillStyle = `rgba(255,140,30,${.5 * fade + .15})`; g.fillRect(cx - 18, 20, 36, cy - 10); korok(g, cx, cy + 30, 1.6, t); }
+      else if (k === 'ability') { g.fillStyle = C.navy; g.beginPath(); g.arc(cx, cy, 70 * (.6 + .4 * pop), 0, Math.PI * 2); g.fill(); text(g, '✦', cx, cy + 22, '700 64px serif', C.gold, 'center'); }
+      else if (k === 'shrine') { g.fillStyle = '#3a4a6a'; rr(g, cx - 60, cy - 70, 120, 140, 12); g.fill(); g.fillStyle = `rgba(110,200,255,${.6 + .4 * Math.sin(t * 4)})`; g.beginPath(); g.arc(cx, cy - 10, 26, 0, Math.PI * 2); g.fill(); }
+      else korok(g, cx, cy + 30 - 20 * Math.sin(pop * Math.PI), 1.6, t);
+      const msg = { seed: 'Yahaha! You found me!', legend: 'A legendary drop!', mimic: 'The chest bites back!', ability: 'A new ability!', shrine: 'A new shrine!' }[k];
+      g.globalAlpha = .4 + .6 * fade; text(g, msg, cx, 120, M(800, 22), C.navy, 'center');
+      text(g, mode === 'big' ? `+${fmt(last.actual)}` : k === 'seed' ? '+1 seed' : '', cx, 400, M(800, 26), C.goldInk, 'center'); g.globalAlpha = 1;
+    } else text(g, 'Press Collect', 220, 280, M(800, 22), C.navy, 'center');
+    g.fillStyle = 'rgba(255,252,244,.94)'; rr(g, 26, 500, 388, 60, 10); g.fill();
+    text(g, mode === 'big' ? `${fmt(last ? last.total : 0)} points` : `Korok seeds ${last ? run.slice(0, n).filter(r => r.kind === 'seed').length : 0} / 900`, 40, 538, M(800, 20), C.ink);
+    // felt vs actual
+    const X = 445, PW = 585; g.fillStyle = C.paper; rr(g, X, 10, PW, 565, 14); g.fill(); g.strokeStyle = C.line; g.lineWidth = 2; g.stroke();
+    text(g, 'HOW EACH FIND FELT', X + 20, 44, M(800, 15), C.muted);
+    const show = run.slice(Math.max(0, n - 16), n), bx = X + 30, bw = 30, base = 400, hh = 300;
+    g.strokeStyle = '#e6dcc4'; g.lineWidth = 1; [0, .5, 1].forEach(v => { g.beginPath(); g.moveTo(bx - 6, base - hh * v); g.lineTo(X + PW - 20, base - hh * v); g.stroke(); });
+    show.forEach((r, i) => {
+      const x = bx + i * (bw + 3), col = { seed: '#3f9b3a', legend: '#ff8c1e', mimic: '#a8692c', ability: C.navy, shrine: '#3a7ab0' }[r.kind];
+      g.strokeStyle = C.muted; g.lineWidth = 1.5; g.strokeRect(x, base - hh, bw, hh);
+      g.fillStyle = col; g.fillRect(x, base - hh * r.felt, bw, hh * r.felt);
+      text(g, String(n - show.length + i + 1), x + bw / 2, base + 18, F(500, 12), C.muted, 'center');
+    });
+    text(g, 'outline: what you got · fill: how it felt (illustrative)', X + 20, base + 46, F(500, 13), C.muted);
+    if (last) { text(g, `felt ${Math.round(last.felt * 100)}%`, X + 20, base + 90, M(800, 26), last.felt > .6 ? C.green : last.felt > .3 ? C.goldInk : C.red); }
+    if (mode === 'big' && last) text(g, `the number: ${fmt(last.actual)}`, X + PW - 20, base + 90, M(700, 18), C.ink, 'right');
+  }
+  canvasDemo('korok', (sl, cv, g) => {
+    const mSeg = $(sl, '.ko-mode'), out = $(sl, '.ko-out'), tourBtn = $(sl, '.ko-tour');
+    mSeg.innerHTML = Object.entries(KMODES).map(([k, m]) => `<button class="btn" data-m="${k}">${m.label}</button>`).join('');
+    const ORDER = Object.keys(KMODES), LEN = 9, DUR = ORDER.length * LEN;
+    const st = { tour: true, held: false, t: 0, mode: 'same', n: 0, since: 9, stage: -1 };
+    const manual = () => { st.tour = false; tourBtn.classList.remove('on'); };
+    const setMode = m => { st.mode = m; st.n = 0; say(out, KMODES[m].say); };
+    $$(mSeg, '.btn').forEach(b => b.onclick = () => { manual(); setMode(b.dataset.m); });
+    $(sl, '.ko-go').onclick = () => { manual(); st.n++; st.since = 0; };
+    $(sl, '.ko-reset').onclick = () => { manual(); st.n = 0; };
+    tourBtn.onclick = () => { st.tour = true; st.t = 0; st.stage = -1; tourBtn.classList.add('on'); };
+    function frame() {
+      if (st.tour) { const k = Math.floor((st.t % DUR) / LEN), u = (st.t % DUR) - k * LEN; if (k !== st.stage) { st.stage = k; setMode(ORDER[k]); } st.n = Math.min(16, Math.floor(u / .5) + 1); st.since = u % .5; }
+      korokScene(g, st.mode, st.n, st.since, st.held ? st.t : performance.now() / 1000);
+      $$(mSeg, '.btn').forEach(b => b.classList.toggle('on', b.dataset.m === st.mode));
+    }
+    LP.runners.korok = { seek(t) { st.held = true; st.tour = true; st.t = t; st.stage = -1; frame(); }, dur: () => DUR };
+    return dt => { if (st.held) return; dt = Math.max(0, Math.min(dt, .1)); st.since += dt; if (st.tour) st.t = (st.t + dt) % DUR; frame(); };
+  });
+
+  /* ---------------- 3. Solved rotation (repetition blocking) ----------------
+     A fire mage against a training dummy. A bot always presses the best button. With fixed cooldowns the cast log becomes
+     periodic and a predictor that copies the last cycle is never wrong; each fix makes it wrong again.
+     "Decisions" = casts the last cycle did not predict. Illustrative, not WoW's real numbers. */
+  const SP = { fb: ['Fireball', 'spell_fire_flamebolt'], blast: ['Fire Blast', 'spell_fire_fireball'], scorch: ['Scorch', 'spell_fire_soulburn'], bomb: ['Living Bomb', 'ability_mage_livingbomb'], pyro: ['Pyroblast', 'spell_fire_fireball02'],
+    bolt2: ['Firebolt', 'spell_fire_firebolt02'], seal: ['Seal of Fire', 'spell_fire_sealoffire'], start: ['Firestarter', 'ability_mage_firestarter'] };
+  const SI = k => `../img/${SP[k][1]}.jpg`;
+  const FIXES = {
+    procs: { label: 'Procs', say: 'Procs: Hot Streak (WoW) lights Pyroblast at random after a critical hit, like Lock and Load for hunters. You still know what to press, but not when, so the bar asks you to watch it again.' },
+    draw: { label: 'Card draw', say: 'Card draw: only three of your five buttons are lit each turn, the way Slay the Spire deals you a hand. You can never play the same hand twice.' },
+    boons: { label: 'Random offers', say: 'Random offers: every few seconds one button is swapped for a new spell, the way Hades offers boons. The best sequence keeps changing under you.' },
+  };
+  function rotSim(fix, steps) {
+    // returns the cast log for `steps` global cooldowns
+    let cd = { blast: 0, bomb: 0, pyro: 0, scorch: 0 }, hot = false, slots = ['fb', 'blast', 'scorch', 'bomb', 'pyro'], log = [], seed = 1;
+    const CD = { blast: 2, bomb: 5, scorch: 3, pyro: 6 }, PRI = ['pyro', 'bomb', 'blast', 'scorch', 'fb', 'bolt2', 'seal', 'start'];
+    for (let s = 0; s < steps; s++) {
+      if (fix.boons && s > 0 && s % 7 === 0) { const i = Math.floor(rnd(s * 3.1) * 4), opts = ['bolt2', 'seal', 'start', 'fb', 'blast', 'scorch']; slots[i] = opts[Math.floor(rnd(s * 5.7) * opts.length)]; }
+      const lit = slots.map((k, i) => { let ok = !(cd[k] > 0); if (k === 'pyro') ok = fix.procs ? hot : ok; return ok; });
+      if (fix.draw) { const hand = [0, 1, 2, 3, 4].sort((a, b) => rnd(s * 11 + a) - rnd(s * 11 + b)).slice(0, 3); slots.forEach((_, i) => { if (!hand.includes(i)) lit[i] = false; }); }
+      let pick = -1; PRI.forEach(k => { const i = slots.indexOf(k); if (pick < 0 && i >= 0 && lit[i]) pick = i; });
+      if (pick < 0) pick = lit.findIndex(Boolean);
+      const k = pick >= 0 ? slots[pick] : null;
+      Object.keys(cd).forEach(c => cd[c] = Math.max(0, cd[c] - 1));
+      if (k) { if (CD[k] && !(k === 'pyro' && fix.procs)) cd[k] = CD[k]; if (k === 'pyro') hot = false; if (fix.procs && (k === 'fb' || k === 'blast' || k === 'scorch') && rnd(s * 13.3 + 7) < .3) hot = true; }
+      log.push({ k, slots: slots.slice(), lit });
+    }
+    // decisions: was this cast predicted by the same position in the last cycle? try the best period up to 12
+    const dec = log.map((e, i) => {
+      if (i < 24) return true;
+      let best = 99; for (let p = 1; p <= 10; p++) { let miss = 0; for (let j = i - 14; j < i; j++) if (j - p >= 0 && log[j].k !== log[j - p].k) miss++; if (miss < best) { best = miss; e.p = p; } }
+      return log[i].k !== log[i - e.p].k;
+    });
+    return { log, dec };
+  }
+  function rotScene(g, fix, step, frac) {
+    const { log, dec } = rotSim(fix, step + 40), cur = log[log.length - 1];
+    g.clearRect(0, 0, W, H);
+    g.fillStyle = '#1d2236'; rr(g, 10, 10, W - 20, H - 20, 14); g.fill();
+    text(g, 'TRAINING DUMMY', 30, 44, M(800, 16), '#aab3d6');
+    const on = Object.entries(fix).filter(([, v]) => v).map(([k]) => FIXES[k].label);
+    text(g, on.length ? `fixes on: ${on.join(', ')}` : 'fixed cooldowns, no randomness', W - 30, 44, F(600, 15), on.length ? C.gold : '#aab3d6', 'right');
+    // cast log
+    text(g, 'cast log (newest on the right)', 30, 82, F(600, 14), '#aab3d6');
+    const lg = log.slice(-20), d20 = dec.slice(-20);
+    lg.forEach((e, i) => { const x = 30 + i * 49; if (e.k) icon(g, SI(e.k), x, 94, 42); if (d20[i]) { g.strokeStyle = C.gold; g.lineWidth = 3; rr(g, x - 3, 91, 48, 48, 8); g.stroke(); } });
+    text(g, 'gold frame: a cast the last cycle did not predict, a real decision', 30, 160, F(500, 13), '#aab3d6');
+    // the dummy
+    g.fillStyle = '#8a6a3a'; g.fillRect(500, 290, 40, 120); g.fillStyle = '#c9a36a'; g.beginPath(); g.arc(520, 268, 34, 0, Math.PI * 2); g.fill(); g.fillRect(470, 315, 100, 16);
+    if (cur && cur.k) { const p = clamp(frac); g.fillStyle = `rgba(255,140,30,${1 - p})`; g.beginPath(); g.arc(520 - 260 * (1 - p), 300, 16, 0, Math.PI * 2); g.fill(); }
+    // action bar
+    const by = 430; text(g, 'action bar', 30, by - 10, F(600, 14), '#aab3d6');
+    cur.slots.forEach((k, i) => { const x = 30 + i * 70; g.globalAlpha = cur.lit[i] ? 1 : .3; icon(g, SI(k), x, by, 60); g.globalAlpha = 1; text(g, String(i + 1), x + 6, by + 18, M(800, 14), '#fff');
+      if (k === 'pyro' && fix.procs && cur.lit[i]) { g.strokeStyle = C.gold; g.lineWidth = 4; rr(g, x - 3, by - 3, 66, 66, 8); g.stroke(); } });
+    // meter
+    const n = d20.filter(Boolean).length, mx0 = 420;
+    text(g, 'decisions in the last 20 casts', mx0, by + 4, F(600, 15), '#aab3d6');
+    g.fillStyle = '#323a5c'; rr(g, mx0, by + 18, 580, 22, 11); g.fill(); g.fillStyle = n > 6 ? C.green : n > 2 ? C.gold : C.red; rr(g, mx0, by + 18, Math.max(22, 580 * n / 20), 22, 11); g.fill();
+    text(g, `${n} / 20`, mx0 + 590, by + 36, M(800, 18), '#fff', 'right');
+    text(g, 'damage', mx0, by + 72, F(600, 15), '#aab3d6');
+    g.fillStyle = '#323a5c'; rr(g, mx0, by + 84, 580, 22, 11); g.fill(); g.fillStyle = '#e07b2a'; rr(g, mx0, by + 84, 580 * .96, 22, 11); g.fill();
+    text(g, 'the bot always presses the best button', mx0 + 590, by + 102, F(600, 13), '#fff', 'right');
+    if (n === 0) text(g, 'Solved: the game is playing you.', 520, 212, M(800, 22), C.gold, 'center');
+  }
+  canvasDemo('rot', (sl, cv, g) => {
+    const fSeg = $(sl, '.ro-fix'), out = $(sl, '.ro-out'), tourBtn = $(sl, '.ro-tour');
+    fSeg.innerHTML = Object.entries(FIXES).map(([k, f]) => `<button class="btn" data-f="${k}">${f.label}</button>`).join('');
+    const GCD = .45, STAGES = [[{}, 'Fixed cooldowns, a bot that always presses the best button. Within a few casts the log repeats exactly, and the decisions meter falls to zero while damage stays at its maximum.'],
+      [{ procs: true }, FIXES.procs.say], [{ draw: true }, FIXES.draw.say], [{ boons: true }, FIXES.boons.say],
+      [{}, 'Chess has the same problem at the scale of a whole game: memorised openings. Bobby Fischer’s answer, Chess960, shuffles the back row. And the scripture’s caveat: some players love a rotation the way a musician loves scales. It is an audience choice.']];
+    const LEN = 11, DUR = STAGES.length * LEN;
+    const st = { tour: true, held: false, t: 0, fix: {}, tt: 0, stage: -1 };
+    const manual = () => { st.tour = false; tourBtn.classList.remove('on'); };
+    $$(fSeg, '.btn').forEach(b => b.onclick = () => { manual(); st.fix = { ...st.fix, [b.dataset.f]: !st.fix[b.dataset.f] }; st.tt = 0; say(out, st.fix[b.dataset.f] ? FIXES[b.dataset.f].say : `${FIXES[b.dataset.f].label} off.`); });
+    $(sl, '.ro-none').onclick = () => { manual(); st.fix = {}; st.tt = 0; say(out, STAGES[0][1]); };
+    tourBtn.onclick = () => { st.tour = true; st.t = 0; st.stage = -1; tourBtn.classList.add('on'); };
+    function frame() {
+      if (st.tour) { const k = Math.floor((st.t % DUR) / LEN); st.tt = (st.t % DUR) - k * LEN; if (k !== st.stage) { st.stage = k; st.fix = STAGES[k][0]; say(out, STAGES[k][1]); } }
+      const step = Math.floor(st.tt / GCD) + 1;
+      rotScene(g, st.fix, step, (st.tt % GCD) / GCD);
+      $$(fSeg, '.btn').forEach(b => b.classList.toggle('on', !!st.fix[b.dataset.f]));
+    }
+    LP.runners.rot = { seek(t) { st.held = true; st.tour = true; st.t = t; st.stage = -1; frame(); }, dur: () => DUR };
+    return dt => { if (st.held) return; dt = Math.max(0, Math.min(dt, .1)); st.tt += dt; if (st.tour) st.t = (st.t + dt) % DUR; frame(); };
+  });
+
+  /* ---------------- 4. The unreachable mountain ----------------
+     A simulated year (52 weeks) under five progression structures. Top: progress toward the mountain. Bottom: what each
+     week's play gave you (the inch-pebble). Illustrative model; the OSRS XP table is the real formula. */
+  const osrsXP = L => { let p = 0; for (let l = 1; l < L; l++) p += Math.floor(l + 300 * Math.pow(2, l / 7)); return Math.floor(p / 4); };
+  const XP99 = osrsXP(99);
+  const STRUCT = {
+    osrs: { label: 'OSRS skill to 99', say: 'Old School RuneScape: XP grows steadily every session, while levels slow down. Level 92 is about halfway to 99 in XP. The Mountain (99 and its cape) is far, but every session shows XP gained.' },
+    paragon: { label: 'Paragon levels', say: 'Diablo III’s Paragon levels have no cap: the post’s “almost unreachable ceiling, with steady growth”. You never arrive, and every session still moves the number.' },
+    tiers: { label: 'Raid tiers', say: 'WoW raid tiers: every 13 weeks a new tier replaces your gear. The jump size is the dial. Too small and a patch feels like nothing; too big and last tier’s gear is junk overnight. The scripture suggests about 12.5%.' },
+    ranked: { label: 'Ranked ladder', say: 'A ranked ladder: rating goes down as well as up, so a whole evening of play can end lower. The scripture calls that an anti-pebble. Turn on checkpoints to see Faeria’s fix.' },
+  };
+  function mtnSim(id, o) {
+    const wk = []; let v = 0;
+    if (id === 'osrs') { let xp = 0; for (let w = 0; w < 52; w++) { const gain = 230000; xp += gain; let L = 1; while (L < 99 && osrsXP(L + 1) <= xp) L++; wk.push({ v: xp / XP99, lab: L, peb: .6 }); } }
+    else if (id === 'paragon') { let xp = 0; for (let w = 0; w < 52; w++) { xp += 1; const lvl = Math.floor(30 * Math.sqrt(xp)); wk.push({ v: lvl / 400, lab: lvl, peb: .55 + .1 * rnd(w) }); } }
+    else if (id === 'tiers') { let ilvl = 100, sunk = 0; for (let w = 0; w < 52; w++) { let peb = .45, ev = null; if (w && w % 13 === 0) { ilvl *= 1 + o.jump; peb = clamp(o.jump / .2); sunk = clamp(o.jump / .3) * (o.trans ? .4 : 1); ev = 'tier'; } else sunk *= .7; wk.push({ v: (ilvl - 100) / 110, lab: Math.round(ilvl), peb, sunk, ev }); } }
+    else { let r = 1400, floor = 0, pts = 0; for (let w = 0; w < 52; w++) { let d = 0; for (let gme = 0; gme < 10; gme++) d += rnd(w * 17 + gme) < .5 ? 25 : -25; const before = r; r = Math.max(o.check ? floor : 0, r + d); if (o.check) floor = Math.max(floor, Math.floor(r / 200) * 200); pts += 10; wk.push({ v: (r - 1000) / 1000, lab: r, peb: o.check ? .3 + clamp((r - before) / 150) * .4 : (r - before) / 150, floor: o.check ? floor : null }); } }
+    return wk;
+  }
+  function mtnScene(g, id, o, upTo) {
+    const wk = mtnSim(id, o), n = Math.min(52, upTo);
+    g.clearRect(0, 0, W, H);
+    g.fillStyle = C.paper; rr(g, 10, 10, W - 20, H - 20, 14); g.fill(); g.strokeStyle = C.line; g.lineWidth = 2; g.stroke();
+    text(g, STRUCT[id].label.toUpperCase(), 30, 42, M(800, 17), C.navy);
+    const X0m = 80, X1m = 1010, T = 70, B = 330, xw = w => X0m + (X1m - X0m) * w / 51, yv = v => B - (B - T) * clamp(v);
+    // the mountain
+    g.fillStyle = '#e8e0cc'; g.beginPath(); g.moveTo(X0m, B); g.lineTo(X1m - 120, T + 10); g.lineTo(X1m, B); g.fill();
+    if (id !== 'paragon' && id !== 'tiers') { g.setLineDash([6, 6]); g.strokeStyle = C.goldInk; g.lineWidth = 2; g.beginPath(); g.moveTo(X0m, T); g.lineTo(X1m, T); g.stroke(); g.setLineDash([]); text(g, id === 'osrs' ? 'level 99' : 'rating 2000', X1m, T - 8, M(700, 14), C.goldInk, 'right'); }
+    else text(g, id === 'paragon' ? 'no ceiling: the line keeps going' : 'each tier raises the ceiling', X1m, T - 8, M(700, 14), C.goldInk, 'right');
+    if (id === 'osrs') { const y92 = yv(osrsXP(92) / XP99); g.strokeStyle = C.muted; g.setLineDash([3, 4]); g.beginPath(); g.moveTo(X0m, y92); g.lineTo(X1m, y92); g.stroke(); g.setLineDash([]); text(g, 'level 92: half the XP of 99', X0m + 6, y92 - 6, F(600, 13), C.muted); }
+    if (id === 'ranked' && o.check) wk.slice(0, n).forEach((w, i) => { if (i && w.floor) { g.fillStyle = 'rgba(47,158,90,.25)'; g.fillRect(xw(i - 1), yv((w.floor - 1000) / 1000), xw(1) - X0m, 3); } });
+    g.strokeStyle = '#2e7fd6'; g.lineWidth = 4; g.beginPath(); wk.slice(0, n).forEach((w, i) => g[i ? 'lineTo' : 'moveTo'](xw(i), yv(w.v))); g.stroke();
+    if (n) { const w = wk[n - 1]; text(g, id === 'osrs' ? `level ${w.lab}` : id === 'paragon' ? `Paragon ${w.lab}` : id === 'tiers' ? `item level ${w.lab}` : `rating ${w.lab}`, xw(n - 1) + (n > 40 ? -8 : 8), yv(w.v) + (n > 40 ? 22 : -8), M(800, 15), C.navy, n > 40 ? 'right' : 'left'); }
+    wk.slice(0, n).forEach((w, i) => { if (w.ev) { g.strokeStyle = '#7a3fc4'; g.lineWidth = 1.5; g.beginPath(); g.moveTo(xw(i), T); g.lineTo(xw(i), B); g.stroke(); text(g, 'new tier', xw(i) + 4, B - 6, F(600, 12), '#7a3fc4'); } });
+    text(g, 'progress', X0m - 10, (T + B) / 2, F(600, 14), C.muted, 'right');
+    // pebbles
+    const PB = 470, PH = 90; text(g, 'what each week gave you', X0m, PB - PH - 12, F(600, 14), C.muted, 'left');
+    g.strokeStyle = C.line; g.beginPath(); g.moveTo(X0m, PB); g.lineTo(X1m, PB); g.stroke();
+    wk.slice(0, n).forEach((w, i) => { const v = clamp(w.peb, -.9, .9), x = xw(i) - 6; g.fillStyle = v >= 0 ? C.green : C.red; g.fillRect(x, v >= 0 ? PB - PH * v : PB, 12, PH * Math.abs(v));
+      if (id === 'tiers' && w.sunk > .05) { g.fillStyle = 'rgba(216,64,47,.55)'; g.fillRect(x, PB + 4, 12, 60 * w.sunk); } });
+    text(g, id === 'tiers' ? 'green: progress that week · red below: gear made obsolete (sunk cost)' : id === 'ranked' && !o.check ? 'red: a week that ended with a lower rating (an anti-pebble)' : 'green: visible progress that week', X0m, 560, F(600, 14), C.ink);
+    if (id === 'ranked') { const neg = wk.slice(0, n).filter(w => w.peb < 0).length; text(g, `${neg} of ${n} weeks ended lower`, X1m, 560, M(800, 15), neg ? C.red : C.green, 'right'); }
+    if (id === 'tiers') text(g, `tier jump ${Math.round(o.jump * 1000) / 10}%${o.trans ? ' · transmog on' : ''}`, X1m, 560, M(800, 15), C.navy, 'right');
+    text(g, 'An illustrative model, not data.', X1m, 42, F(500, 13), C.muted, 'right');
+  }
+  canvasDemo('mount', (sl, cv, g) => {
+    const sSeg = $(sl, '.mo-struct'), out = $(sl, '.mo-out'), tourBtn = $(sl, '.mo-tour'), jr = $(sl, '.mo-jump'), jv = $(sl, '.mo-jv'), trans = $(sl, '.mo-trans'), check = $(sl, '.mo-check');
+    sSeg.innerHTML = Object.entries(STRUCT).map(([k, s]) => `<button class="btn" data-s="${k}">${s.label}</button>`).join('');
+    const STAGES = [['osrs', { jump: .125 }], ['paragon', { jump: .125 }], ['tiers', { jump: .03 }, 'A 3% tier jump: each patch barely registers.'], ['tiers', { jump: .4 }, 'A 40% tier jump: every tier makes last tier’s gear junk overnight, and the sunk-cost bars spike.'], ['tiers', { jump: .4, trans: true }, 'The same 40% jump with transmog: the power is gone, but you keep the look, so less of the effort feels wasted.'], ['tiers', { jump: .125 }, 'About 12.5%, the scripture’s rule: a jump that matters without wiping out what came before.'], ['ranked', {}], ['ranked', { check: true }, 'Faeria’s fix: you can’t drop below a league you reached this season, so a losing evening costs nothing you earned.']];
+    const LEN = 6.5, DUR = STAGES.length * LEN;
+    const st = { tour: true, held: false, t: 0, id: 'osrs', o: { jump: .125 }, stage: -1, up: 52 };
+    const manual = () => { st.tour = false; tourBtn.classList.remove('on'); st.up = 52; };
+    const sync = () => { jr.value = st.o.jump * 100; jv.textContent = `${Math.round(st.o.jump * 1000) / 10}%`; trans.checked = !!st.o.trans; check.checked = !!st.o.check; $(sl, '.mo-tiers').style.display = st.id === 'tiers' ? '' : 'none'; $(sl, '.mo-rank').style.display = st.id === 'ranked' ? '' : 'none'; };
+    $$(sSeg, '.btn').forEach(b => b.onclick = () => { manual(); st.id = b.dataset.s; say(out, STRUCT[st.id].say); sync(); });
+    jr.oninput = () => { manual(); st.o = { ...st.o, jump: +jr.value / 100 }; sync(); };
+    trans.onchange = () => { manual(); st.o = { ...st.o, trans: trans.checked }; };
+    check.onchange = () => { manual(); st.o = { ...st.o, check: check.checked }; say(out, check.checked ? STAGES[7][2] : STRUCT.ranked.say); };
+    tourBtn.onclick = () => { st.tour = true; st.t = 0; st.stage = -1; tourBtn.classList.add('on'); };
+    function frame() {
+      if (st.tour) { const k = Math.floor((st.t % DUR) / LEN), u = (st.t % DUR) - k * LEN; if (k !== st.stage) { st.stage = k; const s = STAGES[k]; st.id = s[0]; st.o = { jump: .125, ...s[1] }; say(out, s[2] || STRUCT[s[0]].say); sync(); } st.up = Math.round(ease(clamp(u / 4.5)) * 52); }
+      mtnScene(g, st.id, st.o, st.up);
+      $$(sSeg, '.btn').forEach(b => b.classList.toggle('on', b.dataset.s === st.id));
+    }
+    sync();
+    LP.runners.mount = { seek(t) { st.held = true; st.tour = true; st.t = t; st.stage = -1; frame(); }, dur: () => DUR };
     return dt => { if (st.held) return; if (st.tour) st.t = (st.t + Math.max(0, Math.min(dt, .1))) % DUR; frame(); };
   });
 })();
