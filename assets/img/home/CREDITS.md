@@ -203,3 +203,17 @@ Atomech Pages (`atomech.html` and its home card):
 | `atomech--starcraft-tech-tree-builds.svg` | [tree-branch](https://game-icons.net/1x1/lorc/tree-branch.html) | Lorc |
 | `atomech--stellaris-tech-tree-browser.svg` | [ringed-planet](https://game-icons.net/1x1/lorc/ringed-planet.html) | Lorc |
 | `atomech--mewgenics-kitten-share.svg` | [cat](https://game-icons.net/1x1/lorc/cat.html) | Lorc |
+
+Learning From My Past (the section on `blog.html`):
+
+| File | Icon | Artist |
+|---|---|---|
+| `learning-past.svg` | [hourglass](https://game-icons.net/1x1/lorc/hourglass.html) | Lorc |
+| `learning-past--theft.svg` | [stone-axe](https://game-icons.net/1x1/lorc/stone-axe.html) | Lorc |
+| `learning-past--simplest.svg` | [fireball](https://game-icons.net/1x1/lorc/fireball.html) | Lorc |
+| `learning-past--clarity.svg` | [magnifying-glass](https://game-icons.net/1x1/lorc/magnifying-glass.html) | Lorc |
+| `learning-past--care.svg` | [mushroom-gills](https://game-icons.net/1x1/lorc/mushroom-gills.html) | Lorc |
+| `learning-past--response.svg` | [dragon-breath](https://game-icons.net/1x1/lorc/dragon-breath.html) | Lorc |
+| `learning-past--satisfaction.svg` | [podium-winner](https://game-icons.net/1x1/delapouite/podium-winner.html) | Delapouite |
+| `learning-past--fit.svg` | [jigsaw-piece](https://game-icons.net/1x1/lorc/jigsaw-piece.html) | Lorc |
+| `learning-past--point.svg` | [checklist](https://game-icons.net/1x1/delapouite/checklist.html) | Delapouite |
