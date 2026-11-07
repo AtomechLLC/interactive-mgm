@@ -52,30 +52,46 @@
   .legend { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 13.5px; color: var(--muted); align-items: center; }
   .legend span { display: inline-flex; align-items: center; gap: 4px; }
   .legend svg { width: 18px; height: 18px; }
+  .lensbar { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #ddd0f2; }
+  .lensbar b { font: 600 14px Jost, sans-serif; color: var(--muted); margin-right: 2px; }
+  .lensbar button { font: 600 13.5px Jost, sans-serif; padding: 2px 9px; border-radius: 999px; border: 1.5px solid #c9b8e8; background: #fbf7ff; color: #4a2f80; cursor: pointer; }
+  .lensbar button.on { background: #4a2f80; border-color: #4a2f80; color: #fff; }
+  .lensbar button small { opacity: .7; }
+  .insight { background: #f6f1ff; border: 1px solid #d9cbef; border-left: 6px solid #6b4bb0; border-radius: 10px; padding: 10px 14px; margin-top: 14px; font-size: 15.5px; line-height: 1.45; color: #2e2457; }
+  .insight h4 { margin: 0 0 3px; font: 800 15px Montserrat, sans-serif; color: #4a2f80; }
+  .insight p { margin: 0; } .insight p + p { margin-top: 6px; }
+  .insight .src { font-size: 13px; color: #6a5f8f; }
+  .dn { margin-top: 8px; padding: 7px 10px; border-radius: 8px; background: #f6f1ff; border: 1px dashed #cdbbe9; font-size: 14.5px; line-height: 1.42; color: #2e2457; }
+  .dn button { font: 700 12.5px Jost, sans-serif; padding: 0 7px; margin-right: 6px; border-radius: 6px; border: 0; background: #e6dcf8; color: #4a2f80; cursor: pointer; }
+  .dn button:hover { background: #d8c9f4; }
+  .gal .dn { display: none; } .gal .it.open .dn { display: block; }
+  .nonotes .dn, .nonotes .insight { display: none; }
   .none { color: var(--muted); font-size: 18px; padding: 30px 0; }
   footer { max-width: 1180px; margin: 0 auto; padding: 0 24px 40px; color: var(--muted); font-size: 13px; }
-  @media (max-width: 560px) { .tools { position: static; } .grid:not(.gal) { grid-template-columns: 1fr; } .it { grid-template-columns: 64px 1fr; } .art { width: 64px; height: 64px; } .gal .it.open { grid-template-columns: 1fr; } .gal { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .band { clip-path: polygon(0 0, 100% 0, 100% 94%, 0 100%); } .tools { position: static; } .grid:not(.gal) { grid-template-columns: 1fr; } .it { grid-template-columns: 64px 1fr; } .art { width: 64px; height: 64px; } .gal .it.open { grid-template-columns: 1fr; } .gal { grid-template-columns: repeat(2, 1fr); } }
 </style>
 </head>
 <body>
 <div class="band"><header>
   <div class="kicker"><a href="../../dnd.html">← D&amp;D Design</a> · Brian Feeney · Riot Games</div>
   <h1>All of Brian Feeney’s <span>Items</span></h1>
-  <p>Every item on Brian Feeney’s <i>D&amp;D Magic Items Megasheet</i>, quoted as he wrote it. Search by name or by what an item does (try “fall”, “door”, “invisible” or “breath”). Each item has its own illustration; switch to Gallery to browse them as pictures and click one to read it. Gold items are the twenty played out on <a href="index.html">Same Problem, New Answers</a>.</p>
+  <p>Every item on Brian Feeney’s <i>D&amp;D Magic Items Megasheet</i>, quoted as he wrote it. Search by name or by what an item does (try “fall”, “door”, “invisible” or “breath”). Each item has its own illustration; switch to Gallery to browse them as pictures and click one to read it. Gold items are the twenty played out on <a href="index.html">Same Problem, New Answers</a>. Purple notes read each item through a lens from the course’s Game Design Scriptures.</p>
 </header></div>
 <main>
   <div class="tools">
-    <input type="search" id="q" placeholder="Search names and descriptions…" autocomplete="off">
+    <input type="search" id="q" placeholder="Search names, descriptions and notes…" autocomplete="off">
     <div class="chips" id="types"></div>
-    <div class="chips" id="view"><button data-v="cards" class="on">Cards</button><button data-v="gal">Gallery</button><label><input type="checkbox" id="feat"> Only the twenty on the problems page</label><span class="count" id="count"></span></div>
+    <div class="chips" id="view"><button data-v="cards" class="on">Cards</button><button data-v="gal">Gallery</button><label><input type="checkbox" id="feat"> Only the twenty on the problems page</label><label><input type="checkbox" id="notes" checked> Designer’s notes</label><span class="count" id="count"></span></div>
     <div class="legend" id="legend"></div>
   </div>
+  <div class="insight"><div class="lensbar" id="lenses"></div><div id="insight"></div></div>
   <div class="grid" id="grid"></div>
 </main>
-<footer>Items: Brian Feeney (Riot Games), <i>D&amp;D Magic Items Megasheet</i>, Core Set, quoted with his spelling. Illustrations: game-icons.net (CC BY 3.0) by Lorc, Delapouite and other contributors; the pick of icon for each item, and the effect badge read from its description, are this page’s own. The rarity tag shows only Rare, Uncommon and Artifact; the sheet’s other entries in that column are working notes.</footer>
+<footer>Items: Brian Feeney (Riot Games), <i>D&amp;D Magic Items Megasheet</i>, Core Set, quoted with his spelling. Illustrations: game-icons.net (CC BY 3.0) by Lorc, Delapouite and other contributors; the pick of icon for each item, and the effect badge read from its description, are this page’s own. Designer’s notes: this page’s reading of each item through the course’s Game Design Scriptures; they are not Brian’s words. The rarity tag shows only Rare, Uncommon and Artifact; the sheet’s other entries in that column are working notes.</footer>
 <script src="catalog-data.js"></script>
 <script src="catalog-art.js"></script>
 <script src="items.js"></script>
+<script src="catalog-notes.js"></script>
 <script>
 (function () {
   const ALL = window.FEENEY_ALL, { ITEMS, PROBLEMS, BINS } = window.FEENEY;
@@ -84,7 +100,8 @@
   const FEAT = {};
   Object.values(ITEMS).forEach(it => { const p = PROBLEMS.find(q => q.id === it.problem), b = BINS.find(q => q.id === it.bin); FEAT[norm(it.name)] = `${p.name} · ${b.name.toLowerCase()}`; });
   const types = ['All', ...[...new Set(ALL.map(i => i.t))].sort((a, b) => ALL.filter(i => i.t === b).length - ALL.filter(i => i.t === a).length)];
-  const st = { q: '', t: 'All', feat: false, v: 'cards', open: null };
+  const st = { q: '', t: 'All', feat: false, v: 'cards', open: null, lens: null, notes: true };
+  const NOTES = window.FEENEY_NOTES, NOTE = n => NOTES.items[n] || null;
   const ART = window.FEENEY_ART;
   const TINT = { Armor: ['#dfe5ef', '#8d9bb5'], Potion: ['#f7dede', '#c8686c'], Ring: ['#fbefcf', '#d4a73c'], Rod: ['#e9e2f5', '#8c76bf'], Scroll: ['#f6ead2', '#c49a5a'], Staff: ['#ece2d4', '#9a7650'], Wand: ['#eedff5', '#a46cc2'], Weapon: ['#e2e6ea', '#7d8894'], Wondrous: ['#dcefee', '#4f9e9a'] };
   let uid = 0;
@@ -102,17 +119,29 @@
   document.getElementById('legend').innerHTML = 'Badge, read from the item’s text:' + Object.entries(ART.badge).map(([k, [c, l]]) => `<span><svg viewBox="0 0 512 512"><circle cx="256" cy="256" r="250" fill="${c}"/><path transform="translate(96 96) scale(.625)" fill="#fff" d="${ART.icons[k]}"/></svg>${l}</span>`).join('');
   const vEl = document.getElementById('view');
   vEl.onclick = e => { const b = e.target.closest('button'); if (!b) return; st.v = b.dataset.v; st.open = null; [...vEl.querySelectorAll('button')].forEach(x => x.classList.toggle('on', x === b)); draw(); };
-  document.getElementById('grid').onclick = e => { if (st.v !== 'gal' || e.target.closest('a')) return; const c = e.target.closest('.it'); if (!c) return; st.open = st.open === c.dataset.n ? null : c.dataset.n; draw(); if (st.open) document.querySelector('.it.open').scrollIntoView({ block: 'nearest', behavior: 'smooth' }); };
+  document.getElementById('grid').onclick = e => { const lb = e.target.closest('.dn button'); if (lb) { setLens(lb.dataset.l); window.scrollTo({ top: document.querySelector('.tools').offsetTop, behavior: 'smooth' }); return; } if (st.v !== 'gal' || e.target.closest('a')) return; const c = e.target.closest('.it'); if (!c) return; st.open = st.open === c.dataset.n ? null : c.dataset.n; draw(); if (st.open) document.querySelector('.it.open').scrollIntoView({ block: 'nearest', behavior: 'smooth' }); };
   document.getElementById('feat').onchange = e => { st.feat = e.target.checked; draw(); };
+  document.getElementById('notes').onchange = e => { st.notes = e.target.checked; if (!st.notes) st.lens = null; draw(); };
+  const lensKeys = Object.keys(NOTES.lenses).sort((a, b) => ALL.filter(i => (NOTE(i.n) || [])[0] === b).length - ALL.filter(i => (NOTE(i.n) || [])[0] === a).length);
+  const lEl = document.getElementById('lenses');
+  lEl.innerHTML = '<b>Scripture lens:</b>' + lensKeys.map(k => `<button data-l="${k}" title="${esc(NOTES.lenses[k][2])}">${esc(NOTES.lenses[k][0])} <small>${ALL.filter(i => (NOTE(i.n) || [])[0] === k).length}</small></button>`).join('');
+  const setLens = k => { st.lens = st.lens === k ? null : k; draw(); };
+  lEl.onclick = e => { const b = e.target.closest('button'); if (b) setLens(b.dataset.l); };
   function draw() {
     const q = st.q.toLowerCase();
-    const list = ALL.filter(i => (st.t === 'All' || i.t === st.t) && (!st.feat || FEAT[norm(i.n)]) && (!q || i.n.toLowerCase().includes(q) || i.d.toLowerCase().includes(q)));
+    const list = ALL.filter(i => (st.t === 'All' || i.t === st.t) && (!st.feat || FEAT[norm(i.n)]) && (!st.lens || (NOTE(i.n) || [])[0] === st.lens) && (!q || i.n.toLowerCase().includes(q) || i.d.toLowerCase().includes(q) || (st.notes && (NOTE(i.n) || ['', ''])[1].toLowerCase().includes(q))));
+    document.body.classList.toggle('nonotes', !st.notes);
+    [...lEl.children].forEach(x => x.classList && x.classList.toggle('on', x.dataset.l === st.lens));
+    const L = st.lens && NOTES.lenses[st.lens];
+    document.getElementById('insight').innerHTML = L
+      ? `<h4>Lens: ${esc(L[0])}</h4><p>${esc(L[2])}</p><p class="src">From ${esc(L[1])}. Click the lens again to clear it.</p>`
+      : `<h4>${st.t === 'All' ? 'Reading the items as a designer' : esc(st.t) + ', as a designer'}</h4><p>${esc(st.t === 'All' ? NOTES.intro : NOTES.types[st.t] || '')}</p>`;
     document.getElementById('count').textContent = `${list.length} of ${ALL.length} items`;
     uid = 0;
     const g = document.getElementById('grid'); g.classList.toggle('gal', st.v === 'gal');
     g.innerHTML = list.length ? list.map(i => {
       const f = FEAT[norm(i.n)];
-      return `<div class="it${f ? ' feat' : ''}${st.open === i.n ? ' open' : ''}" data-n="${esc(i.n)}">${art(i)}<div class="tx"><h3>${hi(i.n, st.q)}</h3><div class="meta"><span class="tag">${i.t}</span>${i.r ? `<span class="tag r">${i.r}</span>` : ''}${i.u ? `<span class="tag u">${esc(i.u)}</span>` : ''}${f ? `<a class="tag f" href="index.html">On the problems page: ${f}</a>` : ''}</div><p>${hi(i.d, st.q)}</p></div></div>`;
+      return `<div class="it${f ? ' feat' : ''}${st.open === i.n ? ' open' : ''}" data-n="${esc(i.n)}">${art(i)}<div class="tx"><h3>${hi(i.n, st.q)}</h3><div class="meta"><span class="tag">${i.t}</span>${i.r ? `<span class="tag r">${i.r}</span>` : ''}${i.u ? `<span class="tag u">${esc(i.u)}</span>` : ''}${f ? `<a class="tag f" href="index.html">On the problems page: ${f}</a>` : ''}</div><p>${hi(i.d, st.q)}</p>${(nt => nt ? `<div class="dn"><button data-l="${nt[0]}" title="${esc(NOTES.lenses[nt[0]][1])}">${esc(NOTES.lenses[nt[0]][0])}</button>${hi(nt[1], st.q)}</div>` : '')(NOTE(i.n))}</div></div>`;
     }).join('') : '<div class="none">No item matches.</div>';
   }
   draw();
