@@ -460,7 +460,10 @@
     const cur = () => run(TURN, steps(), st.t).i;
     $$(sl, '.tn-mode .btn').forEach(b => b.onclick = () => { st.mode = b.dataset.m; $$(sl, '.tn-mode .btn').forEach(x => x.classList.toggle('on', x === b)); st.t = Math.min(st.t, total(steps()) - .01); });
     $(sl, '.tn-prev').onclick = () => { setPlay(false); const i = cur(), s0 = startOf(steps(), i); st.t = st.t - s0 > .3 || i === 0 ? s0 : startOf(steps(), i - 1); };
-    $(sl, '.tn-next').onclick = () => { setPlay(false); const i = Math.min(steps().length - 1, cur() + 1); st.t = startOf(steps(), i) + steps()[i].dur - .02; };
+    $(sl, '.tn-next').onclick = () => {
+      setPlay(false); const end = i => startOf(steps(), i) + steps()[i].dur - .02;
+      let i = cur(); if (st.t >= end(i) - .03) i = Math.min(steps().length - 1, i + 1); st.t = end(i);
+    };
     playBtn.onclick = () => { if (st.t >= total(steps()) - .05) st.t = 0; setPlay(!st.play); };
     $(sl, '.tn-restart').onclick = () => { st.t = 0; setPlay(true); };
     function frame() {
