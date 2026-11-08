@@ -35,6 +35,15 @@
 
   // ---------- drawing helpers (panel-local coordinates) ----------
   let X;   // the 2d context
+  // the student-token props (student-tokens/vector-basics/svg/props); prop(name) is null until the SVG has loaded
+  const PROP_DIR = document.currentScript && document.currentScript.src ? new URL('../../student-tokens/vector-basics/svg/props/', document.currentScript.src).href : null;
+  const PROPS = {};
+  function prop(name) {
+    if (!PROP_DIR) return null;
+    let im = PROPS[name]; if (!im) { im = PROPS[name] = new Image(); im.src = PROP_DIR + name + '.svg'; }
+    return im.complete && im.naturalWidth ? im : null;
+  }
+  ['pressure-plate', 'barrel', 'crate'].forEach(prop);
   // environments: the same pattern, re-skinned per theme. ENV.dungeon is the original look.
   const ENV = {
     dungeon: { floor: '#ddd2bc', ln: '#cdbf9f', tint: 'rgba(120,96,50,.07)', fs: 'tiles', wall: '#3d4270', wallDk: '#2a2e55', wallHi: '#5a5f92', ws: 'brick' },
@@ -315,8 +324,10 @@
         // pressure plate
         const on = t > 1.2 && t < 3.4;
         if (v === 0) {
-          X.fillStyle = on ? '#c9a24a' : '#b9ad92'; X.strokeStyle = C.woodDk; X.lineWidth = 2;
-          X.beginPath(); X.roundRect(296, 192, 58, 56, 6); X.fill(); X.stroke();
+          const pl = prop('pressure-plate');
+          if (pl) { X.drawImage(pl, 325 - 36, 220 - 36, 72, 72); if (on) { X.fillStyle = 'rgba(255,185,81,.45)'; X.beginPath(); X.roundRect(306, 201, 38, 38, 4); X.fill(); } }
+          else { X.fillStyle = on ? '#c9a24a' : '#b9ad92'; X.strokeStyle = C.woodDk; X.lineWidth = 2;
+            X.beginPath(); X.roundRect(296, 192, 58, 56, 6); X.fill(); X.stroke(); }
           if (on) label('Trigger plate', 325, 290);
         }
         wall(0, 0, PW, 110); edge(0, 104, PW, 6); wall(0, 330, PW, 110); edge(0, 330, PW, 6);
@@ -412,9 +423,16 @@
           const s = t < 2.6 ? 1 + (t > 2.2 ? .08 * Math.sin(t * 60) : 0) : 1 + .4 * (1 - show);
           X.save(); X.globalAlpha = show; X.translate(...B); X.scale(s, s);
           shadow(4, 8, 36, 30, .3);
+          const br = prop('barrel');
+          if (br) {   // the student-token barrel with a red hazard badge, so it still reads as explosive
+            X.drawImage(br, -42, -44, 84, 84);
+            X.fillStyle = C.red; X.strokeStyle = '#1d2433'; X.lineWidth = 2.5; X.beginPath(); X.arc(0, 0, 13, 0, TAU); X.fill(); X.stroke();
+            X.fillStyle = C.gold; X.font = '800 18px Montserrat'; X.textAlign = 'center'; X.textBaseline = 'middle'; X.fillText('!', 0, 1);
+          } else {
           X.fillStyle = C.red; X.beginPath(); X.arc(0, 0, 34, 0, TAU); X.fill();
           X.strokeStyle = '#7a1714'; X.lineWidth = 5; X.beginPath(); X.arc(0, 0, 26, 0, TAU); X.stroke(); X.beginPath(); X.arc(0, 0, 34, 0, TAU); X.stroke();
           X.fillStyle = C.gold; X.font = '800 22px Montserrat'; X.textAlign = 'center'; X.textBaseline = 'middle'; X.fillText('!', 0, 1);
+          }
           X.restore();
           if (t > 1.2 && t < 2.6) for (let i = 0; i < 5; i++) { const a = t * 9 + i * 1.3, d = 8 + 10 * frac(t * 3 + i * .2); X.fillStyle = i % 2 ? C.gold : '#fff'; X.beginPath(); X.arc(B[0] + 22 + Math.cos(a) * d, B[1] - 26 + Math.sin(a) * d, 3, 0, TAU); X.fill(); }
         }
@@ -469,6 +487,7 @@
           if (al > 0) { X.save(); X.globalAlpha = al; X.translate(O[0] + Math.cos(a) * r, O[1] + Math.sin(a) * r); X.rotate(a * 1.5); X.scale(s, s);
             if (v === 1) { X.fillStyle = C.wood; X.strokeStyle = C.woodDk; X.lineWidth = 3; X.beginPath(); X.roundRect(-34, -12, 68, 24, 12); X.fill(); X.stroke(); X.fillStyle = C.woodHi; X.beginPath(); X.ellipse(30, 0, 5, 11, 0, 0, TAU); X.fill(); }
             else if (v === 2) ball(0, 0, 20, 0, '#8a8094', '#3a3242');
+            else if (prop('crate')) X.drawImage(prop('crate'), -25, -25, 50, 50);
             else { X.fillStyle = C.wood; X.strokeStyle = C.woodDk; X.lineWidth = 3; X.fillRect(-20, -20, 40, 40); X.strokeRect(-20, -20, 40, 40);
             X.beginPath(); X.moveTo(-20, -20); X.lineTo(20, 20); X.moveTo(20, -20); X.lineTo(-20, 20); X.stroke(); }
             X.restore(); } }

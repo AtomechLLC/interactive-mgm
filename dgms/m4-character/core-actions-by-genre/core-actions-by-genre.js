@@ -7,6 +7,7 @@
 (function () {
   const { $, $$, canvasDemo, say, ptr } = FPF.kit;
   const T = TD, C = TD.C, { clamp, lerp, ease } = TD, TAU = Math.PI * 2;
+  T.prop('crate');
   const W = 1040, H = 585, GY = 418, PX = 300, S = 1.7;
   const rr = (g, x, y, w, h, r) => { g.beginPath(); g.roundRect(x, y, w, h, r); };
   const text = (g, s, x, y, size, col = C.ink, w = 600, align = 'left', fam = 'Jost') => { g.font = `${w} ${size}px ${fam}, sans-serif`; g.fillStyle = col; g.textAlign = align; g.textBaseline = 'alphabetic'; g.fillText(s, x, y); };
@@ -79,7 +80,7 @@
   const muzzle = (P, p) => { const a = p.sr + p.er, h = P.j.hR; return P.world([h[0] + Math.sin(a) * 40, h[1] + Math.cos(a) * 40]); };
   function dummy(g, x, pose, o = {}) { return puppet(g, x, GY, pose, { face: -1, col: C.red, back: '#d87b73', ...o }); }
   function target(g, x, y, r = 34) { ['#e5322d', '#fffaf0', '#e5322d', '#fffaf0', '#e5322d'].forEach((c, i) => { g.fillStyle = c; g.beginPath(); g.arc(x, y, r * (1 - i * .19), 0, TAU); g.fill(); }); g.strokeStyle = '#8b6136'; g.lineWidth = 5; g.beginPath(); g.moveTo(x, y + r); g.lineTo(x, GY); g.stroke(); }
-  function crate(g, x, w, h) { g.fillStyle = '#b07a4a'; g.strokeStyle = '#6e4a2a'; g.lineWidth = 3; g.fillRect(x, GY - h, w, h); g.strokeRect(x, GY - h, w, h); g.beginPath(); g.moveTo(x, GY - h); g.lineTo(x + w, GY); g.moveTo(x + w, GY - h); g.lineTo(x, GY); g.stroke(); }
+  function crate(g, x, w, h) { const im = T.prop('crate'); if (im) { g.drawImage(im, x - w * .125, GY - h - h * .125, w / .8, h / .8); return; } g.fillStyle = '#b07a4a'; g.strokeStyle = '#6e4a2a'; g.lineWidth = 3; g.fillRect(x, GY - h, w, h); g.strokeRect(x, GY - h, w, h); g.beginPath(); g.moveTo(x, GY - h); g.lineTo(x + w, GY); g.moveTo(x + w, GY - h); g.lineTo(x, GY); g.stroke(); }
   function wallBlock(g, x, w, h, col = '#8b8fa8') { g.fillStyle = col; g.strokeStyle = '#4a4f6a'; g.lineWidth = 3; g.fillRect(x, GY - h, w, h); g.strokeRect(x, GY - h, w, h); g.strokeStyle = 'rgba(74,79,106,.35)'; g.lineWidth = 2; for (let yy = GY - h + 26; yy < GY; yy += 26) { g.beginPath(); g.moveTo(x, yy); g.lineTo(x + w, yy); g.stroke(); } }
   function spark(g, x, y, r, a, col = '#ffb951') { if (a <= 0) return; g.save(); g.globalAlpha = clamp(a); g.strokeStyle = col; g.lineWidth = 4; for (let i = 0; i < 8; i++) { const an = i / 8 * TAU; g.beginPath(); g.moveTo(x + Math.cos(an) * r * .35, y + Math.sin(an) * r * .35); g.lineTo(x + Math.cos(an) * r, y + Math.sin(an) * r); g.stroke(); } g.restore(); T.flash(x, y, r * .7, a); }
   function stamina(g, x, y, v, cost) { g.fillStyle = 'rgba(21,32,68,.85)'; rr(g, x - 70, y, 140, 14, 7); g.fill(); g.fillStyle = '#2fae63'; rr(g, x - 68, y + 2, 136 * clamp(v), 10, 5); g.fill(); if (cost > 0) T.popText(`-${Math.round(cost * 100)} stamina`, x, y - 16, '#1a8a4c', 1); text(g, 'stamina', x - 76, y + 12, 12, C.muted, 700, 'right'); }

@@ -18,6 +18,7 @@
 (function () {
   const { $, $$, canvasDemo, say } = FPF.kit;
   const T = TD, C = TD.C, { clamp } = TD;
+  T.prop('flag');
   const W = 1040, H = 585, DT = 1 / 60;
 
   /* ---------- sprites: the real game frames, shared with jump-test-classic (see img/SOURCES.txt) ---------- */
@@ -187,6 +188,7 @@
     }
   }
   function flag(g, x, oy) {
+    const im = T.prop('flag'); if (im) { const S = 7 * TL / .9; g.drawImage(im, x - .31 * S, oy - .94 * S, S, S); return; }   // the student-token flag
     g.fillStyle = '#5d618c'; g.fillRect(x - 2, oy - 7 * TL, 4, 7 * TL);
     g.fillStyle = '#2fae63'; g.beginPath(); g.moveTo(x + 2, oy - 7 * TL + 4); g.lineTo(x + 40, oy - 7 * TL + 18); g.lineTo(x + 2, oy - 7 * TL + 32); g.fill();
     g.fillStyle = C.gold; g.beginPath(); g.arc(x, oy - 7 * TL, 6, 0, Math.PI * 2); g.fill();

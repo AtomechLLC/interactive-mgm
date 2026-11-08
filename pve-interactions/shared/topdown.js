@@ -10,6 +10,16 @@
   };
   let X;
   const use = g => { X = g; };
+  // the student-token props (student-tokens/vector-basics/svg/props), loaded next to this kit; prop(name) returns the image
+  // once it has loaded, null before then, so callers keep their own shape as the fallback
+  const PROP_DIR = document.currentScript && document.currentScript.src ? new URL('../../student-tokens/vector-basics/svg/props/', document.currentScript.src).href : null;
+  const PROPS = {};
+  function prop(name) {
+    if (!PROP_DIR) return null;
+    let im = PROPS[name]; if (!im) { im = PROPS[name] = new Image(); im.src = PROP_DIR + name + '.svg'; }
+    return im.complete && im.naturalWidth ? im : null;
+  }
+  ['flag', 'pillar'].forEach(prop);
   const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
   const lerp = (a, b, k) => a + (b - a) * k;
   const ease = k => k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
@@ -32,6 +42,8 @@
   }
   function pillar(x, y, w, h) {
     shadow(x + w / 2 + 6, y + h / 2 + 8, w * .6, h * .55, .2);
+    const im = Math.abs(w - h) <= .2 * Math.max(w, h) && prop('pillar');   // square blocks use the student-token pillar
+    if (im) { const s = Math.max(w, h) / .8; X.drawImage(im, x + w / 2 - s / 2, y + h / 2 - s / 2, s, s); return; }
     X.fillStyle = C.stone; X.fillRect(x, y, w, h); X.fillStyle = C.stoneDk; X.fillRect(x, y + h - 8, w, 8);
     X.strokeStyle = C.navy; X.lineWidth = 2; X.strokeRect(x, y, w, h);
   }
@@ -114,9 +126,10 @@
     for (let i = 0; i < 8; i++) { const a = i / 8 * TAU, d = r * ease(k) * 1.4; X.fillStyle = `rgba(150,135,110,${.55 * (1 - k)})`; X.beginPath(); X.arc(x + Math.cos(a) * d, y + Math.sin(a) * d * .8, 9 + 12 * k, 0, TAU); X.fill(); }
   }
   function flag(x, y) {
+    X.fillStyle = 'rgba(255,185,81,.25)'; X.beginPath(); X.ellipse(x, y + 10, 34, 14, 0, 0, TAU); X.fill();
+    const im = prop('flag'); if (im) { X.drawImage(im, x - 19.84, y - 50.16, 64, 64); return; }   // pole foot at (x, y + 10)
     X.fillStyle = C.navy; X.fillRect(x - 3, y - 50, 6, 60);
     X.fillStyle = C.gold; X.strokeStyle = C.navy; X.lineWidth = 2; X.beginPath(); X.moveTo(x + 3, y - 50); X.lineTo(x + 44, y - 38); X.lineTo(x + 3, y - 26); X.closePath(); X.fill(); X.stroke();
-    X.fillStyle = 'rgba(255,185,81,.25)'; X.beginPath(); X.ellipse(x, y + 10, 34, 14, 0, 0, TAU); X.fill();
   }
   function pad(x, y, text) {
     X.fillStyle = 'rgba(85,98,235,.18)'; X.strokeStyle = C.blue; X.lineWidth = 2; X.setLineDash([6, 6]);
@@ -171,5 +184,5 @@
     return api;
   }
 
-  window.TD = { C, TAU, use, clamp, lerp, ease, floor, wall, pillar, shadow, player, foe, hp, zone, cone, tracer, laser, beam, bubble, flash, poof, flag, pad, label, popText, trail, stamp, Path };
+  window.TD = { C, TAU, use, clamp, lerp, ease, floor, wall, pillar, shadow, player, foe, hp, zone, cone, tracer, laser, beam, bubble, flash, poof, flag, prop, pad, label, popText, trail, stamp, Path };
 })();
