@@ -99,8 +99,8 @@ Each deck's home button goes back to `pvp/index.html`. Add a card there when you
 
 - `pvp/footsies/`: **Spacing and Footsies**, from the same deck, part 5 (spacing and the footsies slide).
   1. Title: spacing defined, and footsies.
-  2. Land it, whiff it, or get punished: Ryu's crouching medium kick vs Chun-Li's standing medium kick. Pick who presses first, the distance, the waiting player's reaction time and Chun-Li's recovery. Shows hurtboxes and hitboxes (the leg's hurtbox goes out with the kick), both frame strips, and a range map of where each kick lands, whiffs unpunished or gets whiff punished.
-  The rules (`FS`, `limbTip`, `plan`) are at the top of `pvp/footsies/footsies.js`. Frame data and ranges are illustrative, shaped after Street Fighter 6. GIF: `gifs/footsies.gif`.
+  2. Land it, whiff it, or get punished: Street Fighter III: 3rd Strike, Ryu's and Chun-Li's crouching medium kicks, drawn with the game's sprites and per-frame hurtboxes and hitboxes. Pick who presses first, the distance, the waiting player's reaction time and Ryu's recovery. Shows both frame strips and a range map of where each kick lands, whiffs unpunished or gets whiff punished.
+  Sprites, boxes and frame data come from the Game Animation Library's Move Explorer (`frame-data/sprites/street-fighter-3-third-strike/`; sprites are Capcom's, captures and boxes [Baston](http://ensabahnur.free.fr/BastonNew/)'s), exported to `pvp/footsies/moves.js` and `pvp/footsies/img/`. The rules (`front`, `reach`, `plan`) are at the top of `pvp/footsies/footsies.js`. GIF: `gifs/footsies.gif`.
 
 - `pvp/trading/`: **Trading Hits**, from the same deck, part 6 (PvP melee strikes and trades), about slides 217 to 246.
   1. Title: the definition of trading and the three building blocks (animation, timing, reaction rules).
