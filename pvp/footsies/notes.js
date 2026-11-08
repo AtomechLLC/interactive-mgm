@@ -1,0 +1,5 @@
+// Speaker notes per slide, written for this page from the slide text of "MGM C4 M4 - Fundamentals for Designing Engaging PvP Interactions Course", part 5 (zoning and spacing) and its footsies slide. The Drive export has no speaker notes for this part, so these are a summary, not the recorded script.
+window.NOTES = [
+  { script: 'Spacing: positioning your character’s hurtbox, the attackable location, to influence opponent movement. Footsies is spacing at its smallest scale: two characters walking at the edge of each other’s pokes, each trying to press at the right distance.' },
+  { script: 'Ryu’s crouching medium kick is quicker and shorter; Chun-Li’s standing medium kick reaches further and recovers slower. Inside her range she lands it. Just outside it, she whiffs, and her leg stays out long enough for a ready Ryu to hit it: a whiff punish. Further out, nobody reaches anything. Change the distance, the reaction time and the recovery to move those bands. Frame data and ranges are illustrative, shaped after Street Fighter 6.' },
+];

@@ -97,6 +97,16 @@ Each deck's home button goes back to `pvp/index.html`. Add a card there when you
   4. Mobility: walking vs root motion vs a gap closer crossing a lane of bolts.
   The simulation is `pvp/zoning/sim.js` (`ZoneSim`, also a node module). Numbers are illustrative, tuned so the presets land on the deck's story. GIF: `gifs/zoning-lane.gif`.
 
+- `pvp/footsies/`: **Spacing and Footsies**, from the same deck, part 5 (spacing and the footsies slide).
+  1. Title: spacing defined, and footsies.
+  2. Land it, whiff it, or get punished: Ryu's crouching medium kick vs Chun-Li's standing medium kick. Pick who presses first, the distance, the waiting player's reaction time and Chun-Li's recovery. Shows hurtboxes and hitboxes (the leg's hurtbox goes out with the kick), both frame strips, and a range map of where each kick lands, whiffs unpunished or gets whiff punished.
+  The rules (`FS`, `limbTip`, `plan`) are at the top of `pvp/footsies/footsies.js`. Frame data and ranges are illustrative, shaped after Street Fighter 6. GIF: `gifs/footsies.gif`.
+
+- `pvp/trading/`: **Trading Hits**, from the same deck, part 6 (PvP melee strikes and trades), about slides 217 to 246.
+  1. Title: the definition of trading and the three building blocks (animation, timing, reaction rules).
+  2. Greatsword vs dagger: one heavy swing against a chain of three stabs, resolved by first to hit, heavier hit wins (God of War), both land (Street Fighter) or poise (Elden Ring, Dark Souls). Sliders for when the dagger starts and the greatsword user's poise; a table compares the same exchange under all four rules.
+  The rules (`MV`, `RULES`, `sim`) are at the top of `pvp/trading/trading.js`. Numbers are illustrative. GIF: `gifs/trading-hits.gif`.
+
 ## Co-op Interactions: Sequencing with Tokens (`coop-interactions/sequencing/`)
 
 Part 8 of *MGM C4 M6 - Engaging Co-op Interaction Design Fundamentals (Update)*, the Teamplay Sequencing Framework, drawn with plain tokens (P1-P4, one enemy, Water / Chill / Shock / Rock and the `student-tokens/vector-basics` status icons).
