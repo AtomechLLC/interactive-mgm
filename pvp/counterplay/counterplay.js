@@ -292,7 +292,8 @@
     const v = 170, castT = 0.25, fly = 0.55;
     const jy = s => you === 'stop' ? Y0 - v * Math.min(s, castT) : Y0 - v * s;
     const s = i === null ? 0 : lt;
-    const yNow = jy(Math.min(s, castT + fly + 0.6));
+    // rooted: she freezes where the binding lands; otherwise she walks on a little after it passes
+    const yNow = jy(Math.min(s, castT + fly + (i !== null && hits(you, aim) ? 0 : 0.6)));
     if (i !== null) {
       // where she aims: at Jinx (direct) or where Jinx would be if she keeps walking (lead)
       const ay = aim === 'direct' ? jy(castT) : Y0 - v * (castT + fly);
