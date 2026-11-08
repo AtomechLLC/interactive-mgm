@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zoning and Spacing · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="zoning.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · PvP Interactions · Zoning and Spacing', home: '../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1: part 5 opener and the two definitions -->
+<section class="slide center" data-title="Zoning and Spacing" data-demo="none">
+  <div class="kicker rise">part 5 · PvP combat balancing tools and tips</div>
+  <h1 class="rise">Zoning <span class="accent">&amp;</span> Spacing</h1>
+  <div class="rule rise" style="margin:22px auto"></div>
+  <div class="zs-defs rise">
+    <div class="zs-def"><img src="../../student-tokens/256px/league-of-legends/champ-ashe-token-player.png" alt="Ashe"><b>Zoning</b><span>Positioning your character’s <i>attacks</i> to control where your opponent moves.</span></div>
+    <div class="zs-vs">vs</div>
+    <div class="zs-def"><img src="../../student-tokens/256px/league-of-legends/champ-zed-token-enemy.png" alt="Zed"><b>Spacing</b><span>Positioning your character’s <i>hurtbox</i> to influence where your opponent moves.</span></div>
+  </div>
+  <p class="lede rise" style="margin:26px auto 0;text-align:center">Together: space and timing create unequal advantages, so each side has ranges that favor it and ranges that don’t.</p>
+</section>
+
+<!-- 2: Comparing Ashe and Zed, danger by distance, played out on a lane -->
+<section class="slide" data-title="Ashe vs Zed on a Lane" data-demo="lane">
+  <div class="kicker">comparing Ashe and Zed · danger depends on distance</div>
+  <h2 class="sm">Who Gets to <span class="accent">Deal Damage?</span></h2>
+  <div class="zs-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="zs-side">
+      <div class="row wrap ln-presets"></div>
+      <h4><img src="../../student-tokens/256px/league-of-legends/champ-ashe.png" alt="">Ashe · long range, slows</h4>
+      <label class="rng">Attack range <b class="v-range"></b><input type="range" class="i-range" min="300" max="900" step="25"></label>
+      <div class="row wrap">
+        <button class="btn ic t-frost"><img src="img/Ashe_P.png" alt="">Frost Shot slow</button>
+        <button class="btn ic t-volley"><img src="img/Volley.png" alt="">Volley</button>
+      </div>
+      <h4><img src="../../student-tokens/256px/league-of-legends/champ-zed.png" alt="">Zed · short range, high damage</h4>
+      <label class="rng">Move speed <b class="v-zspd"></b><input type="range" class="i-zspd" min="300" max="450" step="5"></label>
+      <div class="row wrap">
+        <button class="btn ic t-w"><img src="img/ZedW.png" alt="">Living Shadow</button>
+        <button class="btn ic t-r"><img src="img/ZedR.png" alt="">Death Mark (2× damage)</button>
+      </div>
+      <h4>Arena</h4>
+      <label class="rng">Room behind Ashe <b class="v-room"></b><input type="range" class="i-room" min="0" max="3000" step="50"></label>
+      <div class="zs-stats st"></div>
+      <p class="zs-out out1"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 3: why zoning is so powerful: the distance problem in 2D, and damage capability -->
+<section class="slide" data-title="The Math of Melee vs Ranged" data-demo="area">
+  <div class="kicker">why zoning is so powerful · the distance problem in 2D</div>
+  <h2 class="sm">Range Grows the Floor You <span class="accent">Threaten</span></h2>
+  <div class="zs-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="zs-side">
+      <label class="rng">Ranged reach <b class="v-ar"></b><input type="range" class="i-ar" min="150" max="1000" step="25"></label>
+      <label class="rng">Melee reach <b class="v-am"></b><input type="range" class="i-am" min="75" max="400" step="25"></label>
+      <label class="rng">Melee damage multiplier <b class="v-ak"></b><input type="range" class="i-ak" min="1" max="8" step="0.5"></label>
+      <div class="row wrap"><button class="btn t-gap">+ gap closer reach (650)</button><button class="btn on a-tour">▶ Walk-through</button></div>
+      <div class="zs-stats st"></div>
+      <p class="zs-out out1"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 4: 3 movement types in PvP combat -->
+<section class="slide" data-title="Three Ways to Close the Gap" data-demo="move">
+  <div class="kicker">3 movement types in PvP combat · keeping damage capability above 0</div>
+  <h2 class="sm">Walk, <span class="accent">Lunge</span> or Gap Close</h2>
+  <div class="zs-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="zs-side">
+      <label class="rng">Walk speed <b class="v-ws"></b><input type="range" class="i-ws" min="200" max="500" step="10"></label>
+      <label class="rng">Root motion per swing <b class="v-lg"></b><input type="range" class="i-lg" min="0" max="300" step="10"></label>
+      <label class="rng">Gap closer recovery <b class="v-rc"></b><input type="range" class="i-rc" min="0" max="1.5" step="0.1"></label>
+      <div class="zs-stats st"></div>
+      <p class="zs-out out1"></p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="sim.js"></script>
+<script src="zoning.js"></script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Three Forms of Counterplay · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="counterplay.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · PvP Interactions · Three Forms of Counterplay', home: '../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1: part 4 opener: the definition and the three forms -->
+<section class="slide center" data-title="Three Forms of Counterplay" data-demo="none">
+  <div class="kicker rise">part 4 · 3 forms of competitive counterplay</div>
+  <h1 class="rise">Counter<span class="accent">play</span></h1>
+  <p class="lede rise cp-def">The act of responding to an opponent’s actions with options in your toolkit that beat theirs.</p>
+  <div class="cp-forms rise">
+    <div class="cp-form sys"><img src="../../student-tokens/256px/icons-actions-and-keywords/dodge.png" alt=""><b>Systemic</b><span>Built into the core rules. Everyone has it, all the time.</span></div>
+    <div class="cp-form sit"><img src="../../student-tokens/256px/icons-actions-and-keywords/eye-target.png" alt=""><b>Situational</b><span>Opens up only when the game state sets it up.</span></div>
+    <div class="cp-form spe"><img src="../../student-tokens/256px/icons-weapons/curvy-knife.png" alt=""><b>Specialized</b><span>A tool, weapon or move you pick that answers specific threats.</span></div>
+  </div>
+</section>
+
+<!-- 2: the manifestation of counterplay: old Sion vs new Sion -->
+<section class="slide" data-title="Old Sion vs New Sion" data-demo="sion">
+  <div class="kicker">the manifestation of counterplay · it comes from the play pattern</div>
+  <h2 class="sm">Old Sion vs <span class="accent">New Sion</span></h2>
+  <div class="cp-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="cp-side">
+      <h4>The target</h4>
+      <label class="rng">Reaction time <b class="v-react"></b><input type="range" class="i-react" min="150" max="900" step="25"></label>
+      <h4>The designer</h4>
+      <label class="rng">Decimating Smash charge time <b class="v-charge"></b><input type="range" class="i-charge" min="0.4" max="2" step="0.1"></label>
+      <div class="cp-stats st"></div>
+      <p class="cp-out out1"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 3: systemic vs situational vs specialized: a sorting drill with the deck's examples -->
+<section class="slide" data-title="Sort the Counterplay" data-demo="sort">
+  <div class="kicker">systemic vs situational vs specialized counterplay</div>
+  <h2 class="sm">Which Form <span class="accent">Is It?</span></h2>
+  <div class="so-wrap">
+    <div class="so-cards"></div>
+    <div class="so-side">
+      <p class="so-q">Pick a card, then pick its form.</p>
+      <div class="so-bins">
+        <button class="btn so-bin sys" data-bin="sys">Systemic <kbd>1</kbd></button>
+        <button class="btn so-bin sit" data-bin="sit">Situational <kbd>2</kbd></button>
+        <button class="btn so-bin spe" data-bin="spe">Specialized <kbd>3</kbd></button>
+      </div>
+      <p class="so-out out"></p>
+      <div class="row wrap"><button class="btn so-reveal">Show all answers</button><button class="btn so-reset">↻ Reset</button></div>
+      <p class="muted small">Include a variety: systemic counterplay keeps every player in the fight, situational counterplay rewards reading the moment, specialized counterplay rewards preparation.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 4: stacking counterplays: the counterplay chain -->
+<section class="slide" data-title="Counterplay Chain" data-demo="chain">
+  <div class="kicker">stacking counterplays · counterplay chains</div>
+  <h2 class="sm">Every Answer Needs an <span class="accent">Answer</span></h2>
+  <div class="ch-wrap">
+    <div class="ch-board">
+      <svg class="ch-lines" viewBox="0 0 1040 560" preserveAspectRatio="none"></svg>
+      <div class="ch-col c1"><div class="ch-head">Player 1</div><button class="ch-node start" data-n="attack"><img src="../../student-tokens/256px/icons-weapons/broadsword.png" alt=""><b>Attack</b></button></div>
+      <div class="ch-col c2"><div class="ch-head">Player 2 · countered by</div></div>
+      <div class="ch-col c3"><div class="ch-head">Player 1 · countered by</div></div>
+    </div>
+    <div class="ch-side">
+      <p class="ch-out out"></p>
+      <p class="muted small">Click a response to follow its link. Click an answer’s ✕ to delete it from the game and see what happens to the response it used to beat.</p>
+      <div class="row wrap"><button class="btn ch-restore">↻ Restore all answers</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- 5: counterplay cycle: skillshot counterplay -->
+<section class="slide" data-title="Skillshot Cycle" data-demo="cycle">
+  <div class="kicker">counterplay cycle · skillshot counterplay · League of Legends</div>
+  <h2 class="sm">Dodge <span class="accent">Lux’s</span> Light Binding</h2>
+  <div class="cp-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="cp-side">
+      <h4>You are Jinx. This round you…</h4>
+      <div class="row wrap"><button class="btn cy-move">Keep moving <kbd>M</kbd></button><button class="btn cy-stop">Stop <kbd>S</kbd></button></div>
+      <h4>Lux</h4>
+      <div class="row wrap"><button class="btn cy-read on">Reads your habits</button><button class="btn cy-coin">Guesses at random</button></div>
+      <div class="row wrap" style="margin-top:8px"><button class="btn cy-reset">↻ New game</button><button class="btn cy-tour">▶ Demo</button></div>
+      <div class="cp-stats st"></div>
+      <p class="cp-out out1"></p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="counterplay.js"></script>
+</body>
+</html>

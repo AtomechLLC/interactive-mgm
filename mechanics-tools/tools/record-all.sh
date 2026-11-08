@@ -18,4 +18,5 @@ rec 'reverse-map/index.html#3' rv-cards reverse-sequencing-card-turn "$NOSIDE"
 rec 'reverse-map/index.html#4' rv-mario reverse-sequencing-mario-climb "$NOSIDE"
 rec 'diminishing/index.html#1' dim diminishing-returns
 rec 'life-per-hit/index.html#1' lph life-per-hit
+rec 'feedback-loops/index.html#1' loops feedback-loops
 wait

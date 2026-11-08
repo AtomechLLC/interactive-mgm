@@ -30,6 +30,7 @@ From [game-icons.net](https://game-icons.net), licensed [CC BY 3.0](https://crea
 | `mechanics-tools--contrapositive.svg` | [arena](https://game-icons.net/1x1/sbed/arena.html) | Sbed |
 | `mechanics-tools--life-per-hit.svg` | [vampire-dracula](https://game-icons.net/1x1/delapouite/vampire-dracula.html) | Delapouite |
 | `mechanics-tools--diminishing.svg` | [chart](https://game-icons.net/1x1/delapouite/chart.html) | Delapouite |
+| `mechanics-tools--feedback-loops.svg` | [rolling-energy](https://game-icons.net/1x1/lorc/rolling-energy.html) | Lorc |
 | `mechanics-tools--contrapositive-rules.svg` | [rule-book](https://game-icons.net/1x1/delapouite/rule-book.html) | Delapouite |
 | `pvp.svg` | [crossed-swords](https://game-icons.net/1x1/lorc/crossed-swords.html) | Lorc |
 | `pvp--strike-trades.svg` | [sword-clash](https://game-icons.net/1x1/lorc/sword-clash.html) | Lorc |
@@ -38,6 +39,8 @@ From [game-icons.net](https://game-icons.net), licensed [CC BY 3.0](https://crea
 | `pvp--bruiser-meta.svg` | [muscle-up](https://game-icons.net/1x1/lorc/muscle-up.html) | Lorc |
 | `pvp--elusives.svg` | [invisible](https://game-icons.net/1x1/delapouite/invisible.html) | Delapouite |
 | `pvp--counter-cycles.svg` | [cycle](https://game-icons.net/1x1/lorc/cycle.html) | Lorc |
+| `pvp--zoning.svg` | [archery-target](https://game-icons.net/1x1/lorc/archery-target.html) | Lorc |
+| `pvp--counterplay.svg` | [shield-reflect](https://game-icons.net/1x1/lorc/shield-reflect.html) | Lorc |
 | `pve-interactions.svg` | [dragon-head](https://game-icons.net/1x1/lorc/dragon-head.html) | Lorc |
 | `pve-interactions--nintendo-model.svg` | [super-mushroom](https://game-icons.net/1x1/lorc/super-mushroom.html) | Lorc |
 | `pve-interactions--enemy-composer.svg` | [goblin-head](https://game-icons.net/1x1/delapouite/goblin-head.html) | Delapouite |

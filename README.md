@@ -82,6 +82,21 @@ Each deck's home button goes back to `pvp/index.html`. Add a card there when you
   5. Same sequence, three weapons: the whole sequence re-run for each weapon in one table.
   The rules (`WEAPONS`, `ENEMY`, `plan`) are at the top of `pvp/payoffs/payoffs.js`. Spear numbers are the deck's; fist and sword payoffs are illustrative.
 
+- `pvp/counterplay/`: **Three Forms of Counterplay**, from the same deck, part 4, about slides 96 to 143.
+  1. Title: the definition and the three forms (systemic, situational, specialized).
+  2. Old Sion vs New Sion: Cryptic Gaze (point and click) against Decimating Smash (charge, then stun whoever is still inside). Sliders for the target's reaction time and the charge time show where a play pattern starts to allow counterplay.
+  3. Which form is it?: sort the deck's 13 examples into systemic, situational or specialized (keys 1 to 3). The one-line explanations are my wording, not the deck's.
+  4. Counterplay chain: Attack, the five responses, and the answer to each, in the slide's row order. Delete an answer with ✕ to see a response become a silver bullet.
+  5. Skillshot cycle: Lux's Light Binding against Jinx, keep moving or stop (M / S), with a Lux who reads your habits or guesses at random.
+  Every demo is a pure function of settings and time in `pvp/counterplay/counterplay.js`. GIF: `gifs/old-vs-new-sion.gif`.
+
+- `pvp/zoning/`: **Zoning: Ashe vs Zed**, from the same deck, part 5 (zoning and spacing), about slides 147 to 213.
+  1. Title: zoning and spacing defined.
+  2. Who gets to deal damage?: a 1D lane where Ashe kites Zed. Tune Ashe's range, Zed's speed and the room behind Ashe; toggle Frost Shot, Volley, Living Shadow and Death Mark. Presets: Ashe kites, + Living Shadow, + Death Mark, no room to kite, no slow. Shows distance over time, damage per second by distance and each side's damage capability.
+  3. Area is damage capability: the share of a circle each range controls.
+  4. Mobility: walking vs root motion vs a gap closer crossing a lane of bolts.
+  The simulation is `pvp/zoning/sim.js` (`ZoneSim`, also a node module). Numbers are illustrative, tuned so the presets land on the deck's story. GIF: `gifs/zoning-lane.gif`.
+
 ## Co-op Interactions: Sequencing with Tokens (`coop-interactions/sequencing/`)
 
 Part 8 of *MGM C4 M6 - Engaging Co-op Interaction Design Fundamentals (Update)*, the Teamplay Sequencing Framework, drawn with plain tokens (P1-P4, one enemy, Water / Chill / Shock / Rock and the `student-tokens/vector-basics` status icons).
@@ -158,6 +173,7 @@ Home page `mechanics-tools/index.html` (cards from `PAGES` + `READY`, extra GIFs
 - `reverse-map/`: the slide 116 map example, forward vs backward, with the WoW grind/level/raid strip (115-119). Slides 2-4 are alternate takes on the same idea: a Pokémon gym planned from Misty back (`rv-pokemon.js`), a card turn built from the finisher with WoW spell icons (`rv-cards.js`) and a Super Mario World climb placed from the Dragon Coin down (`rv-mario.js`). Sprites and art are in `reverse-map/img/`.
 - `diminishing/`: stun per rank as linear, diminishing or capped (the deck's illustrative Xerath curve; live Xerath scales by distance, up to 2.25 s) beside Elden Ring's real Vigor HP (183-186).
 - `life-per-hit/`: 6% lifesteal vs 12 life per hit as damage rises, the Diablo III beta story (177-180). Numbers are illustrative.
+- `feedback-loops/`: the feedback loop sandbox (155-176). Positive and negative loops between two players over 30 rounds, plus diminishing returns and a limit on the positive loop; solo presets for a wildfire and a thermostat. Presets follow the deck: rich get richer, Mario Kart items, Deadlock bounties. Rules in `loops-model.js` (`LoopModel`); numbers are illustrative.
 - `shared/`: `mech.css` layout and a copy of the top-down kit.
 - GIFs in `gifs/`: rebuild with `node mechanics-tools/tools/record-slide-gif.js <page url#slide> <which> <out.gif> [fps] [selectors to hide]` while serving InteractiveMGM locally.
 - `PROPOSALS.md`: the rest of the deck's interactive and GIF ideas, by section.
