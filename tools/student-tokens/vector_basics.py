@@ -153,32 +153,200 @@ for n, (col, g) in STATUS.items():
     svg('status', n, badge(col, g))
 
 # ---------------------------------------------------------------- props
+# One ink outline weight (2.5) on every shape, lit from the top left: a soft ink shade on the lower right and a white
+# highlight on the upper left, the same treatment as the archetype discs. Outlines that must read as one silhouette
+# (key, rings, bow) are drawn as a wide ink stroke under a narrower colour stroke.
+O = f'stroke="{INK}" stroke-width="2.5" stroke-linejoin="round"'
+O2 = f'stroke="{INK}" stroke-width="1.5" stroke-linejoin="round"'
+SH = f'fill="{INK}" opacity=".2"'
+HI = 'fill="#fff" opacity=".45"'
+P_STEEL, P_STEEL_LT, P_STEEL_DK, P_IRON = '#8a8f9c', '#c9ccd4', '#62688a', '#4a4f5c'
+P_WOOD, P_WOOD_LT, P_WOOD_MD, P_LEATHER = '#8a5a2b', '#c08a4a', '#a8743a', '#5a3a1c'
+P_GOLD, P_GOLD_LT = '#ffb951', '#ffd23f'
+
+def hilt(cx, top, guard_w, grip_len):
+    """Crossguard, wrapped grip and pommel under a blade whose base sits at y = top."""
+    g = f'<rect x="{cx - guard_w / 2}" y="{top}" width="{guard_w}" height="8" rx="3" fill="{P_IRON}" {O}/>'
+    g += f'<rect x="{cx - 4.5}" y="{top + 8}" width="9" height="{grip_len}" rx="2" fill="{P_LEATHER}" {O}/>'
+    g += ''.join(f'<line x1="{cx - 4.5}" y1="{top + 12 + i * 5}" x2="{cx + 4.5}" y2="{top + 10 + i * 5}" stroke="{INK}" stroke-width="1.2"/>' for i in range(int((grip_len - 4) / 5)))
+    g += f'<circle cx="{cx}" cy="{top + 12 + grip_len}" r="5.5" fill="{P_GOLD}" {O}/><circle cx="{cx - 1.8}" cy="{top + 10.5 + grip_len}" r="1.8" {HI}/>'
+    g += f'<rect x="{cx - guard_w / 2 + 3}" y="{top + 1.5}" width="{guard_w / 2 - 3}" height="2" rx="1" {HI}/>'
+    return g
+
+def blade(cx, tip, base, hw):
+    """Straight double-edged blade: tip at y = tip, shoulders hw wide, base at y = base, with fuller and shading."""
+    sh = tip + hw * 1.6
+    return (f'<polygon points="{pts([(cx, tip), (cx + hw, sh), (cx + hw, base), (cx - hw, base), (cx - hw, sh)])}" fill="{P_STEEL}" {O}/>'
+            f'<polygon points="{pts([(cx, tip + 2), (cx + hw - 1.2, sh), (cx + hw - 1.2, base - 1.2), (cx, base - 1.2)])}" {SH}/>'
+            f'<polygon points="{pts([(cx - 1, tip + 4), (cx - hw + 1.5, sh + 1), (cx - hw + 1.5, base - 3), (cx - hw + 3.5, base - 3), (cx - hw + 3.5, sh + 2)])}" {HI}/>'
+            f'<line x1="{cx}" y1="{sh + 2}" x2="{cx}" y2="{base - 4}" stroke="{P_STEEL_DK}" stroke-width="2" stroke-linecap="round"/>')
+
+def outlined(path_or_shapes, col, w):
+    """A stroke drawn twice, wide ink under a narrower colour, so joined strokes share one clean outline."""
+    return (f'<g fill="none" stroke="{INK}" stroke-width="{w + 5}" stroke-linecap="round" stroke-linejoin="round">{path_or_shapes}</g>'
+            f'<g fill="none" stroke="{col}" stroke-width="{w}" stroke-linecap="round" stroke-linejoin="round">{path_or_shapes}</g>')
+
+def bolt(x, y, r=2.6):
+    return f'<circle cx="{x}" cy="{y}" r="{r}" fill="{P_STEEL_LT}" {O2}/>'
+
+def two_arm_spiral(cx, cy, r, turns, w, col):
+    out = ''
+    for k in (0, math.pi):
+        n = 120; P = [(cx + r * (i / n) * math.cos(i / n * turns * 2 * math.pi + k), cy + r * (i / n) * math.sin(i / n * turns * 2 * math.pi + k)) for i in range(n + 1)]
+        out += f'<polyline points="{pts(P)}" fill="none" stroke="{col}" stroke-width="{w}" stroke-linecap="round" stroke-linejoin="round"/>'
+    return out
+
 PROPS = {
-    'sword': f'<polygon points="{pts([(50, 4), (58, 14), (58, 64), (42, 64), (42, 14)])}" fill="#8a8f9c" stroke="{INK}" stroke-width="2.5"/><rect x="28" y="64" width="44" height="8" fill="{INK}"/><rect x="45" y="72" width="10" height="22" fill="{INK}"/>',
-    'spear': f'<rect x="47" y="24" width="6" height="72" rx="3" fill="{INK}"/><polygon points="{pts([(50, 2), (58, 26), (42, 26)])}" fill="#8a8f9c" stroke="{INK}" stroke-width="2.5"/>',
-    'dagger': f'<polygon points="{pts([(50, 18), (58, 30), (58, 62), (42, 62), (42, 30)])}" fill="#8a8f9c" stroke="{INK}" stroke-width="2.5"/><rect x="34" y="62" width="32" height="7" fill="{INK}"/><rect x="45" y="69" width="10" height="16" fill="{INK}"/>',
-    'axe': f'<rect x="46" y="10" width="8" height="86" rx="3" fill="#8a5a2b"/><path d="M54 14 Q86 14 88 44 Q70 40 54 44 Z" fill="#8a8f9c" stroke="{INK}" stroke-width="2.5"/>',
-    'bow': f'<path d="M34 6 Q86 50 34 94" fill="none" stroke="#8a5a2b" stroke-width="8"/><line x1="34" y1="6" x2="34" y2="94" stroke="{INK}" stroke-width="2"/>',
-    'staff': f'<rect x="46" y="22" width="8" height="74" rx="3" fill="#8a5a2b"/><circle cx="50" cy="16" r="12" fill="#8a4fd6" stroke="{INK}" stroke-width="2.5"/>',
-    'chain': ''.join(f'<rect x="40" y="{4 + i * 16}" width="20" height="22" rx="9" fill="none" stroke="#7b8496" stroke-width="5"/>' for i in range(6)),
-    'rock': f'<polygon points="{pts([(10, 90), (22, 30), (38, 12), (54, 34), (66, 20), (90, 90)])}" fill="#7a6250" stroke="{INK}" stroke-width="2.5" stroke-linejoin="round"/><polygon points="{pts([(38, 12), (42, 50), (54, 34)])}" fill="#a08a78"/>',
-    'pillar': f'<circle cx="50" cy="50" r="38" fill="#8b8fa8" stroke="{INK}" stroke-width="3"/><circle cx="50" cy="50" r="26" fill="none" stroke="#62688a" stroke-width="4"/>',
-    'wall': f'<rect x="2" y="30" width="96" height="40" fill="#3d4270" stroke="{INK}" stroke-width="2.5"/><path d="M2 50 H98 M26 30 V50 M58 30 V50 M90 30 V50 M10 50 V70 M42 50 V70 M74 50 V70" stroke="#2a2e55" stroke-width="2.5"/>',
-    'crate': f'<rect x="12" y="12" width="76" height="76" fill="#c08a4a" stroke="{INK}" stroke-width="3"/><path d="M12 12 L88 88 M88 12 L12 88" stroke="#8a5a2b" stroke-width="5"/><rect x="12" y="12" width="76" height="76" fill="none" stroke="#8a5a2b" stroke-width="7"/>',
-    'barrel': f'<ellipse cx="50" cy="50" rx="36" ry="42" fill="#c08a4a" stroke="{INK}" stroke-width="3"/><path d="M16 34 H84 M16 66 H84" stroke="{INK}" stroke-width="4"/>',
-    'spikes': f'<polygon points="{pts([(4, 86), (16, 30), (28, 86), (40, 20), (52, 86), (64, 30), (76, 86), (88, 24), (96, 86)])}" fill="#8a8f9c" stroke="{INK}" stroke-width="2.5" stroke-linejoin="round"/><rect x="2" y="84" width="96" height="8" fill="{INK}"/>',
-    'vortex': spiral(50, 50, 44, 2.6, 8),
-    'flag': f'<rect x="28" y="8" width="6" height="88" fill="{INK}"/><polygon points="{pts([(34, 10), (84, 24), (34, 40)])}" fill="#ffb951" stroke="{INK}" stroke-width="2.5"/>',
-    'chest': f'<rect x="12" y="38" width="76" height="46" fill="#c08a4a" stroke="{INK}" stroke-width="3"/><path d="M12 38 Q12 16 50 16 Q88 16 88 38 Z" fill="#a8743a" stroke="{INK}" stroke-width="3"/><rect x="44" y="34" width="12" height="16" fill="#ffd23f" stroke="{INK}" stroke-width="2"/>',
-    'key': f'<circle cx="30" cy="50" r="16" fill="none" stroke="#ffb951" stroke-width="8"/><path d="M46 50 H90 M78 50 V64 M88 50 V60" stroke="#ffb951" stroke-width="8"/>',
-    'door': f'<rect x="22" y="8" width="56" height="88" rx="4" fill="#8a5a2b" stroke="{INK}" stroke-width="3"/><circle cx="66" cy="54" r="5" fill="#ffd23f"/>',
-    'lever': f'<rect x="20" y="70" width="60" height="18" rx="4" fill="#7b8496" stroke="{INK}" stroke-width="2.5"/><line x1="50" y1="76" x2="74" y2="20" stroke="{INK}" stroke-width="6" stroke-linecap="round"/><circle cx="74" cy="20" r="9" fill="#e5322d" stroke="{INK}" stroke-width="2.5"/>',
-    'pressure-plate': f'<rect x="12" y="12" width="76" height="76" rx="8" fill="#b3b7c2" stroke="{INK}" stroke-width="3"/><rect x="26" y="26" width="48" height="48" rx="5" fill="#d6d9e0" stroke="{INK}" stroke-width="2"/>',
-    'potion': f'<path d="M42 10 H58 V32 Q80 42 80 64 Q80 90 50 90 Q20 90 20 64 Q20 42 42 32 Z" fill="#e5322d" stroke="{INK}" stroke-width="3"/><rect x="40" y="6" width="20" height="8" fill="#8a5a2b"/>',
-    'bomb': f'<circle cx="46" cy="58" r="32" fill="#33363f"/><rect x="58" y="18" width="14" height="14" fill="#7b8496" transform="rotate(45 65 25)"/><path d="M70 22 Q80 8 90 14" fill="none" stroke="#8a5a2b" stroke-width="4"/><polygon points="{star(90, 12, 6, 9, 4)}" fill="#ffb951"/>',
-    'no-symbol': f'<circle cx="50" cy="50" r="40" fill="none" stroke="#a8201c" stroke-width="10"/><line x1="22" y1="22" x2="78" y2="78" stroke="#a8201c" stroke-width="10"/>',
-    'crossed-target': f'<circle cx="50" cy="50" r="38" fill="none" stroke="#e5322d" stroke-width="9"/><path d="M24 24 L42 42 M58 58 L76 76 M76 24 L58 42 M42 58 L24 76" stroke="#e5322d" stroke-width="10" stroke-linecap="square"/>',
-    'question': f'<circle cx="50" cy="50" r="42" fill="#fff" stroke="{INK}" stroke-width="4"/><path d="M36 38 Q36 22 50 22 Q64 22 64 36 Q64 46 50 52 V60" fill="none" stroke="{INK}" stroke-width="8" stroke-linecap="round"/><circle cx="50" cy="76" r="6" fill="{INK}"/>',
+    'sword': blade(50, 4, 64, 7) + hilt(50, 64, 40, 18),
+    'dagger': blade(50, 18, 60, 7.5) + hilt(50, 60, 30, 12),
+    'spear': f'<rect x="46.5" y="30" width="7" height="66" rx="3" fill="{P_WOOD}" {O}/><rect x="48" y="34" width="2" height="58" rx="1" {HI}/>'
+        + f'<rect x="45.5" y="88" width="9" height="8" rx="2" fill="{P_IRON}" {O}/>'
+        + f'<path d="M50 2 Q60 16 58 26 L54 32 H46 L42 26 Q40 16 50 2 Z" fill="{P_STEEL}" {O}/>'
+        + f'<path d="M50 5 Q58.5 16 56.5 25.5 L53 30.5 H50 Z" {SH}/><path d="M48.5 8 Q43 17 44 24 L46.5 24 Q46 17 48.5 8 Z" {HI}/>'
+        + f'<line x1="50" y1="9" x2="50" y2="29" stroke="{P_STEEL_DK}" stroke-width="1.6"/>'
+        + f'<rect x="45" y="31" width="10" height="9" rx="2" fill="{P_GOLD}" {O}/><path d="M45 34 H55 M45 37 H55" stroke="{INK}" stroke-width="1.2"/>',
+    'axe': f'<rect x="45" y="8" width="9" height="88" rx="3.5" fill="{P_WOOD}" {O}/><rect x="46.8" y="12" width="2.4" height="80" rx="1" {HI}/>'
+        + f'<path d="M54 92 H45" stroke="{INK}" stroke-width="2.5"/><rect x="44.5" y="82" width="10" height="5" rx="1.5" fill="{P_LEATHER}" {O2}/>'
+        + f'<path d="M45 22 L32 28 L45 34 Z" fill="{P_STEEL}" {O}/>'
+        + f'<path d="M54 18 Q72 20 84 8 Q96 34 84 62 Q76 46 54 42 Z" fill="{P_STEEL}" {O}/>'
+        + f'<path d="M84 13 Q93 34 84 57 Q80 47 74 43 Q83 32 79 17 Z" fill="{P_STEEL_LT}"/>'
+        + f'<path d="M54 34 Q72 36 80 52 Q74 44 54 42 Z" {SH}/>'
+        + f'<rect x="43" y="16" width="13" height="28" rx="2" fill="{P_IRON}" {O}/><path d="M43 23 H56 M43 37 H56" stroke="{INK}" stroke-width="1.2"/>'
+        + bolt(49.5, 30, 2.2),
+    'bow': outlined('<path d="M30 8 Q44 8 52 20 Q74 46 74 50 Q74 54 52 80 Q44 92 30 92"/>', P_WOOD, 7)
+        + '<path d="M33 10 Q44 11 50 20 Q66 38 70 46" fill="none" stroke="#fff" stroke-opacity=".4" stroke-width="2" stroke-linecap="round"/>'
+        + f'<line x1="30" y1="8" x2="30" y2="92" stroke="{INK}" stroke-width="1.8"/>'
+        + f'<rect x="68" y="40" width="11" height="20" rx="3" fill="{P_LEATHER}" {O}/><path d="M68 45 H79 M68 50 H79 M68 55 H79" stroke="{INK}" stroke-width="1.1"/>'
+        + f'<circle cx="30" cy="8" r="3.2" fill="{P_GOLD}" {O2}/><circle cx="30" cy="92" r="3.2" fill="{P_GOLD}" {O2}/>',
+    'staff': f'<circle cx="50" cy="18" r="17" fill="#8a4fd6" opacity=".22"/>'
+        + f'<path d="M46 30 Q44 54 47 74 Q45 86 46 96 H54 Q55 86 53 74 Q56 54 54 30 Z" fill="{P_WOOD}" {O}/>'
+        + f'<path d="M48 34 Q46.5 54 49 72" fill="none" stroke="#fff" stroke-opacity=".4" stroke-width="2" stroke-linecap="round"/>'
+        + f'<path d="M52 44 q2 4 0 7 M50 62 q-2 3 0 6" fill="none" stroke="{INK}" stroke-width="1.2" stroke-linecap="round"/>'
+        + f'<rect x="45" y="88" width="10" height="8" rx="2" fill="{P_IRON}" {O}/>'
+        + f'<circle cx="50" cy="18" r="11.5" fill="#8a4fd6" {O}/><path d="M50 29.5 A11.5 11.5 0 0 0 61.5 18 A13 10 0 0 1 44 28 Z" {SH}/>'
+        + f'<ellipse cx="46" cy="13.5" rx="4" ry="2.6" transform="rotate(-35 46 13.5)" {HI}/>'
+        + f'<path d="M45 34 Q36 30 37 20 Q38 26 44 27 M55 34 Q64 30 63 20 Q62 26 56 27 M46 33 Q50 36 54 33" fill="{P_WOOD}" {O}/>'
+        + f'<path d="M80 10 l2 -5 l2 5 l5 2 l-5 2 l-2 5 l-2 -5 l-5 -2 Z M18 30 l1.5 -3.5 l1.5 3.5 l3.5 1.5 l-3.5 1.5 l-1.5 3.5 l-1.5 -3.5 l-3.5 -1.5 Z" fill="#c9a6f2" stroke="{INK}" stroke-width="1"/>',
+    'chain': ''.join(
+        outlined(f'<rect x="38" y="{y}" width="24" height="24" rx="12"/>', '#7b8496', 5)
+        + f'<path d="M42 {y + 6} A9 9 0 0 1 50 {y + 2.5}" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.6" stroke-linecap="round"/>' for y in (5, 38, 71))
+        + ''.join(f'<rect x="45" y="{y}" width="10" height="26" rx="5" fill="{P_STEEL}" {O}/><rect x="47" y="{y + 4}" width="2.4" height="18" rx="1.2" {HI}/>' for y in (-14, 20, 53, 87)),
+    'rock': f'<ellipse cx="52" cy="90" rx="42" ry="5" fill="{INK}" opacity=".15"/>'
+        + f'<polygon points="{pts([(8, 88), (12, 58), (28, 32), (50, 20), (70, 26), (88, 50), (94, 88)])}" fill="#7a6250" {O}/>'
+        + f'<polygon points="{pts([(13.5, 57), (28.5, 33), (49.5, 22), (46, 44), (30, 52)])}" fill="#a08a78"/>'
+        + f'<polygon points="{pts([(69, 28), (86.5, 50.5), (92.5, 86.5), (62, 86.5), (58, 56)])}" {SH}/>'
+        + f'<path d="M46 44 L58 56 L62 87 M30 52 L36 70 M58 56 L69 28" fill="none" stroke="{INK}" stroke-width="1.6" stroke-linejoin="round"/>'
+        + f'<path d="M30 40 L40 32" stroke="#fff" stroke-opacity=".5" stroke-width="2" stroke-linecap="round"/>'
+        + f'<path d="M74 60 l6 8 M20 74 l6 -4" stroke="{INK}" stroke-width="1.4" stroke-linecap="round"/>',
+    'pillar': f'<rect x="10" y="10" width="80" height="80" rx="6" fill="{P_STEEL_DK}" {O}/>'
+        + f'<path d="M12 88 H88 V12 Z" {SH}/>'
+        + ''.join(f'<circle cx="{x}" cy="{y}" r="2.2" fill="#8b8fa8" {O2}/>' for x, y in ((18, 18), (82, 18), (18, 82), (82, 82)))
+        + f'<circle cx="50" cy="50" r="33" fill="#8b8fa8" {O}/>'
+        + ''.join(f'<line x1="{50 + 26 * math.cos(math.radians(a)):.1f}" y1="{50 + 26 * math.sin(math.radians(a)):.1f}" x2="{50 + 32 * math.cos(math.radians(a)):.1f}" y2="{50 + 32 * math.sin(math.radians(a)):.1f}" stroke="{INK}" stroke-width="1.6"/>' for a in range(0, 360, 30))
+        + f'<circle cx="50" cy="50" r="24" fill="#b3b7c2" {O2}/>'
+        + f'<path d="M26 50 A24 24 0 0 0 74 50 A24 18 0 0 1 26 50 Z" transform="rotate(-45 50 50)" {SH}/>'
+        + f'<ellipse cx="40" cy="38" rx="9" ry="4.5" transform="rotate(-40 40 38)" {HI}/>',
+    'wall': f'<rect x="2" y="66" width="96" height="6" fill="{INK}" opacity=".18"/>'
+        + f'<rect x="2" y="28" width="96" height="42" rx="2" fill="#2a2e55" {O}/>'
+        + ''.join(f'<rect x="{x + 1.2}" y="{y + 1.2}" width="{w - 2.4}" height="11.6" rx="1.5" fill="{c}"/><rect x="{x + 2.5}" y="{y + 2.2}" width="{w - 5}" height="2" rx="1" fill="#fff" opacity=".18"/>'
+                  for y, row in ((28, ((2, 22, '#3d4270'), (24, 30, '#454a7c'), (54, 26, '#3d4270'), (80, 18, '#4a5084'))),
+                                 (42, ((2, 12, '#454a7c'), (14, 28, '#3d4270'), (42, 24, '#4a5084'), (66, 32, '#3d4270'))),
+                                 (56, ((2, 26, '#3d4270'), (28, 22, '#4a5084'), (50, 30, '#3d4270'), (80, 18, '#454a7c'))))
+                  for x, w, c in row)
+        + f'<rect x="2" y="28" width="96" height="42" rx="2" fill="none" {O}/>',
+    'crate': f'<rect x="10" y="10" width="80" height="80" rx="3" fill="{P_WOOD_LT}" {O}/>'
+        + f'<path d="M22 37 H78 M22 63 H78" stroke="{P_WOOD}" stroke-width="2"/>'
+        + f'<polygon points="{pts([(22, 70), (70, 22), (78, 22), (78, 30), (30, 78), (22, 78)])}" fill="{P_WOOD_MD}" {O2}/>'
+        + f'<path d="M10 10 H90 V90 H10 Z M22 22 V78 H78 V22 Z" fill="{P_WOOD}" fill-rule="evenodd" {O}/>'
+        + f'<path d="M12 12 H88 L78 22 H22 V78 L12 88 Z" {HI} opacity=".22"/><path d="M88 12 V88 H12 L22 78 H78 V22 Z" {SH}/>'
+        + ''.join(f'<circle cx="{x}" cy="{y}" r="1.8" fill="{INK}"/>' for x, y in ((16, 16), (84, 16), (16, 84), (84, 84), (50, 16), (50, 84), (16, 50), (84, 50))),
+    'barrel': f'<path d="M24 8 Q12 50 24 92 H76 Q88 50 76 8 Z" fill="{P_WOOD_LT}" {O}/>'
+        + f'<path d="M37 9 Q31 50 37 91 M50 9 V91 M63 9 Q69 50 63 91" fill="none" stroke="{P_WOOD}" stroke-width="1.8"/>'
+        + f'<path d="M63 9 Q69 50 63 91 H76 Q87.5 50 76 9 Z" {SH}/>'
+        + f'<path d="M28 14 Q20 50 28 86" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="3" stroke-linecap="round"/>'
+        + ''.join(f'<path d="M{a} {y} H{100 - a} L{100 - b} {y + 7} H{b} Z" fill="{P_IRON}" {O}/>' for a, b, y in ((21.5, 20.5, 22), (20.5, 21.5, 71)))
+        + f'<path d="M23.5 8 H76.5 L77.5 13 H22.5 Z" fill="{P_IRON}" {O}/><path d="M22.5 87 H77.5 L76.5 92 H23.5 Z" fill="{P_IRON}" {O}/>'
+        + ''.join(bolt(x, y, 1.4) for x in (30, 70) for y in (25.5, 74.5)),
+    'spikes': f'<rect x="4" y="80" width="92" height="12" rx="3" fill="{P_IRON}" {O}/><rect x="6" y="88" width="88" height="2.5" {SH}/>'
+        + ''.join(f'<polygon points="{pts([(x, t), (x + 10, 82), (x - 10, 82)])}" fill="{P_STEEL}" {O}/><polygon points="{pts([(x, t + 3), (x + 8.5, 81), (x, 81)])}" {SH}/>'
+                  f'<line x1="{x - 1.5}" y1="{t + 10}" x2="{x - 6}" y2="78" stroke="#fff" stroke-opacity=".55" stroke-width="1.8" stroke-linecap="round"/>'
+                  for x, t in ((16, 34), (39, 18), (61, 28), (84, 22)))
+        + ''.join(bolt(x, 86, 1.6) for x in (10, 28, 50, 72, 90)),
+    'vortex': f'<circle cx="50" cy="50" r="46" fill="#33363f" opacity=".08"/><circle cx="50" cy="50" r="30" fill="#33363f" opacity=".08"/>'
+        + two_arm_spiral(50, 50, 44, 1.5, 7, '#33363f')
+        + f'<circle cx="50" cy="50" r="7" fill="#33363f"/><circle cx="50" cy="50" r="2.5" fill="#fff" opacity=".6"/>',
+    'flag': f'<ellipse cx="31" cy="94" rx="14" ry="3.5" fill="{INK}" opacity=".2"/>'
+        + f'<rect x="28" y="12" width="6" height="82" rx="2" fill="{P_IRON}" {O}/><rect x="29.3" y="15" width="1.6" height="76" {HI}/>'
+        + f'<path d="M34 14 Q52 8 66 16 Q76 22 88 18 Q80 30 88 44 Q74 48 64 42 Q50 34 34 42 Z" fill="{P_GOLD}" {O}/>'
+        + f'<path d="M58 13 Q64 14 66 16 Q76 22 88 18 Q81 29 87 42 Q76 45 66 40 Q66 26 58 13 Z" {SH}/>'
+        + f'<path d="M38 19 Q50 15 58 18" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="2" stroke-linecap="round"/>'
+        + f'<circle cx="31" cy="9" r="5" fill="{P_GOLD}" {O}/><circle cx="29.5" cy="7.5" r="1.6" {HI}/>',
+    'chest': f'<rect x="10" y="40" width="80" height="48" rx="3" fill="{P_WOOD_LT}" {O}/>'
+        + f'<path d="M12 56 H88 M12 72 H88" stroke="{P_WOOD}" stroke-width="2"/>'
+        + f'<path d="M10 40 Q10 14 50 14 Q90 14 90 40 Z" fill="{P_WOOD_MD}" {O}/><path d="M16 30 Q24 21 40 18" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="2.5" stroke-linecap="round"/>'
+        + f'<path d="M74 41 H89 V87 H74 Z M72 39 Q74 20 64 16 Q88 18 89 39 Z" {SH}/>'
+        + ''.join(f'<polygon points="{pts(p)}" fill="{P_IRON}" {O}/>' for p in (((20.5, 20.2), (27.5, 17), (27.5, 40), (20.5, 40)), ((72.5, 17), (79.5, 20.2), (79.5, 40), (72.5, 40))))
+        + ''.join(f'<rect x="{x - 3.5}" y="40" width="7" height="48" fill="{P_IRON}" {O}/>' + bolt(x, 50, 1.4) + bolt(x, 78, 1.4) for x in (24, 76))
+        + f'<rect x="10" y="38" width="80" height="5" fill="{P_IRON}" {O}/>'
+        + f'<rect x="42" y="34" width="16" height="20" rx="2.5" fill="{P_GOLD_LT}" {O}/><path d="M50 40 a2.8 2.8 0 1 1 0.01 0 Z M48.6 43 H51.4 L52 49 H48 Z" fill="{INK}"/>',
+    'key': outlined('<circle cx="27" cy="50" r="13"/><path d="M40 50 H90 M76 50 V63 M86 50 V59"/>', P_GOLD, 8)
+        + f'<circle cx="27" cy="50" r="4" fill="none" stroke="{INK}" stroke-width="2"/>'
+        + f'<path d="M19 42 A11 11 0 0 1 30 38" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="2.2" stroke-linecap="round"/>'
+        + f'<path d="M44 48 H86" stroke="#fff" stroke-opacity=".55" stroke-width="2" stroke-linecap="round"/>'
+        + f'<path d="M44 53 H88" stroke="{INK}" stroke-opacity=".22" stroke-width="2.5"/>'
+        + f'<rect x="39" y="44" width="6" height="12" rx="1.5" fill="{P_GOLD_LT}" {O2}/>',
+    'door': f'<path d="M16 96 V32 Q16 4 50 4 Q84 4 84 32 V96 Z" fill="#7b8496" {O}/>'
+        + f'<path d="M24 96 V34 Q24 12 50 12 Q76 12 76 34 V96 Z" fill="{P_WOOD}" {O}/>'
+        + f'<path d="M37 13.5 V96 M50 12 V96 M63 13.5 V96" stroke="{INK}" stroke-width="1.5"/>'
+        + f'<path d="M66 15 Q76 20 76 34 V96 H66 Z" {SH}/><path d="M28 34 Q28 18 44 15" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="2.5" stroke-linecap="round"/>'
+        + ''.join(f'<path d="M24 {y} H56 l4 3 l-4 3 H24 Z" fill="{P_IRON}" {O2}/>' + bolt(30, y + 3, 1.3) + bolt(44, y + 3, 1.3) for y in (30, 74))
+        + f'<circle cx="66" cy="58" r="5.5" fill="none" stroke="{INK}" stroke-width="4.5"/><circle cx="66" cy="58" r="5.5" fill="none" stroke="{P_GOLD_LT}" stroke-width="2.2"/><circle cx="66" cy="52" r="2.4" fill="{P_GOLD_LT}" {O2}/>'
+        + f'<path d="M16 96 H84" stroke="{INK}" stroke-width="3"/>',
+    'lever': f'<ellipse cx="50" cy="90" rx="34" ry="4" fill="{INK}" opacity=".18"/>'
+        + f'<line x1="50" y1="72" x2="74" y2="22" stroke="{INK}" stroke-width="9" stroke-linecap="round"/><line x1="50" y1="72" x2="74" y2="22" stroke="{P_STEEL}" stroke-width="4.5" stroke-linecap="round"/>'
+        + f'<line x1="49" y1="68" x2="71" y2="24" stroke="#fff" stroke-opacity=".5" stroke-width="1.4" stroke-linecap="round"/>'
+        + f'<circle cx="74" cy="20" r="9.5" fill="#e5322d" {O}/><path d="M74 29.5 A9.5 9.5 0 0 0 83.5 20 A11 8 0 0 1 68 28 Z" {SH}/><ellipse cx="71" cy="16.5" rx="3.4" ry="2.2" transform="rotate(-35 71 16.5)" {HI}/>'
+        + f'<path d="M18 88 V76 Q18 68 26 68 H74 Q82 68 82 76 V88 Z" fill="#7b8496" {O}/>'
+        + f'<rect x="34" y="73" width="32" height="6" rx="3" fill="{INK}"/><path d="M20 86 H80 V80 Q80 84 76 84 H24 Q20 84 20 80 Z" {SH}/>'
+        + f'<path d="M24 72 H76" stroke="#fff" stroke-opacity=".4" stroke-width="1.8" stroke-linecap="round"/>'
+        + bolt(26, 80, 2.2) + bolt(74, 80, 2.2)
+        + f'<circle cx="50" cy="74" r="5" fill="{P_IRON}" {O2}/>',
+    'pressure-plate': f'<rect x="10" y="10" width="80" height="80" rx="7" fill="#9aa1ad" {O}/>'
+        + ''.join(bolt(x, y, 2.4) for x, y in ((18, 18), (82, 18), (18, 82), (82, 82)))
+        + f'<rect x="24" y="24" width="52" height="52" rx="4" fill="{INK}" opacity=".35"/>'
+        + f'<rect x="26" y="26" width="48" height="48" rx="4" fill="#d6d9e0" {O2}/>'
+        + f'<path d="M26.8 26.8 H73.2 L67 33 H33 V67 L26.8 73.2 Z" fill="#fff" opacity=".6"/><path d="M73.2 26.8 V73.2 H26.8 L33 67 H67 V33 Z" fill="{INK}" opacity=".16"/>'
+        + f'<path d="M42 44 L50 52 L58 44 M42 54 L50 62 L58 54" fill="none" stroke="#9aa1ad" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>',
+    'potion': f'<ellipse cx="50" cy="93" rx="24" ry="3.5" fill="{INK}" opacity=".18"/>'
+        + f'<path d="M42 16 H58 V34 Q80 44 80 66 Q80 91 50 91 Q20 91 20 66 Q20 44 42 34 Z" fill="#eef0f4" {O}/>'
+        + f'<path d="M22.5 58 Q36 52 50 58 Q64 64 77.5 58 Q79 62 79 66 Q79 89.5 50 89.5 Q21 89.5 21 66 Q21 62 22.5 58 Z" fill="#e5322d"/>'
+        + f'<path d="M22.5 58 Q36 52 50 58 Q64 64 77.5 58" fill="none" stroke="{INK}" stroke-width="1.5"/>'
+        + f'<path d="M64 60 Q78 62 78.5 68 Q78 88 54 89.5 Q72 80 64 60 Z" {SH}/>'
+        + f'<path d="M28 66 Q28 50 40 44" fill="none" stroke="#fff" stroke-opacity=".75" stroke-width="3" stroke-linecap="round"/>'
+        + ''.join(f'<circle cx="{x}" cy="{y}" r="{r}" fill="#fff" opacity=".55"/>' for x, y, r in ((44, 72, 2.5), (56, 80, 1.8), (60, 68, 1.4)))
+        + f'<path d="M42 16 H58 V34 Q80 44 80 66 Q80 91 50 91 Q20 91 20 66 Q20 44 42 34 Z" fill="none" {O}/>'
+        + f'<rect x="39" y="14" width="22" height="6" rx="2" fill="#b3b7c2" {O2}/>'
+        + f'<path d="M42 4 H58 L57 15 H43 Z" fill="{P_WOOD_LT}" {O}/><path d="M53 5 H57.5 L56.8 14 H52.5 Z" {SH}/>',
+    'bomb': f'<ellipse cx="46" cy="93" rx="26" ry="4" fill="{INK}" opacity=".18"/>'
+        + f'<circle cx="46" cy="58" r="32" fill="#33363f" {O}/>'
+        + f'<path d="M46 90 A32 32 0 0 0 78 58 A36 28 0 0 1 22 82 Z" fill="#000" opacity=".25"/>'
+        + f'<ellipse cx="33" cy="44" rx="9" ry="5.5" transform="rotate(-40 33 44)" fill="#fff" opacity=".35"/><circle cx="26" cy="54" r="2.4" fill="#fff" opacity=".3"/>'
+        + f'<rect x="56" y="20" width="16" height="14" rx="2" fill="#7b8496" transform="rotate(40 64 27)" {O}/><path d="M58 24 L66 31" stroke="#fff" stroke-opacity=".45" stroke-width="1.6" stroke-linecap="round" transform="rotate(0)"/>'
+        + f'<path d="M68 21 Q74 8 86 13" fill="none" stroke="{INK}" stroke-width="6" stroke-linecap="round"/><path d="M68 21 Q74 8 86 13" fill="none" stroke="{P_WOOD_LT}" stroke-width="3" stroke-linecap="round" stroke-dasharray="3 2"/>'
+        + f'<polygon points="{star(88, 12, 7, 11, 4.5)}" fill="{P_GOLD}" stroke="{INK}" stroke-width="1.5" stroke-linejoin="round"/>'
+        + f'<polygon points="{star(88, 12, 5, 5.5, 2.4)}" fill="#e5322d"/>',
+    'no-symbol': '<circle cx="50" cy="50" r="36" fill="#fff" opacity=".7"/>'
+        + outlined('<circle cx="50" cy="50" r="38"/><line x1="23.5" y1="23.5" x2="76.5" y2="76.5"/>', '#a8201c', 10).replace('stroke-linecap="round"', 'stroke-linecap="butt"')
+        + '<path d="M22 32 A34 34 0 0 1 32 22" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="2.5" stroke-linecap="round"/>',
+    'crossed-target': '<circle cx="50" cy="50" r="36" fill="#fff" opacity=".7"/>'
+        + outlined('<circle cx="50" cy="50" r="38"/><path d="M26 26 L41 41 M59 59 L74 74 M74 26 L59 41 M41 59 L26 74"/>', '#e5322d', 9)
+        + f'<circle cx="50" cy="50" r="5" fill="#e5322d" {O}/>'
+        + '<path d="M22 32 A34 34 0 0 1 32 22" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="2.5" stroke-linecap="round"/>',
+    'question': f'<circle cx="50" cy="50" r="42" fill="#fff" stroke="{INK}" stroke-width="3"/>'
+        + f'<path d="M50 92 A42 42 0 0 0 92 50 A46 34 0 0 1 16 76 Z" fill="{INK}" opacity=".1"/>'
+        + f'<circle cx="50" cy="50" r="35" fill="none" stroke="{INK}" stroke-opacity=".15" stroke-width="1.5"/>'
+        + f'<path d="M36 38 Q36 22 50 22 Q64 22 64 36 Q64 45 54 50 Q50 52 50 58 V61" fill="none" stroke="{INK}" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>'
+        + f'<circle cx="50" cy="76" r="6" fill="{INK}"/>',
 }
 for n, b in PROPS.items(): svg('props', n, b)
 
