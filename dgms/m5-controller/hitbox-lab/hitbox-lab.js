@@ -15,13 +15,13 @@
   const rgba = (hex, a) => { const n = parseInt(hex.slice(1), 16); return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`; };
 
   /* ---------- the real swing ---------- */
-  const CL = window.NRFTW_CLIPS, SW = CL.combo, ID = CL['idle-r'];
+  const CL = window.NRFTW_CLIPS, SW = CL.combo, ID = CL['idle-r'], RE = CL.react;   // RE: the game's light hit reaction from the front
   const N = SW.n, FPS = 30, PER = N / FPS;                  // one loop of the clip, 59 frames at 30 fps
   const HIT = [33, 53], TOTAL = 118;                         // the game's frame data for this move, 60 fps frames
   const gameFrame = i => 2 * i + 1, live = i => gameFrame(i) >= HIT[0] && gameFrame(i) <= HIT[1];
   const FS = -SW.ux[1] / SW.uz[0], HS = -SW.uy[1] / SW.uz[0];   // ground depth and height foreshortening of the camera
   const IMG = {};
-  ['combo', 'idle-r'].forEach(k => { const im = new Image(); im.src = `../img/nrftw/${k}.webp`; IMG[k] = im; });
+  ['combo', 'idle-r', 'react'].forEach(k => { const im = new Image(); im.src = `../img/nrftw/${k}.webp`; IMG[k] = im; });
   const ready = im => im && im.complete && im.naturalWidth > 0;
   // world (x, y, z) -> ground (u forward, v toward the camera) plus height h
   const G = p => ({ u: p[2], v: -p[0], h: p[1] });
@@ -119,7 +119,7 @@
   /* ---------- drawing ---------- */
   function view(ox, oy, M) { return (p, h = p.h || 0) => [ox + p.u * M, oy + p.v * M * FS - h * M * HS]; }
   function sprite(g, clip, i, x, y, M, flip, filter) {
-    const im = IMG[clip === SW ? 'combo' : 'idle-r']; if (!ready(im)) return;
+    const im = IMG[clip === SW ? 'combo' : clip === RE ? 'react' : 'idle-r']; if (!ready(im)) return;
     const s = M / clip.uz[0], sx = (i % clip.cols) * clip.cw, sy = Math.floor(i / clip.cols) * clip.ch;
     g.save(); g.translate(x, y); if (flip) g.scale(-1, 1); if (filter) g.filter = filter;
     g.drawImage(im, sx, sy, clip.cw, clip.ch, -clip.ax * s, -clip.ay * s, clip.cw * s, clip.ch * s);
@@ -191,7 +191,8 @@
       if (!sc.enemy) return;
       if (sc.enemy.low) return blob(g, P, M, sc.enemy, hk > 0);
       const [x, y] = P({ u: sc.enemy.u, v: sc.enemy.v }, 0);
-      sprite(g, ID, IDLE_I, x + hk * 8, y, M, true, hk > 0 ? 'brightness(1.5) sepia(.7) hue-rotate(-35deg) saturate(2.2)' : 'sepia(.7) hue-rotate(-35deg) saturate(2.2) brightness(.8)');
+      const ri = landed ? i - hitAt : -1, reacting = ri >= 0 && ri < RE.n;   // the struck enemy plays its hit reaction, then settles back to idle
+      sprite(g, reacting ? RE : ID, reacting ? ri : IDLE_I, x, y, M, true, hk > 0 ? 'brightness(1.5) sepia(.7) hue-rotate(-35deg) saturate(2.2)' : 'sepia(.7) hue-rotate(-35deg) saturate(2.2) brightness(.8)');
     };
     const drawHero = () => sprite(g, swing ? SW : ID, swing ? i : IDLE_I, ox, oy, M, false);
     if (sc.enemy && sc.enemy.v < 0) { drawEnemy(); drawHero(); } else { drawHero(); drawEnemy(); }
