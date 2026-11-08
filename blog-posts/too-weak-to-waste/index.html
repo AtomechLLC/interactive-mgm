@@ -79,11 +79,67 @@
   </div>
 </section>
 
+<!-- 4: the trigger map -->
+<section class="slide" data-title="The Trigger Map" data-demo="tmap">
+  <div class="kicker">power widens the trigger</div>
+  <h2 class="sm">The <span class="accent">Trigger Map</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4 style="margin-top:0">The item</h4>
+      <div class="seg tm-item"><button class="btn on" data-i="bomb">Firebomb</button><button class="btn" data-i="potion">Healing Potion</button></div>
+      <label class="rng">Power (% of a full HP bar) <b class="tm-pv"></b><input type="range" class="tm-pow" min="0" max="60" step="1" value="10"></label>
+      <h4>What a death costs</h4>
+      <div class="seg tm-stake"><button class="btn" data-s="0">Mario: a life</button><button class="btn" data-s="1">Pokémon: white out</button><button class="btn on" data-s="2">Dark Souls: souls</button><button class="btn" data-s="3">Hades: the run</button><button class="btn" data-s="4">Fire Emblem: the unit</button></div>
+      <p class="tip">Each square is one moment of a fight. Gold means using the item now raises the win chance by more than loss aversion asks: twice the item’s worth, measured against what a death costs. Hover or click a square.</p>
+      <div class="row wrap"><button class="btn tm-tour on">▶ Walk-through</button></div>
+      <p class="mt-out tm-out"></p>
+      <p class="src">Model is this page’s own; numbers are illustrative. Icons: game-icons.net (CC BY 3.0) by Lorc, Delapouite and Skoll.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 5: types -->
+<section class="slide" data-title="Which Loss Does It Erase?" data-demo="types">
+  <div class="kicker">types of consumable</div>
+  <h2 class="sm">Which Loss <span class="accent">Does It Erase?</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4 style="margin-top:0">Mode</h4>
+      <div class="seg ty-mode"><button class="btn on" data-m="explore">Explore the kinds</button><button class="btn" data-m="sort">Sort a run’s losses</button></div>
+      <p class="tip">Each kind is named by the loss it undoes. The strip on each card runs from before the fight to after the loss, and shows when its trigger comes up. Click a kind to read it; in Sort mode, click the kind that would have erased each loss.</p>
+      <div class="row wrap"><button class="btn ty-tour on">▶ Walk-through</button><button class="btn ty-reset">Reset</button></div>
+      <p class="mt-out ty-out"></p>
+      <p class="src">Pokémon item sprites via PokeAPI. Control Ward: Riot Games Data Dragon. Healing potion icon: World of Warcraft (Blizzard). Other icons: game-icons.net (CC BY 3.0) by Lorc, Delapouite and others.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 6: power is relative -->
+<section class="slide" data-title="Power Is Relative" data-demo="ladder">
+  <div class="kicker">power is measured against the game</div>
+  <h2 class="sm">Power Is <span class="accent">Relative</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4 style="margin-top:0">The journey</h4>
+      <label class="rng">Your level <b class="la-lv"></b><input type="range" class="la-lvl" min="5" max="63" step="1" value="5"></label>
+      <label class="chk"><input type="checkbox" class="la-shop" checked> Only potions the shops sell by then</label>
+      <p class="tip">A Potion heals 20 HP whether your Pokémon has 20 HP or 180. An item is a trigger when it undoes at least one enemy hit, so a Pokémon about to faint survives the next blow.</p>
+      <div class="row wrap"><button class="btn la-tour on">▶ Walk-through</button></div>
+      <p class="mt-out la-out"></p>
+      <p class="src">HP: Gen III+ formula, IV 15, no EVs. Potion 20, Super 60, Hyper 120 HP (Gen VII on); Max Potion heals fully. Pokémon art: The Pokémon Company, via PokeAPI sprites.</p>
+    </div>
+  </div>
+</section>
+
 </div></div>
 <script src="../../assets/deck.js"></script>
 <script src="../../assets/kit.js"></script>
 <script src="../shared/topdown.js"></script>
 <script src="../shared/icons.js"></script>
 <script src="consumables.js"></script>
+<script src="widen.js"></script>
 </body>
 </html>
