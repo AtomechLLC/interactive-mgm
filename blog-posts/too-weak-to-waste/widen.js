@@ -2,8 +2,8 @@
    tmap:   The Trigger Map. Every moment of a fight is a cell (foe HP left × your HP left). A cell is a trigger when using
            the item raises the win chance by more than loss aversion asks for, and that bar drops as losing costs more.
            Power and stakes both grow the gold area. Model in FIGHT, winP(), STAKES.
-   types:  Which Loss Does It Erase? Seven kinds of consumable, each named by the loss it undoes, with when in a fight its
-           trigger fires and how power widens it. Sort mode deals fourteen failures to sort into the seven. Data in TYPES, CARDS.
+   types:  Which Loss Does It Erase? Eight kinds of consumable, each named by the loss it undoes, with when in a fight its
+           trigger fires and how power widens it. Sort mode deals sixteen failures to sort into the eight. Data in TYPES, CARDS.
    ladder: Power Is Relative. A water starter from Route 1 to the Champion against the four Gen VII potions. A fixed heal buys
            fewer enemy hits as max HP grows; the Max Potion heals a share, so it keeps its trigger. Data in POT, MILES, hpAt().
    Numbers in FIGHT and the hit size are illustrative. Potion heal amounts are Gen VII onward; ace levels follow FireRed / LeafGreen. */
@@ -19,6 +19,7 @@
     s.split(' ').forEach(w => { const t2 = line ? line + ' ' + w : w; if (g.measureText(t2).width > maxW && line) { txt(g, line, x, yy, font, col); line = w; yy += lh; } else line = t2; });
     if (line) txt(g, line, x, yy, font, col); return yy;
   };
+  const lc = s2 => s2[0].toLowerCase() + s2.slice(1);
   const pct = v => Math.round(v * 100) + '%';
   const img = src => { const i = new Image(); i.src = src; return i; };
   const pic = (g, im, x, y, s) => { if (im.complete && im.naturalWidth) { g.imageSmoothingEnabled = im.naturalWidth > 100; g.drawImage(im, x - s / 2, y - s / 2, s, s); g.imageSmoothingEnabled = true; } };
@@ -169,6 +170,10 @@
       ex: [['fire-bomb', 'Firebomb', 'Dark Souls'], ['drop', 'Holy Water', 'Castlevania'], ['unlit-bomb', 'Bomb', 'The Legend of Zelda']],
       when: 'Near the end, when the foe is almost down.', power: 'More damage finishes foes with more HP left, so the bomb wins fights from further out.',
       shape: x => x > .2 && x < .85 ? clamp((x - .4) / .3) : 0 },
+    { k: 'prep', name: 'Preparation', erases: 'Came in too weak for this one fight', ic: 'round-bottom-flask', col: '#c2410c',
+      ex: [['round-bottom-flask', 'Flasks and elixirs', 'World of Warcraft'], ['meat', 'A canteen meal before the hunt', 'Monster Hunter'], ['drop', 'Charcoal Pine Resin', 'Dark Souls']],
+      when: 'Before the fight, on a guess: you commit before you know whether you would lose without it.', power: 'A bigger buff covers more of the fights you might lose. Knowing the fight ahead (a boss you have already seen) is what makes the guess sure enough to drink.',
+      shape: x => x < .2 ? 1 : x < .85 ? .22 : 0 },
     { k: 'cert', name: 'Certainty', erases: 'The dice took it away', ic: I.master, col: C.purple,
       ex: [[I.master, 'Master Ball', 'Pokémon'], ['crosshair', 'X Accuracy', 'Pokémon'], ['missile-swarm', 'Wand of Magic Missile', 'Pathfinder']],
       when: 'At the one roll that decides the outcome.', power: 'A guarantee covers more targets: the Master Ball catches anything, and a wand that never misses finishes anything at 6 HP or less.',
@@ -191,6 +196,7 @@
       shape: x => .15 + .8 * (1 - x) },
   ];
   const CARDS = [
+    ['prep', 'Pulled a boss you knew was hard without drinking the damage flask, and fell short of its enrage timer.'],
     ['sustain', 'Worn down over five fights in a row, with nothing left for the sixth.'],
     ['burst', 'Fell to the boss with 4% of its HP left.'],
     ['cert', 'Raikou broke out of the ball and fled.'],
@@ -205,8 +211,9 @@
     ['ins', 'The healer fell in the first ten seconds, then everyone else.'],
     ['escape', 'Cornered by a foe you could never outfight.'],
     ['conv', 'A new recruit joins at level 12 when the rest of the party is 30.'],
+    ['prep', 'Walked into the dragon’s lair without the fire-resistance elixir you were carrying.'],
   ];
-  const TT = { x: 26, y: 54, w: 136, h: 250, gap: 6 };
+  const TT = { x: 26, y: 54, w: 118, h: 250, gap: 6 };
   canvasDemo('types', (s, cv, g) => {
     const st = { tour: true, t: 0, held: false, mode: 'explore', sel: 0, hover: -1, card: 0, tries: 0, right: 0, done: [], miss: -1, missT: 0, key: '' };
     const tourBtn = $(s, '.ty-tour'), free = freeOf(st, tourBtn);
@@ -214,7 +221,7 @@
     $$(s, '.ty-mode .btn').forEach(b => b.onclick = () => { free(); st.mode = b.dataset.m; reset(); st.key = ''; });
     $(s, '.ty-reset').onclick = () => { free(); reset(); st.key = ''; };
     tourBtn.onclick = () => { st.tour = true; st.t = 0; st.mode = 'explore'; tourBtn.classList.add('on'); };
-    const at = e => { const p = ptr(cv, e); if (p.y < TT.y || p.y > TT.y + TT.h) return -1; const i = Math.floor((p.x - TT.x) / (TT.w + TT.gap)); return i >= 0 && i < 7 && p.x - TT.x - i * (TT.w + TT.gap) <= TT.w ? i : -1; };
+    const at = e => { const p = ptr(cv, e); if (p.y < TT.y || p.y > TT.y + TT.h) return -1; const i = Math.floor((p.x - TT.x) / (TT.w + TT.gap)); return i >= 0 && i < TYPES.length && p.x - TT.x - i * (TT.w + TT.gap) <= TT.w ? i : -1; };
     cv.addEventListener('pointermove', e => { st.hover = at(e); cv.style.cursor = st.hover >= 0 ? 'pointer' : ''; });
     cv.addEventListener('pointerleave', () => { st.hover = -1; });
     cv.addEventListener('click', e => {
@@ -225,12 +232,12 @@
       else { st.tries++; st.miss = i; st.missT = st.t; }
       st.key = '';
     });
-    const DUR = 7 * 3.2;
+    const DUR = TYPES.length * 3.2;
     function tile(i, sel, ty) {
       const x = TT.x + i * (TT.w + TT.gap), y = TT.y, shake = st.miss === i ? Math.sin((st.t - st.missT) * 40) * 5 * clamp(1 - (st.t - st.missT) * 2) : 0;
       box(g, x + shake, y, TT.w, TT.h, sel ? '#fffaf0' : 'rgba(255,250,240,.6)', sel ? ty.col : st.hover === i ? C.blue : '#cdbf9f', 12, sel ? 4 : 2);
-      icon(g, ty.ic, x + TT.w / 2 + shake, y + 44, 54, ty.col);
-      txt(g, ty.name, x + TT.w / 2 + shake, y + 94, '800 17px Montserrat', C.ink, 'center');
+      icon(g, ty.ic, x + TT.w / 2 + shake, y + 44, 50, ty.col);
+      txt(g, ty.name, x + TT.w / 2 + shake, y + 94, '800 15px Montserrat', C.ink, 'center');
       txt(g, 'erases', x + TT.w / 2, y + 116, '600 12px Jost', C.muted, 'center');
       g.textAlign = 'center'; const words = ty.erases; g.font = '700 14px Jost';
       const lines = []; let ln = ''; words.split(' ').forEach(w => { const t2 = ln ? ln + ' ' + w : w; if (g.measureText(t2).width > TT.w - 16 && ln) { lines.push(ln); ln = w; } else ln = t2; }); lines.push(ln);
@@ -241,24 +248,24 @@
       for (let p = 0; p < sw; p++) { const v = ty.shape(p / sw); if (v > 0) { g.fillStyle = ty.col; g.globalAlpha = v; g.fillRect(sx + p, sy + 26 - 24 * v, 1.2, 24 * v); } }
       g.globalAlpha = 1;
       [.2, .65, .85].forEach(f => { g.strokeStyle = 'rgba(21,32,68,.35)'; g.lineWidth = 1; g.beginPath(); g.moveTo(sx + sw * f, sy - 2); g.lineTo(sx + sw * f, sy + 28); g.stroke(); });
-      txt(g, 'before · fight · losing · after', x + TT.w / 2, sy + 38, '600 10px Jost', C.muted, 'center');
+      txt(g, 'before', sx, sy + 38, '600 11px Jost', C.muted, 'left'); txt(g, 'after', sx + sw, sy + 38, '600 11px Jost', C.muted, 'right');
       // cards sorted here
       const got = st.done.filter(d => d === i).length;
       for (let k = 0; k < 2; k++) box(g, x + TT.w / 2 - 26 + k * 28, y + 226, 22, 14, k < got ? ty.col : null, k < got ? null : '#cdbf9f', 3, 1.5);
     }
     function render() {
       let { mode, sel } = st;
-      if (st.tour) { mode = 'explore'; sel = Math.floor(st.t / 3.2) % 7; }
+      if (st.tour) { mode = 'explore'; sel = Math.floor(st.t / 3.2) % TYPES.length; }
       $$(s, '.ty-mode .btn').forEach(b => b.classList.toggle('on', b.dataset.m === mode));
       T.use(g); panel(g);
-      txt(g, mode === 'explore' ? 'Seven kinds of consumable, named by the loss each one erases' : 'Which kind would have erased this loss? Click it.', 26, 30, '800 19px Montserrat');
+      txt(g, mode === 'explore' ? 'Eight kinds of consumable, named by the loss each one erases' : 'Which kind would have erased this loss? Click it.', 26, 30, '800 19px Montserrat');
       TYPES.forEach((ty, i) => tile(i, mode === 'explore' ? i === sel : false, ty));
       const by = 324;
       box(g, 26, by, 988, 238, 'rgba(21,32,68,.05)', null, 12);
       if (mode === 'explore') {
         const ty = TYPES[sel];
         icon(g, ty.ic, 74, by + 52, 64, ty.col);
-        txt(g, ty.name, 120, by + 38, '800 24px Montserrat'); txt(g, `erases: ${ty.erases.toLowerCase()}`, 120, by + 66, '700 16px Jost', ty.col === C.stoneDk ? C.ink : ty.col);
+        txt(g, ty.name, 120, by + 38, '800 24px Montserrat'); txt(g, `erases: ${lc(ty.erases)}`, 120, by + 66, '700 16px Jost', ty.col === C.stoneDk ? C.ink : ty.col);
         txt(g, 'Its trigger', 46, by + 110, '700 14px Jost', C.muted); wrap(g, ty.when, 46, by + 134, 420, 22, '600 17px Jost');
         txt(g, 'How power widens it', 46, by + 176, '700 14px Jost', C.muted); wrap(g, ty.power, 46, by + 200, 440, 22, '600 16px Jost');
         txt(g, 'In real games', 530, by + 30, '700 14px Jost', C.muted);
@@ -271,12 +278,12 @@
         txt(g, `Loss ${st.card + 1} of ${CARDS.length}`, 46, by + 30, '700 14px Jost', C.muted);
         GI.draw(g, 'skull-crossed-bones', 90, by + 110, 70, '#b0423b');
         wrap(g, `“${text}”`, 150, by + 92, 560, 30, '700 23px Jost');
-        if (st.miss >= 0) wrap(g, `Not that one: ${TYPES[st.miss].name} erases “${TYPES[st.miss].erases.toLowerCase()}.” Which loss is this?`, 150, by + 176, 560, 22, '600 16px Jost', C.redDk);
-        CARDS.forEach((c, i) => box(g, 760 + (i % 7) * 32, by + 60 + Math.floor(i / 7) * 40, 26, 32, i < st.card ? TYPES[st.done[i]].col : i === st.card ? '#fffaf0' : null, i === st.card ? C.navy : '#cdbf9f', 4, i === st.card ? 3 : 1.5));
-        txt(g, `${st.right} right on the first try`, 760, by + 160, '700 15px Jost');
+        if (st.miss >= 0) wrap(g, `Not that one: ${TYPES[st.miss].name} erases “${lc(TYPES[st.miss].erases)}.” Which loss is this?`, 150, by + 176, 560, 22, '600 16px Jost', C.redDk);
+        CARDS.forEach((c, i) => box(g, 730 + (i % 8) * 32, by + 60 + Math.floor(i / 8) * 40, 26, 32, i < st.card ? TYPES[st.done[i]].col : i === st.card ? '#fffaf0' : null, i === st.card ? C.navy : '#cdbf9f', 4, i === st.card ? 3 : 1.5));
+        txt(g, `${st.right} right on the first try`, 730, by + 160, '700 15px Jost');
       } else {
         T.stamp(`${st.right} of ${CARDS.length} on the first try`, 520, by + 80, C.good, 1, 28);
-        wrap(g, 'Every kind owns a different moment: information before the fight, sustain and burst during it, escape once it is lost, insurance after. Choosing a type chooses which situations the item will own.', 80, by + 150, 880, 26, '600 18px Jost');
+        wrap(g, 'Every kind owns a different moment: information and preparation before the fight, sustain and burst during it, escape once it is lost, insurance after. Choosing a type chooses which situations the item will own.', 80, by + 150, 880, 26, '600 18px Jost');
       }
       const key = [mode, sel, st.card, st.miss].join(); if (key === st.key) return; st.key = key;
       say($(s, '.ty-out'), mode === 'explore'
