@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Readable Enemies · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="itb.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · PvE Interactions · Readable Enemies', home: '../index.html', audio: null, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1 -->
+<section class="slide center" data-title="Readable Enemies" data-demo="title">
+  <div class="kicker rise">fundamentals for designing engaging PvE interactions · readability</div>
+  <h1 class="rise">Show the Attack <span class="accent">Before It Lands</span></h1>
+  <div class="rule rise" style="margin:22px auto"></div>
+  <canvas class="demo ti-canvas rise" width="1100" height="262"></canvas>
+  <p class="lede rise" style="margin:18px auto 0;text-align:center;font-size:28px">Into the Breach tells you every enemy attack before you move: which tiles, which way, how hard and in what order. The challenge moves from guessing to deciding.</p>
+</section>
+
+<!-- 2: one whole turn, telegraphs shown or hidden -->
+<section class="slide" data-title="One Turn, Fully Told" data-demo="turn">
+  <div class="kicker">readability · a whole turn, step by step</div>
+  <h2 class="sm">One Turn, <span class="accent">Fully Told</span></h2>
+  <div class="ib-wrap">
+    <canvas class="demo" width="1000" height="680"></canvas>
+    <div class="ib-side">
+      <h4>Enemy intent</h4>
+      <div class="row wrap tn-mode"><button class="btn on" data-m="shown">Telegraphs shown</button><button class="btn" data-m="hidden">Telegraphs hidden</button></div>
+      <h4>Steps</h4>
+      <div class="row wrap"><button class="btn tn-prev">◀ Step</button><button class="btn tn-play on">❚❚ Pause</button><button class="btn tn-next">Step ▶</button><button class="btn tn-restart">Restart</button></div>
+      <p class="mt-out ib-out tn-out"></p>
+      <p class="ib-src">Into the Breach (Subset Games, 2018). Tiles, icons and unit art are the game’s own, unpacked from its <code>resource.dat</code>. Weapon rules follow the game’s scripts (<code>weapons_enemy.lua</code>, <code>weapons_brute.lua</code>, <code>weapons_ranged.lua</code>, <code>weapons_prime.lua</code>); the board and both plans are our own puzzle. A first look at the idea: <a href="../../blog-posts/clarity/index.html">Clarity</a> in Blog Posts.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 3: every Vek, its shape -->
+<section class="slide" data-title="Read the Shape" data-demo="shapes">
+  <div class="kicker">readability · thirteen Vek, five shapes</div>
+  <h2 class="sm">Read the Shape, <span class="accent">Not the Bug</span></h2>
+  <div class="ib-wrap">
+    <canvas class="demo" width="1000" height="680"></canvas>
+    <div class="ib-side">
+      <h4 class="sh-pick">Pick a Vek</h4>
+      <div class="vk-groups sh-groups"></div>
+      <h4>Guess first</h4>
+      <div class="row wrap"><button class="btn sh-quiz">Quiz: hide the telegraph</button></div>
+      <div class="row wrap qz-btns sh-qbtns" style="margin-top:6px"></div>
+      <p class="mt-out ib-out sh-out"></p>
+      <p class="ib-src">Rules from the game’s scripts, base (non-Alpha) versions; file and line in the text. Sprites and portraits are the game’s own.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 4: one telegraph, many answers -->
+<section class="slide" data-title="One Telegraph, Many Answers" data-demo="answers">
+  <div class="kicker">readability · a clear rule gives you options</div>
+  <h2 class="sm">One Telegraph, <span class="accent">Five Answers</span></h2>
+  <div class="ib-wrap">
+    <canvas class="demo" width="1000" height="680"></canvas>
+    <div class="ib-side">
+      <h4>Your answer</h4>
+      <div class="an-list an-btns"></div>
+      <div class="row wrap" style="margin-top:8px"><button class="btn an-play">▶ Play it</button><button class="btn an-tour on">▶ Walk-through</button></div>
+      <p class="mt-out ib-out an-out"></p>
+      <p class="ib-src">The Firefly’s rule (<code>weapons_enemy.lua:423-462</code>): its goo hits the first thing in the line, for 1 damage, with no push. Because the rule is on screen, every answer here can be planned before you commit.</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="itb.js"></script>
+</body>
+</html>

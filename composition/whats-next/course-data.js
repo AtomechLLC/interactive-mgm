@@ -167,6 +167,10 @@ window.COURSE = [
 "Mechanical Counters"
 ],
 [
+"pve-interactions/readability/index.html",
+"Readable Enemies"
+],
+[
 "pve-interactions/escalation/index.html",
 "Escalation"
 ],
