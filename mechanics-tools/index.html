@@ -72,9 +72,10 @@
     ['reverse-map', 'Mark_1', 'Reverse Sequencing Map', 'The map example for slide 116: walk forward into a locked door and go key-hunting, then plan backward from the goal and find two routes. Plus three more takes: a Pokémon gym, a card turn and a Mario climb', '115 to 119', 'reverse-sequencing-map', 'Plan It Forward, Then Backward', 'Forward: hit the locked door, hunt for the key, walk back. Backward: what stops me, what opens it, and the lever route appears.'],
     ['diminishing', 'Mana_Crystal', 'Diminishing Returns', 'Stun per rank as linear, diminishing or capped (the deck’s Xerath curve), beside Elden Ring’s real Vigor curve with its soft caps at 40 and 60', '183 to 186', 'diminishing-returns', 'Each Rank Buys a Little Less', 'Linear, diminishing and capped stun by rank, while a marker climbs Elden Ring’s Vigor from 1 to 99.'],
     ['life-per-hit', 'Hit_Friendly', 'Lifesteal vs Life per Hit', 'The Diablo III beta Barbarian: raise damage and watch 6% lifesteal outheal a whole pack while a flat 12 life per hit stays put', '177 to 180', 'life-per-hit', 'Lifesteal Snowballs, Life per Hit Doesn’t', 'Gear raises damage from 40 to 400 per hit; past 250, lifesteal heals more than the pack deals.'],
+    ['feedback-loops', 'Rolling_Energy', 'Feedback Loop Sandbox', 'Switch positive and negative loops on and off and watch the gap between two players snowball or close: wildfire, thermostat, Mario Kart items, Deadlock bounties, then tame a snowball with diminishing returns or a limit', '155 to 176', 'feedback-loops', 'Snowball, Then Tame It', 'Rich get richer runs away; Mario Kart items and Deadlock bounties pull the gap closed; diminishing returns and a limit slow the snowball down.'],
   ];
   // pages that are built so far
-  const READY = ['doors', 'contrapositive', 'contrapositive-rules', 'inversion', 'reverse-map', 'diminishing', 'life-per-hit'];
+  const READY = ['doors', 'contrapositive', 'contrapositive-rules', 'inversion', 'reverse-map', 'diminishing', 'life-per-hit', 'feedback-loops'];
   const LIVE = PAGES.filter(p => READY.includes(p[0]));
   // deck parts in deck order: [title, first slide, last slide]. Each page sits under the part its first slide is in.
   const PARTS = [
