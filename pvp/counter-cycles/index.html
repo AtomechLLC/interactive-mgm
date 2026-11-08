@@ -21,7 +21,7 @@
   <div class="kicker rise">high level meta · other expressions</div>
   <h1 class="rise">Counter Cycles</h1>
   <div class="rule rise" style="margin:22px auto"></div>
-  <p class="lede rise">Rock, paper, scissors hides inside RTS openings, fighting game mix-ups and MOBA team comps. Each gets a wheel, and the RTS one also plays out on a map, for anyone who has never played StarCraft.</p>
+  <p class="lede rise">Rock, paper, scissors hides inside RTS openings, fighting game mix-ups and MOBA team comps. Each gets a wheel; the RTS one also plays out on a map, and the fighting game one with Street Fighter sprites, for anyone who has never played either.</p>
   <p class="lede rise" style="font-size:26px">Arrows point from the winner to what it beats. Hover anything; click a node to pin it.</p>
   <aside class="notes">The slide’s text notation, “A &lt; B”, reads “A loses to B”. Every wheel shows that notation underneath, and hovering a “&lt;” lights up its arrow.</aside>
 </section>
@@ -76,13 +76,28 @@
       <p class="cc-legend">The same triangle at a scale of fractions of a second. <b>Green</b>: beats. <i>Red</i>: loses to.</p>
       <div class="cc-panel" data-idle="Hover an option to see what it beats and what punishes it. Hover an arrow to read why."></div>
       <div class="cc-notation"></div>
-      <div class="cc-tools"><button class="btn cc-walk">▶ Watch the read-and-adapt loop</button></div>
+      <div class="cc-tools"><button class="btn cc-walk">▶ Watch the read-and-adapt loop</button> <button class="btn" data-go="sf-played-out">See it in Street Fighter →</button></div>
     </div>
   </div>
   <aside class="notes">Block beats Attack, Grab beats Block, Attack beats Grab. The RTS cycle plays out over minutes and whole matches; this one plays out every few seconds, which is why fighting games feel like reading minds.</aside>
 </section>
 
 <!-- 6 -->
+<section class="slide ro" id="sf-played-out" data-title="Each Mix-up, Played Out" data-demo="fight-seq">
+  <canvas class="demo bg-canvas" width="1600" height="900" aria-label="Ryu and Chun-Li in Street Fighter III: 3rd Strike, playing out one arrow of the Attack, Block, Grab wheel frame by frame"></canvas>
+  <div class="kicker">fighting game mix-ups: the wheel, played out</div>
+  <h2>Each mix-up, played out</h2>
+  <div class="ro-ctl">
+    <button class="btn on" data-seq="block-attack">Block beats Attack</button>
+    <button class="btn" data-seq="grab-block">Grab beats Block</button>
+    <button class="btn" data-seq="attack-grab">Attack beats Grab</button>
+    <button class="btn ro-play">❚❚ Pause</button>
+    <input class="ro-scrub" type="range" min="0" max="1" step="0.001" value="0" aria-label="game frame">
+  </div>
+  <aside class="notes">Each button is one arrow of the wheel, played by Ryu and Chun-Li in Street Fighter III: 3rd Strike at a quarter of the game’s speed. The sprites, boxes and frame data are the game’s, from the Baston hitbox viewer; the reactions (block spark, hit freeze, the toss) are drawn on top. Block beats Attack: Ryu’s sweep is −13 on block, so after Chun-Li blocks it she is free 13 frames before he is, long enough for her Crouching Forward to hit his leg. Grab beats Block: Chun-Li holds guard waiting for a strike, Ryu dashes in and throws her, and guard does nothing against a throw. Attack beats Grab: a throw reaches only 49 pixels, so Ryu has to dash in, and Chun-Li’s kick, pressed as he starts moving, hits him mid-dash before he is in range. The frame strip under the stage colours every frame of both players: startup, active, recovery, guard, stun. Click the stage to pause, or drag the slider.</aside>
+</section>
+
+<!-- 7 -->
 <section class="slide cc" data-title="MOBA: A Five-Role Cycle" data-demo="cc-moba">
   <div class="cc-split">
     <svg class="cc-wheel" role="img" aria-label="MOBA counter wheel"></svg>
@@ -100,7 +115,7 @@
   <aside class="notes">The slide’s chain, Marksman &lt; Mage &lt; Assassin &lt; Tank &lt; Bruiser &lt; Marksman, is the outer ring. The 2-stage model adds the inner star: Assassin beats Mage and Marksman, Tank beats Assassin and Mage, Bruiser beats Tank and Assassin, Marksman beats Bruiser and Tank, Mage beats Marksman and Bruiser.</aside>
 </section>
 
-<!-- 7 -->
+<!-- 8 -->
 <section class="slide cc" data-title="Why two stages?" data-demo="cc-grid">
   <div class="cc-split">
     <svg class="cc-wheel" role="img" aria-label="MOBA counter wheel"></svg>
@@ -119,7 +134,7 @@
   <aside class="notes">With five options and one stage, half the pairs have no arrow between them, so a pick only matters against two of the four other roles. Two stages connect every pair: each role has two winning matchups and two losing ones, and the cycle stays balanced.</aside>
 </section>
 
-<!-- 8 -->
+<!-- 9 -->
 <section class="slide cc" data-title="Drill: Counter-Pick" data-demo="cc-quiz">
   <div class="cc-split">
     <svg class="cc-wheel" role="img" aria-label="Counter wheel for the current question"></svg>
@@ -134,12 +149,12 @@
   </div>
 </section>
 
-<!-- 9 -->
+<!-- 10 -->
 <section class="slide" data-title="Same Shape, Three Genres" data-demo="cc-sum">
   <div class="kicker">summary</div>
   <h2>Same Shape, Three Genres</h2>
   <div class="cc-three">
-    <div><svg class="cc-wheel" data-sys="rts"></svg><h3>RTS</h3><p>Decided over a whole match</p></div>
+    <div><svg class="cc-wheel" data-sys="rts"></svg><h3>RTS</h3><p>Decided over the opening moves of a match</p></div>
     <div><svg class="cc-wheel" data-sys="fight"></svg><h3>Fighting</h3><p>Decided every few seconds</p></div>
     <div><svg class="cc-wheel" data-sys="moba"></svg><h3>MOBA</h3><p>Decided in the draft; 5 roles need 2 stages</p></div>
   </div>
@@ -150,5 +165,7 @@
 <script src="../../assets/kit.js"></script>
 <script src="cc.js"></script>
 <script src="openings.js"></script>
+<script src="sf3-moves.js"></script>
+<script src="fight-seq.js"></script>
 </body>
 </html>
