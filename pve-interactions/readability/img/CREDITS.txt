@@ -1,0 +1,10 @@
+Into the Breach (Subset Games, 2018). Every image in this folder is the game's own art, used here as course material.
+
+ui/        tiles (tiles_grass), structures, telegraph arrows, stripes and icons, copied unchanged from the game's
+           resource.dat (unpacked with C:\Projects\GameDesignSkills\IntoTheBreach\unpack_resources.py, img/combat/).
+sprites/   first frame of each unit's animation, trimmed. The local wiki (IntoTheBreach\wiki\assets\sprites) stores
+           them at 3x; these are scaled back to 1x with nearest-neighbour (lossless), and the page draws them at 2x.
+portraits/ unit portraits from IntoTheBreach\wiki\assets\portraits (2x).
+
+Unit rules on the page come from the game's scripts (weapons_enemy.lua, advanced/ae_weapons_enemy.lua and the mech
+weapon files), as summarised in IntoTheBreach\unit_behaviour_rules.md with file:line citations.
