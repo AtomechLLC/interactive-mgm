@@ -25,7 +25,11 @@
   const HOME = [RX + 280, RY + 340], GUARD_AT = [RX + 390, RY + 92];
   const ACT = 2.6;
 
-  function keyIcon(g, x, y, s = 1) { g.save(); g.translate(x, y); g.scale(s, s); g.strokeStyle = '#9a5a06'; g.fillStyle = '#ffb951'; g.lineWidth = 3; g.beginPath(); g.arc(-10, 0, 8, 0, Math.PI * 2); g.fill(); g.stroke(); g.fillRect(-2, -3, 22, 6); g.strokeRect(-2, -3, 22, 6); g.fillRect(12, 3, 4, 6); g.fillRect(17, 3, 3, 5); g.restore(); }
+  // the student-token props (student-tokens/vector-basics/svg/props), drawn once they load; the old shapes stand in until then
+  const PROP = {}; ['key', 'chest'].forEach(n => { const i = new Image(); i.src = `../../student-tokens/vector-basics/svg/props/${n}.svg`; PROP[n] = i; });
+  const propReady = n => PROP[n].complete && PROP[n].naturalWidth > 0;
+  function keyIcon(g, x, y, s = 1) { if (propReady('key')) { const d = 46 * s; g.drawImage(PROP.key, x - d / 2, y - d / 2, d, d); return; } oldKeyIcon(g, x, y, s); }
+  function oldKeyIcon(g, x, y, s = 1) { g.save(); g.translate(x, y); g.scale(s, s); g.strokeStyle = '#9a5a06'; g.fillStyle = '#ffb951'; g.lineWidth = 3; g.beginPath(); g.arc(-10, 0, 8, 0, Math.PI * 2); g.fill(); g.stroke(); g.fillRect(-2, -3, 22, 6); g.strokeRect(-2, -3, 22, 6); g.fillRect(12, 3, 4, 6); g.fillRect(17, 3, 3, 5); g.restore(); }
   function pickIcon(g, x, y, s = 1) { g.save(); g.translate(x, y); g.scale(s, s); g.strokeStyle = '#62688a'; g.lineWidth = 3; g.lineCap = 'round'; g.beginPath(); g.moveTo(-16, 6); g.lineTo(14, -2); g.lineTo(18, -8); g.stroke(); g.beginPath(); g.moveTo(-16, -6); g.lineTo(12, 4); g.stroke(); g.restore(); }
   function hammerIcon(g, x, y, s = 1, rot = 0) { g.save(); g.translate(x, y); g.rotate(rot); g.scale(s, s); g.fillStyle = '#8b6136'; g.fillRect(-3, -4, 6, 34); g.fillStyle = C.stone; g.strokeStyle = C.navy; g.lineWidth = 2; g.fillRect(-16, -14, 32, 14); g.strokeRect(-16, -14, 32, 14); g.restore(); }
   const TOOL_ICON = { key: keyIcon, pick: pickIcon, hammer: hammerIcon };
@@ -48,7 +52,17 @@
     // chest
     const [cx, cy] = SPOT.chest;
     g.fillStyle = '#9b6a3a'; g.strokeStyle = '#4e2a10'; g.lineWidth = 3;
-    if (st.chest === 'smashed') { [[-20, 8, .3], [16, 12, -.5], [0, -6, 1.2]].forEach(([ox, oy, r]) => { g.save(); g.translate(cx + ox, cy + oy); g.rotate(r); g.fillRect(-16, -5, 32, 10); g.restore(); }); T.flash(cx, cy, 30, .5); }
+    if (st.chest === 'smashed') { if (propReady('chest')) { g.fillStyle = '#c08a4a'; g.strokeStyle = '#1d2433'; g.lineWidth = 2; } [[-20, 8, .3], [16, 12, -.5], [0, -6, 1.2]].forEach(([ox, oy, r]) => { g.save(); g.translate(cx + ox, cy + oy); g.rotate(r); g.fillRect(-16, -5, 32, 10); g.strokeRect(-16, -5, 32, 10); g.restore(); }); T.flash(cx, cy, 30, .5); }
+    else if (propReady('chest')) {
+      if (st.chest === 'open') {   // the prop's body under a lid swung back: the lid's underside, then the gold inside
+        g.fillStyle = '#a8743a'; g.strokeStyle = '#1d2433'; g.lineWidth = 2.2;
+        g.beginPath(); g.moveTo(cx - 35, cy - 18); g.lineTo(cx - 38, cy - 46); g.quadraticCurveTo(cx, cy - 58, cx + 38, cy - 46); g.lineTo(cx + 35, cy - 18); g.closePath(); g.fill(); g.stroke();
+        g.fillStyle = 'rgba(29,36,51,.25)'; g.fill();
+        const k = PROP.chest.naturalWidth / 100; g.drawImage(PROP.chest, 0, 36 * k, 100 * k, 64 * k, cx - 44, cy - 52 + 36 * .88, 88, 64 * .88);
+        g.fillStyle = '#ffd23f'; g.strokeStyle = '#1d2433'; g.lineWidth = 2; g.beginPath(); g.ellipse(cx, cy - 18, 26, 6, 0, 0, Math.PI * 2); g.fill(); g.stroke();
+        T.flash(cx, cy - 16, 40, .8);
+      } else g.drawImage(PROP.chest, cx - 44, cy - 52, 88, 88);
+    }
     else {
       g.fillRect(cx - 34, cy - 14, 68, 36); g.strokeRect(cx - 34, cy - 14, 68, 36);
       if (st.chest === 'open') { g.fillStyle = '#7a4f28'; g.fillRect(cx - 34, cy - 40, 68, 22); g.strokeRect(cx - 34, cy - 40, 68, 22); T.flash(cx, cy - 16, 40, .8); }
