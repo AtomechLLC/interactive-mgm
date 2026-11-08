@@ -40,6 +40,8 @@ From [game-icons.net](https://game-icons.net), licensed [CC BY 3.0](https://crea
 | `pvp--elusives.svg` | [invisible](https://game-icons.net/1x1/delapouite/invisible.html) | Delapouite |
 | `pvp--counter-cycles.svg` | [cycle](https://game-icons.net/1x1/lorc/cycle.html) | Lorc |
 | `pvp--zoning.svg` | [archery-target](https://game-icons.net/1x1/lorc/archery-target.html) | Lorc |
+| `pvp--footsies.svg` | [high-kick](https://game-icons.net/1x1/delapouite/high-kick.html) | Delapouite |
+| `pvp--trading.svg` | [scales](https://game-icons.net/1x1/lorc/scales.html) | Lorc |
 | `pvp--counterplay.svg` | [shield-reflect](https://game-icons.net/1x1/lorc/shield-reflect.html) | Lorc |
 | `pve-interactions.svg` | [dragon-head](https://game-icons.net/1x1/lorc/dragon-head.html) | Lorc |
 | `pve-interactions--nintendo-model.svg` | [super-mushroom](https://game-icons.net/1x1/lorc/super-mushroom.html) | Lorc |

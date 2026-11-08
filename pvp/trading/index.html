@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trading Hits · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="trading.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · PvP Interactions · Trading Hits', home: '../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1: definition of trading and the three building blocks -->
+<section class="slide center" data-title="Trading Hits" data-demo="none">
+  <div class="kicker rise">part 6 · PvP melee strikes and trades</div>
+  <h1 class="rise">Trading <span class="accent">Hits</span></h1>
+  <p class="lede rise" style="margin:14px auto 24px;text-align:center;max-width:1150px">The simultaneous exchange of hits, or of one advantage for another.</p>
+  <div class="fx-defs rise">
+    <div class="fx-def"><img src="../../student-tokens/256px/icons-weapons/two-handed-sword.png" alt=""><b>Animation</b><span>How long the swing is, and where in it the strike lands.</span></div>
+    <div class="fx-def"><img src="../../student-tokens/256px/icons-actions-and-keywords/stopwatch.png" alt=""><b>Timing</b><span>Who starts first, and whose active frames arrive first.</span></div>
+    <div class="fx-def"><img src="../../student-tokens/256px/icons-actions-and-keywords/scales.png" alt=""><b>Reaction rules</b><span>When both attacks land, what happens?</span></div>
+  </div>
+</section>
+
+<!-- 2: greatsword vs dagger under four reaction rules -->
+<section class="slide" data-title="Greatsword vs Dagger" data-demo="trade">
+  <div class="kicker">trading · reaction rules · poise</div>
+  <h2 class="sm">Greatsword vs <span class="accent">Dagger</span></h2>
+  <div class="fx-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="fx-side">
+      <h4>When both attacks land…</h4>
+      <div class="row wrap">
+        <button class="btn" data-rule="first">First to hit <kbd>1</kbd></button>
+        <button class="btn" data-rule="heavy">Heavier hit wins <kbd>2</kbd></button>
+        <button class="btn" data-rule="both">Both land <kbd>3</kbd></button>
+        <button class="btn" data-rule="poise">Poise <kbd>4</kbd></button>
+      </div>
+      <h4>Timing</h4>
+      <label class="rng">Dagger starts <b class="v-off"></b><input type="range" class="i-off" min="-10" max="30" step="1"></label>
+      <h4>The designer</h4>
+      <label class="rng">Greatsword user’s poise <b class="v-poise"></b><input type="range" class="i-poise" min="10" max="100" step="5"></label>
+      <div class="row wrap" style="margin-top:8px"><button class="btn td-tour on">▶ Walk-through</button></div>
+      <div class="fx-stats st"></div>
+      <p class="fx-out out1"></p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="trading.js"></script>
+</body>
+</html>
