@@ -1,4 +1,4 @@
-// Records a counter-cycles wheel slide (2, 5 or 6) as timestamped PNG frames for the course GIFs.
+// Records a counter-cycles wheel slide (2, 5 or 7) as timestamped PNG frames for the course GIFs.
 // Usage: serve InteractiveMGM on :${PORT:-8137}, then  node tools/record-cc-gif.js <slide> <frameDir>   (frames are 1920x1080: the 1600x900 slide at 1.2 scale)
 // Encode: ffmpeg -f concat -i <frameDir>/list.txt -vf "fps=12,scale=1920:1080:flags=lanczos,split[a][b];[a]palettegen[p];[b][p]paletteuse=dither=bayer:bayer_scale=4:diff_mode=rectangle" -loop 0 out.gif
 const fs = require('fs'), path = require('path');
@@ -85,7 +85,7 @@ const CSS = `.viewport{inset:0!important}
       await click('.cc-walk'); await park(); await wait(2600 * 3 - 700);
       await click('.cc-walk'); await park(); await wait(900);
     },
-    async 6() {
+    async 7() {
       await wait(900);
       await node('Assassin'); await wait(2600);
       await node('Tank'); await wait(2200);
