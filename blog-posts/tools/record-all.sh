@@ -39,5 +39,6 @@ rec 'atomech-lesson/index.html#2' order atomech-hardest-first-or-snowball
 rec 'atomech-lesson/index.html#3' multi atomech-call-and-swap
 wait
 node record-slide-gif.js "$U/chess-event/index.html#1" rules ../gifs/chess-event-house-rules.gif 8 "" "$NOSIDE" &
-rec 'chess-event/index.html#2' grid chess-event-invisible-bunnies
+rec 'chess-event/index.html#2' spells chess-event-every-piece-spells
+rec 'chess-event/index.html#3' grid chess-event-invisible-bunnies
 wait
