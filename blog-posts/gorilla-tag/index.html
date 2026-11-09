@@ -3,19 +3,35 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Arm Locomotion · Mastering Game Mechanics</title>
+<title>Gorilla Tag · Mastering Game Mechanics</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../assets/deck.css">
 <link rel="stylesheet" href="../../assets/kit.css">
 <link rel="stylesheet" href="../shared/blog.css">
 <script>
-  window.DECK = { title: 'Mastering Game Mechanics · Blog Posts · Arm Locomotion', home: '../index.html', audio: false, cues: null };
+  window.DECK = { title: 'Mastering Game Mechanics · Blog Posts · Gorilla Tag', home: '../index.html', audio: false, cues: null };
 </script>
 <script src="notes.js"></script>
 </head>
 <body>
 <div class="viewport"><div class="stage">
+
+<section class="slide" data-title="Infection tag" data-demo="tag">
+  <div class="kicker">genre breakdown · Gorilla Tag</div>
+  <h2 class="sm">Tag where <span class="accent">trees are your legs</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Run from the lava</h4>
+      <p class="src" style="margin-top:0">Hold W, A, S, D or the mouse button. Every few tenths of a second you take one arm stroke that way.</p>
+      <div class="row wrap"><button class="btn gt-new">New round</button><button class="btn tour on">▶ Walk-through</button></div>
+      <div class="mt-stats"></div>
+      <p class="mt-out"></p>
+      <p class="src">Top-down sketch of an infection round: one lava gorilla, four runners, 30 seconds. Gold hand = a push off a trunk or the rock. Values are illustrative.</p>
+    </div>
+  </div>
+</section>
 
 <section class="slide" data-title="Arm locomotion" data-demo="arms">
   <div class="kicker">genre breakdown · VR movement</div>
@@ -39,6 +55,7 @@
 <script src="../../assets/kit.js"></script>
 <script src="../shared/topdown.js"></script>
 <script src="../shared/genre.js"></script>
+<script src="tag.js"></script>
 <script src="arms.js"></script>
 </body>
 </html>
