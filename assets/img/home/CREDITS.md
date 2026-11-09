@@ -238,3 +238,9 @@ Genre breakdowns (Blog Posts):
 | `blog-posts--mmo.svg` | [backup](https://game-icons.net/1x1/lorc/backup.html) | Lorc |
 | `blog-posts--wow-service.svg` | [server-rack](https://game-icons.net/1x1/delapouite/server-rack.html) | Delapouite |
 | `blog-posts--visual-novel.svg` | [split-arrows](https://game-icons.net/1x1/delapouite/split-arrows.html) | Delapouite |
+| `blog-posts--platformer.svg` | [jump-across](https://game-icons.net/1x1/delapouite/jump-across.html) | Delapouite |
+| `blog-posts--gorilla-tag.svg` | [gorilla](https://game-icons.net/1x1/delapouite/gorilla.html) | Delapouite |
+| `blog-posts--sports-assist.svg` | [basketball-basket](https://game-icons.net/1x1/delapouite/basketball-basket.html) | Delapouite |
+| `blog-posts--arcade-risk.svg` | [joystick](https://game-icons.net/1x1/delapouite/joystick.html) | Delapouite |
+| `blog-posts--stealth.svg` | [hood](https://game-icons.net/1x1/lorc/hood.html) | Lorc |
+| `blog-posts--horror-tension.svg` | [haunting](https://game-icons.net/1x1/lorc/haunting.html) | Lorc |
