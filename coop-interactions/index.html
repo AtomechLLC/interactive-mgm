@@ -118,5 +118,6 @@
   const fig = (sl, gif, gt, cap) => `<figure><a href="gifs/${gif}.gif"><img src="gifs/${gif}.gif" alt="${gt}" loading="lazy"></a><figcaption><b>${gt}</b>${cap} Deck slides ${sl}.</figcaption></figure>`;
   document.getElementById('gifs').innerHTML = LIVE.map(([f, , , , sl, gif, gt, cap]) => fig(sl, gif, gt, cap) + EXTRA.filter(e => e[0] === f).map(e => fig(e[1], e[2], e[3], e[4])).join('')).join('');
 </script>
+<script src="../assets/gif-sections.js" defer></script>
 </body>
 </html>
