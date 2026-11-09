@@ -232,3 +232,9 @@ Genre breakdowns (Blog Posts):
 | `blog-posts--fps-barks.svg` | [shouting](https://game-icons.net/1x1/lorc/shouting.html) | Lorc |
 | `blog-posts--moba.svg` | [coins](https://game-icons.net/1x1/delapouite/coins.html) | Delapouite |
 | `blog-posts--racing-camera.svg` | [car-wheel](https://game-icons.net/1x1/delapouite/car-wheel.html) | Delapouite |
+| `blog-posts--rpg-power.svg` | [upgrade](https://game-icons.net/1x1/delapouite/upgrade.html) | Delapouite |
+| `blog-posts--rpg-xp.svg` | [stairs](https://game-icons.net/1x1/delapouite/stairs.html) | Delapouite |
+| `blog-posts--first-rpg.svg` | [dungeon-gate](https://game-icons.net/1x1/delapouite/dungeon-gate.html) | Delapouite |
+| `blog-posts--mmo.svg` | [backup](https://game-icons.net/1x1/lorc/backup.html) | Lorc |
+| `blog-posts--wow-service.svg` | [server-rack](https://game-icons.net/1x1/delapouite/server-rack.html) | Delapouite |
+| `blog-posts--visual-novel.svg` | [split-arrows](https://game-icons.net/1x1/delapouite/split-arrows.html) | Delapouite |
