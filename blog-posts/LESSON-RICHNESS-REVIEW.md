@@ -26,20 +26,22 @@ Most of the thin pages fail on the same check, **Cost**. They show A against B, 
 
 | # | Page | Why it's thin | Stronger version | Status |
 |---|------|---------------|------------------|--------|
-| 1 | **An MMORPG Is a Service** | A timeline the learner scrubs. "Launch is the start" is a slogan, not a decision. | **Feed the treadmill**: split a 120-person live team between new content, systems that make old content replayable, and stability, then watch three years. | **Built** (slide 2) |
+| 1 | **An MMORPG Is a Service** | A timeline the learner scrubs. "Launch is the start" is a slogan, not a decision. | **Feed the treadmill**: split a 120-person live team between new content, systems that make old content replayable, and stability, then watch three years. | **Restarted as play** (slide 2) |
 | 2 | **Shared World or Instance** | Instanced beats open world on every readout; more players only makes the open world look worse. | **Write the tag rule**: first tag or shared credit, respawn, layer cap, health that grows with the number of attackers. Six readouts, and no setting keeps them all in range. | **Built** (slide 2) |
 | 3 | **Weapon Roles** | Each weapon wins its own range band by construction; the slider only moves a cursor. | **The map picks the meta**: the same guns on three maps, plus a damage slider per gun. | **Built** (slide 2) |
-| 4 | **Speed Is a Camera Job** | Every effect only adds speed; nothing pushes back. | **Speed costs readability**: the same effects, but 20 drivers have to read a braking board. | **Built** (slide 2) |
-| 5 | The First Turn-Based RPGs | A history timeline and a drawing of two views. No mechanic to act on. | *Two views, one dungeon*: map the same maze in first person and top-down and count the wrong turns. Disorientation was the challenge, and the map is a tool for spending it. | **Built** (slide 2) |
+| 4 | **Speed Is a Camera Job** | Every effect only adds speed; nothing pushes back. | **Speed costs readability**: the same effects, but 20 drivers have to read a braking board. | **Restarted as play** (slide 2) |
+| 5 | The First Turn-Based RPGs | A history timeline and a drawing of two views. No mechanic to act on. | *Two views, one dungeon*: map the same maze in first person and top-down and count the wrong turns. Disorientation was the challenge, and the map is a tool for spending it. | **Restarted as play** (slide 2) |
 | 6 | XP Curves + What an RPG Needs | Curve shapes against an hours axis; the grind slider only shifts a line. | *Pace the curve to your zones* (on XP Curves, covering both pages): fixed content hours per zone; shape the curve so nobody has to grind through a gap or outlevels a zone they skipped. The XP curve is a content schedule. | **Built** (slide 2) |
-| 7 | The Storm | Storm on beats storm off. | *Tune the circle*: phase timings against time to first fight, looting time, deaths to the storm and how crowded the final circle gets. | **Built** (slide 2) |
+| 7 | The Storm | Storm on beats storm off. | *Tune the circle*: phase timings against time to first fight, looting time, deaths to the storm and how crowded the final circle gets. | **Restarted as play** (slide 2) |
 | 8 | Counter-Strafe | Counter-strafing beats running every time. | *Write the accuracy rule*: the speed at which spread hits its minimum, and the spread while running. Watch who wins peeks, holding an angle or run-and-gun. | **Built** (slide 2) |
 | 9 | Ring of Blood | A bar staircase the learner reads. | *Tune the ladder*: set each fight's step and watch a population of mixed skill climb it, and see where they quit. | **Built** (slide 2) |
 | 10 | D&D Advantage | The maths is right and clear, but there is no decision. | *The GM's table*: three players add ideas to one roll and the GM rewards each with nothing, Advantage or +2. Advantage doesn't stack and +2s do. | **Built** (slide 2) |
-| 11 | Arm Locomotion | A physics toy, kinesthetic but closed. | *Tune the launch*: launch multiplier, speed cap and smoothing, set against new players, experts and comfort. | **Built** (slide 2) |
+| 11 | Arm Locomotion | A physics toy, kinesthetic but closed. | *Tune the launch*: launch multiplier, speed cap and smoothing, set against new players, experts and comfort. | **Restarted as play** (slide 2) |
 | — | Genre by Verb | A taxonomy table. | Leave it as it is: it works as a navigation page. | Keep |
 
 ## The four rebuilt pages, ranked by how much more they teach
+
+*Feed the treadmill and Speed costs readability below were later replaced by playable restarts; see "Honest grades" further down.*
 
 Each one is a new slide 2 on its existing page, so the original stays on slide 1 to compare against. Each has a walk-through, live controls and speaker notes, and all the numbers are labelled illustrative.
 
@@ -49,6 +51,8 @@ Each one is a new slide 2 on its existing page, so the original stays on slide 1
 4. **Speed costs readability** (`racing-camera/`, slide 2). The smallest change and the cleanest lesson. The full kit of slide 1's effects takes felt speed from 1.0× to 2.6×, but brake points spread from ±3 m to ±24 m and 14 of 20 drivers brake too early or too late. Calming the camera on the approach keeps 2.6× on the straight and brings that down to 4.
 
 ## The seven follow-up spikes, ranked
+
+*Items 5 to 7 were later replaced by playable restarts; see "Honest grades" below.*
 
 These were built after the first four, again as slide 2 on each page, with a walk-through, live controls and speaker notes. All numbers are illustrative.
 
@@ -62,9 +66,26 @@ These were built after the first four, again as slide 2 on each page, with a wal
 
 One shared change: `shared/genre.js` now keeps a page's own `__seek` / `__dur` when it loads after them. Ring of Blood and D&D Advantage needed this to add a genre-style slide 2 without breaking slide 1's GIF hooks.
 
+## Honest grades, and five restarts you play
+
+After the eleven spikes were built, each was graded against the same yardstick. Six hold up: Write the tag rule, The map picks the meta, Write the accuracy rule, Pace the curve to your zones, Tune the ladder and The GM's table. In each, the learner writes a rule and the price shows up somewhere they didn't expect.
+
+Five did not: Feed the treadmill, Tune the circle, Tune the launch, Speed costs readability and Two views, one dungeon. They were dashboards over a model whose numbers I invented, so the "lesson" was whatever the model was built to say, and a sceptical student had no reason to believe it. They were thrown away, not patched. Each was rebuilt from a fresh concept where the learner plays, and the evidence is their own run:
+
+| Page | The playable restart (slide 2) | What the learner finds out from their own inputs |
+|------|------|------|
+| `racing-camera/` | **Brake at the board**: press B (or click) at the 100 m board on 12 corners, 6 with a plain camera and 6 with the full speed kit, shuffled. | Their own brake error, per camera, as dots. The kit that makes speed feel bigger also makes them miss the board. |
+| `first-rpg/` | **Map it yourself**: walk an 8×8 maze in first person, once with graph paper (draw your own walls, no position shown) and once with an automap. | Their own step count with each. Disorientation is the challenge, and the map is the dial on it. |
+| `gorilla-tag/` | **Row with your own arm**: the mouse is the hand. Grip the ground or wall, drag back, let go and fly; cross a pit and climb a wall before the tagger. Play at ×1.0 and ×1.3 launch boost. | Their own times. The same arm motion covers more ground with the boost, and a sloppy release flies further too. |
+| `fortnite-storm/` | **Loot or rotate**: one life against 16 bots. Each crate takes 2 s and adds a gear level; the storm hurts outside the circle. Play a fast storm and a slow storm. | Their own crates, fights and placement per storm. On the fast storm, bots barely loot and most die to the map; on the slow one, gear decides fights. |
+| `wow-service/` | **Survive the drought**: one subscriber's year, a week at a time. Each activity's fun is used up by playing it and only comes back with patches, seasons or affixes. Play the raid-only plan and the systems plan. | How many weeks they last. Playing the freshest thing quits in week 48 on the raid-only plan; the same habit lasts the year on the systems plan, whose best week peaks lower. |
+
+Every restart keeps a walk-through (a scripted player) for the GIF hooks, and keeps the original as slide 1. Values remain illustrative, but the comparison the learner draws comes from what they did, not from a curve they are asked to trust.
+
 ## Patterns to reuse on the next batch
 
 - **Give the post's fix a price.** If the page shows "feature on" winning, add the readout where it loses.
 - **Use several readouts with ranges, not one score.** Then the learner has to pick which cost to carry, which is the design judgement.
 - **Two failure modes per knob.** A weapon that never gets its fight and a weapon that wins everyone's; droughts and staleness. A single slider then has an interior answer, not an "always more".
+- **When the model is invented, let the learner be the data.** A dashboard over made-up rates teaches the author's opinion. A short play session where the learner's own times, errors or weeks are the readout teaches something they can't argue with.
 - **Keep the original as slide 1.** It explains the mechanic first; slide 2 lets the learner make a design call on it.
