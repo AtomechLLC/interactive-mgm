@@ -250,3 +250,10 @@ Genre breakdowns (Blog Posts):
 | `blog-posts--survival.svg` | [campfire](https://game-icons.net/1x1/lorc/campfire.html) | Lorc |
 | `blog-posts--clicker.svg` | [cookie](https://game-icons.net/1x1/delapouite/cookie.html) | Delapouite |
 | `blog-posts--gta-missions.svg` | [car-key](https://game-icons.net/1x1/delapouite/car-key.html) | Delapouite |
+| `blog-posts--card-stack.svg` | [stack](https://game-icons.net/1x1/delapouite/stack.html) | Delapouite |
+| `blog-posts--adventure-deps.svg` | [key](https://game-icons.net/1x1/lorc/key.html) | Lorc |
+| `blog-posts--puzzle-reverse.svg` | [jigsaw-piece](https://game-icons.net/1x1/lorc/jigsaw-piece.html) | Lorc |
+| `blog-posts--text-input.svg` | [keyboard](https://game-icons.net/1x1/delapouite/keyboard.html) | Delapouite |
+| `blog-posts--rts-attention.svg` | [eye-target](https://game-icons.net/1x1/delapouite/eye-target.html) | Delapouite |
+| `blog-posts--casual-curve.svg` | [histogram](https://game-icons.net/1x1/delapouite/histogram.html) | Delapouite |
+| `blog-posts--genre-matrix.svg` | [abacus](https://game-icons.net/1x1/delapouite/abacus.html) | Delapouite |
