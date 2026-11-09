@@ -1,0 +1,4 @@
+// Speaker notes. Source: funsmith.world genre breakdown, "What Was the First Turn-Based RPG Video Game?".
+window.NOTES = [
+  { script: 'The post names Dungeon, written by Don Daglow in 1975, as the first turn-based RPG: text, a party in a monster-filled dungeon, turn-based combat and experience points. In 1981 Ultima I showed one world two ways. The overworld is top-down, about where to go. The dungeons are first person in one-point perspective, about what is in front of you. Wizardry, the same year, took the first-person party crawl further, and in 1996 Super Mario RPG added timed button presses inside turn-based battles. One note: the post dates Wizardry to 1986; the first game shipped in 1981.' },
+];
