@@ -18,7 +18,8 @@
     const sky = g.createLinearGradient(0, y0, 0, hz); sky.addColorStop(0, '#7fb6e6'); sky.addColorStop(1, '#d9ecf7');
     g.fillStyle = sky; g.fillRect(x0, y0, w, hz - y0); g.fillStyle = '#7fb069'; g.fillRect(x0, hz, w, y0 + h - hz);
     const P = (x, z) => [cx + f * x / z, hz + f * HEIGHT / z];
-    const zn = 2.2, zf = 400, [l1, b1] = P(-ROAD, zn), [r1] = P(ROAD, zn), [l2, b2] = P(-ROAD, zf), [r2] = P(ROAD, zf);
+    // the near edge sits below the view's bottom, so the road always runs under the car, whatever the field of view
+    const zn = Math.min(2.2, f * HEIGHT / (y0 + h + 30 - hz)), zf = 400, [l1, b1] = P(-ROAD, zn), [r1] = P(ROAD, zn), [l2, b2] = P(-ROAD, zf), [r2] = P(ROAD, zf);
     g.fillStyle = '#5d6170'; g.beginPath(); g.moveTo(l1, b1); g.lineTo(r1, b1); g.lineTo(r2, b2); g.lineTo(l2, b2); g.fill();
     const off = (SPEED * t) % 10;
     for (let i = 30; i >= 0; i--) { const z = i * 10 - off + 2.5; if (z < zn) continue; [-1, 1].forEach(sd => { const [kx, ky] = P(sd * (ROAD + 1.5), z), ph = f * 1.4 / z; g.fillStyle = i % 2 ? '#e5322d' : '#fff'; g.fillRect(kx - Math.max(1, ph * .08), ky - ph, Math.max(2, ph * .16), ph); }); }
