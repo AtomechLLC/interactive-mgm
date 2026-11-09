@@ -82,7 +82,7 @@
     P.pts.forEach((p, i) => {
       const on = Math.hypot(p.x - goal[i].x, p.y - goal[i].y) < TOL, stuck = side === 'L' && p.snap;
       if (side === 'L') { g.fillStyle = stuck ? C.red : on ? C.gold : '#ff8a3c'; g.beginPath(); g.arc(p.x, p.y, 7, 0, TAU); g.fill(); }
-      else { g.fillStyle = on ? C.gold : '#f2ead6'; g.beginPath(); g.ellipse(p.x, p.y, 13, 11, 0, 0, TAU); g.fill(); g.fillStyle = '#f2ead6'; g.beginPath(); g.ellipse(p.x - 5, p.y - 14, 3, 8, -.2, 0, TAU); g.ellipse(p.x + 5, p.y - 14, 3, 8, .2, 0, TAU); g.fill(); g.font = '800 12px Montserrat, Jost, sans-serif'; g.fillStyle = C.navy; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('ABC'[i], p.x, p.y + 1); }
+      else { BUNNY.draw(g, p.x, p.y, { label: 'ABC'[i], on }); g.textAlign = 'center'; }
     });
     if (cur && cur.x != null) { g.fillStyle = '#fff'; g.strokeStyle = C.navy; g.lineWidth = 1.5; g.beginPath(); g.moveTo(cur.x, cur.y); g.lineTo(cur.x + 4, cur.y + 16); g.lineTo(cur.x + 8, cur.y + 11); g.lineTo(cur.x + 14, cur.y + 12); g.closePath(); g.fill(); g.stroke(); }
     // header and stats

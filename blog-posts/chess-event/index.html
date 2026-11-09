@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why Not Just Chess? · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="../shared/blog.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · Blog Posts · Why Not Just Chess?', home: '../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<section class="slide" data-title="House rules" data-demo="rules">
+  <div class="kicker">post-mortem · the Karazhan chess event</div>
+  <h2 class="sm">Why not just <span class="accent">chess?</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>House rules</h4>
+      <label class="chk"><input type="checkbox" class="cr-own" checked> Each player controls their own piece</label>
+      <label class="chk"><input type="checkbox" class="cr-spare" checked> More pieces than players (the dead jump in)</label>
+      <label class="chk"><input type="checkbox" class="cr-king" checked> The king is the strongest piece</label>
+      <label class="chk"><input type="checkbox" class="cr-faction" checked> You always play your own faction</label>
+      <label class="chk"><input type="checkbox" class="cr-cheat" checked> Medivh cheats for drama</label>
+      <div class="row wrap"><button class="btn cr-tour on">▶ Walk-through</button><button class="btn cr-play">Set the rules yourself</button></div>
+      <div class="mt-stats cr-stats"></div>
+      <p class="mt-out cr-out"></p>
+      <p class="src">Rules and reasons from the post. Piece names are the game's. Who dies when, Medivh's fire and the tension line are illustrative.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Pathing grid vs squares" data-demo="grid">
+  <div class="kicker">post-mortem · the Karazhan chess event</div>
+  <h2 class="sm">The board vs the engine: <span class="accent">invisible bunnies</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Engine vs board</h4>
+      <div class="seg"><button class="btn cg-step on">1. Squares</button><button class="btn cg-step">2. Pathing grid</button><button class="btn cg-step">3. Finer grid?</button><button class="btn cg-step">4. Bunnies</button></div>
+      <label class="chk"><input type="checkbox" class="cg-seen"> What players see (bunnies hidden)</label>
+      <div class="row wrap"><button class="btn cg-tour on">▶ Walk-through</button><button class="btn cg-play">Give orders yourself</button></div>
+      <p class="mt-out cg-out"></p>
+      <p class="src">The 40% memory cost and the bunny fix are from the post. The cell size (1.5 squares) and its offset are illustrative. The bunny is the same marker as on the Nightbane page.</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="../shared/topdown.js"></script>
+<script src="../shared/bunny.js"></script>
+<script src="chess.js"></script>
+</body>
+</html>
