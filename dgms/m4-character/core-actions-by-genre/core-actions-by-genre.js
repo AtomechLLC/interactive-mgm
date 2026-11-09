@@ -1,7 +1,7 @@
 /* Core actions by genre (RGF C2 M4, 3Cs: Character, Part 6 "Core Actions Define the Character").
    One puppet whose action bar swaps when you pick a genre, using the slide's verb sets:
-   platformers (run, jump, attack), fighting games (walk, fast, heavy, block, grab, jump), Souls-likes (walk, run,
-   root motion, pushback, dodge), FPS (run, shoot, ADS, grenade, take cover) and parkour (run, climb, mantle, swing, slide).
+   platformers (run, jump, attack), fighting games (walk, fast, heavy, block, grab, jump), Souls-likes (attack,
+   dodge, block, parry, estus), FPS (run, shoot, ADS, grenade, take cover) and parkour (run, climb, mantle, swing, slide).
    Each verb plays as a short pose animation. Poses and timings are illustrative approximations.
    The canvas is a pure function of time plus the learner's picks, so window.__seek is deterministic. */
 (function () {
@@ -72,18 +72,23 @@
   const GUARD = { hl: .35, hr: -.3, kl: -.35, kr: -.25, sl: .9, el: 2.1, sr: 1.1, er: 2.0, lean: .08 };
   const AIM = { sl: 1.35, el: .25, sr: 1.5, er: .05, hl: .2, hr: -.2, kl: -.15, kr: -.1 };
   const LOW = { sl: .7, el: .9, sr: .8, er: .8 };
+  const SOULS_IDLE = { sr: .5, er: .9, sl: .3, el: .8, hl: .25, hr: -.25, kl: -.2, kr: -.2, lean: .1 };
+  const SHIELD_UP = { ...SOULS_IDLE, sl: 1.35, el: 1.55, sr: .4, er: 1.0, lean: .05, hl: .35, kl: -.35, hr: -.3, kr: -.25 };
   const TUCK = { hl: 1.2, kl: -2.2, hr: 1.0, kr: -2.0, sl: 1.2, el: 1.2, sr: 1.2, er: 1.2, lean: .5 };
 
   /* ---------- props ---------- */
   function sword(g, j, p) { const a = p.sr + p.er, h = j.hR; g.strokeStyle = '#c9d3e6'; g.lineWidth = 4; g.beginPath(); g.moveTo(h[0], h[1]); g.lineTo(h[0] + Math.sin(a + 1.5) * 48, h[1] + Math.cos(a + 1.5) * 48); g.stroke(); g.strokeStyle = '#8b6136'; g.lineWidth = 5; g.beginPath(); g.moveTo(h[0] - Math.sin(a + 1.5) * 7, h[1] - Math.cos(a + 1.5) * 7); g.lineTo(h[0] + Math.sin(a + 1.5) * 4, h[1] + Math.cos(a + 1.5) * 4); g.stroke(); }
   function rifle(g, j, p) { const a = p.sr + p.er, h = j.hR, dx = Math.sin(a), dy = Math.cos(a); g.strokeStyle = '#2b2f3a'; g.lineWidth = 6; g.lineCap = 'butt'; g.beginPath(); g.moveTo(h[0] - dx * 22, h[1] - dy * 22); g.lineTo(h[0] + dx * 30, h[1] + dy * 30); g.stroke(); g.lineWidth = 3; g.beginPath(); g.moveTo(h[0] + dx * 30, h[1] + dy * 30); g.lineTo(h[0] + dx * 40, h[1] + dy * 40); g.stroke(); g.lineCap = 'round'; }
+  function shield(g, j, p) { const a = p.sl + p.el, h = j.hL, ang = Math.atan2(Math.cos(a), Math.sin(a)); g.save(); g.translate(h[0] + Math.cos(a) * 3, h[1] - Math.sin(a) * 3 + 0); g.rotate(ang); g.fillStyle = '#7a5530'; g.strokeStyle = '#c9d3e6'; g.lineWidth = 2.5; g.beginPath(); g.ellipse(0, 0, 17, 7, 0, 0, TAU); g.fill(); g.stroke(); g.fillStyle = '#c9d3e6'; g.beginPath(); g.arc(0, 0, 2.5, 0, TAU); g.fill(); g.restore(); }
+  function flask(g, j, p) { const a = p.sl + p.el, h = j.hL; g.save(); g.translate(h[0], h[1]); g.rotate(-a + Math.PI * .5); g.fillStyle = '#f08a24'; g.strokeStyle = '#8b5a1e'; g.lineWidth = 1.5; g.beginPath(); g.arc(0, 0, 6.5, 0, TAU); g.fill(); g.stroke(); g.fillStyle = '#8b5a1e'; g.fillRect(-2, -13, 4, 7); g.fillStyle = '#ffe0a8'; g.beginPath(); g.arc(-2, -2, 2, 0, TAU); g.fill(); g.restore(); }
+  function health(g, x, y, v, flasks) { g.fillStyle = 'rgba(21,32,68,.85)'; rr(g, x - 70, y, 140, 14, 7); g.fill(); g.fillStyle = '#d2453a'; rr(g, x - 68, y + 2, 136 * clamp(v), 10, 5); g.fill(); text(g, 'health', x - 76, y + 12, 12, C.muted, 700, 'right'); text(g, `estus ×${flasks}`, x + 78, y + 12, 12, '#b5651d', 700, 'left'); }
   const muzzle = (P, p) => { const a = p.sr + p.er, h = P.j.hR; return P.world([h[0] + Math.sin(a) * 40, h[1] + Math.cos(a) * 40]); };
   function dummy(g, x, pose, o = {}) { return puppet(g, x, GY, pose, { face: -1, col: C.red, back: '#d87b73', ...o }); }
   function target(g, x, y, r = 34) { ['#e5322d', '#fffaf0', '#e5322d', '#fffaf0', '#e5322d'].forEach((c, i) => { g.fillStyle = c; g.beginPath(); g.arc(x, y, r * (1 - i * .19), 0, TAU); g.fill(); }); g.strokeStyle = '#8b6136'; g.lineWidth = 5; g.beginPath(); g.moveTo(x, y + r); g.lineTo(x, GY); g.stroke(); }
   function crate(g, x, w, h) { const im = T.prop('crate'); if (im) { g.drawImage(im, x - w * .125, GY - h - h * .125, w / .8, h / .8); return; } g.fillStyle = '#b07a4a'; g.strokeStyle = '#6e4a2a'; g.lineWidth = 3; g.fillRect(x, GY - h, w, h); g.strokeRect(x, GY - h, w, h); g.beginPath(); g.moveTo(x, GY - h); g.lineTo(x + w, GY); g.moveTo(x + w, GY - h); g.lineTo(x, GY); g.stroke(); }
   function wallBlock(g, x, w, h, col = '#8b8fa8') { g.fillStyle = col; g.strokeStyle = '#4a4f6a'; g.lineWidth = 3; g.fillRect(x, GY - h, w, h); g.strokeRect(x, GY - h, w, h); g.strokeStyle = 'rgba(74,79,106,.35)'; g.lineWidth = 2; for (let yy = GY - h + 26; yy < GY; yy += 26) { g.beginPath(); g.moveTo(x, yy); g.lineTo(x + w, yy); g.stroke(); } }
   function spark(g, x, y, r, a, col = '#ffb951') { if (a <= 0) return; g.save(); g.globalAlpha = clamp(a); g.strokeStyle = col; g.lineWidth = 4; for (let i = 0; i < 8; i++) { const an = i / 8 * TAU; g.beginPath(); g.moveTo(x + Math.cos(an) * r * .35, y + Math.sin(an) * r * .35); g.lineTo(x + Math.cos(an) * r, y + Math.sin(an) * r); g.stroke(); } g.restore(); T.flash(x, y, r * .7, a); }
-  function stamina(g, x, y, v, cost) { g.fillStyle = 'rgba(21,32,68,.85)'; rr(g, x - 70, y, 140, 14, 7); g.fill(); g.fillStyle = '#2fae63'; rr(g, x - 68, y + 2, 136 * clamp(v), 10, 5); g.fill(); if (cost > 0) T.popText(`-${Math.round(cost * 100)} stamina`, x, y - 16, '#1a8a4c', 1); text(g, 'stamina', x - 76, y + 12, 12, C.muted, 700, 'right'); }
+  function stamina(g, x, y, v, cost) { g.fillStyle = 'rgba(21,32,68,.85)'; rr(g, x - 70, y, 140, 14, 7); g.fill(); g.fillStyle = '#2fae63'; rr(g, x - 68, y + 2, 136 * clamp(v), 10, 5); g.fill(); if (cost > 0) T.popText(`-${Math.round(cost * 100)} stamina`, x + 178, y + 10, '#1a8a4c', 1); text(g, 'stamina', x - 76, y + 12, 12, C.muted, 700, 'right'); }
 
   /* ---------- the verbs: each returns the puppet pose and draws its own props ---------- */
   // v(k, t, g) -> { pose, dy?, dx?, hip?, hand?, props(g, P), fore(g, P), scroll? }
@@ -111,15 +116,20 @@
         { name: 'Jump', dur: 1.0, about: 'Jump: gets over low attacks and moves the fight to the air, but it is committed until you land.', v: k => ({ pose: kf([[0, GUARD], [.1, { ...GUARD, kl: -1.2, kr: -1.1, hl: .7, hr: .4 }], [.3, TUCK], [.8, TUCK], [.92, { ...GUARD, kl: -1, kr: -.9, hl: .6 }], [1, GUARD]], k), dy: bump(k, .1, .92) * 150 }) },
       ], props: () => {} },
 
-    souls: { name: 'Souls-like', line: 'Heavy verbs: the animation owns the body, and stamina pays for each one.', idle: t => ({ ...breathe(t), sr: .5, er: .9, hl: .25, hr: -.25, kl: -.2, kr: -.2, lean: .1 }),
+    souls: { name: 'Souls-like', line: 'Committed verbs: once one starts, the animation owns the body, and stamina pays for most of them.', idle: t => ({ ...breathe(t), ...SOULS_IDLE }),
       verbs: [
-        { name: 'Walk', dur: 1.5, about: 'Walk: slow and readable. Walking lets stamina refill.', v: (k, t) => ({ pose: { ...walkPose(t * 5), sr: .5, er: .9 }, scroll: 70, regen: true }) },
-        { name: 'Run', dur: 1.3, about: 'Run: faster, but it costs stamina you may need for a dodge.', v: (k, t) => ({ pose: { ...runPose(t * 11), sr: .2, er: 1.2 }, scroll: 300, cost: .25 * k }) },
-        { name: 'Root motion', dur: 1.6, about: 'Root motion: the attack animation carries the body forward a fixed distance, and the player cannot steer it once it starts.', v: k => ({ pose: kf([[0, { sr: .5, er: .9, lean: .1 }], [.3, { lean: -.2, sr: 2.9, er: .3, sl: 2.4, el: .4, hl: .3, hr: -.4, kl: -.3, kr: -.2 }], [.55, { lean: .55, sr: .9, er: .1, sl: .6, el: .3, hl: .9, kl: -.9, hr: -.7, kr: -.2 }], [.8, { lean: .45, sr: .9, er: .1, sl: .6, el: .3, hl: .9, kl: -.9, hr: -.7, kr: -.2 }], [1, { sr: .5, er: .9, lean: .1 }]], k), dx: 110 * ease(seg01(k, .32, .58)) * (1 - ease(seg01(k, .82, 1))), cost: k > .3 ? .3 : 0, fore: (g, P) => {
-          if (k > .32 && k < .82) { g.strokeStyle = 'rgba(229,50,45,.5)'; g.lineWidth = 3; g.setLineDash([8, 6]); g.beginPath(); g.moveTo(PX, GY + 14); g.lineTo(PX + 110 * ease(seg01(k, .32, .58)), GY + 14); g.stroke(); g.setLineDash([]); T.label('the animation moves the body', PX + 60, GY + 34, 'center', C.red, 13); }
+        { name: 'Attack', dur: 1.5, about: 'Attack: a committed swing. The animation carries the body forward and cannot be cancelled once it starts, and every swing costs stamina.', v: k => ({ pose: kf([[0, SOULS_IDLE], [.3, { lean: -.2, sr: 2.9, er: .3, sl: .9, el: 1.4, hl: .3, hr: -.4, kl: -.3, kr: -.2 }], [.55, { lean: .55, sr: .9, er: .1, sl: .5, el: 1.2, hl: .9, kl: -.9, hr: -.7, kr: -.2 }], [.8, { lean: .45, sr: .9, er: .1, sl: .5, el: 1.2, hl: .9, kl: -.9, hr: -.7, kr: -.2 }], [1, SOULS_IDLE]], k), dx: 110 * ease(seg01(k, .32, .58)) * (1 - ease(seg01(k, .82, 1))), cost: k > .3 ? .3 : 0, enemyHit: bump(k, .5, .8), fore: (g, P) => {
+          if (k > .32 && k < .82) { g.strokeStyle = 'rgba(229,50,45,.5)'; g.lineWidth = 3; g.setLineDash([8, 6]); g.beginPath(); g.moveTo(PX, GY + 14); g.lineTo(PX + 110 * ease(seg01(k, .32, .58)), GY + 14); g.stroke(); g.setLineDash([]); T.label('the swing carries the body: no steering', PX + 60, GY + 34, 'center', C.red, 13); }
           if (k > .5 && k < .62) spark(g, P.world(P.j.hR)[0] + 30, P.world(P.j.hR)[1] + 20, 34, 1); } }) },
-        { name: 'Pushback', dur: 1.4, about: 'Pushback: a hit shoves the character back. The enemy’s blow decides where you end up, not the stick.', v: k => ({ pose: kf([[0, { sr: .5, er: .9, lean: .1 }], [.35, { sr: .5, er: .9, lean: .1, sl: 1.5, el: 1.2 }], [.5, { lean: -.45, sl: 1.8, el: 1.0, sr: .2, er: .6, hl: .6, kl: -.4, hr: -.1, kr: -.6 }], [.75, { lean: -.2, sl: 1.5, el: 1.0, hl: .5, kl: -.5 }], [1, { sr: .5, er: .9, lean: .1 }]], k), dx: -70 * ease(seg01(k, .4, .62)) * (1 - ease(seg01(k, .78, 1))), enemySwing: bump(k, .15, .6), cost: k > .45 ? .2 : 0, fore: (g, P) => { if (k > .42 && k < .56) spark(g, P.hip[0] + 40, P.hip[1] - 60, 34, 1, '#ffb951'); if (k > .45 && k < .75) { g.fillStyle = 'rgba(160,140,110,.5)'; for (let i = 0; i < 4; i++) { g.beginPath(); g.arc(P.hip[0] + 30 + i * 14, GY - 6 - i * 3, 8 - i, 0, TAU); g.fill(); } } } }) },
-        { name: 'Dodge', dur: 1.2, about: 'Dodge: a roll with a few frames where hits pass through. It costs a big chunk of stamina.', v: k => { const r = ease(seg01(k, .1, .75)); return { pose: k < .08 || k > .85 ? { sr: .5, er: .9, lean: .1 } : { ...TUCK, rot: r * TAU }, dx: 170 * r * (1 - ease(seg01(k, .8, 1))), cost: k > .1 ? .35 : 0, iframe: k > .18 && k < .55 }; } },
+        { name: 'Dodge', dur: 1.2, about: 'Dodge: a roll with a few frames where hits pass through. It costs a big chunk of stamina.', v: k => { const r = ease(seg01(k, .1, .75)); return { pose: k < .08 || k > .85 ? SOULS_IDLE : { ...TUCK, rot: r * TAU }, dx: 170 * r * (1 - ease(seg01(k, .8, 1))), cost: k > .1 ? .35 : 0, iframe: k > .18 && k < .55, enemySwing: bump(k, .05, .5) }; } },
+        { name: 'Block', dur: 1.4, about: 'Block: raise the shield and the blow lands on it. No damage, but every blocked hit drains stamina, and an empty bar breaks the guard.', v: k => ({ pose: kf([[0, SOULS_IDLE], [.2, SHIELD_UP], [.75, SHIELD_UP], [1, SOULS_IDLE]], k), dx: -18 * ease(seg01(k, .4, .52)) * (1 - ease(seg01(k, .78, 1))), enemySwing: bump(k, .15, .6), cost: k > .42 ? .3 : 0, fore: (g, P) => { if (k > .38 && k < .54) { const h = P.world(P.j.hL); spark(g, h[0] + 14, h[1], 30, 1, '#57b6ff'); T.popText('blocked', h[0] + 10, h[1] - 50, '#1f6c9a', 1); } if (k > .45 && k < .8) T.label('the hit is paid in stamina', PX + 10, GY + 34, 'center', '#1a8a4c', 13); } }) },
+        { name: 'Parry', dur: 1.6, about: 'Parry: flick the shield out just as the blow lands. Too early or too late and you take the hit; on time and the enemy staggers open for a riposte.', v: k => ({ pose: kf([[0, SOULS_IDLE], [.26, { ...SOULS_IDLE, sl: .5, el: 2.3, lean: .02 }], [.38, { ...SOULS_IDLE, sl: 2.0, el: .5, lean: .22, hl: .4, kl: -.4 }], [.6, { ...SOULS_IDLE, sl: 1.8, el: .6, lean: .18, hl: .4, kl: -.4 }], [1, SOULS_IDLE]], k), enemySwing: k < .4 ? bump(k, .15, .65) : 0, enemyStagger: k < .4 ? 0 : 1 - ease(seg01(k, .78, 1)), cost: k > .3 ? .1 : 0, fore: (g, P) => {
+          if (k > .2 && k < .4) { const w = Math.max(110, P.hip[0]); g.fillStyle = 'rgba(255,185,81,.25)'; rr(g, w - 70, 140, 140, 14, 7); g.fill(); g.fillStyle = C.gold; rr(g, w - 70 + 140 * .55, 140, 140 * .15, 14, 7); g.fill(); text(g, 'parry window', w - 76, 152, 12, C.muted, 700, 'right'); }
+          if (k > .38 && k < .52) { const h = P.world(P.j.hL); spark(g, h[0] + 16, h[1], 40, 1); T.popText('parried!', h[0] + 20, h[1] - 60, C.goldInk, 1); }
+          if (k > .5 && k < .82) T.label('riposte opening', 640, GY - 250, 'center', C.red, 14); } }) },
+        { name: 'Estus', dur: 2.0, about: 'Estus: drink a flask to heal. It costs no stamina, but the long sip roots you in place and the flasks are limited until you rest.', v: k => ({ pose: kf([[0, SOULS_IDLE], [.18, { ...SOULS_IDLE, sl: .6, el: 1.2 }], [.32, { ...SOULS_IDLE, sl: 1.15, el: 2.45, nod: -.3, lean: -.05 }], [.7, { ...SOULS_IDLE, sl: 1.15, el: 2.45, nod: -.3, lean: -.05 }], [.85, { ...SOULS_IDLE, sl: .6, el: 1.2 }], [1, SOULS_IDLE]], k), flask: true, hp: lerp(.35, .95, ease(seg01(k, .38, .72))), flasks: k > .35 ? 4 : 5, fore: (g, P) => {
+          if (k > .38 && k < .72) { g.save(); g.globalAlpha = .16 * bump(k, .38, .72); g.fillStyle = '#ffb951'; g.beginPath(); g.arc(P.hip[0], P.hip[1] - 40, 80, 0, TAU); g.fill(); g.restore(); if (k < .6) T.popText('+HP', P.hip[0] + 40, P.hip[1] - 150, '#c0392b', 1); }
+          if (k > .3 && k < .8) T.label('rooted while you drink', PX, GY + 34, 'center', C.red, 13); } }) },
       ], props: () => {} },
 
     fps: { name: 'FPS', line: 'The body mostly carries a camera. The verbs are about the gun and cover.', idle: t => ({ ...LOW, sl: LOW.sl + .02 * Math.sin(t * 2) }),
@@ -178,12 +188,15 @@
       dummy(g, opX, { ...opPose, rot: -rot }, { dy });
     }
     if (gk === 'souls') {
-      const sw = r.enemySwing || 0;
-      const P = puppet(g, 640, GY, { lean: -.1 + .4 * sw, sr: lerp(.6, 2.8, bump(sw, 0, .7)) - 1.6 * clamp((sw - .6) / .4), er: .3, sl: .3, el: .5, hl: .3, hr: -.3, kl: -.3, kr: -.3 }, { face: -1, col: '#5a2a2a', back: '#8a4a4a', s: 2.3, over: (g2, j, p) => sword(g2, j, p) });
+      const sw = r.enemySwing || 0, sg = r.enemyStagger || 0, eh = r.enemyHit || 0;
+      const ep = { lean: -.1 + .4 * sw - .25 * eh, sr: lerp(.6, 2.8, bump(sw, 0, .7)) - 1.6 * clamp((sw - .6) / .4), er: .3, sl: .3, el: .5, hl: .3, hr: -.3, kl: -.3, kr: -.3 };
+      const STAG = { lean: -.45, sr: 3.0, er: .6, sl: 2.2, el: .8, hl: -.2, kl: -.2, hr: .5, kr: -.6 };
+      if (sg > 0) Object.keys(STAG).forEach(key => { ep[key] = lerp(ep[key], STAG[key], sg); });
+      puppet(g, 640 + 30 * sg + 12 * eh, GY, ep, { face: -1, col: '#5a2a2a', back: '#8a4a4a', s: 2.3, over: (g2, j, p) => sword(g2, j, p) });
     }
     if (gk === 'fps' && r.incoming) { for (let i = 0; i < 3; i++) { const q = ((t * 3 + i / 3) % 1); const x = lerp(1000, 506, q); g.strokeStyle = 'rgba(229,50,45,.8)'; g.lineWidth = 3; g.beginPath(); g.moveTo(x, GY - 60 - i * 8); g.lineTo(x + 30, GY - 60 - i * 8); g.stroke(); if (q > .9) spark(g, 506, GY - 60 - i * 8, 16, 1); } }
     // the puppet
-    const over = gk === 'fps' ? rifle : gk === 'souls' ? sword : null;
+    const over = gk === 'fps' ? rifle : gk === 'souls' ? (g2, j, p) => { sword(g2, j, p); (r.flask ? flask : shield)(g2, j, p); } : null;
     const P = puppet(g, PX + (r.dx || 0), GY, r.pose, { dy: r.dy || 0, hip: r.hip || undefined, hand: r.hand, over, a: r.iframe ? .45 : 1 });
     if (r.iframe) T.label('i-frames: hits pass through', P.hip[0], P.hip[1] - 120, 'center', '#8a4fd6', 13);
     if (gk === 'fps' && r.shots) {
@@ -202,7 +215,7 @@
     if (gk === 'fps' && r.grenade > 0 && r.grenade < 1) { const q = r.grenade, x = lerp(P.hip[0] + 20, 860, q), y = lerp(P.hip[1] - 100, 380, q) - Math.sin(q * Math.PI) * 170; g.fillStyle = '#3f5a2a'; g.beginPath(); g.arc(x, y, 8, 0, TAU); g.fill(); }
     if (gk === 'fps' && r.boom > 0) { spark(g, 860, 380, 70, r.boom, '#ff7a2a'); T.flash(860, 370, 80, r.boom); }
     if (r.fore) r.fore(g, P);
-    if (gk === 'souls') { const cost = r.cost || 0; stamina(g, Math.max(110, P.hip[0]), 112, 1 - cost, playing && cost > 0 && k < .9 ? cost : 0); }
+    if (gk === 'souls') { const cost = r.cost || 0; health(g, Math.max(110, P.hip[0]), 88, r.hp ?? .55, r.flasks ?? 5); stamina(g, Math.max(110, P.hip[0]), 112, 1 - cost, playing && cost > 0 && k < .9 ? cost : 0); }
     g.restore();
     // title
     T.label(G.name, 24, 30, 'left', '#fff', 17, C.navy);
