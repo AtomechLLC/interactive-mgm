@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>One Pair of Eyes · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="../shared/blog.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · Blog Posts · One Pair of Eyes', home: '../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<section class="slide" data-title="Three jobs, one focus" data-demo="attention">
+  <div class="kicker">genre breakdown · real-time strategy</div>
+  <h2 class="sm">Three jobs, <span class="accent">one pair of eyes</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Play it: watch one job (keys 1, 2, 3)</h4>
+      <div class="seg"><button class="btn rt-j" data-j="0">1 Economy</button><button class="btn rt-j" data-j="1">2 Supply</button><button class="btn rt-j" data-j="2">3 Army</button></div>
+      <h4>Or watch a habit</h4>
+      <div class="seg"><button class="btn rt-p" data-p="army">Army only</button><button class="btn rt-p" data-p="robin">Rotate</button><button class="btn rt-p on" data-p="urgent">Triage</button></div>
+      <div class="row wrap"><button class="btn tour on">▶ Walk-through</button></div>
+      <div class="mt-stats"></div>
+      <p class="mt-out"></p>
+      <p class="src">Rates are illustrative: economy fills in 6 s, supply in 10 s, the army in 2 s during a fight; a full bar wastes 5 income a second, blocks production, or loses 0.8 units a second.</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="../shared/topdown.js"></script>
+<script src="../shared/genre.js"></script>
+<script src="attention.js"></script>
+</body>
+</html>
