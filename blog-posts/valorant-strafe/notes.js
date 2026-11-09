@@ -1,0 +1,4 @@
+// Speaker notes. Source: funsmith.world genre breakdown, "How to Make a Game Like Valorant?". Numbers are illustrative.
+window.NOTES = [
+  { script: 'Valorant makes every bullet lethal, so it has to make aiming a skill and moving a choice. The tool is movement inaccuracy: the faster you are moving, the wider your bullets spread. Three players strafe right and fire five shots. The first keeps running and sprays everywhere. The second lets go of the key and waits for friction to stop them, which takes about a third of a second. The third taps the opposite key, a counter-strafe, and is still within a tenth of a second. Slide the delay: the counter-strafer is accurate almost at once, the player who waits needs the full stop, and the runner never is. One rule turns movement into a decision with a cost.' },
+];

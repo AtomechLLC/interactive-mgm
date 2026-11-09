@@ -1,0 +1,5 @@
+// Speaker notes. Source: funsmith.world genre breakdown, "MOBA Game Design". Gold per minion is League of Legends' value; the rest is illustrative.
+window.NOTES = [
+  { script: 'A MOBA runs an economy inside the match, and the first skill it asks for is the last hit. Only the killing blow on a minion pays: twenty-one gold for a melee minion, fourteen for a caster. Your own minions are hitting them too. Attack whenever you are ready and you mostly soften minions for your own wave to finish. Wait until the health bar crosses one hit of yours and the gold is yours. Click a red minion to try it.' },
+  { script: 'The post’s balance rule is about agency: no champion should do something the opponent has no tools to deal with. Here are five champions, the disruption each brings, and who answers it. With all five in the pool every row has an answer. Take Janna out and Zed’s Death Mark has none. Take Morgana out and Janna’s Monsoon has only one, and so on. The fix is rarely a nerf to the threat; it is making sure an answer exists.' },
+];
