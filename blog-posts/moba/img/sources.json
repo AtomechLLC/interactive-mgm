@@ -1,0 +1,8 @@
+{
+ "game": "League of Legends (Riot Games)",
+ "files": {
+  "lol-champ-*.png": "Riot Data Dragon 14.1.1, https://ddragon.leagueoflegends.com/cdn/14.1.1/img/champion/<Name>.png",
+  "lol-minion-*-red.png": "CommunityDragon, https://raw.communitydragon.org/latest/game/assets/characters/sru_chaosminion{melee,ranged}/hud/red{melee,range}_circle.png",
+  "lol-minion-*-blue.png": "CommunityDragon, https://raw.communitydragon.org/latest/game/assets/characters/sru_orderminion{melee,ranged}/hud/blue{melee,range}_circle.png"
+ }
+}

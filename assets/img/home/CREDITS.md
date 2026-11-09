@@ -221,3 +221,14 @@ Learning From My Past (the section on `blog.html`):
 | `learning-past--satisfaction.svg` | [podium-winner](https://game-icons.net/1x1/delapouite/podium-winner.html) | Delapouite |
 | `learning-past--fit.svg` | [jigsaw-piece](https://game-icons.net/1x1/lorc/jigsaw-piece.html) | Lorc |
 | `learning-past--point.svg` | [checklist](https://game-icons.net/1x1/delapouite/checklist.html) | Delapouite |
+
+Genre breakdowns (Blog Posts):
+
+| File | Icon | Artist |
+|---|---|---|
+| `blog-posts--valorant-strafe.svg` | [crosshair](https://game-icons.net/1x1/delapouite/crosshair.html) | Delapouite |
+| `blog-posts--fortnite-storm.svg` | [tornado](https://game-icons.net/1x1/lorc/tornado.html) | Lorc |
+| `blog-posts--br-ranges.svg` | [targeting](https://game-icons.net/1x1/lorc/targeting.html) | Lorc |
+| `blog-posts--fps-barks.svg` | [shouting](https://game-icons.net/1x1/lorc/shouting.html) | Lorc |
+| `blog-posts--moba.svg` | [coins](https://game-icons.net/1x1/delapouite/coins.html) | Delapouite |
+| `blog-posts--racing-camera.svg` | [car-wheel](https://game-icons.net/1x1/delapouite/car-wheel.html) | Delapouite |
