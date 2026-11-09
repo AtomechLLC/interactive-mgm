@@ -34,11 +34,30 @@
   </div>
 </section>
 
+<section class="slide" data-title="Pace the curve to your zones" data-demo="pace">
+  <div class="kicker">genre breakdown · RPG · spike</div>
+  <h2 class="sm">The XP curve is a <span class="accent">content schedule</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Six zones, 36 hours of quests</h4>
+      <div class="seg pc-sh"><button class="btn on" data-s="linear">Linear</button><button class="btn" data-s="fit">Content-shaped</button><button class="btn" data-s="exp">Exponential</button></div>
+      <label class="rng">XP to level 20 <b class="pc-kv"></b><input type="range" class="pc-k" min="70" max="140" step="5" value="100"></label>
+      <label class="chk"><input type="checkbox" class="pc-cut"> Cut the Mines (6 hours) to ship on time</label>
+      <div class="row wrap"><button class="btn tour on">▶ Walk-through</button></div>
+      <div class="mt-stats"></div>
+      <p class="mt-out"></p>
+      <p class="src">Zones, hours and the overlevel penalty are illustrative. Every shape is scaled to the same total XP.</p>
+    </div>
+  </div>
+</section>
+
 </div></div>
 <script src="../../assets/deck.js"></script>
 <script src="../../assets/kit.js"></script>
 <script src="../shared/topdown.js"></script>
 <script src="../shared/genre.js"></script>
 <script src="xp.js"></script>
+<script src="pace.js"></script>
 </body>
 </html>
