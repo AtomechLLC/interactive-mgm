@@ -298,6 +298,7 @@ function build3D(canvas) {
 }
 
 const KX = -.95;   // the knight's rest position
+const FLOOR = .08;  // the training ring's top: the knight stands on it, not on the flagstones under it
 
 /* ---------- the Elden Ring knight: the Haligtree Knight set with a Longsword, playing the straight sword's first light
    attack. Files come from the Move Explorer export (GameCombatAnimationLibrary, tools/frame_data/export_er_models.py):
@@ -329,6 +330,16 @@ function decodeAnim(buf, names) {
   if (hasRoot) { root = new Float32Array(N * 3); for (let i = 0; i < N * 3; i++, o += 4) root[i] = dv.getFloat32(o, true); }
   return { frames: N, bones, root };
 }
+// the export has no cloth sim, so the cape's bones swing below the ground in the lunge; fold anything under the ring onto it
+function clampToFloor(m) {
+  if (!m || m.userData.floorClamp) return; m.userData.floorClamp = true;
+  m.onBeforeCompile = sh => {
+    sh.vertexShader = sh.vertexShader.replace('#include <project_vertex>',
+      `{ vec4 fw = modelMatrix * vec4(transformed, 1.0); if (fw.y < ${(FLOOR + .004).toFixed(3)}) { fw.y = ${(FLOOR + .004).toFixed(3)}; transformed = (inverse(modelMatrix) * fw).xyz; } }
+#include <project_vertex>`);
+  };
+  m.customProgramCacheKey = () => 'floor-clamp';
+}
 function loadModel(R) {
   const gl = url => new Promise((ok, no) => new GLTFLoader().load(ER.dir + url, ok, undefined, no));
   const get = url => fetch(ER.dir + url).then(r => { if (!r.ok) throw new Error(url); return url.endsWith('.json') ? r.json() : r.arrayBuffer(); });
@@ -338,7 +349,7 @@ function loadModel(R) {
     const wrap = new THREE.Group(), mirror = new THREE.Group(), motion = new THREE.Group();
     wrap.rotation.y = -Math.PI / 2; mirror.scale.x = -1; wrap.add(mirror); mirror.add(motion);
     const body = ag.scene; motion.add(body);
-    body.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; o.frustumCulled = false; } });
+    body.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; o.frustumCulled = false; [].concat(o.material).forEach(clampToFloor); } });
     const tracks = anim.bones.map(b => body.getObjectByName(b.name));
     const wb = body.getObjectByName(sk.weaponBone), sword = wg.scene.clone(); sword.rotation.z = Math.PI; wb.add(sword);
     sword.traverse(o => { if (o.isMesh) o.castShadow = true; });
@@ -352,55 +363,58 @@ function loadModel(R) {
     // scale to the scene's knight height, then stand him so the blade lands on the dummy at the hit frame
     poseFrame(M, 1); wrap.updateMatrixWorld(true);
     const box = new THREE.Box3().setFromObject(body); M.k = ER.height / Math.max(.5, box.max.y - box.min.y); wrap.scale.setScalar(M.k);
-    poseFrame(M, ER.impact); R.knight.position.set(KX, 0, 0); R.knight.updateMatrixWorld(true);
+    poseFrame(M, ER.impact); R.knight.position.set(KX, FLOOR, 0); R.knight.updateMatrixWorld(true);
     const tp = modelBladePoint(R, 1, new V3()), mid = modelBladePoint(R, .55, new V3());
     // slide him along x until the blade crosses the burlap, then put the contact point where the blade meets it
     wrap.position.x += (R.DX - .05) - Math.max(tp.x, mid.x);
     R.knight.updateMatrixWorld(true); modelBladePoint(R, .8, tp);
     R.HP.set(R.DX - .27, clamp(tp.y, .95, 1.6), clamp(tp.z, -.2, .3));
     R.flash.position.copy(R.HP); R.shock.position.copy(R.HP); R.decal.position.y = R.HP.y - .85;
+    // the front foot's landing spot at the hit frame, for the floor scuff and the dust
+    const toe = body.getObjectByName('R_Toe0'); if (toe) M.footX = toe.getWorldPosition(new V3()).x;
     return true;
   }).catch(e => { console.warn('Elden Ring model not loaded; keeping the grey-box knight', e); return false; });
   return modelReady;
 }
-// one pose per clip frame (1-based, fractional frames blend the two around them); back (0..1) eases the whole pose,
-// root motion included, back to the idle frame so the loop closes without a pop
-const qa = [0, 0, 0, 1], qb = [0, 0, 0, 1], pv = new V3(), pw = new V3();
-function poseFrame(M, f, back = 0) {
+// one pose per clip frame (1-based, fractional frames blend the two around them). Root motion always comes from the
+// same frame as the bones, so a planted foot stays planted: the knight never slides across the floor.
+const qa = [0, 0, 0, 1], pv = new V3();
+function poseFrame(M, f) {
   const A = M.anim, u = clamp(f - 1, 0, A.frames - 1), k0 = Math.floor(u), k1 = Math.min(k0 + 1, A.frames - 1), t = u - k0;
   A.bones.forEach((b, i) => {
     const o = M.tracks[i]; if (!o) return;
     if (b.nr > 1) {
       THREE.Quaternion.slerpFlat(qa, 0, b.rot, k0 * 4, b.rot, k1 * 4, t);
-      if (back > 0) { qb[0] = qa[0]; qb[1] = qa[1]; qb[2] = qa[2]; qb[3] = qa[3]; THREE.Quaternion.slerpFlat(qa, 0, qb, 0, b.rot, 0, back); }
       o.quaternion.fromArray(qa);
     } else o.quaternion.fromArray(b.rot, 0);
-    if (b.np > 1) { o.position.fromArray(b.pos, k0 * 3).lerp(pv.fromArray(b.pos, k1 * 3), t); if (back > 0) o.position.lerp(pw.fromArray(b.pos, 0), back); }
+    if (b.np > 1) o.position.fromArray(b.pos, k0 * 3).lerp(pv.fromArray(b.pos, k1 * 3), t);
     else o.position.fromArray(b.pos, 0);
   });
-  // root motion: the move's own step forward, all of it, eased back to the start mark as the loop closes
-  if (A.root) { M.motion.position.fromArray(A.root, k0 * 3).lerp(pv.fromArray(A.root, k1 * 3), t); if (back > 0) M.motion.position.lerp(pw.fromArray(A.root, 0), back); }
+  // root motion: the move's own step forward, from the same frame as the pose
+  if (A.root) M.motion.position.fromArray(A.root, k0 * 3).lerp(pv.fromArray(A.root, k1 * 3), t);
 }
 // the clip frame for action time a: the swing's three phases map onto the move's own wind-up, strike and recovery.
 // With the animation channel off the knight snaps from his idle pose to the hit frame and back, no anticipation.
-// After the hit he plays the move's real recovery at 30 fps, then blends back to idle before the next swing.
+// After the hit he plays the move's real recovery at 30 fps. To get home for the next swing he runs the clip backwards
+// to frame 1 (a quick rewind) instead of blending the pose: a blend would drag his planted feet 1.7 m across the floor.
 const eIOs = k => k * k * (3 - 2 * k);
+const home = (f, k) => lerp(f, 1, eIOs(clamp(k)));
 function clipFrame(st, a, TL) {
   const animOn = st.ch.anim.on;
-  if (a < TL.press) return [1, 0];
+  if (a < TL.press) return 1;
   if (!animOn) {
-    if (a < TL.wEnd) return [1, 0];
-    if (a < TL.imp) return [lerp(1, ER.impact, (a - TL.wEnd) / (TL.imp - TL.wEnd)), 0];
-    return [ER.impact, clamp((a - TL.imp) / .4)];
+    if (a < TL.wEnd) return 1;
+    if (a < TL.imp) return lerp(1, ER.impact, (a - TL.wEnd) / (TL.imp - TL.wEnd));
+    return home(ER.impact, (a - TL.imp) / .4);
   }
-  if (a < TL.wEnd) { const k = (a - TL.press) / TL.wind; return [lerp(st.cut ? lerp(1, ER.windTop, .7) : 1, ER.windTop, k), 0]; }
-  if (a < TL.imp) return [lerp(ER.windTop, ER.impact, (a - TL.wEnd) / (TL.imp - TL.wEnd)), 0];
-  const d = a - TL.imp;
-  if (!has(st, 'anim', 1)) return [Math.min(ER.end, ER.impact + d * ER.fps), eIOs(clamp(d / .55))];
-  // the full follow-through (1.25 s of action after the hit), then a half-second blend home that ends just before the loop restarts
-  return [Math.min(ER.end, ER.impact + d * ER.fps), eIOs(clamp((d - .7) / .5))];
+  if (a < TL.wEnd) { const k = (a - TL.press) / TL.wind; return lerp(st.cut ? lerp(1, ER.windTop, .7) : 1, ER.windTop, k); }
+  if (a < TL.imp) return lerp(ER.windTop, ER.impact, (a - TL.wEnd) / (TL.imp - TL.wEnd));
+  const d = a - TL.imp, f = Math.min(ER.end, ER.impact + d * ER.fps);
+  if (!has(st, 'anim', 1)) return home(f, d / .55);
+  // the follow-through (1.25 s of action after the hit), rewinding home over the last half second before the loop restarts
+  return home(f, (d - .7) / .5);
 }
-function poseModel(R, st, a, TL) { if (R.model) { const [f, back] = clipFrame(st, a, TL); poseFrame(R.model, f, back); } }
+function poseModel(R, st, a, TL) { if (R.model) poseFrame(R.model, clipFrame(st, a, TL)); }
 // world position of a point on the Longsword, d = 0 at the grip to 1 at the tip
 function modelBladePoint(R, d, out) {
   const M = R.model; M.sword.updateWorldMatrix(true, false);
@@ -421,7 +435,7 @@ function render3D(R, st, t) {
   const TL = timeline(st), A = actionAt(TL, t), a = A.a, p = pose(st, a, TL), s = p.since, hit = s >= 0;
   const vfx = lvl(st, 'vfx'), mat = lvl(st, 'mat'), camL = lvl(st, 'cam'), tm = lvl(st, 'time');
   // knight
-  R.knight.position.set(R.model ? KX : KX + p.lunge, 0, 0);
+  R.knight.position.set(R.model ? KX : KX + p.lunge, FLOOR, 0);
   R.hips.position.y = .9 - p.crouch; R.hips.rotation.z = -p.lean;
   R.arm.rotation.z = -p.ang;
   R.legs[0].rotation.z = -p.lunge * .9 - p.crouch * 1.5; R.legs[1].rotation.z = p.lunge * .7 + p.crouch;
@@ -478,7 +492,7 @@ function render3D(R, st, t) {
   }
   R.straw.count = nw; R.straw.instanceMatrix.needsUpdate = true;
   // floor scuff and dust where the front foot lands
-  const footX = KX + .3 + (st.ch.anim.on ? 22 * (.4 + lvl(st, 'anim')) * .012 : 0);
+  const footX = R.model && R.model.footX != null ? R.model.footX : KX + .3 + (st.ch.anim.on ? 22 * (.4 + lvl(st, 'anim')) * .012 : 0);
   const scuffOn = has(st, 'mat', 2) && st.ch.anim.on && a > TL.wEnd + .03;
   R.scuff.material.opacity = scuffOn ? .35 + .25 * mat : 0; R.scuff.position.x = footX;
   const ds = a - (TL.wEnd + .05);
