@@ -10,7 +10,9 @@
    square with its own string id, give every square a target and an "is it full?" check. Bunnies: ../shared/bunny.js.
    Source of numbers: the 40% is the post's. Piece names are the game's, not the post's. Turn timings, who dies when,
    the tension curve and the cell size (1.5 squares) are illustrative.
-   GIF hooks: __seek(t, which) / __dur(which), which = rules or grid. */
+   Slide 2, spells: every piece's two spells and Medivh's three cheats, names, icons and numbers from warcraft.wiki.gg ("Chess Event");
+   slide 1 casts them on the board (when each support spell lands is illustrative).
+   GIF hooks: __seek(t, which) / __dur(which), which = rules, spells or grid. */
 (function () {
   const { $, $$, canvasDemo, say } = FPF.kit;
   const T = TD, C = TD.C, { clamp, lerp, ease } = TD, TAU = Math.PI * 2;
@@ -28,6 +30,83 @@
   const BANNER = { A: ICON('inv_bannerpvp_02'), H: ICON('inv_bannerpvp_01') };
   const MEDIVH = ICON('inv_staff_medivh'), FIRE = ICON('spell_fire_fire');
   const FILES = 'abcdefgh';
+  /* Each piece's two spells, from the game (warcraft.wiki.gg, "Chess Event"): [Alliance name, Horde name], icon per faction,
+     the shape it hits and the wiki's numbers. Movement and turning share a 5 s cooldown; the two spells share another. */
+  const SPELLS = {
+    K: [{ n: ['Sweep', 'Cleave'], i: ['ability_whirlwind', 'ability_warrior_cleave'], shape: 'cone3', d: '4000 damage to the 3 squares in front' },
+        { n: ['Heroism', 'Bloodlust'], i: ['ability_shaman_heroism', 'spell_nature_bloodlust'], shape: 'aura', d: '+50% damage for allies on the 8 squares around (15 s cooldown)' }],
+    Q: [{ n: ['Elemental Blast', 'Fireball'], i: ['spell_frost_frostbolt02', 'spell_fire_fireball02'], shape: 'bolt', d: '4000 damage to any piece in range (4 straight, 3 diagonal)' },
+        { n: ['Rain of Fire', 'Poison Cloud'], i: ['spell_shadow_rainoffire', 'spell_nature_naturetouchdecay'], shape: 'area', d: '6000 damage to a target and every enemy next to it (15 s cooldown)' }],
+    B: [{ n: ['Holy Lance', 'Shadow Spear'], i: ['spell_holy_holysmite', 'spell_shadow_shadowbolt'], shape: 'line3', d: '2000 damage to enemies in a line of 3 squares in front' },
+        { n: ['Healing', 'Shadow Mend'], i: ['spell_holy_heal', 'spell_shadow_lifedrain02'], shape: 'heal', d: 'Heals a friendly piece for 12,000, up to half the board away (20 s cooldown)' }],
+    N: [{ n: ['Smash', 'Bite'], i: ['ability_warrior_decisivestrike', 'ability_druid_ferociousbite'], shape: 'front1', d: '3000 damage to the square in front' },
+        { n: ['Stomp', 'Howl'], i: ['ability_warstomp', 'ability_hunter_pet_wolf'], shape: 'debuff', d: 'Enemies on the 8 squares around deal 50% less damage for 10 s' }],
+    R: [{ n: ['Geyser', 'Hellfire'], i: ['spell_frost_summonwaterelemental', 'spell_fire_incinerate'], shape: 'adj', d: '3000 damage to every enemy on the 8 squares around' },
+        { n: ['Water Shield', 'Fire Shield'], i: ['ability_shaman_watershield', 'spell_fire_firearmor'], shape: 'shield', d: 'Takes 50% less damage for 5 s' }],
+    P: [{ n: ['Heroic Blow', 'Vicious Strike'], i: ['ability_warrior_punishingblow', 'ability_backstab'], shape: 'front1', d: '1000 damage to the square in front' },
+        { n: ['Shield Block', 'Weapon Deflection'], i: ['ability_defend', 'ability_parry'], shape: 'shield', d: 'Absorbs 500 damage for 5 s' }],
+  };
+  const CHEATS = {
+    fire: { n: 'Damage cheat', i: 'spell_fire_fire', d: 'Fire on the square of one of your pieces' },
+    heal: { n: 'Healing cheat', i: 'spell_nature_tranquility', d: 'His king, and sometimes every piece, back to full health' },
+    berserk: { n: 'Berserking cheat', i: 'racial_troll_berserk', d: 'One of his pieces grows: more size, speed and damage' },
+  };
+  const ICONS = {}; const icon = n => ICONS[n] || (ICONS[n] = ICON(n));
+  const fi = fac => fac === 'A' ? 0 : 1;
+  const TINT = { A: { cone3: '255,214,90', bolt: '120,190,255', area: '255,110,40', line3: '255,236,150', heal: '110,230,140', front1: '255,255,255', adj: '90,170,255', aura: '255,200,80', debuff: '190,150,255', shield: '140,200,255' },
+                 H: { cone3: '255,150,60', bolt: '255,120,30', area: '120,220,80', line3: '170,110,230', heal: '170,110,230', front1: '255,255,255', adj: '255,110,30', aura: '255,70,50', debuff: '190,150,255', shield: '255,140,60' } };
+  // one spell effect from a (caster) to b (target) at progress q (0..1), in squares of size sq
+  function fx(g, shape, fac, a, b, q, sq) {
+    if (q <= 0 || q >= 1) return;
+    const col = TINT[fac][shape], fade = Math.sin(q * Math.PI), ang = Math.atan2(b.y - a.y, b.x - a.x);
+    g.save(); g.lineCap = 'round';
+    if (shape === 'front1') {   // a slash across the target
+      g.strokeStyle = `rgba(${col},${fade})`; g.lineWidth = 5; g.beginPath(); g.arc(b.x - Math.cos(ang) * sq * .3, b.y - Math.sin(ang) * sq * .3, sq * .5, ang - 1.1 + q * .6, ang + .1 + q * .9); g.stroke();
+      g.strokeStyle = `rgba(229,50,45,${fade})`; g.lineWidth = 2; g.stroke();
+    } else if (shape === 'cone3') {   // a sweep over the three squares in front
+      g.fillStyle = `rgba(${col},${.45 * fade})`; g.beginPath(); g.moveTo(a.x, a.y); g.arc(a.x, a.y, sq * 1.6, ang - .8, ang - .8 + 1.6 * clamp(q * 1.6)); g.closePath(); g.fill();
+      g.strokeStyle = `rgba(${col},${fade})`; g.lineWidth = 4; g.beginPath(); g.arc(a.x, a.y, sq * 1.6, ang - .8, ang - .8 + 1.6 * clamp(q * 1.6)); g.stroke();
+    } else if (shape === 'bolt') {   // a ball flies to the target, then bursts
+      const k = clamp(q / .6), x = lerp(a.x, b.x, ease(k)), y = lerp(a.y, b.y, ease(k));
+      if (k < 1) { const gr = g.createRadialGradient(x, y, 0, x, y, 14); gr.addColorStop(0, '#fff'); gr.addColorStop(.4, `rgba(${col},1)`); gr.addColorStop(1, `rgba(${col},0)`); g.fillStyle = gr; g.beginPath(); g.arc(x, y, 14, 0, TAU); g.fill();
+        g.strokeStyle = `rgba(${col},.5)`; g.lineWidth = 6; g.beginPath(); g.moveTo(lerp(a.x, b.x, ease(Math.max(0, k - .25))), lerp(a.y, b.y, ease(Math.max(0, k - .25)))); g.lineTo(x, y); g.stroke(); }
+      else { const r = (q - .6) / .4; g.fillStyle = `rgba(${col},${.7 * (1 - r)})`; g.beginPath(); g.arc(b.x, b.y, sq * (.3 + .4 * r), 0, TAU); g.fill(); }
+    } else if (shape === 'area') {   // the target and every square around it
+      g.fillStyle = `rgba(${col},${.4 * fade})`; g.fillRect(b.x - sq * 1.5, b.y - sq * 1.5, sq * 3, sq * 3);
+      g.strokeStyle = `rgba(${col},${fade})`; g.lineWidth = 2; g.setLineDash([5, 4]); g.strokeRect(b.x - sq * 1.5, b.y - sq * 1.5, sq * 3, sq * 3); g.setLineDash([]);
+      for (let i = 0; i < 9; i++) { const dx = ((i * 37) % 30) / 30 - .5, y0 = ((q * 2 + i * .13) % 1); g.fillStyle = `rgba(${col},${fade})`; g.fillRect(b.x + dx * sq * 2.6, b.y - sq * 1.5 + y0 * sq * 3, 3, 9); }
+    } else if (shape === 'line3') {   // a lance down a line of three squares
+      const len = sq * 3 * clamp(q * 1.8), ex = a.x + Math.cos(ang) * len, ey = a.y + Math.sin(ang) * len;
+      g.strokeStyle = `rgba(${col},${.5 * fade})`; g.lineWidth = 14; g.beginPath(); g.moveTo(a.x, a.y); g.lineTo(ex, ey); g.stroke();
+      g.strokeStyle = `rgba(255,255,255,${fade})`; g.lineWidth = 3; g.stroke();
+    } else if (shape === 'adj') {   // a ring bursting out over the 8 squares around
+      const r = sq * 1.5 * ease(clamp(q * 1.4));
+      g.fillStyle = `rgba(${col},${.25 * fade})`; g.fillRect(a.x - r, a.y - r, r * 2, r * 2);
+      g.strokeStyle = `rgba(${col},${fade})`; g.lineWidth = 5; g.beginPath(); g.arc(a.x, a.y, r, 0, TAU); g.stroke();
+    } else if (shape === 'heal') {   // a beam to an ally, and a rising plus
+      g.strokeStyle = `rgba(${col},${.7 * fade})`; g.lineWidth = 4; g.setLineDash([2, 7]); g.beginPath(); g.moveTo(a.x, a.y); g.lineTo(b.x, b.y); g.stroke(); g.setLineDash([]);
+      g.fillStyle = `rgba(${col},${fade})`; const y = b.y - 10 - q * 22; g.fillRect(b.x - 3, y - 10, 6, 20); g.fillRect(b.x - 10, y - 3, 20, 6);
+      g.strokeStyle = `rgba(${col},${fade})`; g.lineWidth = 3; g.beginPath(); g.arc(b.x, b.y, sq * .45, 0, TAU); g.stroke();
+    } else if (shape === 'aura') {   // allies around the caster light up
+      g.strokeStyle = `rgba(${col},${fade})`; g.lineWidth = 3; g.setLineDash([6, 5]); g.strokeRect(a.x - sq * 1.5, a.y - sq * 1.5, sq * 3, sq * 3); g.setLineDash([]);
+      (b.allies || []).forEach(p => { g.strokeStyle = `rgba(${col},${fade})`; g.lineWidth = 4; g.beginPath(); g.arc(p.x, p.y, sq * .45 + 4 * Math.sin(q * 12), 0, TAU); g.stroke(); });
+    } else if (shape === 'debuff') {   // enemies around shrink their damage
+      g.strokeStyle = `rgba(${col},${fade})`; g.lineWidth = 3; g.beginPath(); g.arc(a.x, a.y, sq * 1.5 * ease(clamp(q * 1.5)), 0, TAU); g.stroke();
+      (b.foes || []).forEach(p => { g.fillStyle = `rgba(${col},${fade})`; g.beginPath(); g.moveTo(p.x - 7, p.y - sq * .5); g.lineTo(p.x + 7, p.y - sq * .5); g.lineTo(p.x, p.y - sq * .5 + 9); g.fill(); });
+    } else if (shape === 'shield') {   // a bubble on the caster
+      g.strokeStyle = `rgba(${col},${fade})`; g.lineWidth = 3; g.fillStyle = `rgba(${col},${.25 * fade})`; g.beginPath(); g.arc(a.x, a.y, sq * .5, 0, TAU); g.fill(); g.stroke();
+    }
+    g.restore();
+  }
+  // the spell's icon and name over the caster
+  function castTag(g, x, y, name, ic, a, col = '#262c6a') {
+    if (a <= 0) return;
+    g.save(); g.globalAlpha *= a; g.font = '700 11px Jost, sans-serif';
+    const w = g.measureText(name).width + 30, bx = clamp(x - w / 2, 4, 1036 - w);
+    g.fillStyle = 'rgba(255,252,244,.95)'; g.strokeStyle = col; g.lineWidth = 1.5; g.beginPath(); g.roundRect(bx, y - 11, w, 22, 6); g.fill(); g.stroke();
+    if (ok(ic)) g.drawImage(ic, bx + 3, y - 8, 16, 16);
+    g.fillStyle = col; g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillText(name, bx + 23, y + 1); g.restore();
+  }
 
   function piece(g, x, y, kind, fac, o = {}) {
     const r = o.r || 21, a = o.a == null ? 1 : o.a;
@@ -128,7 +207,7 @@
         const [, c, r] = p.path[0]; if (occ(c, r)) return;
         moves.push({ p, from: [p.c, p.r] }); p.c = c; p.r = r; p.path.shift();
       });
-      const ev = { kills: [], fire: [], jumps: [], moves };
+      const ev = { kills: [], fire: [], jumps: [], moves, casts: [] };
       ps.filter(p => p.alive && p.dieAt === k).forEach(v => {
         if (v.how === 'fire') { ev.fire.push(v); ev.kills.push({ v, by: null }); return; }
         const foes = ps.filter(q => q.alive && q.side !== v.side && q.dieAt !== k && (q.side === 'M' || q.owner != null || !o.own));
@@ -139,6 +218,22 @@
         if (by && by.side === 'R' && by.id === 'K') kingKills++;
         ev.kills.push({ v, by });
       });
+      // support spells and Medivh's other two cheats, on fixed turns (illustrative timing)
+      ev.casts = [];
+      const live = q => q && q.alive && q.dieAt !== k;
+      const front = side => ps.filter(q => live(q) && q.side === side).sort((x, y) => side === 'R' ? y.r - x.r : x.r - y.r)[0];
+      const near = (q, side) => ps.filter(z => live(z) && z !== q && z.side === side && Math.max(Math.abs(z.c - q.c), Math.abs(z.r - q.r)) <= 1);
+      const rk = P('R', 'K');
+      if (o.king && (k === 5 || k === 9) && live(rk)) ev.casts.push({ by: rk, sp: 1, allies: near(rk, 'R') });
+      if (k === 4 || k === 8) { const b = [P('R', 'Bc'), P('R', 'Bf')].find(live), t = front('R'); if (b && t) ev.casts.push({ by: b, sp: 1, to: t }); }
+      if (k === 3 || k === 7) { const b = [P('M', 'Bc'), P('M', 'Bf')].find(live), t = front('M'); if (b && t) ev.casts.push({ by: b, sp: 1, to: t }); }
+      if (k === 3) { const n = [P('R', 'Nb'), P('R', 'Ng')].find(live); if (n) ev.casts.push({ by: n, sp: 1, foes: near(n, 'M') }); }
+      if (k === 6) { const n = [P('M', 'Nb'), P('M', 'Ng')].find(live); if (n) ev.casts.push({ by: n, sp: 1, foes: near(n, 'R') }); }
+      if (k === 2) { const r = P('R', 'Rh'); if (live(r)) ev.casts.push({ by: r, sp: 1 }); }
+      if (k === 4) { const pw = P('M', 'Pf'); if (live(pw)) ev.casts.push({ by: pw, sp: 1 }); }
+      if (o.cheat && k === 4) ev.cheat = 'berserk';
+      if (o.cheat && k === 7) ev.cheat = 'heal';
+      if (ev.fire.length) ev.cheat = 'fire';
       snaps.push({ k, pos: ps.map(p => ({ c: p.c, r: p.r, alive: p.alive, owner: p.owner, dying: p.dieAt === k })), ev, bench: bench.slice(), kingKills });
       // end of turn: the dead leave; their players jump into a spare or sit out
       ps.filter(p => p.alive && p.dieAt === k).forEach(v => {
@@ -172,7 +267,8 @@
     // header
     text(g, `Turn ${k + 1} of ${TURNS}`, BX - 6, 30, '800 16px Montserrat, Jost, sans-serif', C.ink);
     if (ok(MEDIVH)) g.drawImage(MEDIVH, BX + SQ * 8 - 26, 12, 26, 26);
-    text(g, `Medivh (the AI) plays the ${FAC[hordeFac].name}`, BX + SQ * 8 - 32, 30, '600 13px Jost, sans-serif', C.muted, 'right');
+    if (snap.ev.cheat && f < .95) { const ch = CHEATS[snap.ev.cheat]; castTag(g, BX + SQ * 8 - 110, 25, `Medivh cheats: ${ch.n}`, icon(ch.i), Math.sin(clamp(f / .95) * Math.PI) * 1.6, C.redDk); }
+    else text(g, `Medivh (the AI) plays the ${FAC[hordeFac].name}`, BX + SQ * 8 - 32, 30, '600 13px Jost, sans-serif', C.muted, 'right');
     // fire
     snap.ev.fire.forEach(v => {
       const p = at(snap.pos[S.ps.indexOf(v)].c, snap.pos[S.ps.indexOf(v)].r), a = Math.sin(clamp(f / .8) * Math.PI);
@@ -190,16 +286,31 @@
       const dying = now.dying, da = dying ? 1 - clamp((f - .55) / .4) : 1;
       const owned = now.owner != null, empty = p.side === 'R' && o.own && !owned;
       const acting = !o.own && p.side === 'R' && mvd;
-      piece(g, x, y, p.kind, fac, { a: da * (empty ? .5 : 1), empty, badge: owned ? PLAYERS[now.owner].im : acting ? PLAYERS[0].im : null, hi: acting });
+      const zerk = o.cheat && p.side === 'M' && p.id === 'Q' && k >= 4;
+      if (zerk) { g.fillStyle = `rgba(229,50,45,${.25 + .1 * Math.sin(gt * 9)})`; g.beginPath(); g.arc(x, y, 30, 0, TAU); g.fill(); }
+      if (snap.ev.cheat === 'heal' && p.side === 'M') { const q = Math.sin(clamp(f / .9) * Math.PI); g.strokeStyle = `rgba(110,230,140,${q})`; g.lineWidth = 4; g.beginPath(); g.arc(x, y, 26, 0, TAU); g.stroke(); g.fillStyle = `rgba(110,230,140,${q})`; g.fillRect(x - 2.5, y - 34 - f * 10, 5, 14); g.fillRect(x - 7, y - 29.5 - f * 10, 14, 5); }
+      piece(g, x, y, p.kind, fac, { r: zerk ? 26 : 21, a: da * (empty ? .5 : 1), empty, badge: owned ? PLAYERS[now.owner].im : acting ? PLAYERS[0].im : null, hi: acting });
       if (dying) cross(g, x, y, 12, clamp((f - .45) / .15) * da);
     });
     // attacks
-    snap.ev.kills.forEach(({ v, by }) => {
+    const posOf = q => at(snap.pos[S.ps.indexOf(q)].c, snap.pos[S.ps.indexOf(q)].r);
+    const facOf = q => q.side === 'R' ? raidFac : hordeFac;
+    const tags = [];
+    snap.ev.kills.forEach(({ v, by }, n) => {
       if (!by) return;
-      const a = at(snap.pos[S.ps.indexOf(by)].c, snap.pos[S.ps.indexOf(by)].r), b = at(snap.pos[S.ps.indexOf(v)].c, snap.pos[S.ps.indexOf(v)].r);
-      const q = clamp((f - .25) / .25), fade = 1 - clamp((f - .6) / .2);
-      if (q > 0) T.tracer(a.x, a.y, lerp(a.x, b.x, q), lerp(a.y, b.y, q), fade, by.side === 'R' && by.id === 'K' ? C.gold : '#fff', by.id === 'K' ? 6 : 3);
+      const sp = SPELLS[by.kind][by.kind === 'Q' && (k + n) % 2 ? 1 : 0], fac = facOf(by), a = posOf(by), b = posOf(v);
+      fx(g, sp.shape, fac, a, b, (f - .22) / .5, SQ);
+      tags.push([a, sp.n[fi(fac)], icon(sp.i[fi(fac)])]);
     });
+    snap.ev.casts.forEach(c => {
+      const sp = SPELLS[c.by.kind][c.sp], fac = facOf(c.by), a = posOf(c.by);
+      const b = c.to ? posOf(c.to) : { x: a.x + (c.by.side === 'R' ? 0 : 0), y: a.y - (c.by.side === 'R' ? SQ : -SQ), allies: (c.allies || []).map(posOf), foes: (c.foes || []).map(posOf) };
+      fx(g, sp.shape, fac, a, b, (f - .2) / .65, SQ);
+      tags.push([a, sp.n[fi(fac)], icon(sp.i[fi(fac)])]);
+    });
+    const ta = Math.sin(clamp((f - .15) / .75) * Math.PI) * 1.5;
+    const seen = new Set(); for (let i = tags.length - 1; i >= 0; i--) { const key = tags[i][0].x + ',' + tags[i][0].y + tags[i][1]; if (seen.has(key)) tags.splice(i, 1); else seen.add(key); }
+    tags.forEach(([a, n, ic], i) => castTag(g, a.x, a.y - SQ * .62 - (tags.slice(0, i).some(([b]) => Math.abs(b.x - a.x) < 70 && Math.abs(b.y - a.y) < 20) ? 22 : 0), n, ic, ta));
     // jumps (shown at the end of the turn the piece died in)
     snap.ev.jumps.forEach(j => {
       const q = ease(clamp((f - .6) / .35)); if (q <= 0) return;
@@ -443,6 +554,70 @@
       say($(s, '.cg-out'), STEPS[step].d);
     }
     apis.grid = { seek(t) { st.held = true; st.tour = true; frame(t); }, dur: () => SEG * 4 };
+    return dt => { if (st.held) return; st.t += Math.max(0, dt); frame(st.t); };
+  });
+
+  /* ---------------- slide 2: every piece's spells ---------------- */
+  const MS = 17;   // mini-board square
+  const SHAPE_CELLS = {   // [col, row] on a 5 x 3 mini board, caster at [1, 1] facing right
+    front1: [[2, 1]], cone3: [[2, 0], [2, 1], [2, 2]], line3: [[2, 1], [3, 1], [4, 1]], bolt: [[4, 1]], area: [[2, 0], [3, 0], [4, 0], [2, 1], [3, 1], [4, 1], [2, 2], [3, 2], [4, 2]],
+    adj: [[0, 0], [1, 0], [2, 0], [0, 1], [2, 1], [0, 2], [1, 2], [2, 2]], aura: [[0, 0], [1, 0], [2, 0], [0, 1], [2, 1], [0, 2], [1, 2], [2, 2]], debuff: [[0, 0], [1, 0], [2, 0], [0, 1], [2, 1], [0, 2], [1, 2], [2, 2]],
+    heal: [[3, 0]], shield: [[1, 1]],
+  };
+  const FRIENDLY = { heal: 1, aura: 1, shield: 1 };
+  function mini(g, x0, y0, sp, fac, kind, q) {
+    for (let c = 0; c < 5; c++) for (let r = 0; r < 3; r++) { g.fillStyle = (c + r) % 2 ? '#e4dccb' : '#a99cc0'; g.fillRect(x0 + c * MS, y0 + r * MS, MS, MS); }
+    const cells = SHAPE_CELLS[sp.shape], col = FRIENDLY[sp.shape] ? '47,174,99' : '229,50,45', pulse = .35 + .25 * Math.sin(q * TAU);
+    cells.forEach(([c, r]) => { g.fillStyle = `rgba(${col},${pulse})`; g.fillRect(x0 + c * MS + 1, y0 + r * MS + 1, MS - 2, MS - 2); });
+    g.strokeStyle = '#6c5b86'; g.lineWidth = 1; g.strokeRect(x0, y0, MS * 5, MS * 3);
+    const cx = x0 + MS * 1.5, cy = y0 + MS * 1.5, tc = sp.shape === 'heal' ? [3, 0] : sp.shape === 'bolt' ? [4, 1] : sp.shape === 'area' ? [3, 1] : [2, 1];
+    const b = { x: x0 + (tc[0] + .5) * MS, y: y0 + (tc[1] + .5) * MS, allies: [], foes: [] };
+    piece(g, cx, cy, kind, fac, { r: 7 });
+    if (sp.shape === 'heal') piece(g, b.x, b.y, 'P', fac, { r: 6 });
+    fx(g, sp.shape, fac, { x: cx, y: cy }, b, q, MS);
+  }
+  const ORDER = ['K', 'Q', 'B', 'N', 'R', 'P'];
+  function drawSpells(g, fac, t) {
+    T.use(g); g.clearRect(0, 0, W, H);
+    const other = fac === 'A' ? 'H' : 'A', rowH = 80, y0 = 28;
+    text(g, 'Piece', 8, 18, '800 12px Montserrat, Jost, sans-serif', C.muted);
+    text(g, 'Spell 1 (attack)', 250, 18, '800 12px Montserrat, Jost, sans-serif', C.muted);
+    text(g, 'Spell 2', 645, 18, '800 12px Montserrat, Jost, sans-serif', C.muted);
+    ORDER.forEach((kind, i) => {
+      const y = y0 + i * rowH;
+      g.fillStyle = i % 2 ? 'rgba(255,250,240,.55)' : 'rgba(255,250,240,.9)'; g.beginPath(); g.roundRect(0, y, 1040, rowH - 6, 8); g.fill();
+      piece(g, 26, y + 36, kind, fac, { r: 19 }); piece(g, 60, y + 44, kind, other, { r: 12, a: .8 });
+      const ny = wrap(g, NAMES[fac][kind], 82, y + 28, 150, 15, '800 13px Montserrat, Jost, sans-serif', C.ink);
+      wrap(g, `${FAC[other].name}: ${NAMES[other][kind]}`, 82, ny + 16, 150, 13, '500 11px Jost, sans-serif', C.muted);
+      SPELLS[kind].forEach((sp, j) => {
+        const x = 245 + j * 398, q = ((t * .55 + i * .17 + j * .5) % 1);
+        mini(g, x, y + 12, sp, fac, kind, q);
+        const ic = icon(sp.i[fi(fac)]); if (ok(ic)) g.drawImage(ic, x + 94, y + 6, 26, 26);
+        text(g, sp.n[fi(fac)], x + 126, y + 18, '800 14px Montserrat, Jost, sans-serif', C.ink);
+        text(g, `Horde/Alliance: ${sp.n[fi(other)]}`.replace('Horde/Alliance', FAC[other].name), x + 126, y + 31, '500 10.5px Jost, sans-serif', C.muted);
+        wrap(g, sp.d, x + 94, y + 50, 290, 13, '500 11.5px Jost, sans-serif', C.ink);
+      });
+    });
+    // Medivh's cheats
+    const cy = y0 + 6 * rowH + 4;
+    g.fillStyle = '#fbe3e0'; g.beginPath(); g.roundRect(0, cy, 1040, 585 - cy - 2, 8); g.fill();
+    if (ok(MEDIVH)) g.drawImage(MEDIVH, 10, cy + 14, 34, 34);
+    text(g, 'Medivh cheats', 52, cy + 28, '800 14px Montserrat, Jost, sans-serif', C.redDk);
+    text(g, 'at random, for drama', 52, cy + 44, '500 11px Jost, sans-serif', C.redDk);
+    Object.values(CHEATS).forEach((ch, j) => {
+      const x = 190 + j * 285, ic = icon(ch.i), q = .5 + .5 * Math.sin(t * 3 + j * 2);
+      g.save(); g.shadowColor = `rgba(229,50,45,${q})`; g.shadowBlur = 12; if (ok(ic)) g.drawImage(ic, x, cy + 12, 34, 34); g.restore();
+      text(g, ch.n, x + 42, cy + 24, '800 13px Montserrat, Jost, sans-serif', C.redDk);
+      wrap(g, ch.d, x + 42, cy + 40, 230, 13, '500 11.5px Jost, sans-serif', C.ink);
+    });
+  }
+  canvasDemo('spells', (s, cv, g) => {
+    const st = { tour: true, held: false, t: 0, fac: 'A' };
+    const bA = $(s, '.cs-a'), bH = $(s, '.cs-h');
+    const set = f => { st.fac = f; bA.classList.toggle('on', f === 'A'); bH.classList.toggle('on', f === 'H'); };
+    bA.onclick = () => { st.tour = false; set('A'); }; bH.onclick = () => { st.tour = false; set('H'); };
+    function frame(t) { if (st.tour) set(Math.floor(t / 8) % 2 ? 'H' : 'A'); drawSpells(g, st.fac, t); }
+    apis.spells = { seek(t) { st.held = true; st.tour = true; frame(t); }, dur: () => 16 };
     return dt => { if (st.held) return; st.t += Math.max(0, dt); frame(st.t); };
   });
 
