@@ -244,3 +244,9 @@ Genre breakdowns (Blog Posts):
 | `blog-posts--arcade-risk.svg` | [joystick](https://game-icons.net/1x1/delapouite/joystick.html) | Delapouite |
 | `blog-posts--stealth.svg` | [hood](https://game-icons.net/1x1/lorc/hood.html) | Lorc |
 | `blog-posts--horror-tension.svg` | [haunting](https://game-icons.net/1x1/lorc/haunting.html) | Lorc |
+| `blog-posts--minecraft-rules.svg` | [stone-block](https://game-icons.net/1x1/lorc/stone-block.html) | Lorc |
+| `blog-posts--sandbox-tools.svg` | [toolbox](https://game-icons.net/1x1/delapouite/toolbox.html) | Delapouite |
+| `blog-posts--open-world.svg` | [mountain-road](https://game-icons.net/1x1/delapouite/mountain-road.html) | Delapouite |
+| `blog-posts--survival.svg` | [campfire](https://game-icons.net/1x1/lorc/campfire.html) | Lorc |
+| `blog-posts--clicker.svg` | [cookie](https://game-icons.net/1x1/delapouite/cookie.html) | Delapouite |
+| `blog-posts--gta-missions.svg` | [car-key](https://game-icons.net/1x1/delapouite/car-key.html) | Delapouite |
