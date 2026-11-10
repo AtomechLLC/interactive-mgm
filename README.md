@@ -141,6 +141,16 @@ Part 11, mechanism 2 (deck slides 318 to 324 and 329 to 331): equivalent, growth
   5. Where you meet each one: real-game examples and a design note per kind.
   Rates are illustrative and live at the top of each block in `conversion.js`; `window.__seek(t, which)` / `__dur(which)` replay slides 2 to 4 (`which` = `kinds`, `dial`, `guild`). Icons from wow.zamimg.com in `img/`. GIF: `coop-interactions/gifs/conversion-three-kinds.gif`, recorded by `coop-interactions/tools/record-all.sh`.
 
+## Co-op Interactions: Scarcity, Abundance, Auctions (`coop-interactions/economy/`)
+
+Part 11, mechanisms 3 to 5 and the summary (deck slides 325 to 340).
+  1. Title
+  2. Mooncloth, time as the commodity (forced scarcity): 200 players want a robe, 40 tailors make one cloth per cooldown. The cloth's price (in multiples of the cost of its parts) and the players still waiting over 16 weeks; once everyone is outfitted the price sits on the floor. Cooldown (1 to 4 days) and cloths per item (10 to 40) sliders.
+  3. One farm feeds the server (abundance share): a maintained Minecraft farm makes 3 bread a second, each player eats 0.25, the surplus fills a shared chest. Farmer logs off: the chest drains and everyone goes hungry. Players slider (2 to 16; past 12 the farm can't keep up). A two-bar WoW raid cauldron comparison sits in the side panel.
+  4. Taps, sinks and the auction house: gold in players' bags as a tub with a tap (drops) and a sink (the auction cut), the price of the same sword over 12 weeks, and a playing-versus-shopping bar driven by the share of items that can be traded. Presets: no cut, World of Warcraft, Diablo III at launch, closed and scarce.
+  5. Game economies: watch out for / require / auction house attributes.
+  The models (`sim()` in each block of `economy.js`) are illustrative, not the games' numbers. `window.__seek(t, which)` / `__dur(which)` replay slides 2 to 4 (`which` = `scarcity`, `abundance`, `auction`). Shares `../conversion/conversion.css`. Icons: wow.zamimg.com and minecraft.wiki in `img/`. GIFs: `coop-interactions/gifs/scarcity-mooncloth.gif`, `abundance-one-farm.gif`, `auction-taps-and-sinks.gif`.
+
 ## Layout
 
 - `index.html`: the course home. One section per module in module number order (M1 to M8), each listing that module's interactive pages in deck order with their part and slide range. Add a line here when you add a page to a module. The home page shows summary cards only: the seven MGM modules link to `mgm.html`, Blog Posts links to `blog.html` and Directing Game Mechanics (DGMS + RGF) links to `dgms/index.html`; `mgm.html` and `blog.html` hold the full card lists, and `dgms.html` is now only a redirect to `dgms/index.html` so old links keep working (add new MGM module pages to `mgm.html`). `dnd.html` is the D&D Design section: Brian Feeney's items (`blog-posts/feeney-items/`), The Ogre Turn, D&D Advantage and the Atomech D&D tools; add D&D pages there (those two decks' home buttons go to it). `atomech.html` links Atomech LLC's other GitHub Pages sites; add a card there when the org publishes a new one Add new blog cards to `blog.html` and new DGMS pages to `dgms/index.html`.
