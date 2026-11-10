@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Build Orders · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&family=Orbitron:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="bo.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · PvP Interactions · Build Orders', home: '../index.html', audio: null, cues: null };
+</script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1 -->
+<section class="slide center" data-title="Build Orders" data-demo="bo-title">
+  <div class="kicker rise">high level meta · the opening as a recipe</div>
+  <h1 class="rise">Build <span class="accent">Orders</span></h1>
+  <div class="rule rise" style="margin:22px auto"></div>
+  <canvas class="bo-title-field rise" width="1800" height="300"></canvas>
+  <p class="lede rise" style="margin:14px auto 0;text-align:center">Rush, Turtle and Expand are bets. A build order is how you place one: every worker, every building, every second, in order. Write one, run it, and watch the bet pay off or go bust.</p>
+  <aside class="notes">Counter Cycles drew the RTS opening triangle as a wheel. This module opens the wheel up: each opening is a list of things to build in order, and a small simulation turns that list into a clock. The faction here is original, with timings in the spirit of a classic sci-fi RTS opening: 12 workers and 50 ore at 0:00, workers mine about 57 ore a minute, buildings need a worker to put them up, and supply caps how much you can field.</aside>
+</section>
+
+<!-- 2 -->
+<section class="slide bo" data-title="Reading a Build Order" data-demo="bo-read">
+  <div class="kicker">notation</div>
+  <h2>Reading a Build Order</h2>
+  <div class="bo-hud navy-scope"></div>
+  <div class="bo-read">
+    <div class="bo-read-left">
+      <p class="bo-read-intro">Players write builds as <b>supply count + what to build</b>. The number is when: “place it the moment your supply hits 13”. Hover a line.</p>
+      <ol class="bo-notation"></ol>
+      <div class="bo-explain"></div>
+    </div>
+    <div class="bo-read-right">
+      <canvas class="bo-field" width="1640" height="460"></canvas>
+      <div class="bo-gantt-wrap navy-scope"><svg class="bo-gantt"></svg></div>
+      <div class="bo-transport"></div>
+    </div>
+  </div>
+  <aside class="notes">The standard opening, written the way players write it. Each line is a supply count and a building. Workers are never on the list: making them nonstop is assumed, which is why the numbers keep climbing between lines. Hover a line to jump the clock to that moment and light its bar on the timeline.</aside>
+</section>
+
+<!-- 3 -->
+<section class="slide bo" data-title="The Build Order Simulator" data-demo="bo-lab">
+  <div class="kicker">sandbox</div>
+  <h2>Build Order <span class="accent">Simulator</span></h2>
+  <div class="bo-hud navy-scope"></div>
+  <div class="bo-lab">
+    <div class="bo-col-tree">
+      <div class="bo-tree-box"><svg class="bo-tree"></svg><div class="bo-tip"></div></div>
+      <div class="bo-presets"></div>
+      <div class="bo-opts"></div>
+    </div>
+    <div class="bo-col-list">
+      <div class="bo-list-head"><b>Your build</b><span><button class="bo-mini bo-undo" title="Undo (Z)">↶</button><button class="bo-mini bo-clear" title="Clear the list">Clear</button></span></div>
+      <ol class="bo-list"></ol>
+      <p class="bo-list-foot"></p>
+    </div>
+    <div class="bo-col-view">
+      <canvas class="bo-field" width="1640" height="400"></canvas>
+      <div class="bo-gantt-wrap navy-scope"><svg class="bo-gantt"></svg></div>
+      <div class="bo-chart-wrap navy-scope"><svg class="bo-chart"></svg></div>
+      <div class="bo-transport"></div>
+    </div>
+  </div>
+  <aside class="notes">Click the tech tree to add a step after the highlighted line (or at the end). Greyed nodes are locked: nothing earlier in your build unlocks them yet. Drag lines to reorder, × to remove. The simulation reruns on every change and prints the supply count each step actually started at, which is the build written in standard notation. Coloured chips on a line say what it waited for: ore, gas, supply (a supply block) or tech. Workers are made nonstop up to the worker cap; after your last step the toggles can keep every building producing, add Supply Posts and spend floating ore on more production, the way a player would.</aside>
+</section>
+
+<!-- 4 -->
+<section class="slide bo" data-title="Three Ways to Lose an Opening" data-demo="bo-mistakes">
+  <div class="kicker">execution</div>
+  <h2>Three Ways to <span class="accent">Lose</span></h2>
+  <div class="bo-hud navy-scope"></div>
+  <div class="bo-mis">
+    <div class="bo-mis-left">
+      <p class="bo-mis-intro">Same plan, same clock. Each toggle breaks one habit. The faint line is the clean build.</p>
+      <div class="bo-mis-btns"></div>
+      <div class="bo-mis-cards"></div>
+    </div>
+    <div class="bo-mis-right">
+      <div class="bo-chart-wrap navy-scope tall"><svg class="bo-chart"></svg></div>
+      <div class="bo-gantt-wrap navy-scope short"><svg class="bo-gantt"></svg></div>
+      <div class="bo-transport"></div>
+    </div>
+  </div>
+  <aside class="notes">Build orders are easy to read and hard to execute. Three classic leaks: a supply block (production stops because there’s no room), cutting workers (the economy flattens forever, not just for a moment), and floating ore (money in the bank is an army that doesn’t exist). Stack them to see how quickly a good plan turns into a losing one.</aside>
+</section>
+
+<!-- 5 -->
+<section class="slide bo" data-title="Rush, Turtle, Expand on One Clock" data-demo="bo-clock">
+  <div class="kicker">the counter cycle, from the inside</div>
+  <h2>One Clock, <span class="accent">Three Openings</span></h2>
+  <div class="bo-hud bo-hud-battle navy-scope"></div>
+  <div class="bo-clock">
+    <div class="bo-clock-left">
+      <div class="bo-pick"><span class="bo-pick-lbl">attacker</span><div class="bo-pick-a"></div></div>
+      <div class="bo-pick"><span class="bo-pick-lbl">defender</span><div class="bo-pick-d"></div></div>
+      <div class="bo-matrix"></div>
+      <div class="bo-windows"></div>
+    </div>
+    <div class="bo-clock-right">
+      <div class="bo-chart-wrap navy-scope tall"><svg class="bo-chart"></svg></div>
+      <div class="bo-verdict"></div>
+      <div class="bo-transport"></div>
+    </div>
+  </div>
+  <aside class="notes">Run Rush, Turtle and Expand side by side and ask, at every second: if this player attacked that one now, who wins? Defenders fight at home with Bunkers and a 20% home advantage. Fights use Lanchester’s square law: strength is power squared, so a bigger army wins by more than its margin and keeps most of itself. Scrub the clock and watch the matrix: early, Rush beats Expand and Turtle holds Rush. Late, Expand outgrows Turtle. The counter cycle isn’t a rule someone wrote; it falls out of the build orders and the clock.</aside>
+</section>
+
+<!-- 6 -->
+<section class="slide bo" data-title="Drill: Hit the Timing" data-demo="bo-drill">
+  <div class="kicker">drill</div>
+  <h2>Hit the <span class="accent">Timing</span></h2>
+  <div class="bo-hud navy-scope"></div>
+  <div class="bo-lab">
+    <div class="bo-col-tree">
+      <div class="bo-tree-box"><svg class="bo-tree"></svg><div class="bo-tip"></div></div>
+      <div class="bo-goals"></div>
+    </div>
+    <div class="bo-col-list">
+      <div class="bo-list-head"><b>Your build</b><span><button class="bo-mini bo-undo" title="Undo (Z)">↶</button><button class="bo-mini bo-clear" title="Clear the list">Clear</button></span></div>
+      <ol class="bo-list"></ol>
+      <p class="bo-list-foot"></p>
+    </div>
+    <div class="bo-col-view">
+      <div class="bo-goal-card"></div>
+      <canvas class="bo-field" width="1640" height="320"></canvas>
+      <div class="bo-gantt-wrap navy-scope"><svg class="bo-gantt"></svg></div>
+      <div class="bo-transport"></div>
+    </div>
+  </div>
+  <aside class="notes">Five targets, each with three stars. Every one has a trick: the fastest expansion skips something everyone builds first, the soldier timing wants fewer workers than feels right, the tank wants Supply Posts placed before you need them, and holding the rush is a question of how few defences you can get away with. Stars are saved in this browser.</aside>
+</section>
+
+<!-- 7 -->
+<section class="slide" data-title="What a Build Order Is" data-demo="bo-sum">
+  <div class="kicker">summary</div>
+  <h2>What a Build Order Is</h2>
+  <div class="bo-sum">
+    <div class="bo-sum-card"><b>A bet, written down</b><p>Every opening spends the same ore on different futures: army now, safety now, or economy later. The order is the bet.</p></div>
+    <div class="bo-sum-card"><b>A clock</b><p>Supply counts are timestamps. A build is a schedule, and a supply block or an idle bank is a missed appointment.</p></div>
+    <div class="bo-sum-card"><b>A counter cycle, in time</b><p>Rush beats Expand <i>before</i> it pays off; Expand beats Turtle <i>after</i>. The wheel is the clock, folded.</p></div>
+  </div>
+  <div class="bo-sum-links">
+    <button class="btn" data-go="2">Back to the simulator</button>
+    <a class="btn" href="../counter-cycles/index.html#2">Counter Cycles: the RTS wheel →</a>
+  </div>
+  <aside class="notes">For a designer the takeaway is the tuning surface: build times, costs, supply and travel all decide when each opening peaks. Move one number (say, the Bunker’s cost) and the window where Rush beats Turtle opens or closes. A healthy counter cycle needs those windows to exist and to overlap.</aside>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="engine.js"></script>
+<script src="bo.js"></script>
+</body>
+</html>
