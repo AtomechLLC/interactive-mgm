@@ -18,7 +18,7 @@
       const here = pagesOf(k), gifs = gifsOf(k);
       if (!here.length) return '';
       return `<section class="mod" id="${k}">
-    <a class="head" href="${k}/index.html"><img src="${ROOT}dgms--${k}.svg" alt=""><span><span class="code">${code}</span><b>${esc(title)}</b><small><i>${esc(deck)}</i>: ${esc(line)}</small></span><span class="go">Module home →</span></a>
+    <a class="head" href="${k}/index.html"><img src="${ROOT}dgms--${k}.svg" alt=""><span><span class="code">${code}</span><b>${esc(title)}<span class="gds">GDS Member</span></b><small><i>${esc(deck)}</i>: ${esc(line)}</small></span><span class="go">Module home →</span></a>
     <div class="pages">${here.map(([p, t]) => {
         const g = gifs.filter(x => x[0].startsWith(p.replace('/', '--') + '.') || x[0].startsWith(p.replace('/', '--') + '-')).length;
         return `<a class="pg" href="${p}/index.html"><img src="${ROOT}${icon(p)}" alt=""><span><b>${esc(t)}</b><small>${g ? n(g, 'GIF') : 'Interactive'}</small></span></a>`;
@@ -35,7 +35,7 @@
   document.title = `${code} · ${title} · Directing Game Mechanics`;
   document.body.insertAdjacentHTML('afterbegin', `<div class="band"><header>
   <a class="up" href="../index.html">← All modules</a>
-  <div class="kicker">${code}</div>
+  <div class="kicker">${code}<span class="gds">GDS Member</span></div>
   <h1>${words.length ? esc(words.join(' ')) + ' ' : ''}<span>${esc(last)}</span></h1>
   <p>Visuals for <i>${esc(deck)}</i>: ${esc(line)}.</p>
 </header></div>`);

@@ -52,3 +52,7 @@ figcaption b { color: var(--ink); font-family: Montserrat, sans-serif; display: 
 .next a:hover { text-decoration: underline; }
 
 @media (max-width: 560px) { a.head { grid-template-columns: 52px 1fr; } .head img { width: 52px; height: 52px; } .head .go { display: none; } .pages { margin-left: 0; } .grid { grid-template-columns: 1fr; } .row { grid-template-columns: 1fr; } }
+
+/* GDS Member badge: marks course material from MGM, RGF and DGMS */
+.gds { display: inline-block; margin-left: 8px; padding: 2px 8px; border-radius: 999px; background: #152044; color: #ffb951; font-family: Jost, system-ui, sans-serif; font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; vertical-align: middle; white-space: nowrap; }
+.band .gds, .kicker .gds { background: #ffb951; color: #152044; margin-left: 10px; }
