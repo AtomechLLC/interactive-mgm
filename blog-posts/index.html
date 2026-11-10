@@ -95,6 +95,14 @@
 <script>
   // [folder, title, blurb, post, part]
   const PAGES = [
+    ['price-the-hit', 'Price the Hit', 'Set one boss swing’s windup, tell and damage, then dodge it twelve times. Your own dodge rate per round is the chart', 'Shade of Aran and Attumen', 'rp', 'blog-posts--attumen'],
+    ['triage', 'Triage the Ability', 'Eight draft abilities, five gates, three fixes. A fix only counts at the first gate the ability fails', 'Learning From My Past, the five lessons', 'rp', 'blog-posts--keep-five'],
+    ['draw-the-map', 'Draw the Map', 'Paint cover on a battle royale island and watch which weapon ranges each zone hands out. Flat fields and dense towns both leave weapons with no home', 'Battle Royale Game Design', 'rp', 'blog-posts--br-ranges'],
+    ['talent-points', 'Spend the Talent Points', 'Ten points, four spells, a thirty-second fight. Stack the bolt talents and top the meter with one button, or spread them and keep four', 'Warlock’s Overhaul and Small Compounding Factors', 'rp', 'blog-posts--warlock-talents'],
+    ['where-looking', 'Where Are You Looking?', 'Steer with the mouse while a state changes eight times. The same cue in the HUD corner, on the character, in a crowd, and as a sound, timed on your own reactions', 'Clarity, and UI posts', 'rp', 'blog-posts--racing-camera'],
+    ['five-potions', 'Five Potions', 'Eight rooms and five potions under three rules: never return, refill twice, or drink for you. See how many you die holding', 'RPG and Survival Game Design', 'rp', 'blog-posts--survival'],
+    ['same-dungeon', 'Same Dungeon, Fifth Time', 'Plan a route through one dungeon five times under different affixes. Two are a coat of paint; four break the route you settled on', 'WoW as a Service and Ennui', 'rp', 'blog-posts--wow-service'],
+    ['did-i-press', 'Did I Press It?', 'Jump the same ten gaps three times with a hidden amount of coyote time, and say whose fault each fall was. Then see what you really pressed', 'Control is King and Platformer Game Design', 'rp', 'blog-posts--platformer'],
     ['aran', 'Shade of Aran', 'One verb, three answers: Arcane Explosion says leave, Blizzard says follow, Flame Wreath says hold still. Play it with W A S D, and try the shipped Flame Wreath bug', 'Shade of Aran, parts 1 to 3', 'pm'],
     ['best-button', 'Best Button', 'The TBC Warlock\u2019s spells as coefficient per second of casting. Add the 0/21/40 build\u2019s talents one at a time and watch the rotation collapse to Shadow Bolt; then watch 2% talents compound', 'Warlock\u2019s Overhaul: Streamlining and Gameplay Balance', 'pm'],
     ['netherspite', 'Netherspite Beams', 'Swap or die, then version 3\u2019s layers one at a time, with meters for steps that must be exact and mistakes the raid can recover from. Hold the blue beam yourself', 'Netherspite: The Clash of Novelty and Game Difficulty', 'pm'],
@@ -154,7 +162,7 @@
     ['casual-curve', 'Sawtooth or Ramp', 'Two difficulty curves with the same average and a thousand simulated newcomers: relief levels drain stress, so more reach level 30. Veterans gain nothing from them', 'Casual Game Design', 'gb'],
     ['genre-matrix', 'Genre by Verb', 'The post\u2019s 22 genres against six verbs: move, aim, plan, build, choose, manage. Light up a verb, or click a genre to open its own interactive', '22 Types of Video Games', 'gb'],
   ];
-  const PARTS = [['pm', 'Post-mortems from the trenches'], ['st', 'System teardowns'], ['gb', 'Genre breakdowns'], ['gds', 'More from Alex Brazie'], ['lp', 'Learning From My Past'], ['ot', 'Other designers']];
+  const PARTS = [['rp', 'Replanned: play it yourself'], ['pm', 'Post-mortems from the trenches'], ['st', 'System teardowns'], ['gb', 'Genre breakdowns'], ['gds', 'More from Alex Brazie'], ['lp', 'Learning From My Past'], ['ot', 'Other designers']];
   const card = ([f, t, b, post, part, img]) =>
     `<a class="mod" href="${f}/index.html"><img src="../assets/img/home/${img || 'blog-posts--' + f}.svg" alt=""><span><b>${t}</b><small>${b}. Post: <i>${post}</i>.</small>${img || part === 'gds' ? '' : '<br><span class="tag">spike</span>'}</span></a>`;
   document.getElementById('cards').innerHTML = PARTS.map(([k, pt]) => {
