@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Price the Hit · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="../shared/blog.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · Blog Posts · Price the Hit', home: '../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<section class="slide" data-title="Price the hit" data-demo="price">
+  <div class="kicker">replanned · proportional punishment</div>
+  <h2 class="sm">Design the swing, <span class="accent">then dodge it</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Your boss swing</h4>
+      <label class="rng">Windup <b class="ph-wv"></b><input type="range" class="ph-w" min="0.15" max="1.2" step="0.05" value="0.5"></label>
+      <div class="seg ph-tell">
+        <button class="btn" data-v="none">No tell</button><button class="btn" data-v="sound">Sound</button><button class="btn on" data-v="decal">Ground decal</button><button class="btn" data-v="both">Both</button>
+      </div>
+      <label class="rng">Damage per hit <b class="ph-dv"></b><input type="range" class="ph-d" min="10" max="60" step="5" value="30"></label>
+      <div class="row wrap"><button class="btn play">Dodge it (Space)</button><button class="btn tour on">▶ Walk-through</button></div>
+      <div class="mt-stats"></div>
+      <p class="mt-out"></p>
+      <p class="src">Twelve swings a round. A dodge protects you for 0.3 s and can't be repeated for 0.7 s, so mashing fails. The chart plots your own rounds; the walk-through's dots are a scripted player. After Dark Souls' Sen's Fortress boulders and Elden Ring's delayed swings.</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="../shared/topdown.js"></script>
+<script src="../shared/genre.js"></script>
+<script src="../shared/play.js"></script>
+<script src="hit.js"></script>
+</body>
+</html>
