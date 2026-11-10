@@ -138,7 +138,7 @@ Quick wins worth doing early even though they are not top 5:
 - Hard as text: a story with no picture of the cost.
 - Proposal: two power curves over play time. The normal one climbs in steady steps as quests reward gear. The gifted one jumps early and then goes flat for a long stretch, with "nothing new to equip" markers. A GIF with the curves drawing in parallel is enough.
 
-**Conversion rate sandbox: equivalent, growth, erosive** (slides 318-324, 329-331), effort **M**, high priority
+**Conversion rate sandbox: equivalent, growth, erosive** (slides 318-324, 329-331), effort **M**, high priority. Spiked as `conversion/` (three kinds side by side, a rate dial with a cap, a gift passed around an 8-player guild); the 30-day guild economy with an abundance preset is still open.
 - Teaches: equivalent (nothing lost), growth (more than you started with: Clash Royale card donation, group XP bonus, Potionomics slimes) and erosive (less: taxes, fees, a high-level player boosting a friend). Growth trades need caps, and erosive trades stop infinite boosting (slide 324).
 - Hard as text: three formulas and long notes. The consequences show up over time and across many players.
 - Proposal: a small guild of 8 players trading a daily resource. Choose a conversion rate and a daily cap, then run 30 days. Charts show total supply, the gap between the boosted player and everyone else, and days to the "shiny thing". Presets: Clash Royale donation (growth plus cap), unlimited gifting (equivalent, no cap) and boosting with erosion (slide 324). An "abundance" preset (Minecraft farm, WoW cauldron) shows the shared pool collapsing when one maintainer stops.

@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conversion Rates · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="../shared/coop.css">
+<link rel="stylesheet" href="conversion.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · Co-op Interactions · Conversion Rates', home: '../index.html', audio: null, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1 -->
+<section class="slide center" data-title="Conversion Rates" data-demo="title">
+  <div class="kicker rise">designing co-op economics</div>
+  <h1 class="rise">Every Trade Has a <span class="accent">Rate</span></h1>
+  <div class="rule rise" style="margin:22px auto"></div>
+  <canvas class="demo ti-canvas cv-title rise" width="1100" height="440"></canvas>
+  <p class="lede rise" style="margin:18px auto 0;text-align:center">What comes out of a trade, compared with what went in, decides where a pool ends up.</p>
+</section>
+
+<!-- 2: the three kinds side by side -->
+<section class="slide" data-title="Three Kinds" data-demo="kinds">
+  <div class="kicker">mechanism 2: conversion rates</div>
+  <h2 class="sm">Same Trade, <span class="accent">Over and Over</span></h2>
+  <canvas class="demo cv-kinds" width="1420" height="600"></canvas>
+  <div class="row wrap cv-ctl">
+    <button class="btn cv-once">Trade once</button><button class="btn cv-play on">▶ Play</button><button class="btn cv-reset">Reset</button>
+    <p class="cv-out"></p>
+  </div>
+</section>
+
+<!-- 3: dial the rate -->
+<section class="slide" data-title="Dial the Rate" data-demo="dial">
+  <div class="kicker">mechanism 2: conversion rates</div>
+  <h2 class="sm">One Number <span class="accent">Decides the Kind</span></h2>
+  <div class="cv-wrap">
+    <canvas class="demo cv-dial" width="1100" height="600"></canvas>
+    <div class="cv-side">
+      <label class="cv-lab">Value out for every 1 in: <b class="cv-rv">×1.00</b></label>
+      <input type="range" class="cv-rate" min="0.25" max="2" step="0.05" value="1">
+      <label class="cv-sb"><input type="checkbox" class="cv-cap"> Cap the gain at +10 per trade</label>
+      <div class="cv-h">Presets</div>
+      <div class="cv-presets"></div>
+      <div class="cv-stats"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 4: pass it around the guild -->
+<section class="slide" data-title="Pass It Around" data-demo="guild">
+  <div class="kicker">mechanism 2: conversion rates</div>
+  <h2 class="sm">Pass It <span class="accent">Around the Guild</span></h2>
+  <div class="cv-wrap">
+    <canvas class="demo cv-guild" width="1100" height="600"></canvas>
+    <div class="cv-side">
+      <div class="cv-h">Each hand-off is a trade</div>
+      <div class="row wrap cv-modes">
+        <button class="btn" data-m="0">Equivalent ×1</button><button class="btn" data-m="1">Growth ×1.5</button><button class="btn" data-m="2">Erosive ×0.5</button>
+      </div>
+      <label class="cv-sb"><input type="checkbox" class="cv-gcap"> Daily cap: each player receives once a day</label>
+      <div class="cv-stats cv-gstats"></div>
+      <div class="row wrap"><button class="btn cv-grestart">Restart</button></div>
+      <p class="cv-gout"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 5: where you meet each one -->
+<section class="slide" data-title="In Real Games" data-demo="none">
+  <div class="kicker">mechanism 2: conversion rates</div>
+  <h2 class="sm">Where You <span class="accent">Meet Each One</span></h2>
+  <div class="cv-cards">
+    <div class="cv-card eq">
+      <h3>Equivalent</h3>
+      <p class="cv-def">Value in = value out. Nothing is lost, even when the count changes.</p>
+      <div class="cv-ex"><img src="img/inv_misc_food_21.jpg" alt=""><span>1 apple → 0.5 orange, when an orange is worth 2 apples</span></div>
+      <div class="cv-ex"><img src="img/inv_misc_pocketwatch_01.jpg" alt=""><span>5 minutes of play → 100 coins, at the same rate every time</span></div>
+      <p class="cv-rule">Design note: value moves between players, so who holds it matters, not how much exists.</p>
+    </div>
+    <div class="cv-card gr">
+      <h3>Growth</h3>
+      <p class="cv-def">More comes out than went in. The trade creates value.</p>
+      <div class="cv-ex"><img src="img/achievement_guildperk_fasttrack.jpg" alt=""><span>Group XP bonus: killing together pays more than killing alone</span></div>
+      <div class="cv-ex"><span class="cv-tx">CR</span><span>Clash Royale card donation: the giver earns gold and XP, the receiver keeps the card</span></div>
+      <p class="cv-rule">Design note: growth trades need caps, or two friends can trade back and forth forever.</p>
+    </div>
+    <div class="cv-card er">
+      <h3>Erosive</h3>
+      <p class="cv-def">Less comes out than went in. The trade burns value.</p>
+      <div class="cv-ex"><img src="img/inv_misc_coin_02.jpg" alt=""><span>Auction house cut: 5% of every sale leaves the economy</span></div>
+      <div class="cv-ex"><img src="img/inv_misc_bag_10.jpg" alt=""><span>Boosting a friend: 100 coins of your time buys 50 coins of theirs</span></div>
+      <p class="cv-rule">Design note: erosion is a sink. It stops infinite boosting and slows inflation.</p>
+    </div>
+  </div>
+  <p class="cv-src">Icons: World of Warcraft (Blizzard Entertainment) via wow.zamimg.com. Rates on these slides are illustrative.</p>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="../shared/topdown.js"></script>
+<script src="conversion.js"></script>
+</body>
+</html>
