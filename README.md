@@ -335,6 +335,13 @@ Home page `blog-posts/index.html` (cards from `PAGES`), for the posts in funsmit
   - `room-to-improve/`: twenty peeks from cover under a strict (stop to shoot) and a loose accuracy rule; duels won per block of five.
   - `who-responds-last/`: five fixed card-duel scenes with a last-in, first-out stack; outcomes are written per choice in `stack.js`.
   - `place-the-breather/`: a 6×6 match-three with easy and hard levels; the learner orders twelve and plays them, and the page plots wasted moves and failed tries.
+  - `score-the-stack/`: a small block stacker played under flat, steep and jackpot score tables; the page plots the learner's stack height per piece.
+  - `climb-your-ladder/`: six timing-duel opponents whose dodge window the learner tunes; tries and reaction times per rung for the last two climbs.
+  - `spend-the-stash/`: eight gacha banners played with resetting and carry-over pity; real rolls at stated (compressed) rates, pulls per banner recorded.
+  - `grind-or-go/`: a five-area campaign under three XP rules with formula-driven fights; battles, boss tries and fight seconds per rule.
+  - `four-moves/`: pick four moves and auto-battle five Elite Four rooms on the real type chart; printed power is set beside turns used.
+  - `trade-or-farm/`: a 45-second lane where each attack is a last hit or a hit on the champion, with a shared-gold mode that removes the choice.
+  - `ceremony-tax/`: reveal length per loot tier on a fixed clock; seconds watching against seconds playing, beside the learner's face taps.
 - GIFs in `gifs/`: rebuild them all with `sh blog-posts/tools/record-all.sh` while serving InteractiveMGM on 127.0.0.1:8191. They are 1920×1080 with the side panel hidden.
 - `shared/`: `blog.css` layout, a copy of the top-down kit, `bunny.js` (the invisible bunny marker) and `icons.js` (the depth icons plus potion, bomb, chest, heart and dice icons from game-icons.net). `img/`: World of Warcraft spell icons from wow.zamimg.com (sources in `img/sources.json`).
 
