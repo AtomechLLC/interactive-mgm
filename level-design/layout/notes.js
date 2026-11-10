@@ -1,0 +1,4 @@
+// Speaker notes. Source: The Level Design Book, "Typology" and "Circulation" (book.leveldesignbook.com, CC BY-NC-SA 4.0). Wording is ours.
+window.NOTES = [
+  { script: 'A typology is a named layout pattern, a shape you can point at and talk about. Watch the same player walk each one to its objective. A corridor offers no choices and never sends you back. A hub and spoke sends you out and back through the hub again and again, which is fine when the hub itself is worth seeing. A loopback ends with a shortcut that drops you next to where you started, so the return trip costs almost nothing. A string of pearls lets you choose your way through each open area, then funnels everyone through the same chokepoint. The three lane map has no single path at all: it is a multiplayer layout where the routes are the choice.' },
+];

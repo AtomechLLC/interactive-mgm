@@ -13,6 +13,8 @@ Open `index.html` in a browser (no build step, works straight off disk). It list
 - `composition/`: **Composition** (`composition/index.html`), from *MGM C4 M7 - Techniques to Scale Engaging Gameplay Design*, the final module.
 - `blog-posts/`: **Blog Posts** (`blog-posts/index.html`), interactives for the posts in funsmith.world's *Analyze real games* path. Ten spikes so far (the top five and the five quick wins); `blog-posts/PROPOSALS.md` lists a proposal per post.
 
+- `level-design/`: **The Level Design Book** (`level-design/index.html`), interactives that follow the chapters of [The Level Design Book](https://book.leveldesignbook.com/) (CC BY-NC-SA 4.0). Explanations and maps are our own; each slide links the chapter it follows. `pacing/` (beat sheet and intensity graph), `layout/` (five typologies walked), `blockout/` (metrics, cover heights, wayfinding aids). The index lists the chapters still to build.
+
 - `student-tokens/`: **Student tokens**, round battle-map tokens (enemy, player, ability, hazard and object rings) cut from the decks' art, plus `vector-basics/` (simple SVG player tokens, arrows, telegraphs, status badges and props), for students laying out encounters in Miro. Browse and download them on `student-tokens/index.html` (linked from the home page); details in `student-tokens/README.md`.
 
 Shared engine, theme and art stay in `assets/` at the root, so a deck one level down loads `../../assets/`. `404.html` redirects the old root deck URLs (for example `/core-actions/`) to their `pvp/` homes.

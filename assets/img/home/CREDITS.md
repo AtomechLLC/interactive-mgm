@@ -258,3 +258,9 @@ Genre breakdowns (Blog Posts):
 | `blog-posts--casual-curve.svg` | [histogram](https://game-icons.net/1x1/delapouite/histogram.html) | Delapouite |
 | `blog-posts--genre-matrix.svg` | [abacus](https://game-icons.net/1x1/delapouite/abacus.html) | Delapouite |
 | `dgms--m9-game-feel--sell-the-hit.svg` | [sword-slice](https://game-icons.net/1x1/lorc/sword-slice.html) | Lorc |
+| `level-design.svg` | [open-book](https://game-icons.net/1x1/lorc/open-book.html) | Lorc |
+| `level-design--layout.svg` | [treasure-map](https://game-icons.net/1x1/lorc/treasure-map.html) | Lorc |
+| `level-design--metrics.svg` | [brick-wall](https://game-icons.net/1x1/delapouite/brick-wall.html) | Delapouite |
+| `level-design--cover.svg` | [checked-shield](https://game-icons.net/1x1/lorc/checked-shield.html) | Lorc |
+| `level-design--wayfinding.svg` | [compass](https://game-icons.net/1x1/lorc/compass.html) | Lorc |
+| `level-design--pacing.svg` | [heart-beats](https://game-icons.net/1x1/lorc/heart-beats.html) | Lorc |
