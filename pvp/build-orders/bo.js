@@ -631,7 +631,7 @@
   /* =====================================================================
      slide 5: one clock, three openings, who wins when
      ===================================================================== */
-  const HOME = 1.2;
+  const HOME = 1.1;   // same as match.js
   // the same four colours, darkened enough to read as text on parchment
   const INK = { rush: '#d8402f', turtle: '#16908d', expand: '#a88200', standard: '#1f5fbf' };
   function fight(A, D) {
@@ -684,6 +684,10 @@
           : `<p class="bo-verdict-h ${f.w}">${f.w === 'atk' ? `${label(atk)} attacks now and <b>wins</b>` : `${label(def)} <b>holds</b>`}</p>
              <p><b style="color:${INK[atk]}">${f.a.toFixed(1)}</b> attacking power into <b style="color:${INK[def]}">${f.d.toFixed(1)}</b> defence (army${D.def ? ' + bunkers' : ''} × ${HOME} home advantage). Square law: <b>${f.left.toFixed(1)}</b> power survives on the ${f.w === 'atk' ? 'attacking' : 'defending'} side${f.w === 'atk' && D.bases > 1 ? `, and ${label(def)}’s ${D.bases} bases are open` : ''}.</p>
              <p class="bo-win-line">${winTxt}</p>`);
+        if (!same && window.BOMap) {
+          $(s, '.bo-verdict').insertAdjacentHTML('beforeend', `<button class="bo-mapbtn">▶ Play ${label(atk)} vs ${label(def)} out on the map</button>`);
+          $(s, '.bo-mapbtn').onclick = () => window.BOMap.show([atk, def]);
+        }
         // the matrix: every pairing at this second
         const three = ['rush', 'turtle', 'expand'];
         say($(s, '.bo-matrix'), `<div class="bo-mx-cap">if one attacked another at <b>${fmt(t)}</b></div><table><tr><th class="bo-mx-corner">attacker ↓ · defender →</th>${three.map(k => `<th style="color:${INK[k]}">${label(k)}</th>`).join('')}</tr>${three.map(a => `<tr><th style="color:${INK[a]}">${label(a)}</th>${three.map(d => {

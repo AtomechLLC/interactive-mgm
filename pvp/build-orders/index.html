@@ -110,10 +110,23 @@
       <div class="bo-transport"></div>
     </div>
   </div>
-  <aside class="notes">Run Rush, Turtle and Expand side by side and ask, at every second: if this player attacked that one now, who wins? Defenders fight at home with Bunkers and a 20% home advantage. Fights use Lanchester’s square law: strength is power squared, so a bigger army wins by more than its margin and keeps most of itself. Scrub the clock and watch the matrix: early, Rush beats Expand and Turtle holds Rush. Late, Expand outgrows Turtle. The counter cycle isn’t a rule someone wrote; it falls out of the build orders and the clock.</aside>
+  <aside class="notes">Run Rush, Turtle and Expand side by side and ask, at every second: if this player attacked that one now, who wins? Defenders fight at home with Bunkers and a 10% home advantage. Fights use Lanchester’s square law: strength is power squared, so a bigger army wins by more than its margin and keeps most of itself. Scrub the clock and watch the matrix: early, Rush beats Expand and Turtle holds Rush. Late, Expand outgrows Turtle. The counter cycle isn’t a rule someone wrote; it falls out of the build orders and the clock.</aside>
 </section>
 
 <!-- 6 -->
+<section class="slide bm" data-title="Play It Out on the Map" data-demo="bo-map">
+  <canvas class="demo bg-canvas" width="1600" height="900" aria-label="Two build orders playing out on a StarCraft-style map"></canvas>
+  <div class="kicker">two builds, one map</div>
+  <h2>Play It <span class="accent">Out</span></h2>
+  <div class="bm-ctl">
+    <div class="bm-side"><span class="bm-lbl">left</span><div class="bm-builds"></div><select class="bm-plan" aria-label="Left attack plan"></select></div>
+    <div class="bm-side"><span class="bm-lbl">right</span><div class="bm-builds"></div><select class="bm-plan" aria-label="Right attack plan"></select></div>
+    <div class="bm-run"><span class="bm-ctrs"></span><button class="bm-b ro-play" title="Play / pause">❚❚</button><input class="ro-scrub" type="range" min="0" max="1" step="0.001" value="0" aria-label="game clock"><span class="bm-speeds"></span></div>
+  </div>
+  <aside class="notes">Nothing on this map is scripted. Both build orders run in the same simulator as the sandbox, side by side, and every loss comes out of the loser’s economy: a raid that kills twelve workers really does cost the next two minutes. Each side also has an attack plan: stay home, all-in early, one big push at 40 power, or max out first. Armies walk across the map in 40 seconds; groups that meet in the middle fight there, and an army that reaches the enemy ramp fights the defenders and Bunkers with a 10% home advantage. When nothing is left to stop it, it kills workers, then the newest base, then everything else. “Your build” is whatever is in the sandbox. Try the three counter buttons, then put your own build against each opening.</aside>
+</section>
+
+<!-- 7 -->
 <section class="slide bo" data-title="Drill: Hit the Timing" data-demo="bo-drill">
   <div class="kicker">drill</div>
   <h2>Hit the <span class="accent">Timing</span></h2>
@@ -138,7 +151,7 @@
   <aside class="notes">Five targets, each with three stars. Every one has a trick: the fastest expansion skips something everyone builds first, the soldier timing wants fewer workers than feels right, the tank wants Supply Posts placed before you need them, and holding the rush is a question of how few defences you can get away with. Stars are saved in this browser.</aside>
 </section>
 
-<!-- 7 -->
+<!-- 8 -->
 <section class="slide" data-title="What a Build Order Is" data-demo="bo-sum">
   <div class="kicker">summary</div>
   <h2>What a Build Order Is</h2>
@@ -158,6 +171,8 @@
 <script src="../../assets/deck.js"></script>
 <script src="../../assets/kit.js"></script>
 <script src="engine.js"></script>
+<script src="match.js"></script>
 <script src="bo.js"></script>
+<script src="bo-map.js"></script>
 </body>
 </html>

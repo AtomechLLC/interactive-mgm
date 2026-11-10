@@ -256,3 +256,25 @@ svg.bo-win-svg { display: block; width: 100%; height: auto; font-family: var(--f
 
 /* phones: the stage scales down, so fine text needs a nudge */
 body.touch .bo-step { cursor: pointer; }
+
+/* ---------- play it out: two builds on one map (bo-map.js) ---------- */
+.slide.bm > canvas.demo.bg-canvas { position: absolute !important; inset: 0; width: 1600px; height: 900px; margin: 0; border: 0; border-radius: 0; background: none; z-index: 0; }
+.slide.bm .slide-head h2 { font-size: 46px; }
+.bm-ctl { position: absolute !important; top: 14px; right: 20px; z-index: 4 !important; width: 990px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px; }
+.bm-side { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; background: var(--navy); border-radius: 12px; padding: 8px 10px; }
+.bm-lbl { font: 700 13px Montserrat, Jost; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); width: 52px; }
+.bm-builds { display: flex; gap: 5px; flex-wrap: wrap; }
+.bm-b { font: 600 15px Jost; color: #e8eefc; background: rgba(255,255,255,.07); border: 1.5px solid rgba(255,255,255,.18); border-radius: 999px; padding: 4px 11px; cursor: pointer; white-space: nowrap; }
+.bm-b:hover { border-color: rgba(255,255,255,.5); }
+.bm-builds .bm-b { border-color: color-mix(in srgb, var(--c) 55%, transparent); }
+.bm-builds .bm-b.on { background: var(--c); color: #152044; border-color: var(--c); }
+.bm-b.on { background: var(--gold); color: #152044; border-color: var(--gold); }
+.bm-plan { margin-left: 58px; font: 600 15px Jost; color: #fff; background: #0f2858; border: 1.5px solid rgba(255,185,81,.6); border-radius: 8px; padding: 4px 8px; cursor: pointer; }
+.bm-run { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
+.bm-ctrs, .bm-speeds { display: flex; gap: 5px; }
+.bm-run .bm-b { color: var(--navy); background: rgba(21,32,68,.06); border-color: rgba(21,32,68,.3); }
+.bm-run .bm-b.on { background: var(--navy); color: #fff; border-color: var(--navy); }
+.bm-run .ro-play { min-width: 44px; font-size: 16px; }
+.bm-run .ro-scrub { width: 200px; }
+.bo-mapbtn { margin-top: 8px; font: 600 16px Jost; padding: 6px 14px; border-radius: 999px; border: 0; background: var(--navy); color: #fff; cursor: pointer; }
+.bo-mapbtn:hover { background: #24356b; }
