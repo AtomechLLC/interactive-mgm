@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blockout · Level Design Book</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="../shared/blog.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · Level Design Book · Blockout', home: '../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<section class="slide" id="metrics" data-title="Measure against the player" data-demo="metrics">
+  <div class="kicker">blockout · metrics</div>
+  <h2 class="sm">Measure against <span class="accent">the player</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Set the blockout</h4>
+      <label class="rng">Hallway width <b class="me-wv"></b><input type="range" class="me-w" min="1" max="5" step="0.25" value="1.5"></label>
+      <label class="rng">Stair slope <b class="me-sv"></b><input type="range" class="me-s" min="15" max="55" step="1" value="45"></label>
+      <label class="rng">Wall height <b class="me-hv"></b><input type="range" class="me-h" min="0.5" max="3" step="0.1" value="1"></label>
+      <div class="mt-stats me-stats"></div>
+      <p class="mt-out me-out"></p>
+      <p class="src">Rules of thumb from <a href="https://book.leveldesignbook.com/process/blockout/metrics" target="_blank" rel="noopener">The Level Design Book: Metrics</a> and <a href="https://book.leveldesignbook.com/process/blockout" target="_blank" rel="noopener">Blockout</a> (CC BY-NC-SA 4.0). Everything is measured in player sizes, so it holds in any engine.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="cover" data-title="How tall is cover?" data-demo="cover">
+  <div class="kicker">combat · cover</div>
+  <h2 class="sm">How tall is <span class="accent">cover?</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>The crate</h4>
+      <label class="rng">Crate height <b class="cv-hv"></b><input type="range" class="cv-h" min="0.3" max="2.2" step="0.05" value="1.1"></label>
+      <h4>You</h4>
+      <div class="seg cv-stance"><button class="btn on" data-v="crouch">Crouch behind it</button><button class="btn" data-v="stand">Stand up to shoot</button></div>
+      <h4>The enemy</h4>
+      <div class="seg cv-foe"><button class="btn on" data-v="0">On the ground</button><button class="btn" data-v="2.5">On a balcony</button></div>
+      <div class="mt-stats cv-stats"></div>
+      <p class="mt-out cv-out"></p>
+      <p class="src">Height bands are the Uncharted 4 figures quoted in <a href="https://book.leveldesignbook.com/process/combat/cover" target="_blank" rel="noopener">The Level Design Book: Cover</a> (CC BY-NC-SA 4.0). Body heights are our own round numbers.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="wayfinding" data-title="Which way is the exit?" data-demo="wayfind">
+  <div class="kicker">blockout · wayfinding</div>
+  <h2 class="sm">Which way is <span class="accent">the exit?</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Add wayfinding aids, subtle to direct</h4>
+      <div class="kw wf-aids"></div>
+      <div class="row wrap"><button class="btn wf-run">↻ Send 24 players</button></div>
+      <div class="mt-stats wf-stats"></div>
+      <p class="mt-out wf-out"></p>
+      <p class="src">The subtle-to-direct ordering follows <a href="https://book.leveldesignbook.com/process/blockout/wayfinding" target="_blank" rel="noopener">The Level Design Book: Wayfinding</a> (CC BY-NC-SA 4.0). The pull of each aid is our illustrative number, not the book’s.</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="../shared/topdown.js"></script>
+<script src="../shared/plan.js"></script>
+<script src="metrics.js"></script>
+<script src="cover.js"></script>
+<script src="wayfind.js"></script>
+</body>
+</html>
