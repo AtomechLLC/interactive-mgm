@@ -31,7 +31,7 @@
 
   function make() {
     const rooms = {}, doors = [], stairs = [], dashes = [], halves = [], props = [], marks = [];
-    const P = { rooms, doors, stairs, dashes, halves, props, marks };
+    const P = { rooms, doors, flights: stairs, dashes, halves, props, marks };   // P.stairs() is the adder; the list is P.flights
     const center = r => r.circle ? [r.circle[0], r.circle[1]] : cent(r.pts);
     const edgeOf = (r, i) => [r.pts[i % r.pts.length], r.pts[(i + 1) % r.pts.length]];
     function door(a, b, L, R, kind) {
@@ -78,6 +78,8 @@
     // a door at a point on a wall that two rooms share; deg is the wall's direction (0 horizontal, 90 vertical)
     P.door = (a, b, m, deg = 0, kind) => { const r = deg * Math.PI / 180; doors.push({ a, b, m, e: [Math.cos(r), Math.sin(r)], gw: 42, kind: kind || 'door' }); };
     P.stairs = (a, b, w, n = 7) => stairs.push({ a, b, w, n });
+    // a curved flight along the inside of a round room: angles in degrees, treads run radially
+    P.arcStairs = (cx, cy, r0, r1, a0, a1, n = 9) => stairs.push({ arc: [cx, cy, r0, r1, a0 * Math.PI / 180, a1 * Math.PI / 180], n });
     P.dash = (a, b) => dashes.push({ a, b });
     P.half = (a, b) => halves.push({ a, b });
     P.prop = (type, x, y, r = 9, rot = 0) => props.push({ type, x, y, r, rot });
@@ -142,6 +144,13 @@
       g.strokeStyle = INK; g.lineWidth = 3.5; list.forEach(r => { shape(g, r); g.stroke(); });
       // stairs: a strip with treads across it and an arrow up the flight
       stairs.forEach(s => {
+        if (s.arc) {
+          const [cx, cy, r0, r1, a0, a1] = s.arc;
+          g.fillStyle = FLOOR2; g.strokeStyle = 'rgba(28,36,80,.55)'; g.lineWidth = 1.5;
+          g.beginPath(); g.arc(cx, cy, r1, a0, a1); g.arc(cx, cy, r0, a1, a0, true); g.closePath(); g.fill(); g.stroke();
+          g.beginPath(); for (let i = 1; i < s.n; i++) { const a = a0 + (a1 - a0) * i / s.n; g.moveTo(cx + Math.cos(a) * r0, cy + Math.sin(a) * r0); g.lineTo(cx + Math.cos(a) * r1, cy + Math.sin(a) * r1); } g.stroke();
+          return;
+        }
         const d = unit(sub(s.b, s.a)), n = [-d[1], d[0]], h = s.w / 2;
         g.fillStyle = FLOOR2; g.strokeStyle = 'rgba(28,36,80,.55)'; g.lineWidth = 1.5;
         g.beginPath(); [add(s.a, mul(n, h)), add(s.b, mul(n, h)), add(s.b, mul(n, -h)), add(s.a, mul(n, -h))].forEach((p, i) => i ? g.lineTo(...p) : g.moveTo(...p)); g.closePath(); g.fill(); g.stroke();
