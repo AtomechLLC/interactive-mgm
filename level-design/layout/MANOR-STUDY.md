@@ -104,3 +104,9 @@ The earlier version of this slide rotated rooms and chamfered corners, then join
 - The nested L lines in the tower are read as tiered steps; they could be a gallery edge.
 - The porch openings and the outbuilding's inner partitions are too small to read with confidence.
 - All real-world sizes rest on the 0.29 m tread assumption.
+
+## The rules as a generator
+
+`../shared/manorgen.js` plays the eight recipes with random numbers inside the ranges above, then mirrors and turns the plan. Its `check(plan)` reads only the finished geometry and scores fourteen rules: grid count from wall directions, the turns, boundary weights, the round anchor, the two curves, the tower's bite, that every door joins the rooms it claims, door widths, no door facing a door, no overlapping rooms, a stair on every seam, lighter walls outside, loops through the outdoors, and neighbours of different size.
+
+`node level-design/layout/manor-smoke.js 1000` draws a thousand first drafts, reports how often each rule holds, then breaks four rules on purpose and confirms the matching check catches each one. The generator covers one family of plan: the same arrangement of hall, tower, two wings and outbuilding with different proportions and orientation. It does not yet invent a different arrangement.
