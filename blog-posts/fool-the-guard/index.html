@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fool the Guard · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="../shared/blog.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · Blog Posts · Fool the Guard', home: '../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<section class="slide" data-title="Fool the Guard" data-demo="guard">
+  <div class="kicker">Replanned · Stealth Game Design</div>
+  <h2 class="sm">Roll the dice <span class="hl">before the plan</span>, not after</h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Where the randomness goes</h4>
+      <div class="seg fg-mode">
+        <button class="btn on" data-v="fixed">Nowhere</button><button class="btn" data-v="patrol">In his patrol</button><button class="btn" data-v="dice">In his detection</button>
+      </div>
+      <p class="src fg-tip" style="font-size:14px;color:inherit"></p>
+      <div class="row wrap"><button class="btn play">Sneak (W A S D)</button><button class="btn tour on">▶ Walk-through</button></div>
+      <div class="mt-stats"></div>
+      <p class="mt-out"></p>
+      <p class="src">Cross five times per setting. Space whistles once per attempt: he stops and looks toward the sound. The table is your own attempts; the walk-through is a scripted sneak. After Mark of the Ninja, Hitman and Splinter Cell.</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="../shared/topdown.js"></script>
+<script src="../shared/genre.js"></script>
+<script src="../shared/play.js"></script>
+<script src="guard.js"></script>
+</body>
+</html>
