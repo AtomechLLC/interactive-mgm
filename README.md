@@ -328,6 +328,13 @@ Home page `blog-posts/index.html` (cards from `PAGES`), for the posts in funsmit
   - `smart-steering/`: a top-down track with a dirt shortcut; the assist takes the wheel near any edge and clamps the kart to the road. Lap times and falls per setting.
   - `reach-or-precision/`: drag to move along ten pads at 0.5×, 1.5× or 4× gain; time, strokes and missed landings per gain.
   - `blind-spots/`: sixty games in twelve genres, each tagged with two of the five skill types (this page's reading); coverage bars and three suggested games from the learner's ticks.
+  - `price-growth/`: a 45 s clicker with three buildings at 1.07, 1.15 or 1.30 cost growth; purchase and click timelines per growth. Base prices are the page's; the walk-through runs a scripted player at three times speed.
+  - `tool-first/`: 60 s to fit a three-coefficient flight path through three rings; a blind test costs 5 s, a live preview 20 s once. Runs logged with and without the tool.
+  - `guess-the-verb/`: a one-room parser game typed into a text box in the side panel; the learner binds five of their own refused commands to actions and the page reruns their transcript.
+  - `the-detour/`: a hurdle sprint with a fishing hole, forced, optional, and optional with a time bonus; records fishing time, final time and the learner's rating per run.
+  - `room-to-improve/`: twenty peeks from cover under a strict (stop to shoot) and a loose accuracy rule; duels won per block of five.
+  - `who-responds-last/`: five fixed card-duel scenes with a last-in, first-out stack; outcomes are written per choice in `stack.js`.
+  - `place-the-breather/`: a 6×6 match-three with easy and hard levels; the learner orders twelve and plays them, and the page plots wasted moves and failed tries.
 - GIFs in `gifs/`: rebuild them all with `sh blog-posts/tools/record-all.sh` while serving InteractiveMGM on 127.0.0.1:8191. They are 1920×1080 with the side panel hidden.
 - `shared/`: `blog.css` layout, a copy of the top-down kit, `bunny.js` (the invisible bunny marker) and `icons.js` (the depth icons plus potion, bomb, chest, heart and dice icons from game-icons.net). `img/`: World of Warcraft spell icons from wow.zamimg.com (sources in `img/sources.json`).
 
