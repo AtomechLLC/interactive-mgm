@@ -15,14 +15,16 @@
   ];
   const rnd = (i, seed) => { let x = (i * 374761393 + seed * 668265263) >>> 0; x = (x ^ (x >>> 13)) * 1274126177 >>> 0; return (x >>> 8) / 16777216; };
   // the courtyard: an irregular hall with the start below and four ways out
-  const P = PLAN.make(), ANG = [-118, -66, -14, 30, 78, 112, 152, 206];
-  P.poly('Q', ANG.map(a => [520 + Math.cos(a * Math.PI / 180) * 185, 322 + Math.sin(a * Math.PI / 180) * 110]), { lab: 'courtyard' });
-  P.chain('Q', 4, [{ id: 'S', len: 95, turn: 6, w: 130, lab: 'start' }]);
-  P.chain('Q', 0, [{ id: 'N1', len: 80, turn: -8, w: 92 }, { id: 'N', len: 72, turn: 12, w: 160, tint: '#f6e6bc' }]);
-  P.chain('Q', 6, [{ id: 'W1', len: 130, turn: 12, w: 82 }, { id: 'W', len: 80, turn: -28, w: 125 }]);
-  P.chain('Q', 1, [{ id: 'NE1', len: 120, turn: 22, w: 80 }, { id: 'NE', round: 52 }]);
-  P.chain('Q', 2, [{ id: 'E1', len: 130, turn: -14, w: 84 }, { id: 'E', len: 75, turn: 30, w: 120 }]);
-  P.prop('planter', 430, 300, 13); P.prop('planter', 610, 350, 13); P.prop('column', 470, 375, 7); P.prop('column', 585, 262, 7);
+  const P = PLAN.make();
+  P.rect('Q', 330, 220, 710, 420, { cham: [0, 1, 2, 3], k: 40, lab: 'courtyard' });   // edges: 1 top, 2 NE cut, 3 right, 5 bottom, 7 left
+  P.chain('Q', 5, [{ id: 'S', len: 90, turn: 0, w: 120, w0: 120, lab: 'start' }]);
+  P.chain('Q', 1, [{ id: 'N1', len: 70, turn: 0, w: 90, w0: 90 }, { id: 'N', len: 80, turn: 10, w: 170, w0: 170, tint: '#f6e6bc' }]);
+  P.chain('Q', 7, [{ id: 'W1', len: 120, turn: -15, w: 80, w0: 80 }, { id: 'W', len: 90, turn: 0, w: 130, w0: 130 }]);
+  P.chain('Q', 2, [{ id: 'NE1', len: 100, turn: 0, w: 70, w0: 70 }, { id: 'NE', round: 50 }]);
+  P.chain('Q', 3, [{ id: 'E1', len: 110, turn: 15, w: 80, w0: 80 }, { id: 'E', len: 90, turn: 0, w: 130, w0: 130 }]);
+  { const n = P.rooms.N; P.stairs([n.c[0] - 40, n.c[1] + 30], [n.c[0] - 40, n.c[1] - 25], 34, 6); }
+  P.rect('O', 760, 470, 930, 550, { lab: 'outbuilding', tint: '#ece5d4' });
+  P.prop('planter', 420, 290, 13); P.prop('planter', 620, 360, 13); [[400, 380], [640, 260]].forEach(([x, y]) => P.prop('column', x, y, 7));
   P.prop('crate', P.rooms.W.c[0] - 20, P.rooms.W.c[1] + 18, 9, .4); P.prop('crate', P.rooms.E.c[0] + 15, P.rooms.E.c[1] - 15, 9, -.3);
   const EX = { W: ['W1', 'W'], N: ['N1', 'N'], NE: ['NE1', 'NE'], E: ['E1', 'E'] };
   const MOUTH = k => P.doorOf('Q', EX[k][0]).m;
@@ -72,7 +74,7 @@
       const R = P.rooms, nm = MOUTH('N'), Q = R.Q.c;
       ['W', 'NE', 'E'].forEach(k => T.label('dead end', R[EX[k][1]].c[0], R[EX[k][1]].c[1] - 30, 'center', C.muted, 13));
       T.flag(R.N.c[0] + 30, R.N.c[1] + 4); T.label('exit', R.N.c[0] - 40, R.N.c[1], 'center', C.goldInk, 14);
-      T.label('start', R.S.c[0] + 60, R.S.c[1] + 10, 'center', C.muted, 13);
+      T.label('start', R.S.c[0] + 60, R.S.c[1] + 10, 'center', C.muted, 13); T.label('outbuilding', R.O.c[0], R.O.c[1], 'center', C.muted, 13);
       // aids
       if (on.has('detail')) { const n1 = R.N1.pts; g.fillStyle = 'rgba(138,79,214,.22)'; g.beginPath(); n1.forEach((p, i) => i ? g.lineTo(...p) : g.moveTo(...p)); g.closePath(); g.fill(); }
       if (on.has('light')) { const gr = g.createRadialGradient(nm[0], nm[1], 10, nm[0], nm[1], 140); gr.addColorStop(0, 'rgba(255,214,120,.7)'); gr.addColorStop(1, 'rgba(255,214,120,0)'); g.fillStyle = gr; g.fillRect(nm[0] - 150, nm[1] - 150, 300, 300); }

@@ -1,4 +1,6 @@
-/* Floor-plan kit for the Level Design Book pages, drawn the way an architect's plan reads:
+/* Floor-plan kit for the Level Design Book pages, drawn the way an architect's plan reads.
+   Maps are composed from a few strong volumes: straight-walled halls (right angles where they suit), wings rotated
+   off the grid, round towers and niches, a detached outbuilding, and a stair or threshold where two volumes meet.
    rooms share walls instead of hanging off corridors, walls meet at varied angles, some rooms are round,
    exterior walls are heavy and interior walls light, doorways are gaps with a door swing, and stairs, dashed
    thresholds, half walls, columns and planters give each room a purpose.
@@ -8,6 +10,9 @@
    P.round(id, cx, cy, r, o)               a round room
    P.chain(fromId, edgeIndex, steps)       grow rooms off an edge, each sharing a wall with the last:
                                            step = { id, len, turn (degrees, + is clockwise), w (end width), round: r, lab, tint, kind }
+   P.rect(id, x0, y0, x1, y1, o)            a volume with straight walls, corners optionally cut (o.cham, o.k)
+   P.door(a, b, [x, y], deg, kind)          a door on a shared wall
+   step.w0                                 the new room's width along the old wall, if it differs
    P.link(id, aId, ai, bId, bi, o)         a passage between two room edges; o = { w, ta, tb, kind } (kind of the door into b)
    P.stairs(a, b, w, n) / P.dash(a, b) / P.half(a, b) / P.prop(type, x, y, r, rot) / P.mark(kind, x, y, s)
    P.walk(route)                           points for a route of 'id' or 'id:via' items, passing through the doors
@@ -47,7 +52,10 @@
         }
         const d2 = unit(rot(d, st.turn || 0)), w = st.w || hyp(sub(R, L)), m2 = add(m, mul(d2, st.len)), u = [-d2[1], d2[0]];
         const s = dot(sub(L, m), u) >= 0 ? 1 : -1, L2 = add(m2, mul(u, s * w / 2)), R2 = add(m2, mul(u, -s * w / 2));
-        P.poly(st.id, [L, R, R2, L2], st); door(prev.id, st.id, L, R, st.kind);
+        // w0: the new room starts with its own width along the old wall (a corridor off a big hall, or a hall off a corridor)
+        const L0 = st.w0 ? add(m, mul(unit(sub(L, m)), st.w0 / 2)) : L, R0 = st.w0 ? add(m, mul(unit(sub(R, m)), st.w0 / 2)) : R;
+        P.poly(st.id, [L0, R0, R2, L2], st);
+        const narrow = hyp(sub(R0, L0)) < hyp(sub(R, L)); door(prev.id, st.id, narrow ? L0 : L, narrow ? R0 : R, st.kind);
         prev = rooms[st.id]; L = L2; R = R2; d = d2;
       });
       return prev;
@@ -60,6 +68,15 @@
       P.poly(id, pts, o); door(aId, id, a1, a2); door(id, bId, pts[2], pts[3], o.kind);
       return rooms[id];
     };
+    // an axis-aligned volume; o.cham = [corner indices TL 0, TR 1, BR 2, BL 3] cut at 45 degrees by o.k px.
+    // With every corner cut the edges are: 0 TL cut, 1 top, 2 TR cut, 3 right, 4 BR cut, 5 bottom, 6 BL cut, 7 left.
+    P.rect = (id, x0, y0, x1, y1, o = {}) => {
+      const c = [[x0, y0], [x1, y0], [x1, y1], [x0, y1]], k = o.k || 30, cut = new Set(o.cham || []), pts = [];
+      c.forEach((p, i) => { if (!cut.has(i)) { pts.push(p); return; } const pr = c[(i + 3) % 4], nx = c[(i + 1) % 4]; pts.push(add(p, mul(unit(sub(pr, p)), k)), add(p, mul(unit(sub(nx, p)), k))); });
+      return P.poly(id, pts, o);
+    };
+    // a door at a point on a wall that two rooms share; deg is the wall's direction (0 horizontal, 90 vertical)
+    P.door = (a, b, m, deg = 0, kind) => { const r = deg * Math.PI / 180; doors.push({ a, b, m, e: [Math.cos(r), Math.sin(r)], gw: 42, kind: kind || 'door' }); };
     P.stairs = (a, b, w, n = 7) => stairs.push({ a, b, w, n });
     P.dash = (a, b) => dashes.push({ a, b });
     P.half = (a, b) => halves.push({ a, b });
@@ -118,7 +135,8 @@
       // a faint grid of floor slabs, clipped to each room
       list.forEach(r => {
         g.save(); shape(g, r); g.clip(); g.strokeStyle = 'rgba(160,140,100,.16)'; g.lineWidth = 1;
-        const [cx, cy] = r.c, ang = r.circle ? 0 : Math.atan2(r.pts[1][1] - r.pts[0][1], r.pts[1][0] - r.pts[0][0]);
+        const [cx, cy] = r.c; let ang = 0, best = 0;
+        if (!r.circle) r.pts.forEach((p, i) => { const q = r.pts[(i + 1) % r.pts.length], l = Math.hypot(q[0] - p[0], q[1] - p[1]); if (l > best) { best = l; ang = Math.atan2(q[1] - p[1], q[0] - p[0]); } });
         g.translate(cx, cy); g.rotate(ang); g.beginPath(); for (let k = -400; k <= 400; k += 26) { g.moveTo(k, -400); g.lineTo(k, 400); g.moveTo(-400, k); g.lineTo(400, k); } g.stroke(); g.restore();
       });
       g.strokeStyle = INK; g.lineWidth = 3.5; list.forEach(r => { shape(g, r); g.stroke(); });

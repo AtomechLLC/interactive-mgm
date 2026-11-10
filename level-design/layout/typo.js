@@ -18,52 +18,65 @@
 
   const BUILD = {
     corridor() {
+      // a building that grew: an entry porch, a straight hall with a niche, a wing turned off the grid with stairs
+      // where it meets the hall, a hall back on the grid, and a round tower at the end; a shed stands apart
       const P = PLAN.make();
-      P.poly('S', [[38, 300], [150, 252], [205, 330], [190, 452], [58, 470]], { lab: 'start' });
-      P.chain('S', 2, [{ id: 'A', len: 200, turn: -20, w: 120 }, { id: 'B', len: 180, turn: 35, w: 175 }, { id: 'C', len: 170, turn: -30, w: 125 }, { id: 'G', round: 105, lab: 'objective', tint: GOLD }]);
-      const B = P.rooms.B, sa = B.pts[1], sb = B.pts[2], k = .16;
-      P.stairs([sa[0] + (sb[0] - sa[0]) * .2 + (B.c[0] - sa[0]) * k, sa[1] + (sb[1] - sa[1]) * .2 + (B.c[1] - sa[1]) * k], [sa[0] + (sb[0] - sa[0]) * .8 + (B.c[0] - sa[0]) * k, sa[1] + (sb[1] - sa[1]) * .8 + (B.c[1] - sa[1]) * k], 30, 8);
-      const g = P.rooms.G.circle; P.prop('column', g[0] - 40, g[1] - 55, 8); P.prop('column', g[0] + 45, g[1] + 50, 8); P.prop('table', g[0] + 30, g[1] - 30, 10, .5);
-      P.prop('crate', 90, 330, 9, .3); P.prop('crate', 110, 435, 8, -.4); P.prop('planter', P.rooms.A.c[0], P.rooms.A.c[1] - 42, 12);
+      P.rect('S', 40, 280, 170, 390, { lab: 'start' });
+      P.rect('A', 170, 240, 390, 430, { cham: [0], k: 34 });
+      P.door('S', 'A', [170, 335], 90);
+      P.chain('A', 3, [{ id: 'Ap', round: 34 }]);   // edges with one cut corner: 0 cut, 1 top, 2 right, 3 bottom, 4 left
+      P.chain('A', 2, [{ id: 'B', len: 200, turn: -20, w: 150, w0: 150 }, { id: 'C', len: 150, turn: 20, w: 150 }, { id: 'G', round: 100, lab: 'objective', tint: GOLD }]);
+      const B = P.rooms.B, sd = P.doorOf('A', 'B'), n = [-sd.e[1], sd.e[0]], dir = PLAN.unit([B.c[0] - sd.m[0], B.c[1] - sd.m[1]]);
+      P.stairs([sd.m[0] + dir[0] * 20, sd.m[1] + dir[1] * 20], [sd.m[0] + dir[0] * 95, sd.m[1] + dir[1] * 95], 120, 8);
+      P.prop('column', 230, 290, 8); P.prop('column', 330, 290, 8); P.prop('column', 230, 385, 8); P.prop('column', 330, 385, 8);
+      P.prop('crate', 70, 310, 9, .3); P.prop('table', P.rooms.G.c[0] + 30, P.rooms.G.c[1] - 40, 10, .5);
+      P.rect('O', 690, 455, 880, 545, { lab: 'outbuilding', tint: '#ece5d4' }); P.half([785, 455], [785, 500]);
       return { P, route: ['S', 'A', 'B', 'C', 'G'] };
     },
     hub() {
-      const P = PLAN.make(), angs = [-112, -68, -20, 22, 68, 112, 160, 200], rad = [122, 118, 128, 114, 118, 122, 126, 116];
-      P.poly('H', angs.map((a, i) => [520 + Math.cos(a * Math.PI / 180) * rad[i], 292 + Math.sin(a * Math.PI / 180) * rad[i]]), { lab: 'hub' });
-      P.chain('H', 0, [{ id: 'G', len: 105, turn: 8, w: 175, lab: 'objective', kind: 'gate', tint: GOLD }]);
-      P.chain('H', 6, [{ id: 'K1a', len: 115, turn: -12, w: 85 }, { id: 'K1', len: 120, turn: 28, w: 175, lab: 'key', tint: KEY }]);
-      P.chain('H', 2, [{ id: 'K2a', len: 105, turn: 18, w: 85 }, { id: 'K2', round: 78, lab: 'key', tint: KEY }]);
-      P.chain('H', 4, [{ id: 'S', len: 100, turn: -10, w: 150, lab: 'start' }]);
-      P.mark('tree', 580, 240, .75);
-      [45, 135, 225, 315].forEach(a => P.prop('column', 520 + Math.cos(a * Math.PI / 180) * 88, 292 + Math.sin(a * Math.PI / 180) * 80, 7));
-      const k1 = P.rooms.K1; P.prop('crate', k1.c[0] - 40, k1.c[1] + 30, 9, .4); P.prop('crate', k1.c[0] - 22, k1.c[1] + 40, 7, -.2);
+      // a cut-corner hall with a fountain; straight volumes north and south, rotated wings east and west
+      const P = PLAN.make();
+      P.rect('H', 400, 200, 640, 390, { cham: [0, 1, 2, 3], k: 32, lab: 'hub' });
+      P.chain('H', 1, [{ id: 'G', len: 105, turn: 0, w: 170, w0: 170, lab: 'objective', kind: 'gate', tint: GOLD }]);
+      P.chain('H', 5, [{ id: 'S', len: 90, turn: 0, w: 130, w0: 130, lab: 'start' }]);
+      P.chain('H', 7, [{ id: 'K1a', len: 110, turn: 25, w: 80, w0: 80 }, { id: 'K1', len: 120, turn: -25, w: 160, w0: 160, lab: 'key', tint: KEY }]);
+      P.chain('H', 3, [{ id: 'K2a', len: 100, turn: 20, w: 80, w0: 80 }, { id: 'K2', round: 75, lab: 'key', tint: KEY }]);
+      P.mark('fountain', 580, 250, .75);
+      const g = P.rooms.G; P.stairs([g.c[0] - 60, g.c[1] + 40], [g.c[0] - 60, g.c[1] - 35], 36, 6);
+      const k1 = P.rooms.K1; P.prop('crate', k1.c[0] - 40, k1.c[1] + 40, 9, .4); P.prop('crate', k1.c[0] - 18, k1.c[1] + 50, 7, -.2);
+      P.rect('O', 720, 455, 900, 545, { lab: 'outbuilding', tint: '#ece5d4' });
       return { P, keys: ['K1', 'K2'], route: ['S', 'H', 'K1a', 'K1', 'K1a', 'H', 'K2a', 'K2', 'K2a', 'H', 'G'] };
     },
     loop() {
+      // a wrapped core: a band of corridor runs round a core of halls, one corner cut; the objective sits in the
+      // core's far end, and a one-way door from the core hall drops you back beside the entry annex
       const P = PLAN.make();
-      P.poly('S', [[120, 400], [262, 378], [298, 528], [112, 548]], { lab: 'start' });
-      P.chain('S', 0, [{ id: 'A', len: 140, turn: 2, w: 115 }, { id: 'B', len: 145, turn: 62, w: 150 }, { id: 'C', len: 250, turn: 28, w: 110 }, { id: 'D', len: 150, turn: 32, w: 160 }, { id: 'E', len: 150, turn: 58, w: 120 }, { id: 'G', len: 130, turn: 55, w: 160, lab: 'objective', tint: GOLD }]);
-      P.link('X', 'G', 2, 'S', 1, { w: 90, kind: 'short' });
-      P.mark('tower', 545, 300, 1.1);
-      const B = P.rooms.B; P.prop('column', B.c[0] - 20, B.c[1] + 18, 7); P.prop('column', B.c[0] + 24, B.c[1] - 14, 7);
-      const D = P.rooms.D; P.stairs([D.c[0] - 10, D.c[1] - 50], [D.c[0] + 30, D.c[1] + 30], 34, 7);
-      return { P, route: ['S', 'A', 'B', 'C', 'D', 'E', 'G', 'X', 'S'] };
+      P.rect('W', 170, 100, 250, 480, { cham: [0], k: 46 });
+      P.rect('Nb', 250, 100, 800, 180); P.rect('E', 800, 100, 880, 480); P.rect('Sb', 250, 400, 800, 480);
+      P.rect('X', 250, 180, 620, 400, { lab: 'core hall' }); P.rect('G', 620, 180, 800, 400, { lab: 'objective', tint: GOLD });
+      P.rect('S', 60, 250, 170, 350, { lab: 'start' });
+      P.door('S', 'W', [170, 300], 90); P.door('W', 'Nb', [250, 140], 90); P.door('Nb', 'E', [800, 140], 90); P.door('E', 'G', [800, 290], 90);
+      P.door('G', 'X', [620, 290], 90); P.door('X', 'W', [250, 290], 90, 'short'); P.door('W', 'Sb', [250, 440], 90); P.door('Sb', 'E', [800, 440], 90);
+      P.chain('E', 1, [{ id: 'T', round: 52, lab: 'tower' }]);
+      P.stairs([390, 140], [480, 140], 64, 7); P.stairs([640, 440], [550, 440], 64, 7);
+      [[320, 230], [420, 230], [520, 230], [320, 350], [420, 350], [520, 350]].forEach(([x, y]) => P.prop('column', x, y, 8));
+      P.rooms.W.via = { n: [210, 150], m: [210, 292] };
+      return { P, route: ['S', 'W:n', 'Nb', 'E', 'G', 'X', 'W:m', 'S'] };
     },
     pearls() {
+      // a porch, a skewed hall with two rows of columns (three ways through), a round hall with a fountain
+      // (two ways round), and the objective room set square against the round hall
       const P = PLAN.make();
-      P.poly('S', [[30, 240], [140, 222], [158, 372], [40, 384]], { lab: 'start' });
-      P.chain('S', 1, [{ id: 'c1', len: 60, turn: 4, w: 58 }, { id: 'P1a', len: 55, turn: -8, w: 300 }, { id: 'P1', len: 130, turn: 4, w: 300, kind: 'open', lab: 'pearl' }, { id: 'P1b', len: 55, turn: 6, w: 60, kind: 'open' }, { id: 'c2', len: 55, turn: 8, w: 58 }, { id: 'P2a', len: 50, turn: -12, w: 270 }, { id: 'P2', len: 110, turn: 2, w: 270, kind: 'open', lab: 'pearl' }, { id: 'P2b', len: 50, turn: 4, w: 60, kind: 'open' }, { id: 'c3', len: 45, turn: 0, w: 58 }, { id: 'G', round: 72, lab: 'objective', tint: GOLD }]);
-      // pearl 1: two half walls split the hall into three ways through
-      const mc = (a, b, k) => { const p = along(P, a, 'P1', k), q = along(P, 'P1', b, k); return [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2]; };
-      const n1 = fwd(P, 'P1', 'P1b');
-      [-50, 50].forEach(k => { const m = mc('P1a', 'P1b', k); P.half([m[0] - n1[0] * 60, m[1] - n1[1] * 60], [m[0] + n1[0] * 60, m[1] + n1[1] * 60]); });
-      P.rooms.P1.via = { a: mc('P1a', 'P1b', -95), b: mc('P1a', 'P1b', 0), c: mc('P1a', 'P1b', 95) }; P.rooms.P1.fork = 3;
-      // pearl 2: a fountain in the middle, around it either side
-      const m2 = (k) => { const p = along(P, 'P2a', 'P2', k), q = along(P, 'P2', 'P2b', k); return [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2]; };
-      const f = m2(0); P.mark('fountain', f[0], f[1], .9);
-      P.rooms.P2.via = { a: m2(-75), b: m2(75) }; P.rooms.P2.fork = 2;
-      [-110, 110].forEach(k => { const m = m2(k); P.prop('planter', m[0], m[1], 11); });
-      return { P, route: ['S', 'c1', 'P1a', 'P1:a', 'P1b', 'c2', 'P2a', 'P2:b', 'P2b', 'c3', 'G'] };
+      P.rect('S', 30, 285, 150, 395, { lab: 'start' });
+      P.chain('S', 1, [{ id: 'c1', len: 70, turn: 0, w: 60, w0: 60 }, { id: 'P1', len: 230, turn: -14, w: 300, w0: 300, lab: 'pearl' }, { id: 'c2', len: 60, turn: 14, w: 60, w0: 60 }, { id: 'P2', round: 115, lab: 'pearl' }]);
+      const [cx, cy, r] = P.rooms.P2.circle;
+      P.rect('G', cx + r, cy - 70, cx + r + 150, cy + 70, { lab: 'objective', tint: GOLD }); P.door('P2', 'G', [cx + r, cy], 90);
+      const a = P.doorOf('c1', 'P1').m, b = P.doorOf('P1', 'c2').m, d = PLAN.unit([b[0] - a[0], b[1] - a[1]]), n = [-d[1], d[0]], mm = PLAN.mid(a, b);
+      [-50, 50].forEach(k => [-70, -25, 20, 65].forEach(t => P.prop('column', mm[0] + n[0] * k + d[0] * t, mm[1] + n[1] * k + d[1] * t, 8)));
+      P.rooms.P1.via = { a: [mm[0] - n[0] * 100, mm[1] - n[1] * 100], b: mm, c: [mm[0] + n[0] * 100, mm[1] + n[1] * 100] }; P.rooms.P1.fork = 3;
+      P.mark('fountain', cx, cy, .9); P.rooms.P2.via = { a: [cx, cy - 75], b: [cx, cy + 75] }; P.rooms.P2.fork = 2;
+      P.stairs([cx + r + 20, cy - 50], [cx + r + 20, cy + 50], 30, 7);
+      return { P, route: ['S', 'c1', 'P1:a', 'c2', 'P2:b', 'G'] };
     },
     lanes() {
       const P = PLAN.make(), R = ([x, y]) => [W - x, H - y];
@@ -92,10 +105,10 @@
   };
 
   const TYPES = {
-    corridor: { name: 'Corridor', text: '<b class="accent">One way forward.</b> Nobody gets lost and you set the order of every beat, but the player never chooses a route. Bending the rooms and changing their width and height (the stairs) keeps a one-way path from feeling like a hallway.' },
-    hub: { name: 'Hub and spoke', text: '<b class="accent">A central room with branches.</b> The player picks the order of the spokes, and the hub, with its tree, becomes familiar from repeat visits, so it doubles as an orientation point. The book points to Gone Home’s mansion. The price is the walk back through the hub after every spoke.' },
-    loop: { name: 'Loopback', text: '<b class="accent">The route bends back on itself.</b> A one-way shortcut at the end opens beside the start, so the trip out is long and the way home is short. The tower in the courtyard is visible from every room, so the player always knows how far round they are. Dark Souls’ Undead Burg, one of the book’s studies, is built around shortcuts like this.' },
-    pearls: { name: 'String of pearls', text: '<b class="accent">Open halls joined by chokepoints.</b> Inside each pearl, half walls and a fountain give the player several ways through; the narrow doors between pearls bring everyone back to the same point. Freedom inside each space, a fixed order between them.' },
+    corridor: { name: 'Corridor', text: '<b class="accent">One way forward.</b> Nobody gets lost and you set the order of every beat, but the player never chooses a route. The rooms are distinct volumes: a porch, a columned hall with a niche, a wing turned off the grid with stairs where it meets the hall, and a round tower. That keeps a one-way path from feeling like a hallway.' },
+    hub: { name: 'Hub and spoke', text: '<b class="accent">A central room with branches.</b> The player picks the order of the spokes, and the hub, with its fountain, becomes familiar from repeat visits, so it doubles as an orientation point. The book points to Gone Home’s mansion. The price is the walk back through the hub after every spoke.' },
+    loop: { name: 'Loopback', text: '<b class="accent">The route bends back on itself.</b> A band of corridor wraps a core of halls. The trip out goes all the way round; at the objective a one-way door through the core hall drops you back beside the entry, so the way home is short. Dark Souls’ Undead Burg, one of the book’s studies, is built around shortcuts like this.' },
+    pearls: { name: 'String of pearls', text: '<b class="accent">Open halls joined by chokepoints.</b> Inside each pearl, rows of columns or a fountain give the player several ways through; the narrow doors between pearls bring everyone back to the same point. Freedom inside each space, a fixed order between them.' },
     lanes: { name: 'Three lane', text: '<b class="accent">A multiplayer layout.</b> Two bases joined by three routes, with short connectors between them. The right half is the left half turned 180 degrees, so neither team has an advantage. There is no critical path: which lane to take, and when to cross over, is the decision.' },
   };
   const ORDER = ['corridor', 'hub', 'loop', 'pearls', 'lanes'];
