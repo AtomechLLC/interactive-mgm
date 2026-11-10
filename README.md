@@ -131,6 +131,16 @@ The appendix to Sequencing with Tokens, with real game art.
   5. A click-to-play wall of 13 YouTube clips grouped as hand-offs, setup → payoff, exploits and full team chains (ids checked against YouTube oEmbed).
   GIFs: `coop-interactions/gifs/sequencing-games-*.gif`.
 
+## Co-op Interactions: Conversion Rates (`coop-interactions/conversion/`)
+
+Part 11, mechanism 2 (deck slides 318 to 324 and 329 to 331): equivalent, growth and erosive trades.
+  1. Title: three transmutation circles turning apples into oranges, apples into more apples, coins into fewer coins.
+  2. Same trade, over and over: the three kinds side by side, each making its trade 8 times. Equivalent swaps 16 apples to 8 oranges and back (an orange is worth 2 apples), so the count zigzags while the value line stays flat; growth turns 4 apples into 102.5 at ×1.5; erosive turns 100 coins into 0.39 at ×0.5. Trade once, Play / Pause, Reset.
+  3. One number decides the kind: a ×0.25 to ×2 dial (value out for every 1 in) over 10 trades, with ×0.5 / ×1 / ×1.5 reference curves, a +10 per trade cap that turns compounding growth into a straight line, and presets (apples for oranges, 5 minutes → 100 coins, group XP bonus, capped card donation, 5% auction house cut, boosting at half value).
+  4. Pass it around the guild: a gift handed around 8 players, each hand-off a trade. Growth with no cap runs away, a daily cap (each player receives once a day) gives the day a ceiling, erosion makes the gift too small to pass on after 6 hand-offs, equivalence stays at 100.
+  5. Where you meet each one: real-game examples and a design note per kind.
+  Rates are illustrative and live at the top of each block in `conversion.js`; `window.__seek(t, which)` / `__dur(which)` replay slides 2 to 4 (`which` = `kinds`, `dial`, `guild`). Icons from wow.zamimg.com in `img/`. GIF: `coop-interactions/gifs/conversion-three-kinds.gif`, recorded by `coop-interactions/tools/record-all.sh`.
+
 ## Layout
 
 - `index.html`: the course home. One section per module in module number order (M1 to M8), each listing that module's interactive pages in deck order with their part and slide range. Add a line here when you add a page to a module. The home page shows summary cards only: the seven MGM modules link to `mgm.html`, Blog Posts links to `blog.html` and Directing Game Mechanics (DGMS + RGF) links to `dgms/index.html`; `mgm.html` and `blog.html` hold the full card lists, and `dgms.html` is now only a redirect to `dgms/index.html` so old links keep working (add new MGM module pages to `mgm.html`). `dnd.html` is the D&D Design section: Brian Feeney's items (`blog-posts/feeney-items/`), The Ogre Turn, D&D Advantage and the Atomech D&D tools; add D&D pages there (those two decks' home buttons go to it). `atomech.html` links Atomech LLC's other GitHub Pages sites; add a card there when the org publishes a new one Add new blog cards to `blog.html` and new DGMS pages to `dgms/index.html`.

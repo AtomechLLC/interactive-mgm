@@ -1,0 +1,9 @@
+// Speaker notes per slide. Source: "MGM C4 M6 - Engaging Co-op Interaction Design Fundamentals", Part 11, Mechanism 2: Conversion Rates
+// (slides 318-324, 329-331). The wording below is this page's summary of those slides; the rates are illustrative.
+window.NOTES = [
+  { script: 'The second mechanism of co-op economics is the conversion rate: when players trade, what comes out compared with what went in. There are three kinds, and each one pushes a pool somewhere different over repeated trades.' },
+  { script: 'Equivalent: one apple for half an orange, when an orange is worth two apples. The count goes down and back up, but the value never changes. Growth: one apple becomes one and a half, so every trade creates value. Erosive: a hundred coins become fifty, so every trade burns value. Press Trade once and point at the value line, not the count.' },
+  { script: 'The kind is decided by one number: value out for every one in. Exactly one is equivalent, above one is growth, below one is erosive. Growth compounds, so it doubles every few trades; that is why growth trades need caps. With the cap on, the curve becomes a straight line. Erosion halves just as fast, which makes it a sink: auction house cuts and taxes use it to pull money out of the economy.' },
+  { script: 'In a co-op game the trade happens between players. Pass a gift around eight guild members: equivalent hand-offs only move value, growth hand-offs print value on every pass, and without a cap two friends can loop it forever. Clash Royale donations are growth trades with a daily limit. Erosive hand-offs make boosting a friend expensive, so it stops on its own after a few passes.' },
+  { script: 'Where you meet each one. Ask of every trade in your game: is it equivalent, growth or erosive, and is that what you want? Growth needs a cap, erosion is a sink, and equivalence means the design question is who holds the value, not how much of it exists.' },
+];

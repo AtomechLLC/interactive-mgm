@@ -9,6 +9,7 @@ rec() { case " $ONLY " in *" $3 "*|"  ") node record-slide-gif.js "$U/$1" "$2" "
 GIF_COLORS=96 rec 'camera/index.html#2' lab camera-shared-screen
 rec 'chains/index.html#2' builder chains-setup-exploit-payoff
 rec 'free-gear/index.html#2' plateau free-gear-plateau
+rec 'conversion/index.html#2' kinds conversion-three-kinds
 rec 'interactions/index.html#2' count interaction-count
 rec 'symmetry/index.html#2' spectrum symmetry-spectrum
 rec 'keywords/index.html#3' board keywords-need-situations

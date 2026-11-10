@@ -264,3 +264,4 @@ Genre breakdowns (Blog Posts):
 | `level-design--cover.svg` | [checked-shield](https://game-icons.net/1x1/lorc/checked-shield.html) | Lorc |
 | `level-design--wayfinding.svg` | [compass](https://game-icons.net/1x1/lorc/compass.html) | Lorc |
 | `level-design--pacing.svg` | [heart-beats](https://game-icons.net/1x1/lorc/heart-beats.html) | Lorc |
+| `coop-interactions--conversion.svg` | [trade](https://game-icons.net/1x1/lorc/trade.html) | Lorc |
