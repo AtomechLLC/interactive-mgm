@@ -90,7 +90,7 @@
       i, key: c.b, plan: PLANS[c.p], col: i === 1 && same ? ALT : colOf(c.b),
       name: label(c.b) + (same ? (i ? ' (right)' : ' (left)') : ''),
       built: R.builtAll[i], pos: placeAll(R.builtAll[i]),
-      order: buildOf(c.b).order.map(o => T[o.id].name),
+      steps: R.steps[i],
     }));
     // armies: walk the lane in each side's own frame, then close on whatever they're hitting
     const last = [{}, {}];
@@ -441,6 +441,30 @@
     }
   }
 
+  // the build order ticking along: supply count each step started at; done steps bright, the next one gold
+  function ticker(steps, g, x, y, w) {
+    const live = steps.filter(st => !st.bad);
+    let cur = live.findIndex(st => st.start == null || st.start > g);
+    if (cur < 0) cur = live.length;
+    g2.font = '600 13px Jost';
+    const items = live.map((st, j) => ({ st, s: (st.start != null && st.start <= g ? st.supply + ' ' : '') + T[st.id].name, j }));
+    // lay out on two lines, scrolled so the next step is on screen
+    let from = 0;
+    const fits = a => { let cx = 0, line = 0; for (const it of items.slice(a)) { const ww = g2.measureText(it.s).width + 16; if (cx + ww > w) { line++; cx = 0; } if (line > 1) return it.j; cx += ww; } return Infinity; };
+    while (from < cur && fits(from) <= cur) from++;
+    let cx = x, cy = y, line = 0;
+    txt(from ? '…' : '', x - 12, y, 13, '#7f8db0', 'left', 600);
+    for (const it of items.slice(from)) {
+      const ww = g2.measureText(it.s).width + 16;
+      if (cx + ww > x + w) { if (++line > 1) break; cx = x; cy += 20; }
+      const done = it.j < cur, next = it.j === cur;
+      rr(cx, cy - 9, ww - 5, 18, 9); g2.fillStyle = next ? 'rgba(255,185,81,.22)' : done ? 'rgba(255,255,255,.08)' : 'rgba(255,255,255,.02)'; g2.fill();
+      txt(it.s, cx + 5.5, cy + 1, 13, next ? '#ffb951' : done ? '#e8eefc' : '#6b7898', 'left', 600);
+      cx += ww;
+    }
+    if (cur >= live.length && live.length) txt('build done: now macro', x + w, y - 22, 12, '#5fe0a0', 'right', 600);
+  }
+
   /* ---------- the slide: map, captions, two cards, a chart ---------- */
   const PANEL = '#152044';
   function render(M, g) {
@@ -484,7 +508,7 @@
       });
       const L = S.lost;
       txt(L.units + L.workers + L.structs ? `lost: ${L.units} units · ${L.workers} workers · ${L.structs} buildings` : 'lost: nothing yet', x + 18, y0 + 170, 16, L.units + L.workers + L.structs ? '#ff9a9a' : '#7f8db0', 'left', 600);
-      wrapC('build: ' + P.order.join(', '), x + 18, y0 + 198, w - 36, 13, '#7f8db0', 1.25, 500, 'left', 2);
+      ticker(P.steps, g, x + 18, y0 + 194, w - 36);
     });
     // army power and workers over time
     const cx = 552, cw = 496;

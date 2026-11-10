@@ -20,6 +20,11 @@
     timing:   { name: 'One big push', tag: 'Waits for 40 power, then attacks in waves of 12.', at: 40, wave: 12 },
     late:     { name: 'Max out first', tag: 'Waits for 130 power or 8:00, then rolls in.', at: 130, deadline: 480, wave: 20 },
   };
+  // or leave at a fixed time with whatever is home, then reinforce in waves of 8
+  for (const s of [180, 240, 300, 360, 420]) {
+    const m = `${s / 60 | 0}:${String(s % 60).padStart(2, '0')}`;
+    PLANS['at' + s] = { name: `Attack at ${m}`, tag: `Leaves at ${m} with everything at home, then sends reinforcements in waves of 8.`, at: 0.9, after: s, wave: 8 };
+  }
   const PRESET_PLAN = { rush: 'rush', turtle: 'home', expand: 'late', standard: 'timing' };
 
   const powerOf = (S, counts) => S.powerOf(counts);
@@ -178,7 +183,7 @@
     // every structure ever built, with when it died, for drawing rubble
     const builtAll = side.map(P => P.S.snaps.length ? P.S.snaps[P.S.snaps.length - 1].structs : []);
     return {
-      snaps, events, over, end, builtAll, plans: side.map(P => P.plan),
+      snaps, events, over, end, builtAll, plans: side.map(P => P.plan), steps: side.map(P => P.S.result().steps),
       at(tt) { return snaps[Math.max(0, Math.min(snaps.length - 1, Math.round(tt * 2)))]; },
     };
   }
