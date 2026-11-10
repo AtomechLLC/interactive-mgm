@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pick Your Bonus · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="../shared/blog.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · Blog Posts · Pick Your Bonus', home: '../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<section class="slide" data-title="Pick Your Bonus" data-demo="bonus">
+  <div class="kicker">Replanned · D&amp;D Advantage</div>
+  <h2 class="sm">Advantage, or <span class="hl">a flat +3</span>?</h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>How it works</h4>
+      <p class="src" style="font-size:15px;color:inherit">Twelve checks. Each shows the number you need on a d20. Before the roll, pick <b>Advantage</b> (roll twice, keep the higher) or a flat <b>+3</b>. One pick per check, no take-backs.</p>
+      <div class="row wrap"><button class="btn play">Play</button><button class="btn tour on">▶ Walk-through</button></div>
+      <div class="mt-stats"></div>
+      <p class="mt-out"></p>
+      <p class="src">Odds are exact: Advantage succeeds with 1 − ((need − 1) / 20)², +3 with (24 − need) / 20, capped at 0 and 100%. No automatic hit on a natural 20, as for a 5e ability check. The dice are real rolls. After D&amp;D 5e and Baldur's Gate 3.</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="../shared/topdown.js"></script>
+<script src="../shared/genre.js"></script>
+<script src="../shared/play.js"></script>
+<script src="bonus.js"></script>
+</body>
+</html>
