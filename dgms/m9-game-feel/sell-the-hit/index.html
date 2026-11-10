@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sell the Hit · Directing Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/deck.css">
+<link rel="stylesheet" href="../../../assets/kit.css">
+<link rel="stylesheet" href="../../shared/dgms.css">
+<script>
+  window.DECK = { title: 'Directing Game Mechanics · Module 9 · Sell the Hit', home: '../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+<style>
+  .sh-legend { display: grid; gap: 6px; margin: 4px 0 10px; }
+  .sh-legend button { display: flex; align-items: center; gap: 10px; text-align: left; font: 600 15px Jost, sans-serif; color: var(--ink); background: #fffaf0; border: 2px solid #e3d8bf; border-radius: 8px; padding: 5px 10px; cursor: pointer; }
+  .sh-legend button i { width: 14px; height: 14px; border-radius: 4px; flex: none; }
+  .sh-legend button small { margin-left: auto; color: var(--muted); font-weight: 500; }
+  .sh-legend button.on { border-color: var(--navy); background: #fff; }
+  .sh-pick { background: #fffaf0; border-left: 5px solid var(--navy); border-radius: 8px; padding: 10px 12px; margin-top: 4px; }
+  .sh-pick b { font-family: Montserrat, sans-serif; font-weight: 800; font-size: 18px; display: block; margin-bottom: 4px; }
+  .sh-pick p { margin: 0; font-size: 16px; line-height: 1.38; color: var(--ink); }
+  .sh-pick p + p { margin-top: 6px; color: var(--muted); font-size: 15px; }
+  .sh-chips { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 6px; margin: 4px 0 8px; }
+  .sh-chips label { display: flex; gap: 7px; align-items: center; font: 500 14.5px Jost, sans-serif; color: var(--ink); background: #fffaf0; border: 2px solid #e3d8bf; border-left-width: 6px; border-radius: 7px; padding: 2px 6px; cursor: pointer; }
+  .sh-chips label input { width: 15px; height: 15px; margin: 0; }
+  .sh-count { font: 800 17px Montserrat, sans-serif; color: var(--ink); margin: 6px 0 0; }
+</style>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<section class="slide" data-title="Eighteen ways, plain" data-demo="basic">
+  <div class="kicker">feedback techniques · a square, a circle, one trick per tile</div>
+  <h2 class="sm">One hit, <span class="accent">eighteen tricks</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585" aria-label="Eighteen copies of the same strike: a blue square hits a red circle. Each tile adds exactly one game feel technique."></canvas>
+    <div class="mt-side">
+      <div class="row wrap"><button class="btn sh-tour on">▶ Play</button><button class="btn sh-ghost">Ghost the plain hit</button></div>
+      <div class="sh-pick"></div>
+      <p class="src">Click any tile for what it changes. Every tile plays the same strike on the same clock; only one technique differs. The next slide sorts the eighteen into six layers.</p>
+    </div>
+  </div>
+</section>
+
+<!-- source: an animated reference grid of game feel techniques (one strike per cell), rebuilt in the course's own art and grouped by layer -->
+<section class="slide" data-title="Eighteen ways to sell a hit" data-demo="grid">
+  <div class="kicker">feedback techniques · one strike, one trick per tile</div>
+  <h2 class="sm">Eighteen ways to <span class="accent">sell a hit</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585" aria-label="Eighteen copies of the same strike: a blue knight lunges at a red dummy. Each tile adds exactly one game feel technique."></canvas>
+    <div class="mt-side">
+      <div class="row wrap"><button class="btn sh-tour on">▶ Walk-through</button><button class="btn sh-ghost">Ghost the plain hit</button></div>
+      <h4>Six layers <small>click to highlight</small></h4>
+      <div class="sh-legend"></div>
+      <div class="sh-pick"></div>
+      <p class="src">Click any tile for what it changes. Every tile plays the same strike on the same clock; only one technique differs.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Stack them up" data-demo="stack">
+  <div class="kicker">feedback techniques · they combine</div>
+  <h2 class="sm">Now <span class="accent">stack them</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585" aria-label="One large strike. The techniques ticked on the right are all applied at once."></canvas>
+    <div class="mt-side">
+      <div class="row wrap"><button class="btn st-tour on">▶ Walk-through</button><button class="btn st-none">Plain</button><button class="btn st-all">All 18</button></div>
+      <div class="sh-chips"></div>
+      <p class="sh-count st-count"></p>
+      <p class="mt-out st-out"></p>
+      <p class="src">Sound is synthesised in the browser and plays after your first click, when “Sound design” is ticked. With a controller connected, “Haptics” rumbles it.</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../../assets/deck.js"></script>
+<script src="../../../assets/kit.js"></script>
+<script src="../../shared/topdown.js"></script>
+<script src="sell-the-hit.js"></script>
+</body>
+</html>
