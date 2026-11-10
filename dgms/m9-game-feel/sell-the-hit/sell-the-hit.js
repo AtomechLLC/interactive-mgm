@@ -1,7 +1,8 @@
 /* Sell the hit (DGMS Module 9, feedback techniques, deck slides 179-202).
-   Slide 1: eighteen copies of one strike, a knight lunging at a training dummy, each adding exactly one game feel
+   Slide 1: the plain version, a square striking a circle in eighteen tiles, one technique each, in the course palette.
+   Slide 2: eighteen copies of one strike, a knight lunging at a training dummy, each adding exactly one game feel
    technique, grouped into six layers (timing, body, effects, camera, beyond the screen, world).
-   Slide 2: the same strike, large, with any mix of the eighteen stacked together.
+   Slide 3: the same strike, large, with any mix of the eighteen stacked together.
    Every frame is a pure function of (techniques on, time in the loop), so window.__seek replays exactly for the
    GIF recorder. Sound and rumble fire only during live play, never from __seek. */
 (function () {
@@ -45,16 +46,20 @@
      Local frame: 200 x 180, floor at GY; K scales both characters. The knight starts at AX and its sword tip reaches the dummy's face at AHIT. */
   const K = 1.3, LW = 200, LH = 180, GY = 128, AX = 40, DX = 160, AHIT = DX - 16 * K - 10 * K - 23 * K * Math.cos(.3);
   const P = 2.4, A0 = .42, A1 = .82, HIT = 1.04, R0 = 1.62, R1 = 2.08, STOP = .15;
+  // BASIC draws the plain version: a square and a circle, nothing else on screen unless a technique needs it
+  let BASIC = false;
+  const hitX = () => BASIC ? DX - 31 * K : AHIT;
   const sim = (t, on) => on.stop && t > HIT ? (t < HIT + STOP ? HIT : t - STOP) : t;
   function knightX(s, on) {
     const back = on.antic ? 14 : 0;
     if (s < A0) return AX;
     if (s < A1) return AX - back * ease(clamp((s - A0) / (A1 - A0)));
-    if (s < HIT) { const k = (s - A1) / (HIT - A1); return lerp(AX - back, AHIT, on.ramp ? k * k * k : k); }
+    const AH = hitX();
+    if (s < HIT) { const k = (s - A1) / (HIT - A1); return lerp(AX - back, AH, on.ramp ? k * k * k : k); }
     const d = s - HIT;
     const fx = on.follow ? 11 * Math.exp(-d * 6) * Math.sin(Math.min(d * 13, Math.PI * 1.5)) : 0;
-    if (s < R0) return AHIT + fx;
-    return lerp(AHIT, AX, ease(clamp((s - R0) / (R1 - R0)))) + fx;
+    if (s < R0) return AH + fx;
+    return lerp(AH, AX, ease(clamp((s - R0) / (R1 - R0)))) + fx;
   }
   // sword angle: 0 points right, negative is up
   function swordA(s, on) {
@@ -74,6 +79,16 @@
   function backdrop(g, on, dr) {
     // two distant pillars: the focus kick blurs them, every other tile leaves them sharp
     const bl = on.focus && dr > 0 ? 3.2 * Math.sin(clamp(dr / .1) * Math.PI / 2) * (1 - clamp((dr - .25) / .45)) : 0;
+    if (BASIC) {   // only the focus kick's background rings and the world's floor line
+      if (on.focus) {
+        g.save(); if (bl > .05) g.filter = `blur(${bl.toFixed(2)}px)`;
+        g.strokeStyle = '#a9aed0'; g.lineWidth = 1.5;
+        [[18, 70, 5], [90, 58, 4], [44, 118, 4], [176, 74, 5], [132, 120, 4]].forEach(([x, y, r]) => { g.beginPath(); g.arc(x, y, r, 0, TAU); g.stroke(); });
+        g.restore();
+      }
+      if (on.world) { g.strokeStyle = C.navy; g.lineWidth = 2; g.beginPath(); g.moveTo(8, GY + 1); g.lineTo(LW - 8, GY + 1); g.stroke(); }
+      return;
+    }
     g.save();
     if (bl > .05) { g.filter = `blur(${bl.toFixed(2)}px)`; g.globalAlpha = 1 - bl * .08; }
     [[14, 76], [184, 62]].forEach(([x, h]) => {
@@ -87,6 +102,11 @@
     g.strokeStyle = '#cdbf9f'; g.lineWidth = 1.5; g.beginPath(); g.moveTo(-20, GY); g.lineTo(LW + 20, GY); g.stroke();
   }
   function knight(g, x, a, sx = 1, sy = 1, lean = 0, alpha = 1) {
+    if (BASIC) {
+      g.save(); g.globalAlpha *= alpha; g.translate(x, GY); g.rotate(lean); g.scale(sx * K, sy * K);
+      g.fillStyle = '#5562eb'; g.strokeStyle = C.navy; g.lineWidth = 1.8; g.beginPath(); g.rect(-13, -26, 26, 26); g.fill(); g.stroke();
+      g.restore(); return;
+    }
     g.save(); g.globalAlpha *= alpha; g.translate(x, GY); g.rotate(lean); g.scale(sx * K, sy * K);
     g.fillStyle = 'rgba(40,30,20,.2)'; g.beginPath(); g.ellipse(0, 1, 14, 3.5, 0, 0, TAU); g.fill();
     g.fillStyle = '#5562eb'; g.strokeStyle = C.navy; g.lineWidth = 2;
@@ -100,9 +120,20 @@
     g.beginPath(); g.moveTo(3, -2.6); g.lineTo(23, 0); g.lineTo(3, 2.6); g.closePath(); g.fill(); g.stroke();
     g.restore();
   }
-  const tipOf = (x, a) => [x + K * (10 + Math.cos(a) * 23), GY - K * (13 - Math.sin(a) * 23)];
+  const tipOf = (x, a) => BASIC ? [x - 6 * K, GY - 13 * K] : [x + K * (10 + Math.cos(a) * 23), GY - K * (13 - Math.sin(a) * 23)];
   function dummy(g, x, o) {
     g.save(); g.translate(x, GY); g.rotate(o.tilt || 0); g.scale(K * (o.sx || 1), K / (o.sx || 1));
+    if (BASIC) {
+      if (o.plume != null) {   // secondary motion: a stalk with a weight on the end
+        g.save(); g.translate(4, -34); g.rotate(.5 + o.plume);
+        g.strokeStyle = C.navy; g.lineWidth = 1.6; g.beginPath(); g.moveTo(0, 0); g.lineTo(0, -10); g.stroke();
+        g.fillStyle = C.navy; g.beginPath(); g.moveTo(0, -10); g.lineTo(3, -13); g.lineTo(0, -16); g.lineTo(-3, -13); g.closePath(); g.fill();
+        g.restore();
+      }
+      g.fillStyle = o.flash ? C.red : '#fffcf4'; g.strokeStyle = C.red; g.lineWidth = 2.4;
+      g.beginPath(); g.arc(0, -18, 17, 0, TAU); g.fill(); g.stroke();
+      g.restore(); return;
+    }
     g.fillStyle = 'rgba(40,30,20,.22)'; g.beginPath(); g.ellipse(0, 1, 17, 4, 0, 0, TAU); g.fill();
     if (o.plume != null) {   // secondary motion: a plume on a short stem
       g.save(); g.translate(0, -40); g.rotate(o.plume);
@@ -130,8 +161,8 @@
     g.restore();
   }
   function frameCorners(g, col) {
-    g.strokeStyle = col; g.lineWidth = 2; const m = 5, L = 11;
-    [[m, m, 1, 1], [LW - m, m, -1, 1], [m, LH - m, 1, -1], [LW - m, LH - m, -1, -1]].forEach(([x, y, sx, sy]) => {
+    g.strokeStyle = col; g.lineWidth = 2; const m = 5, L = 11, top = BASIC ? 24 + m : m;   // the plain grid crops the top 24
+    [[m, top, 1, 1], [LW - m, top, -1, 1], [m, LH - m, 1, -1], [LW - m, LH - m, -1, -1]].forEach(([x, y, sx, sy]) => {
       g.beginPath(); g.moveTo(x, y + L * sy); g.lineTo(x, y); g.lineTo(x + L * sx, y); g.stroke();
     });
   }
@@ -221,8 +252,10 @@
       g.save(); g.fillStyle = 'rgba(85,98,235,.55)';
       g.beginPath(); g.roundRect(xa - 12 * K, GY - 25 * K, kx - xa + 24 * K, 24 * K, 9 * K); g.fill();
       const [px, py] = [kx + 10 * K, GY - 13 * K];
+      if (!BASIC) {
       g.fillStyle = 'rgba(238,241,251,.85)'; g.strokeStyle = 'rgba(21,32,68,.4)'; g.lineWidth = 1;
       g.beginPath(); g.moveTo(px, py); g.arc(px, py, 23 * K, Math.min(aa, ka), Math.max(aa, ka)); g.closePath(); g.fill(); g.stroke();
+      }
       g.restore();
     }
     // weapon trail: a ribbon behind the sword tip
@@ -236,7 +269,7 @@
     }
     knight(g, kx, ka, sx, sy, lean);
     // impact sparks at the blade's point of contact
-    if (on.vfx && d >= 0) sparks(g, DX - 16 * K, GY - K * (13 - Math.sin(.3) * 23) - 2, frozen ? 0 : clamp(d / .26));
+    if (on.vfx && d >= 0) sparks(g, BASIC ? DX - 18 * K : DX - 16 * K, BASIC ? GY - 18 * K : GY - K * (13 - Math.sin(.3) * 23) - 2, frozen ? 0 : clamp(d / .26));
     // world response: dust and pebbles
     if (on.world && d >= 0 && d < .7) {
       const k = d / .7;
@@ -284,13 +317,17 @@
 
   const scenes = {};
 
-  /* ---------- slide 1: the grid ---------- */
+  /* ---------- slides 1 and 2: the grid, plain and layered ---------- */
   const COLS = 6, ROWS = 3, GAP = 10, TW = (W - GAP * (COLS - 1)) / COLS, TH = (H - GAP * (ROWS - 1)) / ROWS;
   const HEAD = 28, SC = Math.min(TW / LW, (TH - HEAD - 6) / LH);
-  canvasDemo('grid', (s, cv, g) => {
+  // the same grid twice: `basic` is the plain square-and-circle version, the other the knight with its six layers
+  // the plain slide names the shapes instead of the knight and dummy
+  const plain = str => str.replace(/the knight and blade are/gi, 'the square is').replace(/the sword tip/gi, 'the square').replace(/the plume on the dummy|A plume on the dummy/g, 'A stalk on the circle')
+    .replace(/the knight/g, 'the square').replace(/The knight/g, 'The square').replace(/the dummy/g, 'the circle').replace(/The dummy/g, 'The circle').replace(/, winces,/, '');
+  const makeGrid = (name, basic) => canvasDemo(name, (s, cv, g) => {
     const st = { tour: true, t: 0, frozen: false, now: 0, ghost: false, pick: 2, group: null, key: '' };
     const tourBtn = $(s, '.sh-tour'), ghostBtn = $(s, '.sh-ghost');
-    $(s, '.sh-legend').innerHTML = GROUP_IDS.map(k => `<button data-g="${k}"><i style="background:${GROUPS[k].col}"></i>${GROUPS[k].name}<small>${TECH.filter(t => t.group === k).length}</small></button>`).join('');
+    if (!basic) $(s, '.sh-legend').innerHTML = GROUP_IDS.map(k => `<button data-g="${k}"><i style="background:${GROUPS[k].col}"></i>${GROUPS[k].name}<small>${TECH.filter(t => t.group === k).length}</small></button>`).join('');
     const free = () => { if (!st.tour) return; st.tour = false; tourBtn.classList.remove('on'); st.now = st.t; };
     $$(s, '.sh-legend button').forEach(b => b.onclick = () => { free(); st.group = st.group === b.dataset.g ? null : b.dataset.g; });
     ghostBtn.onclick = () => { st.ghost = !st.ghost; ghostBtn.classList.toggle('on', st.ghost); };
@@ -302,11 +339,11 @@
     });
     cv.style.cursor = 'pointer';
     // the walk-through: one swing per layer, then one swing with nothing highlighted
-    const DUR = P * (GROUP_IDS.length + 1);
+    const DUR = basic ? P : P * (GROUP_IDS.length + 1);   // the plain grid just loops one swing
     function render() {
       const t = st.tour ? st.t : st.now;
       let group = st.group, pick = st.pick;
-      if (st.tour) { const n = Math.floor(t / P); group = GROUP_IDS[n] || null; pick = group ? TECH.findIndex(x => x.group === group) : 2; }
+      if (st.tour && !basic) { const n = Math.floor(t / P); group = GROUP_IDS[n] || null; pick = group ? TECH.findIndex(x => x.group === group) : 2; }
       const lt = t % P;
       g.clearRect(0, 0, W, H);
       TECH.forEach((tc, i) => {
@@ -314,10 +351,11 @@
         const dim = group && tc.group !== group;
         g.save(); g.globalAlpha = dim ? .5 : 1;
         g.fillStyle = 'rgba(255,252,244,.9)'; g.beginPath(); g.roundRect(x, y, TW, TH, 12); g.fill();
-        g.fillStyle = gr.col; g.beginPath(); g.roundRect(x, y, 6, TH, [12, 0, 0, 12]); g.fill();
-        g.font = '800 15px Montserrat'; g.fillStyle = C.ink; g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillText(tc.name, x + 16, y + 19);
+        if (!basic) { g.fillStyle = gr.col; g.beginPath(); g.roundRect(x, y, 6, TH, [12, 0, 0, 12]); g.fill(); }
+        g.font = '800 15px Montserrat'; g.fillStyle = C.ink; g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillText(tc.name, x + (basic ? 12 : 16), y + 19);
         g.save(); g.translate(x + (TW - LW * SC) / 2 + 3, y + HEAD + 4); g.scale(SC, SC);
-        strike(g, lt, { [tc.id]: 1 }, st.ghost);
+        if (basic) { g.beginPath(); g.rect(0, 0, LW, LH - 24); g.clip(); g.translate(0, -24); }   // no floor, so lift the pair to the middle
+        BASIC = basic; strike(g, lt, { [tc.id]: 1 }, st.ghost); BASIC = false;
         g.restore();
         const sel = !st.tour && !group && i === pick;
         if (sel || (group && !dim)) { g.strokeStyle = sel ? C.navy : gr.col; g.lineWidth = 3; g.beginPath(); g.roundRect(x + 1.5, y + 1.5, TW - 3, TH - 3, 11); g.stroke(); }
@@ -334,16 +372,18 @@
           say(box, `<b style="color:${gr.ink}">${gr.name}</b><p>This layer ${gr.say}: ${list.join(', ')}.</p><p>Click a tile in it to see what one technique does.</p>`);
         } else {
           const tc = TECH[pick], gr = GROUPS[tc.group];
-          box.style.borderLeftColor = gr.col;
-          say(box, `<b>${tc.name}</b><p>${tc.what}</p><p>${tc.tip}</p>`);
+          box.style.borderLeftColor = basic ? C.navy : gr.col;
+          say(box, `<b>${tc.name}</b><p>${basic ? plain(tc.what) : tc.what}</p><p>${basic ? plain(tc.tip) : tc.tip}</p>`);
         }
       }
     }
-    scenes.grid = { seek(t) { st.frozen = st.tour = true; st.t = t; render(); }, dur: () => DUR };
+    scenes[name] = { seek(t) { st.frozen = st.tour = true; st.t = t; render(); }, dur: () => DUR };
     return dt => { if (st.tour) { if (!st.frozen) st.t += dt; if (st.t > DUR) st.t = 0; } else st.now += dt; render(); };
   });
+  makeGrid('basic', true);
+  makeGrid('grid', false);
 
-  /* ---------- slide 2: stack them ---------- */
+  /* ---------- slide 3: stack them ---------- */
   canvasDemo('stack', (s, cv, g) => {
     const st = { tour: true, t: 0, frozen: false, now: 0, on: {}, key: '', lastS: 0 };
     const tourBtn = $(s, '.st-tour'), box = $(s, '.sh-chips');
