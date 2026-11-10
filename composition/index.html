@@ -162,5 +162,6 @@
   document.getElementById('gifs').innerHTML = GIFS.map(([f, gif, gt, cap, sl]) =>
     `<figure><a href="gifs/${gif}.gif"><img src="gifs/${gif}.gif" alt="${gt}" loading="lazy"></a><figcaption><b>${gt}</b>${cap} Deck slides ${sl}. <a href="${f}/index.html">Interactive page</a>.</figcaption></figure>`).join('');
 </script>
+<script src="../assets/gif-sections.js" defer></script>
 </body>
 </html>

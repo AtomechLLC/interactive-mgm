@@ -257,3 +257,4 @@ Genre breakdowns (Blog Posts):
 | `blog-posts--rts-attention.svg` | [eye-target](https://game-icons.net/1x1/delapouite/eye-target.html) | Delapouite |
 | `blog-posts--casual-curve.svg` | [histogram](https://game-icons.net/1x1/delapouite/histogram.html) | Delapouite |
 | `blog-posts--genre-matrix.svg` | [abacus](https://game-icons.net/1x1/delapouite/abacus.html) | Delapouite |
+| `dgms--m9-game-feel--sell-the-hit.svg` | [sword-slice](https://game-icons.net/1x1/lorc/sword-slice.html) | Lorc |
