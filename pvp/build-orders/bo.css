@@ -256,3 +256,32 @@ svg.bo-win-svg { display: block; width: 100%; height: auto; font-family: var(--f
 
 /* phones: the stage scales down, so fine text needs a nudge */
 body.touch .bo-step { cursor: pointer; }
+
+/* ---------- 6: played out on the map ---------- */
+.bo-to-map { align-self: flex-start; font-size: 16px; }
+.bo-war { display: flex; flex-direction: column; gap: 8px; height: 100%; min-height: 0; }
+.bo-war-top { display: flex; gap: 28px; align-items: center; }
+.bo-war-top .bo-pick { grid-template-columns: auto 1fr; }
+.bo-pk-row { display: flex; gap: 6px; }
+.bo-pk.row { flex: none; flex-direction: row; gap: 7px; padding: 3px 12px 3px 4px; border-radius: 99px; }
+.bo-pk.row img, .bo-pk.row .bo-pic-std { width: 30px; height: 30px; border-width: 2px; }
+.bo-pk.row span { font-size: 15px; }
+canvas.bo-map-cv { display: block; width: 100%; height: auto; border-radius: 12px; }
+.bo-war-bot { display: grid; grid-template-columns: 1fr 480px 1fr; gap: 14px; flex: 1; min-height: 0; }
+.bo-war-build { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 7px 12px; min-height: 0; overflow: hidden; display: flex; flex-direction: column; gap: 5px; }
+.bo-wb-h { display: flex; gap: 10px; align-items: baseline; white-space: nowrap; overflow: hidden; }
+.bo-wb-h b { font-family: var(--display); font-size: 20px; }
+.bo-wb-h span { font-size: 14px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; }
+.bo-wb-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.bo-wchip { display: inline-flex; align-items: center; gap: 2px; padding: 2px 5px 2px 4px; border-radius: 7px; background: var(--c); opacity: .3; transition: opacity .2s, box-shadow .2s; }
+.bo-wchip b { font-family: Orbitron, var(--display); font-size: 13px; color: #152044; min-width: 14px; text-align: right; }
+.bo-wchip.done { opacity: 1; }
+.bo-wchip.cur { box-shadow: 0 0 0 2px var(--navy); }
+.bo-wchip.bad { background: #ccc; opacity: .5; }
+.bo-wb-now { font-size: 17px; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bo-wb-now b { font-variant-numeric: tabular-nums; color: var(--gold-ink); }
+.bo-war-mid { display: flex; flex-direction: column; gap: 8px; justify-content: center; }
+.bo-map-when { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; }
+.bo-map-when .bo-pick-lbl { margin-right: 4px; }
+.bo-wt { font-size: 14px; padding: 5px 11px; border-radius: 99px; border: 1px solid var(--line); background: rgba(255,252,244,.8); cursor: pointer; color: var(--ink); font-variant-numeric: tabular-nums; }
+.bo-wt.on { background: var(--navy); color: #fff; border-color: var(--navy); }

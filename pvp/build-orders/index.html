@@ -108,12 +108,33 @@
       <div class="bo-chart-wrap navy-scope tall"><svg class="bo-chart"></svg></div>
       <div class="bo-verdict"></div>
       <div class="bo-transport"></div>
+      <button class="btn bo-to-map" data-go="bo-map">▶ Watch this attack on the map</button>
     </div>
   </div>
   <aside class="notes">Run Rush, Turtle and Expand side by side and ask, at every second: if this player attacked that one now, who wins? Defenders fight at home with Bunkers and a 20% home advantage. Fights use Lanchester’s square law: strength is power squared, so a bigger army wins by more than its margin and keeps most of itself. Scrub the clock and watch the matrix: early, Rush beats Expand and Turtle holds Rush. Late, Expand outgrows Turtle. The counter cycle isn’t a rule someone wrote; it falls out of the build orders and the clock.</aside>
 </section>
 
 <!-- 6 -->
+<section class="slide bo" id="bo-map" data-title="Played Out on the Map" data-demo="bo-map">
+  <div class="kicker">the build orders, played out</div>
+  <h2>Played Out on the <span class="accent">Map</span></h2>
+  <div class="bo-hud bo-hud-battle navy-scope"></div>
+  <div class="bo-war">
+    <div class="bo-war-top">
+      <div class="bo-pick"><span class="bo-pick-lbl">attacker</span><div class="bo-map-a bo-pk-row"></div></div>
+      <div class="bo-pick"><span class="bo-pick-lbl">defender</span><div class="bo-map-d bo-pk-row"></div></div>
+    </div>
+    <canvas class="bo-map-cv" width="3040" height="880" aria-label="Two build orders played out on one map: workers mine, buildings go up, and the attacker moves out at the chosen time"></canvas>
+    <div class="bo-war-bot">
+      <div class="bo-war-build bo-map-ba"></div>
+      <div class="bo-war-mid"><div class="bo-map-when"></div><div class="bo-transport"></div></div>
+      <div class="bo-war-build bo-map-bd"></div>
+    </div>
+  </div>
+  <aside class="notes">The same simulation, drawn as a game. Every worker, building and unit appears on the map the moment the build order makes it: workers mine crystals and gas, buildings go up where they’re placed, soldiers gather at the top of the ramp (or at the second base once it’s finished). The chips under the map are each build order, ticking off as it runs; the number is the supply count the step actually started at. At the chosen time the attacker’s whole army moves out. The fight is the One Clock slide’s, with one change: the defender gets the time the attack takes to walk across the map, so its army is counted when the attack lands, not when it leaves. Best picks the first moment that attack wins; if it never does, it shows the closest try. A winning attack then raids the nearest base’s workers. Yours plays the build from the Simulator slide.</aside>
+</section>
+
+<!-- 7 -->
 <section class="slide bo" data-title="Drill: Hit the Timing" data-demo="bo-drill">
   <div class="kicker">drill</div>
   <h2>Hit the <span class="accent">Timing</span></h2>
@@ -138,7 +159,7 @@
   <aside class="notes">Five targets, each with three stars. Every one has a trick: the fastest expansion skips something everyone builds first, the soldier timing wants fewer workers than feels right, the tank wants Supply Posts placed before you need them, and holding the rush is a question of how few defences you can get away with. Stars are saved in this browser.</aside>
 </section>
 
-<!-- 7 -->
+<!-- 8 -->
 <section class="slide" data-title="What a Build Order Is" data-demo="bo-sum">
   <div class="kicker">summary</div>
   <h2>What a Build Order Is</h2>
@@ -148,7 +169,7 @@
     <div class="bo-sum-card"><b>A counter cycle, in time</b><p>Rush beats Expand <i>before</i> it pays off; Expand beats Turtle <i>after</i>. The wheel is the clock, folded.</p></div>
   </div>
   <div class="bo-sum-links">
-    <button class="btn" data-go="2">Back to the simulator</button>
+    <button class="btn" data-go="2">Back to the simulator</button> <button class="btn" data-go="bo-map">Back to the map</button>
     <a class="btn" href="../counter-cycles/index.html#2">Counter Cycles: the RTS wheel →</a>
   </div>
   <aside class="notes">For a designer the takeaway is the tuning surface: build times, costs, supply and travel all decide when each opening peaks. Move one number (say, the Bunker’s cost) and the window where Rush beats Turtle opens or closes. A healthy counter cycle needs those windows to exist and to overlap.</aside>
@@ -159,5 +180,6 @@
 <script src="../../assets/kit.js"></script>
 <script src="engine.js"></script>
 <script src="bo.js"></script>
+<script src="war.js"></script>
 </body>
 </html>

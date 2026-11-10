@@ -723,6 +723,8 @@
         const cur = svgEl('line', { x1: X(0), x2: X(0), y1: top - 2, y2: Hp, class: 'bo-cursor dk' }, svg);
         return { cursor(t) { cur.setAttribute('x1', X(t)); cur.setAttribute('x2', X(t)); }, hi(a, d) { for (const k in rows) rows[k].classList.toggle('on', k === a + '>' + d); } };
       })();
+      // jump to the map slide with this pairing
+      $(s, '.bo-to-map').addEventListener('click', () => { window.BO_MAP_PAIR = { atk, def }; });
       redo();
       s._tr = tr;
     },
@@ -792,4 +794,6 @@
     leave(s) { s._stop?.(); s._L.tr.stop(); },
   });
   demo('bo-sum');
+  // shared with war.js (the map slide)
+  window.BOUI = { transport, icon, fight, HOME, esc };
 })();
