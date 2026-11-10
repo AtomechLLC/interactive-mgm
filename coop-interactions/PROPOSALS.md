@@ -143,11 +143,11 @@ Quick wins worth doing early even though they are not top 5:
 - Hard as text: three formulas and long notes. The consequences show up over time and across many players.
 - Proposal: a small guild of 8 players trading a daily resource. Choose a conversion rate and a daily cap, then run 30 days. Charts show total supply, the gap between the boosted player and everyone else, and days to the "shiny thing". Presets: Clash Royale donation (growth plus cap), unlimited gifting (equivalent, no cap) and boosting with erosion (slide 324). An "abundance" preset (Minecraft farm, WoW cauldron) shows the shared pool collapsing when one maintainer stops.
 
-**Forced scarcity: Mooncloth** (slides 325-328), effort **S**
+**Forced scarcity: Mooncloth** (slides 325-328), effort **S**. Built as slide 2 of `economy/`.
 - Teaches: time-gated resources create value at first, then the price collapses once most players have what they need.
 - Proposal: a price-over-weeks chart with demand (players still wanting items) and supply (daily crafts). Students drag the cooldown and recipe cost and watch when the price falls to its component cost.
 
-**Auction house economy** (slides 332-337), effort **L**, medium priority
+**Auction house economy** (slides 332-337), effort **L**, medium priority. A small taps-and-sinks version is slide 4 of `economy/` (the abundance share farm is slide 3); the agent sim is still open.
 - Teaches: auction houses speed up trade, which spreads oversupply, inflation and exploits fast (Diablo 3: better to shop than play). Taxes as a sink, scarcity as the precondition.
 - Proposal: an agent sim with gold taps (drops), sinks (tax %) and an "every item tradable" toggle. Charts for gold supply, average item price and "upgrades found by playing vs buying". With D3 settings, the buying line overtakes playing. Big build, best as a later deep dive.
 

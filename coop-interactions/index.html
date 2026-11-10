@@ -80,9 +80,10 @@
     ['interactions', 'Token_Player3', 'Interaction Count', 'Add players and monsters and count what you have to design: one player and three monsters is 3 things, three players is 15', '9', 'interaction-count', 'From 3 Things to 15', 'Mario alone, then Luigi and Peach join against three enemies, then six different ones: every line is something to design.'],
     ['free-gear', 'Mana_Crystal', 'Free Gear Plateau', 'A tier-9 gift at hour one versus earning gear by questing: the spike, then the hours with nothing new to equip, and what soulbound changes', '316 and 317', 'free-gear-plateau', 'The Gift That Flattens the Curve', 'Gifted quest gear outclasses every reward for 22 hours; with soulbound rewards both players climb the same steps.'],
     ['conversion', 'Trade', 'Conversion Rates', 'Equivalent, growth and erosive trades made eight times in a row, a dial from ×0.25 to ×2 with a cap, and a gift passed around an eight-player guild', '318 to 324, 329 to 331', 'conversion-three-kinds', 'Same Trade, Over and Over', 'Apples swap to oranges and back and stay worth 16 apples, 4 apples grow to 102, and 100 coins erode to under half a coin.'],
+    ['economy', 'Price_Tag', 'Scarcity, Abundance, Auctions', 'Mooncloth\'s price falling to the cost of its parts once players are outfitted, one Minecraft farm feeding a server until the farmer logs off, and an auction house as a tub of gold with a tap, a sink and a playing-versus-shopping bar', '325 to 340', 'scarcity-mooncloth', 'Mooncloth: Time as the Commodity', 'A 1-day cooldown outfits 200 players by week 15 and the price hits the floor; a 4-day cooldown keeps the price up and most players waiting.'],
   ];
   // pages that are built so far
-  const READY = ['timing', 'chains', 'sequencing', 'sequencing-games', 'camera', 'targeting', 'keywords', 'team-roles', 'interactions', 'free-gear', 'conversion', 'symmetry'];
+  const READY = ['timing', 'chains', 'sequencing', 'sequencing-games', 'camera', 'targeting', 'keywords', 'team-roles', 'interactions', 'free-gear', 'conversion', 'economy', 'symmetry'];
   const LIVE = PAGES.filter(p => READY.includes(p[0]));
   // deck parts in deck order: [title, first slide, last slide]. Each page sits under the part its first slide is in.
   const PARTS = [
@@ -107,6 +108,8 @@
   }).join('');
   // more GIFs per page: [folder, slides, gif file, title, caption]
   const EXTRA = [
+    ['economy', '329 to 331', 'abundance-one-farm', 'One Farm Feeds the Server', 'A maintained farm makes more bread than 8 players eat; the farmer logs off, the chest drains and everyone goes hungry until they return.'],
+    ['economy', '332 to 337', 'auction-taps-and-sinks', 'Taps, Sinks and the Auction House', 'No cut, a 5% cut with limited items, Diablo III at launch and a closed, scarce market: gold in bags, the price of the same sword, and playing versus shopping.'],
     ['timing', '150 and 151', 'timing-revive', 'Heal and Revive', 'Reactive tools need the event first: a heal needs damage, a revive needs a death.'],
     ['timing', '156 to 158', 'timing-souls', 'Iron Flesh, Block, Estus', 'The same punch on yourself: halve it before, block it during, drink after.'],
     ['timing', '159 and 160', 'timing-stack', 'Stack All Three', 'A shield before, an intervention during and a heal after, all on one big hit.'],

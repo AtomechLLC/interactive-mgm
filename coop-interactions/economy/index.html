@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scarcity, Abundance, Auctions · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="../shared/coop.css">
+<link rel="stylesheet" href="../conversion/conversion.css">
+<link rel="stylesheet" href="economy.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · Co-op Interactions · Scarcity, Abundance, Auctions', home: '../index.html', audio: null, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<!-- 1 -->
+<section class="slide center" data-title="Scarcity, Abundance, Auctions" data-demo="none">
+  <div class="kicker rise">designing co-op economics</div>
+  <h1 class="rise">Scarcity, Abundance, <span class="accent">Auctions</span></h1>
+  <div class="rule rise" style="margin:22px auto"></div>
+  <div class="ec-trio rise">
+    <div><img src="img/inv_fabric_moonrag_01.jpg" alt=""><b>Mechanism 3</b><span>Forced scarcity</span></div>
+    <div><img src="img/mc_bread.png" alt="" class="px"><b>Mechanism 4</b><span>Abundance share</span></div>
+    <div><img src="img/inv_misc_coin_02.jpg" alt=""><b>Mechanism 5</b><span>Auction houses</span></div>
+  </div>
+  <p class="lede rise" style="margin:22px auto 0;text-align:center">Three ways a game decides how much there is to trade, and how fast it moves.</p>
+</section>
+
+<!-- 2: forced scarcity, Mooncloth -->
+<section class="slide" data-title="Forced Scarcity" data-demo="scarcity">
+  <div class="kicker">mechanism 3: forced scarcity</div>
+  <h2 class="sm">Mooncloth: <span class="accent">Time as the Commodity</span></h2>
+  <div class="cv-wrap">
+    <canvas class="demo cv-dial" width="1100" height="600"></canvas>
+    <div class="cv-side">
+      <label class="cv-lab">Cooldown per cloth: <b class="ec-cdv">1 day</b></label>
+      <input type="range" class="cv-rate ec-cd" min="1" max="4" step="1" value="1">
+      <label class="cv-lab">Cloths per item: <b class="ec-needv">20</b></label>
+      <input type="range" class="cv-rate ec-need" min="10" max="40" step="10" value="20">
+      <div class="cv-stats ec-sstats"></div>
+      <div class="row wrap"><button class="btn ec-sreplay">Replay</button></div>
+      <p class="cv-gout ec-sout"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 3: abundance share, Minecraft farm -->
+<section class="slide" data-title="Abundance Share" data-demo="abundance">
+  <div class="kicker">mechanism 4: abundance share</div>
+  <h2 class="sm">One Farm <span class="accent">Feeds the Server</span></h2>
+  <div class="cv-wrap">
+    <canvas class="demo cv-dial" width="1100" height="600"></canvas>
+    <div class="cv-side">
+      <label class="cv-lab">Players on the server: <b class="ec-nv">8</b></label>
+      <input type="range" class="cv-rate ec-n" min="2" max="16" step="1" value="8">
+      <div class="row wrap"><button class="btn ec-leave">Farmer logs off</button><button class="btn ec-areset">Restart</button></div>
+      <div class="cv-stats ec-astats"></div>
+      <p class="cv-gout ec-aout"></p>
+      <div class="ec-cauldron">
+        <div class="cv-h">Same idea: the WoW raid cauldron</div>
+        <div class="ec-bar"><img src="img/inv_potion_62.jpg" alt=""><span style="width:100%">40 raiders each craft a flask</span></div>
+        <div class="ec-bar"><img src="img/inv_misc_cauldron_nature.jpg" alt=""><span style="width:62%" class="g">One cauldron for the raid</span></div>
+        <small>Total herbs spent, illustrative. Cheaper together, so the guild funnels herbs to its alchemists.</small>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4: auction houses, taps and sinks -->
+<section class="slide" data-title="Auction Houses" data-demo="auction">
+  <div class="kicker">mechanism 5: auction houses</div>
+  <h2 class="sm">Taps, Sinks and <span class="accent">the Auction House</span></h2>
+  <div class="cv-wrap">
+    <canvas class="demo cv-dial" width="1100" height="600"></canvas>
+    <div class="cv-side">
+      <label class="cv-lab">Gold dropped per week: <b class="ec-tapv"></b></label>
+      <input type="range" class="cv-rate ec-tap" min="10" max="300" step="10" value="30">
+      <label class="cv-lab">Auction house cut: <b class="ec-taxv"></b></label>
+      <input type="range" class="cv-rate ec-tax" min="0" max="30" step="1" value="5">
+      <label class="cv-lab">Items that can be traded: <b class="ec-trv"></b></label>
+      <input type="range" class="cv-rate ec-tr" min="5" max="100" step="5" value="20">
+      <div class="cv-h">Presets</div>
+      <div class="cv-presets ec-presets"></div>
+      <p class="cv-gout ec-xout"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 5: summary -->
+<section class="slide" data-title="Game Economies" data-demo="none">
+  <div class="kicker">in summary</div>
+  <h2 class="sm">Game Economies <span class="accent">Run on Scarcity</span></h2>
+  <div class="cv-cards">
+    <div class="cv-card er">
+      <h3>Watch out for</h3>
+      <div class="cv-ex"><img src="img/inv_chest_cloth_04.jpg" alt=""><span><b>Unusable resources</b> and previous-tier overflow: gear the owner can’t use ends up handed to someone it flattens</span></div>
+      <div class="cv-ex"><img src="img/inv_misc_coin_02.jpg" alt=""><span><b>Unlimited exchanges:</b> any trade with no cap or cost gets repeated until it breaks something</span></div>
+      <div class="cv-ex"><span class="cv-tx">99</span><span><b>Zero scenarios:</b> a level 99 player farming a level 1 dungeon and selling the loot for more than their own content pays</span></div>
+    </div>
+    <div class="cv-card">
+      <h3>Require</h3>
+      <div class="cv-ex"><span class="cv-tx ec-tap-ic">＋</span><span><b>Taps:</b> know every place a resource enters the game</span></div>
+      <div class="cv-ex"><span class="cv-tx ec-sink-ic">−</span><span><b>Sinks:</b> know every place it leaves, and whether the sinks keep pace with the taps</span></div>
+      <div class="cv-ex"><img src="img/inv_fabric_moonrag_01.jpg" alt=""><span><b>Scarcity:</b> an economy succeeds or fails on it. A free market only works if the system has resilience.</span></div>
+    </div>
+    <div class="cv-card gr">
+      <h3>An auction house</h3>
+      <div class="cv-ex"><span>Speeds up every trade, so exploits and inflation spread quickly</span></div>
+      <div class="cv-ex"><span>Only means something if scarcity exists</span></div>
+      <div class="cv-ex"><span>Undermines progression when buying is easier than playing</span></div>
+      <div class="cv-ex"><span>Is worthless when nothing on it beats what play gives you</span></div>
+      <div class="cv-ex"><span>Works best inside a closed system</span></div>
+    </div>
+  </div>
+  <p class="cv-src">Icons: World of Warcraft (Blizzard Entertainment) via wow.zamimg.com; Minecraft (Mojang) via minecraft.wiki. Numbers on these slides are illustrative.</p>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="../shared/topdown.js"></script>
+<script src="economy.js"></script>
+</body>
+</html>

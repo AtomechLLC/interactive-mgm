@@ -265,3 +265,4 @@ Genre breakdowns (Blog Posts):
 | `level-design--wayfinding.svg` | [compass](https://game-icons.net/1x1/lorc/compass.html) | Lorc |
 | `level-design--pacing.svg` | [heart-beats](https://game-icons.net/1x1/lorc/heart-beats.html) | Lorc |
 | `coop-interactions--conversion.svg` | [trade](https://game-icons.net/1x1/lorc/trade.html) | Lorc |
+| `coop-interactions--economy.svg` | [price-tag](https://game-icons.net/1x1/delapouite/price-tag.html) | Delapouite |

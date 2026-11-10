@@ -1,0 +1,19 @@
+/* Scarcity, abundance, auctions: per-slide layout on top of ../conversion/conversion.css. */
+.ec-trio { display: flex; gap: 60px; justify-content: center; }
+.ec-trio div { display: flex; flex-direction: column; align-items: center; gap: 6px; color: #fff; }
+.ec-trio img { width: 110px; height: 110px; border-radius: 14px; border: 3px solid var(--gold, #ffb951); background: #1d2140; }
+.ec-trio img.px, .ec-px { image-rendering: pixelated; }
+.ec-trio b { font: 700 16px Montserrat, sans-serif; text-transform: uppercase; letter-spacing: .08em; color: #ffb951; margin-top: 8px; }
+.ec-trio span { font-size: 28px; }
+.cv-side .cv-lab { font-size: 17px; }
+.cv-side .cv-lab b { font-size: 22px; }
+.ec-cauldron { margin-top: 2px; display: grid; gap: 6px; }
+.ec-bar { display: flex; align-items: center; gap: 8px; }
+.ec-bar img { width: 34px; height: 34px; border-radius: 6px; border: 2px solid #3d4270; flex: none; }
+.ec-bar span { background: #e5322d; color: #fff; font-size: 14px; font-weight: 600; padding: 6px 10px; border-radius: 6px; white-space: nowrap; box-sizing: border-box; }
+.ec-bar span.g { background: #2fae63; }
+.ec-cauldron small { font-size: 14px; color: var(--muted); line-height: 1.3; }
+.cv-ex b { font-weight: 600; }
+.cv-tx.ec-tap-ic { background: #2fae63; color: #fff; font-size: 30px; }
+.cv-tx.ec-sink-ic { background: #e5322d; color: #fff; font-size: 30px; }
+.cv-tx { font-size: 20px; }
