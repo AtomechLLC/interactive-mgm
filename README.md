@@ -335,6 +335,20 @@ Home page `blog-posts/index.html` (cards from `PAGES`), for the posts in funsmit
   - `room-to-improve/`: twenty peeks from cover under a strict (stop to shoot) and a loose accuracy rule; duels won per block of five.
   - `who-responds-last/`: five fixed card-duel scenes with a last-in, first-out stack; outcomes are written per choice in `stack.js`.
   - `place-the-breather/`: a 6×6 match-three with easy and hard levels; the learner orders twelve and plays them, and the page plots wasted moves and failed tries.
+  - `score-the-stack/`: a small block stacker played under flat, steep and jackpot score tables; the page plots the learner's stack height per piece.
+  - `climb-your-ladder/`: six timing-duel opponents whose dodge window the learner tunes; tries and reaction times per rung for the last two climbs.
+  - `spend-the-stash/`: eight gacha banners played with resetting and carry-over pity; real rolls at stated (compressed) rates, pulls per banner recorded.
+  - `grind-or-go/`: a five-area campaign under three XP rules with formula-driven fights; battles, boss tries and fight seconds per rule.
+  - `four-moves/`: pick four moves and auto-battle five Elite Four rooms on the real type chart; printed power is set beside turns used.
+  - `trade-or-farm/`: a 45-second lane where each attack is a last hit or a hit on the champion, with a shared-gold mode that removes the choice.
+  - `ceremony-tax/`: reveal length per loot tier on a fixed clock; seconds watching against seconds playing, beside the learner's face taps.
+  - `chase-or-skip/`: six rooms against a clock that affords three detours; rewards are shown four ways and the reveal ranks them by a worth the page sets.
+  - `answer-budget/`: pick three boss mechanics by response type and play the healer on a shared cooldown; a timeline records windows, presses, misses and idle seconds.
+  - `the-fifth-rule/`: a dodge pattern with five rule cards offered one at a time; hits per round are charted against what the fight absorbs.
+  - `clutch-generator/`: tune enemy odds, play ten firefights with real rolls and mark the memorable ones; marks are plotted against the tightest odds and whether a choice came with them.
+  - `show-less/`: a dark corridor with six growls and a chosen number of real strikes; hesitation after each growl is recorded per setting.
+  - `cut-to-four/`: keep four of ten abilities; a one-lane duel written for the page runs the kit against three opponents and reports whether both sides got to play.
+  - `write-the-item/`: build an item from verb and limit cards; a scene grid of stated design judgements marks six scenes changed, ended or untouched.
 - GIFs in `gifs/`: rebuild them all with `sh blog-posts/tools/record-all.sh` while serving InteractiveMGM on 127.0.0.1:8191. They are 1920×1080 with the side panel hidden.
 - `shared/`: `blog.css` layout, a copy of the top-down kit, `bunny.js` (the invisible bunny marker) and `icons.js` (the depth icons plus potion, bomb, chest, heart and dice icons from game-icons.net). `img/`: World of Warcraft spell icons from wow.zamimg.com (sources in `img/sources.json`).
 
