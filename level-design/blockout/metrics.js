@@ -51,8 +51,8 @@
       T.wall(x0, cy - hw / 2 - 24, x1 - x0, 24); T.wall(x0, cy + hw / 2, x1 - x0, 24);
       T.floor(x0, cy - hw / 2, x1 - x0, hw);
       // width ruler
-      g.strokeStyle = C.goldInk; g.lineWidth = 2; g.beginPath(); g.moveTo(x1 - 20, cy - hw / 2); g.lineTo(x1 - 20, cy + hw / 2); g.stroke();
-      T.label(`${w.toFixed(2)}×`, x1 - 20, cy, 'center', C.goldInk, 14);
+      g.strokeStyle = C.goldInk; g.lineWidth = 2; g.beginPath(); g.moveTo(x0 + 12, cy - hw / 2); g.lineTo(x0 + 12, cy + hw / 2); g.moveTo(x0 + 6, cy - hw / 2); g.lineTo(x0 + 18, cy - hw / 2); g.moveTo(x0 + 6, cy + hw / 2); g.lineTo(x0 + 18, cy + hw / 2); g.stroke();
+      T.label(`${w.toFixed(2)}× wide`, x0 + 44, cy + hw / 2 + 42, 'center', C.goldInk, 14);
       const sc = PW / 44, P = 6.5, k = t % P, L = x0 + 30, R = x1 - 50;
       let p1, p2, y1 = cy, y2 = cy, msg = null;
       if (w >= 2) {

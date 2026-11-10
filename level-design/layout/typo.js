@@ -30,7 +30,6 @@
       P.stairs([sd.m[0] + dir[0] * 20, sd.m[1] + dir[1] * 20], [sd.m[0] + dir[0] * 95, sd.m[1] + dir[1] * 95], 120, 8);
       P.prop('column', 230, 290, 8); P.prop('column', 330, 290, 8); P.prop('column', 230, 385, 8); P.prop('column', 330, 385, 8);
       P.prop('crate', 70, 310, 9, .3); P.prop('table', P.rooms.G.c[0] + 30, P.rooms.G.c[1] - 40, 10, .5);
-      P.rect('O', 690, 455, 880, 545, { lab: 'outbuilding', tint: '#ece5d4' }); P.half([785, 455], [785, 500]);
       return { P, route: ['S', 'A', 'B', 'C', 'G'] };
     },
     hub() {
@@ -44,7 +43,6 @@
       P.mark('fountain', 580, 250, .75);
       const g = P.rooms.G; P.stairs([g.c[0] - 60, g.c[1] + 40], [g.c[0] - 60, g.c[1] - 35], 36, 6);
       const k1 = P.rooms.K1; P.prop('crate', k1.c[0] - 40, k1.c[1] + 40, 9, .4); P.prop('crate', k1.c[0] - 18, k1.c[1] + 50, 7, -.2);
-      P.rect('O', 720, 455, 900, 545, { lab: 'outbuilding', tint: '#ece5d4' });
       return { P, keys: ['K1', 'K2'], route: ['S', 'H', 'K1a', 'K1', 'K1a', 'H', 'K2a', 'K2', 'K2a', 'H', 'G'] };
     },
     loop() {
@@ -105,9 +103,9 @@
   };
 
   const TYPES = {
-    corridor: { name: 'Corridor', text: '<b class="accent">One way forward.</b> Nobody gets lost and you set the order of every beat, but the player never chooses a route. The rooms are distinct volumes: a porch, a columned hall with a niche, a wing turned off the grid with stairs where it meets the hall, and a round tower. That keeps a one-way path from feeling like a hallway.' },
+    corridor: { name: 'Corridor', text: '<b class="accent">One way forward.</b> Nobody gets lost and you set the order of every beat, but the player never chooses a route. Distinct rooms (a columned hall, a turned wing with stairs on the seam, a round tower) keep a one-way path from feeling like a hallway.' },
     hub: { name: 'Hub and spoke', text: '<b class="accent">A central room with branches.</b> The player picks the order of the spokes, and the hub, with its fountain, becomes familiar from repeat visits, so it doubles as an orientation point. The book points to Gone Home’s mansion. The price is the walk back through the hub after every spoke.' },
-    loop: { name: 'Loopback', text: '<b class="accent">The route bends back on itself.</b> A band of corridor wraps a core of halls. The trip out goes all the way round; at the objective a one-way door through the core hall drops you back beside the entry, so the way home is short. Dark Souls’ Undead Burg, one of the book’s studies, is built around shortcuts like this.' },
+    loop: { name: 'Loopback', text: '<b class="accent">The route bends back on itself.</b> A band of corridor wraps a core of halls. The trip out goes all the way round; at the objective a one-way door drops you back beside the entry, so the way home is short. Dark Souls’ Undead Burg, one of the book’s studies, is built on shortcuts like this.' },
     pearls: { name: 'String of pearls', text: '<b class="accent">Open halls joined by chokepoints.</b> Inside each pearl, rows of columns or a fountain give the player several ways through; the narrow doors between pearls bring everyone back to the same point. Freedom inside each space, a fixed order between them.' },
     lanes: { name: 'Three lane', text: '<b class="accent">A multiplayer layout.</b> Two bases joined by three routes, with short connectors between them. The right half is the left half turned 180 degrees, so neither team has an advantage. There is no critical path: which lane to take, and when to cross over, is the decision.' },
   };

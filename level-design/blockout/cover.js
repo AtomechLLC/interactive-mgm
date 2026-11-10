@@ -37,10 +37,11 @@
     function ui() {
       ch = +$(s, '.cv-h').value; $(s, '.cv-hv').textContent = `${ch.toFixed(2)} m`;
       const r = calc(), [bc, bl] = band(ch);
-      say($(s, '.cv-stats'), `<div class="${bc}"><b>${ch.toFixed(2)}</b><span>m: ${bl}</span></div>` +
+      say($(s, '.cv-stats'), `<div class="${bc}"><b>${ch.toFixed(2)} m</b><span>${bl}</span></div>` +
         `<div class="${r.exp < .1 ? 'g' : r.exp < .5 ? 'y' : 'r'}"><b>${Math.round(r.exp * 100)}%</b><span>of your body the enemy can see</span></div>` +
         `<div class="${r.canShoot ? 'g' : 'y'}"><b>${r.canShoot ? 'yes' : 'no'}</b><span>${r.canShoot ? 'you can see and shoot the enemy from here' : 'you cannot see the enemy from here'}</span></div>`);
-      say($(s, '.cv-out'), el ? '<b class="accent">Cover only works against the angle it was built for.</b> From above, the same crate hides much less of you. Height changes every cover decision on the map.'
+      say($(s, '.cv-out'), el && r.exp < .05 ? '<b class="accent">Tall enough, even from above.</b> This crate still hides you from the balcony, but lower it and the high angle finds you long before a ground-level enemy would.'
+        : el ? '<b class="accent">Cover only works against the angle it was built for.</b> From above, the same crate hides much less of you. Height changes every cover decision on the map.'
         : stance === 'stand' ? 'Standing up to shoot trades safety for a shot. Over low cover you expose only your head and shoulders; over high cover you cannot shoot at all and have to step out to the side.'
         : 'Crouched, you are hidden by anything taller than your head. The question is whether you can pop up and shoot over it, or must lean out around it.');
     }

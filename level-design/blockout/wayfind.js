@@ -23,7 +23,6 @@
   P.chain('Q', 2, [{ id: 'NE1', len: 100, turn: 0, w: 70, w0: 70 }, { id: 'NE', round: 50 }]);
   P.chain('Q', 3, [{ id: 'E1', len: 110, turn: 15, w: 80, w0: 80 }, { id: 'E', len: 90, turn: 0, w: 130, w0: 130 }]);
   { const n = P.rooms.N; P.stairs([n.c[0] - 40, n.c[1] + 30], [n.c[0] - 40, n.c[1] - 25], 34, 6); }
-  P.rect('O', 760, 470, 930, 550, { lab: 'outbuilding', tint: '#ece5d4' });
   P.prop('planter', 420, 290, 13); P.prop('planter', 620, 360, 13); [[400, 380], [640, 260]].forEach(([x, y]) => P.prop('column', x, y, 7));
   P.prop('crate', P.rooms.W.c[0] - 20, P.rooms.W.c[1] + 18, 9, .4); P.prop('crate', P.rooms.E.c[0] + 15, P.rooms.E.c[1] - 15, 9, -.3);
   const EX = { W: ['W1', 'W'], N: ['N1', 'N'], NE: ['NE1', 'NE'], E: ['E1', 'E'] };
@@ -74,7 +73,7 @@
       const R = P.rooms, nm = MOUTH('N'), Q = R.Q.c;
       ['W', 'NE', 'E'].forEach(k => T.label('dead end', R[EX[k][1]].c[0], R[EX[k][1]].c[1] - 30, 'center', C.muted, 13));
       T.flag(R.N.c[0] + 30, R.N.c[1] + 4); T.label('exit', R.N.c[0] - 40, R.N.c[1], 'center', C.goldInk, 14);
-      T.label('start', R.S.c[0] + 60, R.S.c[1] + 10, 'center', C.muted, 13); T.label('outbuilding', R.O.c[0], R.O.c[1], 'center', C.muted, 13);
+      T.label('start', R.S.c[0] + 60, R.S.c[1] + 10, 'center', C.muted, 13);
       // aids
       if (on.has('detail')) { const n1 = R.N1.pts; g.fillStyle = 'rgba(138,79,214,.22)'; g.beginPath(); n1.forEach((p, i) => i ? g.lineTo(...p) : g.moveTo(...p)); g.closePath(); g.fill(); }
       if (on.has('light')) { const gr = g.createRadialGradient(nm[0], nm[1], 10, nm[0], nm[1], 140); gr.addColorStop(0, 'rgba(255,214,120,.7)'); gr.addColorStop(1, 'rgba(255,214,120,0)'); g.fillStyle = gr; g.fillRect(nm[0] - 150, nm[1] - 150, 300, 300); }
