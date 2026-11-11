@@ -57,7 +57,7 @@
           const idx = ((Math.round(pos) + d) % L + L) % L, off = (Math.round(pos) + d - pos) * 52;
           const on = d === 0 && spin >= 1;
           g.fillStyle = on ? '#bdf0d8' : '#7fd7c6'; g.globalAlpha = 1 - Math.abs(off) / 140; g.beginPath(); g.roundRect(x - 52, RY + off - 22, 104, 44, 4); g.fill();
-          CK.wrap(g, vals[idx], x, RY + off - (vals[idx].length > 14 ? 7 : 0), 98, { size: 12.5, w: 700, align: 'center', lh: 14, col: C.navy });
+          CK.wrap(g, vals[idx], x, RY + off, 98, { valign: 'middle', size: 12.5, w: 700, align: 'center', lh: 14, col: C.navy });
         }
         g.restore(); g.globalAlpha = 1;
         g.strokeStyle = C.gold; g.lineWidth = 3; g.strokeRect(x - 58, RY - 25, 116, 50);
