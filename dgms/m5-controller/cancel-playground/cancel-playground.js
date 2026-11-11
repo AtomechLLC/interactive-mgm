@@ -44,40 +44,26 @@
     if (txt) label(g, txt, (X(a) + X(b)) / 2, ly, { col, size });
   }
 
-  // a side-view swordfighter facing right; y is the ground
+  // the swordfighter is Pip from the shared cast (assets/cast.js), facing right; y is the ground.
+  // P.arm is the weapon angle in radians (0 points forward, negative is up), as the pose code below produces it.
+  const RD = 180 / Math.PI, FS = .75;
+  const castPose = P => {
+    if (P.roll) return CAST.roll(((-P.roll / TAU) % 1 + 1) % 1);
+    const crouch = clamp((P.crouch || 0) / 12, 0, .6), w = 90 - (P.arm ?? -0.7) * RD;
+    const base = P.guard ? 'block' : CAST.hold(w);
+    return { base: crouch ? CAST.mix(base, 'crouch', crouch) : base, lift: (P.air || 0) / FS, ...(P.guard ? {} : { w }), ...(P.lean ? { lean: P.lean * RD } : {}) };
+  };
+  const castOpts = (x, y, P, arm) => ({ x, y, s: FS * (P.scale || 1), pose: castPose(arm == null ? P : { ...P, arm }), weapon: P.weapon === 1 ? 'axe' : 'sword',
+    flash: P.flash || 0, alpha: P.alpha ?? 1, trim: P.stance ? '#ff7a2a' : '#2f7bff' });
   function fighter(g, x, y, P = {}) {
-    const k = P.scale || 1, a = P.arm ?? -0.7, axe = P.weapon === 1;
-    g.save(); g.translate(x, y - (P.air || 0) * k); g.scale(k, k); g.globalAlpha *= P.alpha ?? 1;
-    if (P.roll) { g.translate(0, -34); g.rotate(P.roll); g.translate(0, 34); }
-    if (P.lean) { g.rotate(P.lean); }
-    const body = P.flash ? `rgb(${Math.round(lerp(38, 226, P.flash))},${Math.round(lerp(44, 58, P.flash))},${Math.round(lerp(106, 58, P.flash))})` : INK;
-    if (P.trail) {
+    if (P.trail) {   // the swing's arc, traced by the weapon tip
       const [t0, t1, tc] = P.trail;
-      g.save(); g.globalAlpha *= .4; g.strokeStyle = tc; g.lineWidth = 20; g.lineCap = 'round';
-      g.beginPath(); g.arc(0, -74, 70, Math.min(t0, t1), Math.max(t0, t1)); g.stroke(); g.restore();
+      g.save(); g.globalAlpha *= .4; g.strokeStyle = tc; g.lineWidth = 18 * (P.scale || 1); g.lineCap = 'round'; g.beginPath();
+      for (let q = 0; q <= 10; q++) { const t = CAST.tip('pip', castOpts(x, y, P, lerp(t0, t1, q / 10))); q ? g.lineTo(t.x, t.y) : g.moveTo(t.x, t.y); }
+      g.stroke(); g.restore();
     }
-    g.lineCap = 'round'; g.strokeStyle = body; g.fillStyle = body;
-    const cr = P.crouch || 0;
-    g.lineWidth = 7; g.beginPath(); g.moveTo(0, -40 + cr); g.lineTo(-13, 0); g.moveTo(0, -40 + cr); g.lineTo(13, 0); g.stroke();
-    g.lineWidth = 13; g.beginPath(); g.moveTo(0, -42 + cr); g.lineTo(0, -76 + cr); g.stroke();
-    g.beginPath(); g.arc(0, -93 + cr, 12, 0, TAU); g.fill();
-    g.fillStyle = P.stance ? '#ff7a2a' : '#2f7bff'; g.fillRect(-8, -48 + cr, 16, 6);   // stance sash
-    // arm and weapon
-    const sx = 0, sy = -74 + cr, hx = sx + Math.cos(a) * 24, hy = sy + Math.sin(a) * 24;
-    g.strokeStyle = body; g.lineWidth = 6; g.beginPath(); g.moveTo(sx, sy); g.lineTo(hx, hy); g.stroke();
-    const L = axe ? 52 : 62, ex = hx + Math.cos(a) * L, ey = hy + Math.sin(a) * L;
-    if (axe) {
-      g.strokeStyle = '#7a4a1e'; g.lineWidth = 5; g.beginPath(); g.moveTo(hx, hy); g.lineTo(ex, ey); g.stroke();
-      g.save(); g.translate(ex, ey); g.rotate(a); g.fillStyle = '#8f97ad'; g.strokeStyle = '#4b5470'; g.lineWidth = 2;
-      g.beginPath(); g.moveTo(-14, -2); g.quadraticCurveTo(-4, -22, 8, -20); g.lineTo(4, 0); g.lineTo(8, 20); g.quadraticCurveTo(-4, 22, -14, 2); g.closePath(); g.fill(); g.stroke(); g.restore();
-    } else {
-      g.strokeStyle = '#9aa6c2'; g.lineWidth = 5; g.beginPath(); g.moveTo(hx, hy); g.lineTo(ex, ey); g.stroke();
-      g.strokeStyle = '#e8edf7'; g.lineWidth = 2; g.beginPath(); g.moveTo(hx + Math.cos(a) * 8, hy + Math.sin(a) * 8); g.lineTo(ex, ey); g.stroke();
-      g.strokeStyle = '#e0a92d'; g.lineWidth = 4; g.beginPath();
-      g.moveTo(hx + Math.cos(a + 1.57) * 8, hy + Math.sin(a + 1.57) * 8); g.lineTo(hx - Math.cos(a + 1.57) * 8, hy - Math.sin(a + 1.57) * 8); g.stroke();
-    }
-    if (P.guard) { g.strokeStyle = 'rgba(47,123,255,.55)'; g.lineWidth = 6; g.beginPath(); g.arc(10, -60, 46, -1.1, 1.1); g.stroke(); }
-    g.restore();
+    CAST.draw(g, 'pip', castOpts(x, y, P));
+    if (P.guard) { const k = P.scale || 1; g.strokeStyle = 'rgba(47,123,255,.55)'; g.lineWidth = 6; g.beginPath(); g.arc(x + 10 * k, y - 60 * k, 46 * k, -1.1, 1.1); g.stroke(); }
   }
   function dummy(g, x, y, flash = 0, far = false) {
     g.save(); g.globalAlpha *= far ? .55 : 1;

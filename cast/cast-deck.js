@@ -57,7 +57,7 @@
       const T = t % 6.4;
       if (T < .8) return { pose: CAST.mix('idle', 'guard', T / .8) };
       if (T < 2.6) { const f = (T - .8) * 30; if (ch.weapon === 'bow') return { pose: CAST.mix('guard', 'aim', clamp(f / 14)) }; if (ch.weapon === 'staff') return { pose: CAST.mix('guard', 'cast', clamp(f / 14)) }; return { pose: CAST.swing(f, 14, 18, 54).pose }; }
-      if (T < 3.4) { const k = (T - 2.6) / .8; return { pose: k < .5 ? CAST.mix('idle', 'hit', k * 2) : CAST.mix('hit', 'idle', (k - .5) * 2), flash: k < .15 ? 1 - k / .15 : 0 }; }
+      if (T < 3.4) { const k = (T - 2.6) / .8; return { pose: CAST.clip('hitLight', k * .7).pose, flash: k < .15 ? 1 - k / .15 : 0 }; }
       if (T < 4.4) return { pose: CAST.roll((T - 3.4) / 1), dx: 0 };
       if (T < 5.6) { const k = (T - 4.4) / 1.2; return { pose: k < .3 ? CAST.mix('idle', 'cheer', k / .3) : k > .8 ? CAST.mix('cheer', 'idle', (k - .8) / .2) : 'cheer' }; }
       return { pose: 'idle' };
@@ -222,7 +222,44 @@
     };
   });
 
-  /* ================= 4. who plays which part ================= */
+  /* ================= 4. motion clips sampled from Phalanx ================= */
+  canvasDemo('clips', (s, c, g) => {
+    const st = { clip: 'hitHeavy', who: 'rook', rate: .33, t: 0 };
+    const SHOW = ['hitLight', 'hitHeavy', 'knockdown', 'death', 'slash', 'slashHeavy', 'punch', 'greatSlash', 'run', 'dash', 'jumpRise', 'land'];
+    const LOOP = { run: 1, runBack: 1, idle: 1 }, code = $(s, '.cl-code');
+    const pick = $(s, '.cl-pick');
+    pick.innerHTML = SHOW.map(k => `<button class="btn${k === st.clip ? ' on' : ''}" data-k="${k}">${CAST.CLIP_NOTES[k]}</button>`).join('');
+    $$(pick, '.btn').forEach(b => b.onclick = () => { st.clip = b.dataset.k; st.t = 0; $$(pick, '.btn').forEach(x => x.classList.toggle('on', x === b)); });
+    castButtons($(s, '.cl-who'), id => st.who = id, LIST.filter(x => !x.dummy).map(x => x.id))(st.who);
+    $$(s, '.cl-speed .btn').forEach(b => b.onclick = () => { st.rate = +b.dataset.r; $$(s, '.cl-speed .btn').forEach(x => x.classList.toggle('on', x === b)); });
+    let last = '';
+    return (dt) => {
+      st.t += dt * st.rate;
+      const D = CAST.clipData[st.clip], n = D.frames.length, len = n / 30, loop = !!LOOP[st.clip], hold = .8;
+      const t = loop ? st.t : st.t % (len + hold), cl = CAST.clip(st.clip, t, { loop });
+      const call = [`const c = CAST.clip('${st.clip}', t${loop ? ', { loop: true }' : ''});`, `CAST.draw(g, '${st.who}', { x: x + c.dx, y, pose: c.pose });`, `// frame ${Math.floor(cl.frame)} of ${n}${cl.live ? ', hitbox live' : ''}`].join('\n');
+      if (call !== last) { code.textContent = call; last = call; }
+      g.clearRect(0, 0, W, H); panel(g, 0, 0, W, H);
+      const GY = 330, X = 380;
+      floor(g, 20, W - 20, GY);
+      lab(g, `${CAST.CLIP_NOTES[st.clip]}: ${n} frames at 30 fps`, 30, 30, { col: C.navy, size: 18, weight: 700, font: 'Montserrat, sans-serif' });
+      lab(g, `from Phalanx: ${D.src}`, 30, 54, { col: C.muted, size: 13 });
+      CAST.draw(g, st.who, { x: X + cl.dx * 1.25, y: GY, s: 1.25, pose: cl.pose, flash: /^hit|knock/.test(st.clip) && cl.frame < 3 ? .7 : 0 });
+      if (cl.live) { const p = CAST.tip(st.who, { x: X + cl.dx * 1.25, y: GY, s: 1.25, pose: cl.pose }); g.fillStyle = 'rgba(229,50,45,.25)'; g.beginPath(); g.arc(p.x, p.y, 26, 0, TAU); g.fill(); }
+      // six key frames as ghosts, then every frame as a strip with the live hitbox frames in red
+      const y0 = 380, x0 = 40, cw = (W - 80) / n;
+      for (let i = 0; i < 6; i++) {
+        const f = Math.round(i * (n - 1) / 5), cx = 110 + i * 165, k = CAST.clip(st.clip, f / 30);
+        CAST.draw(g, st.who, { x: cx + k.dx * .45, y: y0 + 120, s: .45, pose: k.pose, ghost: true, shadow: false });
+        lab(g, `frame ${f}`, cx, y0 + 140, { col: C.muted, size: 12, align: 'center' });
+      }
+      for (let f = 0; f < n; f++) { const live = (D.active || []).some(([a, b]) => f >= a && f < b); g.fillStyle = live ? PH.active : 'rgba(93,97,140,.25)'; g.fillRect(x0 + f * cw + 1, y0 + 160, cw - 2, 14); }
+      const px = x0 + Math.min(cl.frame, n) * cw; g.strokeStyle = C.navy; g.lineWidth = 3; g.beginPath(); g.moveTo(px, y0 + 154); g.lineTo(px, y0 + 180); g.stroke();
+      CAST.tag(g, st.who, W - 70, 30, { size: 15 });
+    };
+  });
+
+  /* ================= 5. who plays which part ================= */
   canvasDemo('guide', (s, c, g) => {
     const PW = 512, PHh = 284;
     function frame(x, y, title, sub) {

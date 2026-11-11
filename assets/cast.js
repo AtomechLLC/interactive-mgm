@@ -7,7 +7,7 @@
    Options: x, y (floor point), s (scale, 1 = about 145 px tall for a medium build), face (1 right, -1 left),
      pose (a name from CAST.POSES, a partial pose object, or CAST.mix(a, b, k)), alpha, flash (0..1 whitens the
      body for a hit), tint (replaces the body colour), ghost (true draws a faint key-pose silhouette),
-     weapon (override; null for empty hands), shadow (default true).
+     weapon (override; null for empty hands), shadow (default true), squash (vertical scale, 1 = none), trim (belt colour override).
 
    A pose is a set of angles in degrees. Every limb angle is absolute: 0 points straight down, 90 points
    forward (the way the figure faces), 180 points up, 270 (or -90) points back. Angles may run past 180 so a
@@ -21,7 +21,8 @@
 
    Helpers: CAST.mix(a, b, k) blends two poses; CAST.swing(f, startup end, active end, total, kind) gives the
    pose of a strike on frame f with the phase it is in (kind 'slash' or 'thrust'); CAST.cycle('walk' | 'run', t)
-   loops a gait (t in cycles); CAST.roll(k) is a dodge roll, k 0..1; CAST.points(id, o) and CAST.tip(id, o)
+   loops a gait (t in cycles); CAST.roll(k) is a dodge roll, k 0..1; CAST.hold(w, extra) is a whole-body pose
+   holding the weapon at angle w (for pages that already animate one weapon angle); CAST.points(id, o) and CAST.tip(id, o)
    return world positions of the joints and the weapon tip (trails, hitboxes); CAST.box(id, o) is a hurtbox
    rect; CAST.tag(g, id, x, y) draws the character's name pill. */
 (function () {
@@ -46,6 +47,7 @@
     sword: { name: 'Sword', len: 64, w: 5, guard: 14 },
     greatsword: { name: 'Greatsword', len: 100, w: 8, guard: 22 },
     dagger: { name: 'Dagger', len: 28, w: 5, guard: 9 },
+    axe: { name: 'Axe', len: 54 },
     staff: { name: 'Staff', len: 92 },
     bow: { name: 'Bow', len: 0 },
     claws: { name: 'Claws', len: 16 },
@@ -248,6 +250,11 @@
       g.strokeStyle = dark; g.lineWidth = W.w + 3; g.beginPath(); g.moveTo(0, 3); g.lineTo(0, W.len); g.stroke();
       g.strokeStyle = steel; g.lineWidth = W.w; g.beginPath(); g.moveTo(0, 3); g.lineTo(0, W.len); g.stroke();
       g.strokeStyle = ghost ? dark : ch.trim; g.lineWidth = 4; g.beginPath(); g.moveTo(-W.guard / 2, 3); g.lineTo(W.guard / 2, 3); g.stroke();
+    } else if (kind === 'axe') {
+      g.strokeStyle = dark; g.lineWidth = 7; g.beginPath(); g.moveTo(0, -6); g.lineTo(0, W.len); g.stroke();
+      g.strokeStyle = ghost ? dark : '#a9743e'; g.lineWidth = 4; g.beginPath(); g.moveTo(0, -5); g.lineTo(0, W.len - 1); g.stroke();
+      g.fillStyle = ghost ? dark : '#c3cadb'; g.strokeStyle = dark; g.lineWidth = 2.2;   // the head, blade toward the swing (local -x is forward-down)
+      g.beginPath(); g.moveTo(-2, W.len - 22); g.quadraticCurveTo(-22, W.len - 26, -24, W.len - 8); g.quadraticCurveTo(-22, W.len + 10, -2, W.len + 4); g.closePath(); g.fill(); g.stroke();
     } else if (kind === 'staff') {
       g.strokeStyle = dark; g.lineWidth = 7; g.beginPath(); g.moveTo(0, -34); g.lineTo(0, W.len); g.stroke();
       g.strokeStyle = ghost ? dark : '#a9743e'; g.lineWidth = 4; g.beginPath(); g.moveTo(0, -33); g.lineTo(0, W.len - 1); g.stroke();
@@ -294,9 +301,9 @@
     const ch = BY[id]; if (!ch) return;
     const { x = 0, y = 0, s = 1, face = 1, alpha = 1, flash = 0, ghost = false, shadow = true } = o;
     const P = resolve(ch, o.pose);
-    const col = ghost ? GHOST.col : (o.tint || ch.col), dark = ghost ? GHOST.dark : ch.dark, trim = ch.trim;
+    const col = ghost ? GHOST.col : (o.tint || ch.col), dark = ghost ? GHOST.dark : ch.dark, trim = o.trim || ch.trim;
     const kind = 'weapon' in o ? o.weapon : ch.weapon, lw = 2.6;
-    g.save(); g.globalAlpha *= alpha * (ghost ? .55 : 1); g.translate(x, y); g.scale(face * s, s);
+    g.save(); g.globalAlpha *= alpha * (ghost ? .55 : 1); g.translate(x, y); g.scale(face * s, s * (o.squash ?? 1));
     g.lineCap = 'round'; g.lineJoin = 'round';
     if (ch.dummy) {
       if (shadow) { g.fillStyle = 'rgba(40,30,20,.18)'; g.beginPath(); g.ellipse(0, 2, 26, 6, 0, 0, TAU); g.fill(); }
@@ -364,6 +371,15 @@
     return mix(name + '1', name + '2', k);
   }
   const roll = k => ({ base: 'tuck', spin: 360 * clamp(k) });
+  // a full-body pose that holds the weapon at angle w (degrees, same convention as poses), for pages that already
+  // animate a single weapon angle: it slides through follow, strike, idle, guard and windup by w, then sets w exactly.
+  // extra fields (lean, lift, ...) override the result.
+  const HOLD = [['follow', 58], ['strike', 95], ['idle', 125], ['guard', 145], ['windup', 230]];
+  function hold(w, extra = {}) {
+    let i = 0; while (i < HOLD.length - 2 && w > HOLD[i + 1][1]) i++;
+    const [a, wa] = HOLD[i], [b, wb] = HOLD[i + 1];
+    return { base: mix(a, b, (w - wa) / (wb - wa)), w, ...extra };
+  }
 
   // a name pill in the character's colours
   function tag(g, id, x, y, { size = 14, text } = {}) {
@@ -374,5 +390,5 @@
     g.restore();
   }
 
-  window.CAST = { list: CAST_LIST, by: BY, BUILD, WEAPON, POSES, POSE_NOTES, draw, points, tip, box, swing, cycle, roll, mix, resolve: (id, p) => resolve(BY[id], p), tag };
+  window.CAST = { list: CAST_LIST, by: BY, BUILD, WEAPON, POSES, POSE_NOTES, draw, points, tip, box, swing, cycle, roll, hold, mix, resolve: (id, p) => resolve(BY[id], p), tag };
 })();
