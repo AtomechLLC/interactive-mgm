@@ -1,7 +1,13 @@
 /* Keywords need situations: per-slide layout. */
 /* slide 2 */
 .ks-wrap { display: grid; grid-template-columns: 900px 1fr; gap: 40px; margin-top: 0; }
-.ks-tabs { display: flex; gap: 8px; margin-bottom: 12px; }
+.ks-tabs { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 12px; }
+.ks-filter, .ks-nav { display: flex; gap: 8px; align-items: center; }
+.ks-nav span { font: 600 18px Jost, sans-serif; color: var(--ink); min-width: 104px; text-align: center; }
+.ks-nav small { font-size: 15px; color: var(--muted); }
+.ks-step { width: 38px; height: 38px; border-radius: 50%; border: 2px solid #cdbf9f; background: #fffaf0; color: var(--ink); font: 700 22px Jost, sans-serif; line-height: 1; cursor: pointer; }
+.ks-step:hover, .ks-tab:hover { border-color: var(--navy); }
+.ks-sib { display: block; width: 100%; text-align: left; margin-top: 4px; padding: 8px 14px; border-radius: 10px; border: 2px dashed #e0a92d; background: #fdf0cf; color: #9a5a06; font: 600 17px Jost, sans-serif; cursor: pointer; }
 .ks-tab { font: 600 17px Jost, sans-serif; padding: 6px 16px; border-radius: 99px; border: 2px solid #cdbf9f; background: #fffaf0; color: var(--ink); cursor: pointer; }
 .ks-tab.on { background: var(--navy); color: #fff; border-color: var(--navy); }
 .ks-sheet { min-height: 430px; }
