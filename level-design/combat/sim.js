@@ -31,7 +31,7 @@
    swap puts each squad in the other spawn, midShut walls up the middle doorway, bench is a list of unit keys left out. */
 (function (root) {
   const CHEER = .08, EMOTES = ['😎', '🎉', '💪', '🔥', '👋', '😤', '🫡', '✌️'];   // one kill in twelve or so gets an emoji
-  const TAU = Math.PI * 2, RESPAWN = 3, GUARD = 1.5, SIGHT = 640, LOCK = .3, SH_WAIT = 1.2, SH_REGEN = 14, GLASS = 40, REGLAZE = 30;   // a pane takes 40 points of fire and is replaced 30 s after it breaks
+  const TAU = Math.PI * 2, RESPAWN = 3, GUARD = 1.5, SIGHT = 640, LOCK = .3, SH_WAIT = 1.2, SH_REGEN = 14, GAP = 3, SHOVE = 70, GLASS = 40, REGLAZE = 30;   // a pane takes 40 points of fire and is replaced 30 s after it breaks
   const LANES = ['long', 'mid', 'tun'];
   const SCALE = .36;   // pace only: how long a battle lasts. Who wins a fight is decided by EDGE.
   // each token's favoured moment: [label shown on a favoured hit, the moment in words]
@@ -576,6 +576,13 @@
           const w = u.path[0]; let clear = true;
           // wait for a hazard instead of walking into it
           if (B.danger.length) { const L = Math.hypot(w.x - u.x, w.y - u.y) || 1, k = Math.min(L, 14); clear = !threat(u, u.x + (w.x - u.x) / L * k, u.y + (w.y - u.y) / L * k, 12); }
+          // single file: fall in behind a squadmate walking the same way just ahead, instead of walking into its token.
+          // It waits at most a moment, so a slow leader is passed and nothing can lock up.
+          if (clear) {
+            const ang = Math.atan2(w.y - u.y, w.x - u.x), cx = Math.cos(ang), cy = Math.sin(ang);
+            const ahead = B.units.some(m => { if (m === u || !m.alive || m.team !== u.team || B.t - (m.movedT || -9) > .05) return false; const dx = m.x - u.x, dy = m.y - u.y, L = Math.hypot(dx, dy); return L < 12 * (d.size || 1) + 12 * (m.def.size || 1) + GAP && dx * cx + dy * cy > L * .5 && Math.cos(m.mv - ang) > .3; });
+            if (!ahead) u.queue = 0; else if ((u.queue = (u.queue || 0) + dt) < .6) clear = false;
+          }
           if (clear && moveTo(u, w.x, w.y, sp * dt)) u.path.shift();
           const r = roomAt(u.x, u.y, u.room); if (r) enter(u, r);
         }
@@ -596,11 +603,26 @@
           else { fire(u, e); const lead = B.units.some(m => m.alive && m.team === u.team && m.def.leads && m !== u && dist(m, u) < 130); u.shotCd = d.rate * (lead ? .8 : 1) * (st.haste > 0 ? .8 : 1); }
         }
       }
-      // keep squadmates from standing on one spot
-      for (let i = 0; i < B.units.length; i++) for (let j = i + 1; j < B.units.length; j++) {
+      // keep tokens from being drawn on top of each other. Two tokens may pass through one another when they are heading opposite
+      // ways or when only one of them is moving; once they would come to rest, or walk together, they are held a token apart.
+      // Opponents in a melee are left to close.
+      for (let pass = 0; pass < 2; pass++) for (let i = 0; i < B.units.length; i++) for (let j = i + 1; j < B.units.length; j++) {
         const a = B.units[i], b = B.units[j]; if (!a.alive || !b.alive || a.dash || b.dash) continue;
-        const dx = b.x - a.x, dy = b.y - a.y, L = Math.hypot(dx, dy), min = a.team === b.team ? 20 : 16;
-        if (L < min && L > .01) { const k = (min - L) / 2 * .5, px = dx / L * k, py = dy / L * k; if (roomAt(a.x - px, a.y - py, a.room) === a.room) { a.x -= px; a.y -= py; } if (roomAt(b.x + px, b.y + py, b.room) === b.room) { b.x += px; b.y += py; } }
+        const dx = b.x - a.x, dy = b.y - a.y, L = Math.hypot(dx, dy), foes = a.team !== b.team;
+        const min = foes && (a.def.shot === 'melee' || b.def.shot === 'melee') ? 16 : 12 * (a.def.size || 1) + 12 * (b.def.size || 1) + GAP;
+        if (L >= min) continue;
+        const ma = B.t - (a.movedT || -9) < .05, mb = B.t - (b.movedT || -9) < .05;
+        const ux = L > .01 ? dx / L : Math.cos(i * 2.4), uy = L > .01 ? dy / L : Math.sin(i * 2.4), k = Math.min((min - L) / 2 * .5, SHOVE * dt);
+        const shove = (u, sx, sy) => {   // slide along a wall instead of stopping at it
+          for (const [px, py] of [[sx, sy], [sx, 0], [0, sy]]) if ((px || py) && roomAt(u.x + px, u.y + py, u.room) === u.room) { u.x += px; u.y += py; return true; }
+        };
+        // passing: a walker whose next waypoint is clear of the other token steps round it, and goes through it only where a wall
+        // leaves no room to. Two walkers crossing head on do the same. Nobody standing is pushed out of the way.
+        const past = (u, v) => u.path.length && Math.hypot(u.path[0].x - v.x, u.path[0].y - v.y) > min + 6;
+        const round = (u, v) => { const nx = -Math.sin(u.mv), ny = Math.cos(u.mv), sd = (u.x - v.x) * nx + (u.y - v.y) * ny >= 0 ? 1 : -1, q = Math.min(min - L, SHOVE * 1.6 * dt); shove(u, nx * sd * q, ny * sd * q); };
+        if (ma !== mb && past(ma ? a : b, ma ? b : a)) { round(ma ? a : b, ma ? b : a); continue; }
+        if (ma && mb && Math.cos(a.mv - b.mv) < -.2 && past(a, b) && past(b, a)) { round(a, b); round(b, a); continue; }
+        shove(a, -ux * k, -uy * k); shove(b, ux * k, uy * k);
       }
       // projectiles
       B.shots = B.shots.filter(s => {

@@ -9,6 +9,8 @@
   const mix = (a, b, k) => a.map((v, i) => Math.round(v + (b[i] - v) * k)), rgb = c => `rgb(${c[0]},${c[1]},${c[2]})`;
   const FOG = [226, 218, 200], STONE = [86, 92, 140], STONE2 = [62, 67, 112];
 
+  // a themed room's walls take its material (theme.js); where two rooms share a wall, each side shows its own
+  const MAT = m => (m && window.FPSTHEME && FPSTHEME.MATS[m]) || null;
   function walls(P, shut) {
     const out = [];
     Object.values(P.rooms).forEach(r => {
@@ -16,7 +18,7 @@
       r.pts.forEach((a, i) => {
         const b = r.pts[(i + 1) % r.pts.length], L = Math.hypot(b[0] - a[0], b[1] - a[1]), ux = (b[0] - a[0]) / L, uy = (b[1] - a[1]) / L;
         const gaps = P.doors.filter(d => d !== shut && (d.a === r.id || d.b === r.id)).map(d => { const t = (d.m[0] - a[0]) * ux + (d.m[1] - a[1]) * uy, off = Math.abs((d.m[0] - a[0]) * uy - (d.m[1] - a[1]) * ux); return off < 3 && t > 0 && t < L ? [t - d.gw / 2, t + d.gw / 2] : null; }).filter(Boolean).sort((p, q) => p[0] - q[0]);
-        let t = 0; [...gaps, [L, L]].forEach(([g0, g1]) => { if (g0 > t + .5) out.push({ x1: a[0] + ux * t, y1: a[1] + uy * t, x2: a[0] + ux * g0, y2: a[1] + uy * g0, side: Math.abs(ux) > Math.abs(uy) ? 1 : 0 }); t = Math.max(t, g1); });
+        let t = 0; [...gaps, [L, L]].forEach(([g0, g1]) => { if (g0 > t + .5) out.push({ x1: a[0] + ux * t, y1: a[1] + uy * t, x2: a[0] + ux * g0, y2: a[1] + uy * g0, side: Math.abs(ux) > Math.abs(uy) ? 1 : 0, mat: MAT(r.mat), len: g0 - t, cx: r.c[0], cy: r.c[1] }); t = Math.max(t, g1); });
       });
     });
     return out;
@@ -29,22 +31,27 @@
     cam.x = u.x; cam.y = u.y;
     const ca = Math.cos(cam.ang), sa = Math.sin(cam.ang);
     // ceiling and floor
-    let gr = g.createLinearGradient(0, 0, 0, hor); gr.addColorStop(0, '#f6f1e2'); gr.addColorStop(1, rgb(FOG)); g.fillStyle = gr; g.fillRect(0, 0, W, hor);
-    gr = g.createLinearGradient(0, hor, 0, H); gr.addColorStop(0, rgb(FOG)); gr.addColorStop(1, '#cdbf9f'); g.fillStyle = gr; g.fillRect(0, hor, W, H - hor);
+    const here = o.rooms && o.rooms[u.room], hm = here && MAT(here.mat);
+    let gr = g.createLinearGradient(0, 0, 0, hor); gr.addColorStop(0, here && here.sky ? '#a9d3ea' : hm && hm.dim ? '#8f8478' : '#f6f1e2'); gr.addColorStop(1, rgb(FOG)); g.fillStyle = gr; g.fillRect(0, 0, W, hor);
+    gr = g.createLinearGradient(0, hor, 0, H); gr.addColorStop(0, rgb(FOG)); gr.addColorStop(.25, hm ? hm.floor[0] : rgb(FOG)); gr.addColorStop(1, hm ? hm.floor[1] : '#cdbf9f'); g.fillStyle = gr; g.fillRect(0, hor, W, H - hor);
     // walls: one ray per STEP columns, nearest hit wins
     const z = new Float32Array(W);
     for (let c = 0; c < W; c += STEP) {
       const off = Math.atan((c + STEP / 2 - W / 2) / proj), ra = cam.ang + off, rx = Math.cos(ra), ry = Math.sin(ra);
-      let best = 1e9, side = 0;
+      let best = 1e9, bestE = 1e9, hit = null, hk = 0;
       for (const s of o.walls) {
         const ex = s.x2 - s.x1, ey = s.y2 - s.y1, den = rx * ey - ry * ex; if (Math.abs(den) < 1e-6) continue;
         const t = ((s.x1 - cam.x) * ey - (s.y1 - cam.y) * ex) / den, k = ((s.x1 - cam.x) * ry - (s.y1 - cam.y) * rx) / den;
-        if (t > .5 && t < best && k >= 0 && k <= 1) { best = t; side = s.side; }
+        if (t > .5 && k >= 0 && k <= 1) { const te = ((cam.x - s.x1) * ey - (cam.y - s.y1) * ex) * ((s.cx - s.x1) * ey - (s.cy - s.y1) * ex) > 0 ? t - 1 : t; if (te < bestE) { bestE = te; best = t; hit = s; hk = k; } }
       }
       const d = best * Math.cos(off); for (let i = 0; i < STEP && c + i < W; i++) z[c + i] = d;
       if (best > 1e8) continue;
       const h = WALL * proj / d, fog = Math.min(.85, d / 620);
-      g.fillStyle = rgb(mix(side ? STONE : STONE2, FOG, fog)); g.fillRect(c, hor - h / 2, STEP, h);
+      const m = hit.mat, side = hit.side, base = m ? (side ? m.wall : m.wall2) : side ? STONE : STONE2;
+      // planks and brick joints: darker columns where the hit crosses a joint, and brick courses across
+      const joint = m && m.lines && h > 18 && Math.floor(hk * hit.len / (m.lines === 'plank' ? 12 : 16)) !== Math.floor((hk * hit.len - d * STEP / proj) / (m.lines === 'plank' ? 12 : 16));
+      g.fillStyle = rgb(mix(joint && m.lines === 'plank' ? mix(base, [30, 20, 20], .35) : base, FOG, fog)); g.fillRect(c, hor - h / 2, STEP, h);
+      if (m && m.lines === 'brick' && h > 30) { g.fillStyle = `rgba(40,20,20,${.22 * (1 - fog)})`; for (let i = 1; i < 8; i++) g.fillRect(c, hor - h / 2 + h * i / 8, STEP, Math.max(1, h * .012)); }
       g.fillStyle = `rgba(28,36,80,${.5 * (1 - fog)})`; g.fillRect(c, hor - h / 2, STEP, Math.max(1, h * .05)); g.fillRect(c, hor + h / 2 - Math.max(1, h * .07), STEP, Math.max(1, h * .07));
     }
     // world point -> { x on screen, f distance ahead, k pixels per world unit there }
@@ -61,12 +68,14 @@
     const items = [];
     B.zones.forEach(zn => items.push({ kind: 'zone', x: zn.x, y: zn.y, r: zn.r, team: zn.team, k: 1 - zn.t / zn.t0 }));
     B.units.forEach(e => { if (e === u || !e.alive) return; const cl = B.cloaked(e); if (cl && e.team !== u.team) return; if (e.def.bubble && !(e.st.stun > 0)) items.push({ kind: 'zone', x: e.x, y: e.y, r: e.def.bubble, team: e.team, k: .25, soft: true }); items.push({ kind: 'unit', x: e.x, y: e.y, e, a: cl ? .35 : 1 }); });
+    (o.props || []).forEach(p => items.push({ kind: 'prop', x: p.x, y: p.y, pr: p }));
+    (o.flats || []).forEach(fl => items.push({ kind: 'flat', x: fl.x, y: fl.y, fl }));
     B.shots.forEach(s => items.push({ kind: 'shot', x: s.x, y: s.y, s }));
     B.fx.forEach(f => { if (f.type === 'dead' || f.type === 'burst' || f.type === 'text' || f.type === 'ring') items.push({ kind: 'fx', x: f.x, y: f.y, f }); });
     items.forEach(it => it.p = P(it.x, it.y));
-    items.filter(it => it.p.f > 6).sort((a, b) => b.p.f - a.p.f).forEach(it => {
+    items.filter(it => it.p.f > 6 || it.kind === 'flat').sort((a, b) => (b.kind === 'flat') - (a.kind === 'flat') || b.p.f - a.p.f).forEach(it => {
       // near plane: a billboard closer than about a tile fades out and stops growing, so nothing fills the screen or is cut by the frame
-      const { f, x } = it.p, k = it.kind === 'zone' ? it.p.k : Math.min(it.p.k, NEARK), near = it.kind === 'zone' ? 1 : Math.max(0, Math.min(1, (f - 20) / 30)), floor = hor + EYE * k;
+      const { f, x } = it.p, k = it.kind === 'zone' ? it.p.k : Math.min(it.p.k, NEARK), near = it.kind === 'zone' || it.kind === 'flat' ? 1 : Math.max(0, Math.min(1, (f - 20) / 30)), floor = hor + EYE * k;
       if (near <= 0) return;
       if (it.kind === 'zone') {
         const rx = it.r * k, ry = Math.max(2, it.r * k * EYE / f);
@@ -92,6 +101,11 @@
           let n = 0; o.BADGE.forEach(([key, icon]) => { if (e.st[key] > 0 && n < 3) { const bs = Math.max(10, r * .7), im = o.tok('status/' + icon, 64); if (im) g.drawImage(im, x + r - n * bs, base - bs, bs, bs); n++; } });
           if (e === u.target) { g.strokeStyle = '#ffb951'; g.lineWidth = 2.5; g.beginPath(); g.roundRect(x - r - 5, top - 5, bw + 10, bh + 10, r + 5); g.stroke(); }
         });
+      } else if (it.kind === 'flat') {   // a tray on the floor: its corners projected onto the floor plane; skipped while any corner is behind the eye
+        const poly = pts => { const q = pts.map(([px, py]) => P(px, py)); if (q.some(c => c.f < 10)) return null; return q.map(c => [c.x, hor + EYE * c.k]); };
+        const a = poly(it.fl.pts); if (a) { const xs = a.map(c => c[0]); seen(Math.min(...xs), Math.max(...xs), f, () => { const fill = (pp, col) => { g.fillStyle = col; g.beginPath(); pp.forEach((c, i) => i ? g.lineTo(c[0], c[1]) : g.moveTo(c[0], c[1])); g.closePath(); g.fill(); }; fill(a, it.fl.fill); g.strokeStyle = 'rgba(28,36,80,.45)'; g.lineWidth = 1.5; g.stroke(); const b = it.fl.inner && poly(it.fl.inner); if (b) fill(b, it.fl.fill2); }); }
+      } else if (it.kind === 'prop') {
+        const w = it.pr.r * 2 * k; seen(x - w, x + w, f, () => { g.globalAlpha = near; FPSTHEME.fp(g, it.pr, x, floor, k); });
       } else if (it.kind === 'shot') {
         const s = it.s, lift = s.type === 'grenade' ? Math.sin((s.k || 0) * Math.PI) * 40 : s.type === 'dog' ? -EYE * .7 : s.type === 'drone' ? 34 : 0, r = (s.type === 'rocket' || s.big ? 7 : s.type === 'dog' ? 9 : s.type === 'grenade' ? 7 : s.type === 'drone' ? 9 : 4) * Math.min(k, 2.2), cy = hor - lift * k;
         seen(x - r - 2, x + r + 2, f, () => {

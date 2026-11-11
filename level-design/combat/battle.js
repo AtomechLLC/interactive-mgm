@@ -54,9 +54,9 @@
       else if (h.type === 'jet') { g.fillStyle = '#4a4f6b'; [h.a, h.b].forEach(p => { g.beginPath(); g.arc(p[0], p[1], 7, 0, TAU); g.fill(); }); g.strokeStyle = 'rgba(255,138,42,.35)'; g.lineWidth = 2; g.setLineDash([4, 6]); g.beginPath(); g.moveTo(...h.a); g.lineTo(...h.b); g.stroke(); g.setLineDash([]); }
     });
   }
-  const planOf = map => { if (!map._plan) { map._plan = map.P.render(W, H); decor(map._plan.getContext('2d'), map); } return map._plan; };
+  const planOf = map => { if (!map._plan) { map._plan = map.P.render(W, H); FPSTHEME.paint(map._plan.getContext('2d'), map); decor(map._plan.getContext('2d'), map); } return map._plan; };
   const base = (g, map = MAP) => { const p = planOf(map); if (map === MAP) plan = p; g.clearRect(0, 0, W, H); g.fillStyle = 'rgba(255,252,244,.85)'; g.beginPath(); g.roundRect(0, 0, W, H, 14); g.fill(); g.drawImage(p, 0, 0); };
-  const labels = (g, map = MAP) => Object.values(map.P.rooms).forEach(r => { if (r.lab) T.label(r.lab, (r.labAt || r.c)[0], (r.labAt || r.c)[1], 'center', C.muted, 13, 'rgba(255,252,244,.7)'); });
+  const labels = (g, map = MAP) => Object.values(map.P.rooms).forEach(r => { if (r.lab) r.lab.split('\n').forEach((t, i, all) => T.label(t, (r.labAt || r.c)[0], (r.labAt || r.c)[1] + (i - (all.length - 1) / 2) * 15, 'center', C.muted, i ? 11 : 13, 'rgba(255,252,244,.7)')); });
   // im drawn so that the point (ax, ay) of its 100 x 100 box sits at (x, y), turned by rot, at k px per unit
   function stampTok(g, im, x, y, rot, kx, ky, ax = 50, ay = 50, a = 1) { if (!im || a <= 0) return; g.save(); g.globalAlpha *= a; g.translate(x, y); g.rotate(rot); g.drawImage(im, -ax * kx, -ay * ky, 100 * kx, 100 * ky); g.restore(); }
   // a token whose disc (centre 42,56; radius 32 of 100) lands on (x, y) with radius r, inside a ring in its team's colour
@@ -292,7 +292,7 @@
       if (B.over && run) { run = false; sync(); }
       if (fp && sel && sel.alive && !B.over) {
         T.use(g); g.clearRect(0, 0, W, H); g.save(); g.beginPath(); g.roundRect(0, 0, W, H, 14); g.clip();
-        const warn = FPV.draw(g, B, sel, cam, { W, H, walls, plan, drawUnit, tok, TEAM, BADGE, dt: Math.min(dt, .1) });
+        const warn = FPV.draw(g, B, sel, cam, { W, H, walls, plan, drawUnit, tok, TEAM, BADGE, dt: Math.min(dt, .1), props: FPSTHEME.props(MAP), flats: FPSTHEME.flats(MAP), rooms: MAP.P.rooms });
         FPV.mini(g, B, sel, { W, H, TEAM, plan }, W - 272, 14, .25);
         // head-up display: score, who you are, health, and whether this is your moment
         T.label(`${TEAM[0].name} ${B.score[0]}`, 18, 24, 'left', TEAM[0].col, 17); T.label(`${TEAM[1].name} ${B.score[1]}`, 150, 24, 'left', TEAM[1].col, 17);
@@ -306,7 +306,7 @@
         g.restore();
       } else {
         drawBattle(g, B, sel, heat || B.over);
-        if (fp && sel && !sel.alive && !B.over) T.stamp(`${sel.def.name} is down: back in ${Math.max(0, sel.dead).toFixed(1)} s`, W / 2, 70, TEAM[sel.team].col, 1, 22);
+        if (fp && sel && !sel.alive && !B.over) T.stamp(sel.dead > 1e6 ? `${sel.def.name} is down: back when the rest of its pack falls` : `${sel.def.name} is down: back in ${Math.max(0, sel.dead).toFixed(1)} s`, W / 2, 70, TEAM[sel.team].col, 1, 22);
       }
       // the side panel only rewrites when its text changes
       const sc = B.script(), wait = sc.n < 10;
