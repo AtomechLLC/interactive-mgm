@@ -137,11 +137,16 @@
       if (B.t - (u.beamT || -9) < .12 && u.beamTo && u.beamTo.alive) { const e = u.beamTo; g.save(); g.strokeStyle = '#2fb36a'; g.lineWidth = 4; g.setLineDash([6, 5]); g.lineDashOffset = -B.t * 40; g.beginPath(); g.moveTo(u.x, u.y); g.lineTo(e.x, e.y); g.stroke(); g.restore(); stampTok(g, tok('status/heal', 64), e.x - 13, e.y - 13, 0, .13, .13); }
       if (u === sel) { g.strokeStyle = C.gold; g.lineWidth = 3; g.beginPath(); g.arc(u.x, u.y, r + 8, 0, TAU); g.stroke(); }
       drawUnit(g, d, u.x, u.y, r, ghost);
-      if (d.key === 'riot-shield') { g.strokeStyle = B.t - (u.blockT || -9) < .2 ? '#fff' : '#1d2433'; g.lineWidth = 4; g.lineCap = 'round'; g.beginPath(); g.arc(u.x, u.y, r + 6, u.face - 1.0, u.face + 1.0); g.stroke(); }
+      if (d.block) {   // the shield arc shrinks with its stamina; a dropped shield is a thin red dashed arc
+        const k = u.sh / d.block; g.lineCap = 'round';
+        if (u.broken) { g.save(); g.setLineDash([3, 5]); g.strokeStyle = C.red; g.lineWidth = 2; g.beginPath(); g.arc(u.x, u.y, r + 6, u.face - 1.0, u.face + 1.0); g.stroke(); g.restore(); }
+        else { g.strokeStyle = 'rgba(29,36,51,.25)'; g.lineWidth = 4; g.beginPath(); g.arc(u.x, u.y, r + 6, u.face - 1.0, u.face + 1.0); g.stroke(); g.strokeStyle = B.t - (u.blockT || -9) < .2 ? '#fff' : '#1d2433'; g.beginPath(); g.arc(u.x, u.y, r + 6, u.face - k, u.face + k); g.stroke(); }
+      }
       if (d.key === 'xeno-swarm') for (let i = 0; i < 4; i++) { const a = B.t * 3 + i * TAU / 4; g.fillStyle = '#4b2e63'; g.beginPath(); g.arc(u.x + Math.cos(a) * (r + 7), u.y + Math.sin(a) * (r + 7), 3.2, 0, TAU); g.fill(); }
       // health bar and status badges
       const w = 26 * (d.size || 1), hp = clamp(u.hp / u.hpMax); g.globalAlpha = ghost;
       g.fillStyle = '#1d2433'; g.fillRect(u.x - w / 2 - 1, u.y - r - 11, w + 2, 5); g.fillStyle = TEAM[u.team].col; g.fillRect(u.x - w / 2, u.y - r - 10, w * hp, 3); g.globalAlpha = 1;
+      if (d.block) { g.fillStyle = '#1d2433'; g.fillRect(u.x - w / 2 - 1, u.y - r - 15, w + 2, 4); g.fillStyle = u.broken ? C.red : C.gold; g.fillRect(u.x - w / 2, u.y - r - 14, w * u.sh / d.block, 2); }   // shield stamina
       let n = 0; BADGE.forEach(([k, icon]) => { if (u.st[k] > 0 && n < 3) { stampTok(g, tok('status/' + icon, 64), u.x + r + 2 - n * 13, u.y + r + 1, 0, .13, .13, 50, 50, ghost); n++; } });
     });
     // shots in flight
@@ -209,6 +214,7 @@
         const hp = clamp(sel.hp / sel.hpMax), inEdge = B.t - (sel.edgeT || -9) < 1.2, E = FPSSIM.EDGE[sel.def.key];
         T.label(`${sel.def.name} · ${sel.kills} kills, ${sel.deaths} deaths`, 18, H - 58, 'left', TEAM[sel.team].col, 17);
         g.fillStyle = '#1d2433'; g.fillRect(18, H - 40, 264, 14); g.fillStyle = TEAM[sel.team].col; g.fillRect(20, H - 38, 260 * hp, 10);
+        if (sel.def.block) { g.fillStyle = '#1d2433'; g.fillRect(18, H - 48, 264, 8); g.fillStyle = sel.broken ? C.red : C.gold; g.fillRect(20, H - 46, 260 * sel.sh / sel.def.block, 4); }   // shield stamina
         if (E) T.label(inEdge ? `In its moment: ${E[0]}` : `Favoured moment: ${E[0]}`, 18, H - 14, 'left', inEdge ? C.goldInk : C.muted, 15, inEdge ? '#fde9b8' : 'rgba(255,252,244,.9)');
         let n = 0; BADGE.forEach(([k, icon]) => { if (sel.st[k] > 0 && n < 5) { stampTok(g, tok('status/' + icon, 64), 306 + n * 30, H - 33, 0, .26, .26); n++; } });
         if (warn) T.stamp(warn, W / 2, 74, C.redDk, 1, 20);
