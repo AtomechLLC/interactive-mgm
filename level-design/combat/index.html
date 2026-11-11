@@ -19,10 +19,16 @@
   .fr-u.on { background: #fde9b8; border-color: #e0a92d; border-top-color: var(--tc); }
   .slide .fr-out { font-size: 21px; line-height: 1.45; color: var(--ink); margin: 18px 0 0; min-height: 4.4em; }
   .fr-out .chip { margin-top: 8px; }
-  table.fb-board { width: 100%; border-collapse: collapse; font-size: 15px; color: var(--ink); margin-top: 10px; }
-  table.fb-board th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 600; padding-bottom: 2px; }
-  table.fb-board td { padding: 2px 4px; border-bottom: 1px solid #e3d8bf; font-weight: 600; }
-  table.fb-board td:last-child, table.fb-board th:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+  table.fb-script { width: 100%; border-collapse: collapse; font-size: 15px; color: var(--ink); }
+  table.fb-script td { padding: 3px 4px; border-bottom: 1px solid #e3d8bf; font-weight: 600; vertical-align: top; }
+  table.fb-script td:first-child { width: 22px; font-weight: 800; color: var(--muted); }
+  table.fb-script tr.met td:first-child { color: #2fae63; }
+  table.fb-script tr.miss td:first-child { color: #e5322d; }
+  table.fb-script small { display: block; font-weight: 500; font-size: 13px; color: var(--muted); }
+  .mt-side label.chk { font-size: 15px; margin: 4px 0; }
+  .mt-side label.chk input { width: 17px; height: 17px; }
+  .fb-bench { font: 600 14px Jost, sans-serif; padding: 3px 6px; border-radius: 8px; border: 2px solid #cdbf9f; background: #fffaf0; color: var(--ink); max-width: 230px; }
+  .slide .fb-out { font-size: 15px; line-height: 1.35; margin-top: 8px; }
 </style>
 <script>
   window.DECK = { title: 'Mastering Game Mechanics · Level Design Book · Combat', home: '../index.html', audio: false, cues: null };
@@ -61,12 +67,16 @@
   <div class="mt-wrap">
     <canvas class="demo" width="1040" height="585"></canvas>
     <div class="mt-side">
-      <div class="row wrap"><button class="btn fb-play">⏸ Pause</button><button class="btn fb-new">↻ New battle</button><button class="btn fb-end">⏭ Skip to the end</button></div>
-      <h4>Speed</h4>
+      <div class="row wrap"><button class="btn fb-play">⏸ Pause</button><button class="btn fb-new">↻ New battle</button><button class="btn fb-end">⏭ To the end</button></div>
       <div class="seg fb-speed"><button class="btn" data-v="1">1×</button><button class="btn" data-v="2">2×</button><button class="btn" data-v="4">4×</button><button class="btn" data-v="8">8×</button></div>
-      <table class="fb-board"></table>
+      <h4>Change one thing</h4>
+      <label class="chk"><input type="checkbox" class="fb-shut"> Wall up the middle doorway</label>
+      <label class="chk"><input type="checkbox" class="fb-swap"> Swap the spawns</label>
+      <label class="chk fb-pick">Bench <select class="fb-bench"></select></label>
+      <label class="chk"><input type="checkbox" class="fb-heat"> Show where units fell</label>
+      <h4>The battle we designed for</h4>
+      <table class="fb-script"></table>
       <p class="mt-out fb-out"></p>
-      <p class="src">Teal is the modern squad, orange the sci-fi squad. Circles, cones, lines, arrows and badges are the student-token telegraphs and status icons. Units respawn in their own spawn room three seconds after they fall.</p>
     </div>
   </div>
 </section>

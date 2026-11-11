@@ -43,7 +43,8 @@
       mid: ['A', 'M1', 'MidW', 'MidE', 'rM1', 'B'],
       tun: ['A', 'As', 'T1', 'T2', 'Tmid', 'rT2', 'rT1', 'Bs', 'B'],
     };
-    return { P, lanes, bases: ['A', 'B'], W, H };
+    const laneOf = { A: 'spawn', B: 'spawn', Long: 'long', An: 'long', Bn: 'long', M1: 'mid', rM1: 'mid', MidW: 'mid', MidE: 'mid', As: 'tun', Bs: 'tun', T1: 'tun', rT1: 'tun', T2: 'tun', rT2: 'tun', Tmid: 'tun', cN: 'link', rcN: 'link', cS: 'link', rcS: 'link' };
+    return { P, lanes, laneOf, bases: ['A', 'B'], W, H };
   }
   root.FPSMAP = { build, W, H };
 })(typeof window !== 'undefined' ? window : globalThis);
