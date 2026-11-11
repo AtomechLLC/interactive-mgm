@@ -85,7 +85,7 @@
           if (Math.abs(turn) < 1.75) {
             const off = Math.sin(turn) * r * .55, wide = Math.max(.25, Math.cos(turn * .8)), fr = r * .86;
             g.save(); g.beginPath(); g.roundRect(x - r, top, bw, bh, r); g.clip(); g.translate(x - off, cy); g.scale(wide, 1);
-            g.fillStyle = '#fffaf0'; g.beginPath(); g.arc(0, 0, fr, 0, TAU); g.fill(); g.clip(); o.drawUnit(g, e.def, 0, 0, fr, 1, false); g.restore();
+            o.drawUnit(g, e.def, 0, 0, fr, 1, false); g.restore();
           }
           g.globalAlpha = near;
           const w = Math.max(18, bw * 1.2), hp = Math.max(0, e.hp / e.hpMax), by = top - Math.max(6, 6 * Math.min(k, 2)); g.fillStyle = '#1d2433'; g.fillRect(x - w / 2 - 1, by - 1, w + 2, 6); g.fillStyle = col; g.fillRect(x - w / 2, by, w * hp, 4);
