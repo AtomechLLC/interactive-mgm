@@ -15,7 +15,7 @@
 
   // student tokens, drawn once into a small canvas each so a frame is only bitmap copies
   const cache = {};
-  function tok(path, px = 128) {
+  function tok(path, px = 256) {
     let c = cache[path];
     if (!c) { c = cache[path] = { cv: null }; const im = new Image(); im.onload = () => { const cv = document.createElement('canvas'); cv.width = cv.height = px; cv.getContext('2d').drawImage(im, 0, 0, px, px); c.cv = cv; }; im.src = SVG + path + '.svg'; }
     return c.cv;
@@ -60,9 +60,9 @@
   // im drawn so that the point (ax, ay) of its 100 x 100 box sits at (x, y), turned by rot, at k px per unit
   function stampTok(g, im, x, y, rot, kx, ky, ax = 50, ay = 50, a = 1) { if (!im || a <= 0) return; g.save(); g.globalAlpha *= a; g.translate(x, y); g.rotate(rot); g.drawImage(im, -ax * kx, -ay * ky, 100 * kx, 100 * ky); g.restore(); }
   // a token whose disc (centre 42,56; radius 32 of 100) lands on (x, y) with radius r, inside a ring in its team's colour
-  function drawUnit(g, def, x, y, r, a = 1) {
+  function drawUnit(g, def, x, y, r, a = 1, disc = true) {
     const k = r / 32; g.save(); g.globalAlpha *= a;
-    g.fillStyle = TEAM[def.team].col; g.beginPath(); g.arc(x, y, r + 3, 0, TAU); g.fill();
+    if (disc) { g.fillStyle = TEAM[def.team].col; g.beginPath(); g.arc(x, y, r + 3, 0, TAU); g.fill(); }
     const im = unitTok(def); if (im) g.drawImage(im, x - 42 * k, y - 56 * k, 100 * k, 100 * k); else { g.fillStyle = '#8a8f9c'; g.beginPath(); g.arc(x, y, r, 0, TAU); g.fill(); }
     g.restore();
   }
