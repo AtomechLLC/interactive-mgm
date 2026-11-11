@@ -1,7 +1,9 @@
 /* Combat on a map: three slides drawn on one floor plan (map.js) and one simulation (sim.js).
    1. the map study: lanes, longest sightlines and doorways, all measured from the plan itself
    2. the two squads: every token with the behaviour or power the simulation gives it
-   3. the battle: ten modern tokens against ten sci-fi tokens, respawning until one side has 100 kills
+   3. the battle: ten modern tokens against ten sci-fi tokens, respawning until one side has 100 kills,
+      seen from above or through the eyes of one followed token (fp.js)
+   4. three lopsided maps (maps.js): the same battle, with every environmental feature counted by which token used it
    Every unit, telegraph, arrow, status badge and prop is a student token from student-tokens/vector-basics/svg. */
 (function () {
   const { $, $$, demo, canvasDemo, say } = FPF.kit;
@@ -25,8 +27,29 @@
   ['arrows/charge-ally', 'arrows/charge-enemy', 'arrows/leap-ally', 'arrows/leap-enemy', 'props/bomb', 'props/vortex', 'tokens/neutral-creature'].forEach(n => tok(n));
 
   let plan = null;
-  const base = g => { plan = plan || MAP.P.render(W, H); g.clearRect(0, 0, W, H); g.fillStyle = 'rgba(255,252,244,.85)'; g.beginPath(); g.roundRect(0, 0, W, H, 14); g.fill(); g.drawImage(plan, 0, 0); };
-  const labels = g => Object.values(MAP.P.rooms).forEach(r => { if (r.lab) T.label(r.lab, (r.labAt || r.c)[0], (r.labAt || r.c)[1], 'center', C.muted, 13, 'rgba(255,252,244,.7)'); });
+  // what plan.js does not draw: glass, vent grilles, ledges, and the fixed parts of the hazards
+  function decor(g, map) {
+    const INK = PLAN.INK;
+    map.P.doors.forEach(d => {
+      const a = [d.m[0] - d.e[0] * d.gw / 2, d.m[1] - d.e[1] * d.gw / 2], z = [d.m[0] + d.e[0] * d.gw / 2, d.m[1] + d.e[1] * d.gw / 2], n = [-d.e[1], d.e[0]];
+      g.lineCap = 'butt';
+      if (d.kind === 'window') { g.strokeStyle = '#8fd0ee'; g.lineWidth = 7; g.beginPath(); g.moveTo(...a); g.lineTo(...z); g.stroke(); g.strokeStyle = INK; g.lineWidth = 1.2; [-3.5, 3.5].forEach(k => { g.beginPath(); g.moveTo(a[0] + n[0] * k, a[1] + n[1] * k); g.lineTo(z[0] + n[0] * k, z[1] + n[1] * k); g.stroke(); }); }
+      else if (d.kind === 'vent') { g.strokeStyle = '#4a4f6b'; g.lineWidth = 12; g.beginPath(); g.moveTo(...a); g.lineTo(...z); g.stroke(); g.strokeStyle = '#c9c4b4'; g.lineWidth = 1.5; for (let k = 3; k < d.gw; k += 5) { const p = [a[0] + d.e[0] * k, a[1] + d.e[1] * k]; g.beginPath(); g.moveTo(p[0] + n[0] * 5, p[1] + n[1] * 5); g.lineTo(p[0] - n[0] * 5, p[1] - n[1] * 5); g.stroke(); } }
+      else if (d.kind === 'ledge') {
+        const rb = map.P.rooms[d.b].c, k = (rb[0] - d.m[0]) * n[0] + (rb[1] - d.m[1]) * n[1] > 0 ? 1 : -1;
+        g.strokeStyle = C.goldInk; g.lineWidth = 4; g.setLineDash([10, 5]); g.beginPath(); g.moveTo(...a); g.lineTo(...z); g.stroke(); g.setLineDash([]);
+        g.fillStyle = C.goldInk; for (let t = 15; t < d.gw; t += 30) { const p = [a[0] + d.e[0] * t, a[1] + d.e[1] * t]; g.beginPath(); g.moveTo(p[0] + n[0] * k * 16, p[1] + n[1] * k * 16); g.lineTo(p[0] + n[0] * k * 6 + d.e[0] * 6, p[1] + n[1] * k * 6 + d.e[1] * 6); g.lineTo(p[0] + n[0] * k * 6 - d.e[0] * 6, p[1] + n[1] * k * 6 - d.e[1] * 6); g.fill(); }
+      }
+    });
+    (map.hazards || []).forEach(h => {
+      if (h.type === 'patrol') { g.strokeStyle = 'rgba(28,36,80,.4)'; g.lineWidth = 2; [-7, 7].forEach(k => { g.beginPath(); g.moveTo(h.a[0], h.a[1] + k); g.lineTo(h.b[0], h.b[1] + k); g.stroke(); }); for (let x = h.a[0]; x <= h.b[0]; x += 22) { g.beginPath(); g.moveTo(x, h.a[1] - 10); g.lineTo(x, h.a[1] + 10); g.stroke(); } }
+      else if (h.type === 'rotor') { g.strokeStyle = 'rgba(229,50,45,.35)'; g.lineWidth = 2; g.setLineDash([6, 6]); g.beginPath(); g.arc(h.x, h.y, h.len, 0, TAU); g.stroke(); g.setLineDash([]); }
+      else if (h.type === 'jet') { g.fillStyle = '#4a4f6b'; [h.a, h.b].forEach(p => { g.beginPath(); g.arc(p[0], p[1], 7, 0, TAU); g.fill(); }); g.strokeStyle = 'rgba(255,138,42,.35)'; g.lineWidth = 2; g.setLineDash([4, 6]); g.beginPath(); g.moveTo(...h.a); g.lineTo(...h.b); g.stroke(); g.setLineDash([]); }
+    });
+  }
+  const planOf = map => { if (!map._plan) { map._plan = map.P.render(W, H); decor(map._plan.getContext('2d'), map); } return map._plan; };
+  const base = (g, map = MAP) => { const p = planOf(map); if (map === MAP) plan = p; g.clearRect(0, 0, W, H); g.fillStyle = 'rgba(255,252,244,.85)'; g.beginPath(); g.roundRect(0, 0, W, H, 14); g.fill(); g.drawImage(p, 0, 0); };
+  const labels = (g, map = MAP) => Object.values(map.P.rooms).forEach(r => { if (r.lab) T.label(r.lab, (r.labAt || r.c)[0], (r.labAt || r.c)[1], 'center', C.muted, 13, 'rgba(255,252,244,.7)'); });
   // im drawn so that the point (ax, ay) of its 100 x 100 box sits at (x, y), turned by rot, at k px per unit
   function stampTok(g, im, x, y, rot, kx, ky, ax = 50, ay = 50, a = 1) { if (!im || a <= 0) return; g.save(); g.globalAlpha *= a; g.translate(x, y); g.rotate(rot); g.drawImage(im, -ax * kx, -ay * ky, 100 * kx, 100 * ky); g.restore(); }
   // a token whose disc (centre 42,56; radius 32 of 100) lands on (x, y) with radius r, inside a ring in its team's colour
@@ -97,7 +120,8 @@
       const pick = k => {
         const u = ROSTER.find(x => x.key === k); $$(grid, '.fr-u').forEach(b => b.classList.toggle('on', b.dataset.k === k));
         const w = { bullet: 'rifle fire', bolt: 'plasma bolts', rail: 'aimed shots', rocket: 'rockets', arc: 'energy arcs', melee: 'melee', none: 'no weapon' }[u.shot], ln = u.lane.indexOf(Math.max(...u.lane));
-        say(out, `<b style="color:${TEAM[u.team].col}">${u.name}.</b> ${u.does}<br><span class="chip">${u.hp} health</span> <span class="chip">${w}${u.range > 40 ? `, ${(u.range / TILE).toFixed(1)} tiles` : ''}</span> <span class="chip">${u.spd > 110 ? 'fast' : u.spd < 75 ? 'slow' : 'walking pace'}</span> <span class="chip gold">prefers ${Object.values(laneName)[ln]}</span>`);
+        const E = FPSSIM.EDGE[u.key];
+        say(out, `<b style="color:${TEAM[u.team].col}">${u.name}.</b> ${u.does}${E ? ` <b class="accent">Its moment:</b> it hits about twice as hard ${E[1]}.` : ''}<br><span class="chip">${u.hp} health</span> <span class="chip">${w}${u.range > 40 ? `, ${(u.range / TILE).toFixed(1)} tiles` : ''}</span> <span class="chip">${u.spd > 110 ? 'fast' : u.spd < 75 ? 'slow' : 'walking pace'}</span> <span class="chip gold">prefers ${Object.values(laneName)[ln]}</span>`);
       };
       $$(grid, '.fr-u').forEach(b => b.onclick = () => pick(b.dataset.k)); pick('marksman');
       window.__fpsPick = pick;
@@ -106,10 +130,34 @@
 
   /* ---------- 3. the battle ---------- */
   const BADGE = [['guard', 'invulnerable'], ['stun', 'stun'], ['confuse', 'confuse'], ['root', 'root'], ['slow', 'slow'], ['marked', 'marked'], ['burn', 'burn'], ['bleed', 'bleed'], ['haste', 'haste'], ['amp', 'damage-up']];
+  function drawHaz(g, B) {
+    B.haz.forEach(h => {
+      if (h.type === 'crush') {
+        const d = h.d, k = h.k || 0, n = [-d.e[1], d.e[0]], half = d.gw / 2;
+        if (h.warn && Math.floor(B.t * 10) % 2) { g.strokeStyle = C.red; g.lineWidth = 3; g.beginPath(); g.arc(d.m[0], d.m[1], half + 6, 0, TAU); g.stroke(); }
+        [-1, 1].forEach(s => { const a = [d.m[0] + d.e[0] * half * s, d.m[1] + d.e[1] * half * s], z = [d.m[0] + d.e[0] * half * s * (1 - (d.shut ? 1 : k * .55)), d.m[1] + d.e[1] * half * s * (1 - (d.shut ? 1 : k * .55))]; g.strokeStyle = '#3a4160'; g.lineWidth = 13; g.lineCap = 'butt'; g.beginPath(); g.moveTo(...a); g.lineTo(...z); g.stroke(); g.strokeStyle = C.gold; g.lineWidth = 3; g.beginPath(); g.moveTo(a[0] + n[0] * 3, a[1] + n[1] * 3); g.lineTo(z[0] + n[0] * 3, z[1] + n[1] * 3); g.stroke(); });
+      } else if (h.type === 'patrol') {
+        g.save(); g.translate(h.x, h.y); g.fillStyle = '#3a4160'; g.strokeStyle = PLAN.INK; g.lineWidth = 2; g.beginPath(); g.roundRect(-h.r - 3, -h.r + 2, h.r * 2 + 6, h.r * 2 - 4, 6); g.fill(); g.stroke();
+        g.fillStyle = C.gold; for (let i = -1; i <= 1; i++) g.fillRect(i * 13 - 3, -h.r + 2, 6, h.r * 2 - 4); g.fillStyle = C.red; g.beginPath(); g.arc(0, 0, 5, 0, TAU); g.fill(); g.restore();
+      } else if (h.type === 'rotor') {
+        g.save(); g.translate(h.x, h.y); g.rotate(h.ang || 0); g.strokeStyle = '#3a4160'; g.lineWidth = 8; g.lineCap = 'round'; g.beginPath(); g.moveTo(-h.len, 0); g.lineTo(h.len, 0); g.stroke();
+        g.strokeStyle = C.red; g.beginPath(); g.moveTo(-h.len, 0); g.lineTo(-h.len + 16, 0); g.moveTo(h.len, 0); g.lineTo(h.len - 16, 0); g.stroke(); g.restore();
+        g.fillStyle = C.gold; g.strokeStyle = PLAN.INK; g.lineWidth = 2.5; g.beginPath(); g.arc(h.x, h.y, 11, 0, TAU); g.fill(); g.stroke();
+      } else if (h.type === 'jet') {
+        if (h.warn) { g.strokeStyle = C.red; g.lineWidth = 2 + 5 * (h.k || 0); g.setLineDash([5, 5]); g.beginPath(); g.moveTo(...h.a); g.lineTo(...h.b); g.stroke(); g.setLineDash([]); }
+        if (h.live) { const L = Math.hypot(h.b[0] - h.a[0], h.b[1] - h.a[1]); for (let k = 0; k <= L; k += 9) { const f = .5 + .5 * Math.sin(B.t * 31 + k * 1.7), x = h.a[0] + (h.b[0] - h.a[0]) * k / L, y = h.a[1] + (h.b[1] - h.a[1]) * k / L; g.fillStyle = `rgba(255,${138 + Math.round(70 * f)},42,.75)`; g.beginPath(); g.arc(x, y, h.w * (.55 + .4 * f), 0, TAU); g.fill(); } }
+      } else if (h.type === 'barrel') {
+        if (h.state === 'gone') { g.fillStyle = 'rgba(40,30,30,.22)'; g.beginPath(); g.arc(h.x, h.y, 13, 0, TAU); g.fill(); return; }
+        if (h.state === 'fuse') { g.strokeStyle = C.red; g.lineWidth = 3; g.beginPath(); g.arc(h.x, h.y, h.r, 0, TAU); g.stroke(); g.fillStyle = 'rgba(229,50,45,.14)'; g.fill(); }
+        const im = tok('props/barrel'); if (im) stampTok(g, im, h.x, h.y, 0, .3, .3); else { g.fillStyle = '#9a6434'; g.beginPath(); g.arc(h.x, h.y, 11, 0, TAU); g.fill(); }
+      }
+    });
+  }
   function drawBattle(g, B, sel, heat) {
-    T.use(g); base(g);
+    T.use(g); base(g, B.map);
+    drawHaz(g, B);
     if (B.opt.midShut) { const d = B.midDoor; g.strokeStyle = PLAN.INK; g.lineWidth = 9; g.lineCap = 'butt'; g.beginPath(); g.moveTo(d.m[0] - d.e[0] * d.gw / 2, d.m[1] - d.e[1] * d.gw / 2); g.lineTo(d.m[0] + d.e[0] * d.gw / 2, d.m[1] + d.e[1] * d.gw / 2); g.stroke(); }
-    labels(g);
+    labels(g, B.map);
     // death map: one dot where each unit fell, in the colour of the squad that lost it
     if (heat) { g.save(); g.globalAlpha = .42; B.deaths.forEach(k => { g.fillStyle = TEAM[k.team].col; g.beginPath(); g.arc(k.x, k.y, 6, 0, TAU); g.fill(); }); g.restore(); }
     const tel = (n, team) => tok(`telegraphs/${n}-${TEAM[team].tel}`, 256);
@@ -135,11 +183,16 @@
       if (B.t - (u.beamT || -9) < .12 && u.beamTo && u.beamTo.alive) { const e = u.beamTo; g.save(); g.strokeStyle = '#2fb36a'; g.lineWidth = 4; g.setLineDash([6, 5]); g.lineDashOffset = -B.t * 40; g.beginPath(); g.moveTo(u.x, u.y); g.lineTo(e.x, e.y); g.stroke(); g.restore(); stampTok(g, tok('status/heal', 64), e.x - 13, e.y - 13, 0, .13, .13); }
       if (u === sel) { g.strokeStyle = C.gold; g.lineWidth = 3; g.beginPath(); g.arc(u.x, u.y, r + 8, 0, TAU); g.stroke(); }
       drawUnit(g, d, u.x, u.y, r, ghost);
-      if (d.key === 'riot-shield') { g.strokeStyle = B.t - (u.blockT || -9) < .2 ? '#fff' : '#1d2433'; g.lineWidth = 4; g.lineCap = 'round'; g.beginPath(); g.arc(u.x, u.y, r + 6, u.face - 1.0, u.face + 1.0); g.stroke(); }
+      if (d.block) {   // the shield arc shrinks with its stamina; a dropped shield is a thin red dashed arc
+        const k = u.sh / d.block; g.lineCap = 'round';
+        if (u.broken) { g.save(); g.setLineDash([3, 5]); g.strokeStyle = C.red; g.lineWidth = 2; g.beginPath(); g.arc(u.x, u.y, r + 6, u.face - 1.0, u.face + 1.0); g.stroke(); g.restore(); }
+        else { g.strokeStyle = 'rgba(29,36,51,.25)'; g.lineWidth = 4; g.beginPath(); g.arc(u.x, u.y, r + 6, u.face - 1.0, u.face + 1.0); g.stroke(); g.strokeStyle = B.t - (u.blockT || -9) < .2 ? '#fff' : '#1d2433'; g.beginPath(); g.arc(u.x, u.y, r + 6, u.face - k, u.face + k); g.stroke(); }
+      }
       if (d.key === 'xeno-swarm') for (let i = 0; i < 4; i++) { const a = B.t * 3 + i * TAU / 4; g.fillStyle = '#4b2e63'; g.beginPath(); g.arc(u.x + Math.cos(a) * (r + 7), u.y + Math.sin(a) * (r + 7), 3.2, 0, TAU); g.fill(); }
       // health bar and status badges
       const w = 26 * (d.size || 1), hp = clamp(u.hp / u.hpMax); g.globalAlpha = ghost;
       g.fillStyle = '#1d2433'; g.fillRect(u.x - w / 2 - 1, u.y - r - 11, w + 2, 5); g.fillStyle = TEAM[u.team].col; g.fillRect(u.x - w / 2, u.y - r - 10, w * hp, 3); g.globalAlpha = 1;
+      if (d.block) { g.fillStyle = '#1d2433'; g.fillRect(u.x - w / 2 - 1, u.y - r - 15, w + 2, 4); g.fillStyle = u.broken ? C.red : C.gold; g.fillRect(u.x - w / 2, u.y - r - 14, w * u.sh / d.block, 2); }   // shield stamina
       let n = 0; BADGE.forEach(([k, icon]) => { if (u.st[k] > 0 && n < 3) { stampTok(g, tok('status/' + icon, 64), u.x + r + 2 - n * 13, u.y + r + 1, 0, .13, .13, 50, 50, ghost); n++; } });
     });
     // shots in flight
@@ -156,24 +209,33 @@
       else if (f.type === 'rail') { const L = Math.hypot(f.x2 - f.x, f.y2 - f.y); stampTok(g, tel('line', f.team), f.x, f.y, Math.atan2(f.y2 - f.y, f.x2 - f.x) + Math.PI / 2, .16 * a + .04, L / 96, 50, 98, a); g.save(); g.globalAlpha = a; g.strokeStyle = TEAM[f.team].col; g.lineWidth = 3; g.beginPath(); g.moveTo(f.x, f.y); g.lineTo(f.x2, f.y2); g.stroke(); g.restore(); }
       else if (f.type === 'arc') { const L = Math.hypot(f.x2 - f.x, f.y2 - f.y); g.save(); g.translate((f.x + f.x2) / 2, (f.y + f.y2) / 2); g.rotate(Math.atan2(f.y2 - f.y, f.x2 - f.x) + Math.PI / 2 - .34); g.globalAlpha = a; const im = tel('lightning', f.team), kk = L / 97; if (im) g.drawImage(im, -50 * kk * .5, -50 * kk, 100 * kk * .5, 100 * kk); g.restore(); }
       else if (f.type === 'burst') stampTok(g, tel('burst', f.team), f.x, f.y, k, f.r / 46 * (.5 + .5 * k), f.r / 46 * (.5 + .5 * k), 50, 50, a);
+      else if (f.type === 'boom') { g.save(); g.globalAlpha = a * .8; g.fillStyle = '#ff8a2a'; g.beginPath(); g.arc(f.x, f.y, f.r * (.4 + .6 * k), 0, TAU); g.fill(); g.fillStyle = '#ffe08a'; g.beginPath(); g.arc(f.x, f.y, f.r * .5 * (1 - k), 0, TAU); g.fill(); g.restore(); }
       else if (f.type === 'slash') stampTok(g, tel('burst', f.team), f.x, f.y, 0, .22, .22, 50, 50, a);
       else if (f.type === 'dead') stampTok(g, tok('status/dead', 64), f.x, f.y - k * 10, 0, .22, .22, 50, 50, Math.min(1, a * 2));
+      else if (f.type === 'text' && f.team != null) { g.save(); g.globalAlpha = Math.max(0, a); g.font = '700 13px Montserrat, Jost, sans-serif'; g.textAlign = 'center'; g.lineWidth = 4; g.strokeStyle = '#fffaf0'; g.strokeText(f.text, f.x, f.y - k * 12); g.fillStyle = TEAM[f.team].col; g.fillText(f.text, f.x, f.y - k * 12); g.restore(); }   // a favoured hit, named in the squad's colour
       else if (f.type === 'text') T.popText(f.text, f.x, f.y - k * 14, C.ink, a);
     });
     // score strip along the top edge, kill feed along the bottom edge
     const sc = B.score, bw = 300;
     [0, 1].forEach(t => { const x = t ? W / 2 + 40 : W / 2 - 40 - bw; g.fillStyle = 'rgba(28,36,80,.12)'; g.fillRect(x, 12, bw, 16); g.fillStyle = TEAM[t].col; const f = bw * Math.min(1, sc[t] / B.goal); g.fillRect(t ? x : x + bw - f, 12, f, 16); T.label(`${TEAM[t].name} ${sc[t]}`, t ? x + bw + 14 : x - 14, 20, t ? 'left' : 'right', TEAM[t].col, 17); });
     T.label(`to ${B.goal}`, W / 2, 20, 'center', C.muted, 14);
-    const f0 = B.feed[0]; if (f0 && B.t - f0.t < 3) { const a = B.units[f0.k], v = B.units[f0.v]; T.label(`${a.def.name} took out ${v.def.name}`, W / 2, 566, 'center', TEAM[a.team].col, 15); }
+    const f0 = B.feed[0]; if (f0 && B.t - f0.t < 3) { const a = B.units[f0.k], v = B.units[f0.v], cap = s => s[0].toUpperCase() + s.slice(1); T.label(f0.hz ? (a ? `${a.def.name} got ${v.def.name} with ${f0.hz}` : `${cap(f0.hz)} took out ${v.def.name}`) : `${a.def.name} took out ${v.def.name}`, W / 2, 566, 'center', a ? TEAM[a.team].col : C.redDk, 15); }
     if (B.over) { g.fillStyle = 'rgba(255,252,244,.6)'; g.fillRect(0, 0, W, H); T.stamp(`${TEAM[B.winner].name} squad wins ${sc[B.winner]} to ${sc[1 - B.winner]}`, W / 2, H / 2 - 20, TEAM[B.winner].col, 1, 40); const mvp = [...B.units].sort((a, b) => b.kills - a.kills)[0]; T.label(`Most kills: ${mvp.def.name}, ${mvp.kills}. Battle length ${Math.floor(B.t / 60)}:${String(Math.floor(B.t % 60)).padStart(2, '0')}.`, W / 2, H / 2 + 44, 'center', C.ink, 18); }
   }
 
   canvasDemo('fps-battle', (s, cv, g) => {
-    let seed = 1, B, speed = 2, run = true, sel = null, acc = 0, shown = '', heat = false;
-    const out = $(s, '.fb-out'), board = $(s, '.fb-script'), bench = $(s, '.fb-bench');
-    bench.innerHTML = '<option value="">nobody</option>' + ROSTER.map(u => `<option value="${u.key}">${TEAM[u.team].name}: ${u.name}</option>`).join('');
+    let seed = 1, B, speed = 2, run = true, sel = null, acc = 0, shown = '', heat = false, fp = false, walls = [], follow = '';
+    const cam = { ang: 0, x: 0, y: 0 };
+    const out = $(s, '.fb-out'), board = $(s, '.fb-script'), bench = $(s, '.fb-bench'), who = $(s, '.fb-follow');
+    const opts = ROSTER.map(u => `<option value="${u.key}">${TEAM[u.team].name}: ${u.name}</option>`).join('');
+    bench.innerHTML = '<option value="">nobody</option>' + opts; who.innerHTML = '<option value="">nobody</option>' + opts;
+    const pick = key => { follow = key || ''; sel = B.units.find(u => u.def.key === follow) || null; who.value = sel ? follow : ''; if (sel) cam.ang = sel.face; shown = ''; };
     // a lever restarts the same battle (same seed) with one thing changed, so the two runs can be compared
-    const fresh = keep => { if (!keep) seed++; B = FPSSIM.create(MAP, { seed, goal: 100, swap: $(s, '.fb-swap').checked, midShut: $(s, '.fb-shut').checked, bench: bench.value ? [bench.value] : [] }); sel = null; run = true; shown = ''; sync(); };
+    const fresh = keep => {
+      if (!keep) seed++;
+      B = FPSSIM.create(MAP, { seed, goal: 100, swap: $(s, '.fb-swap').checked, midShut: $(s, '.fb-shut').checked, bench: bench.value ? [bench.value] : [] });
+      walls = FPV.walls(MAP.P, B.opt.midShut ? B.midDoor : null); run = true; pick(follow); sync();
+    };
     const sync = () => { $(s, '.fb-play').textContent = run ? '⏸ Pause' : '▶ Play'; $$(s, '.fb-speed .btn').forEach(b => b.classList.toggle('on', +b.dataset.v === speed)); };
     $(s, '.fb-play').onclick = () => { if (B.over) fresh(); else { run = !run; sync(); } };
     $(s, '.fb-new').onclick = () => fresh();
@@ -181,18 +243,83 @@
     $$(s, '.fb-speed .btn').forEach(b => b.onclick = () => { speed = +b.dataset.v; sync(); });
     [$(s, '.fb-swap'), $(s, '.fb-shut'), bench].forEach(el => el.onchange = () => fresh(true));
     $(s, '.fb-heat').onchange = e => { heat = e.target.checked; };
-    cv.addEventListener('click', e => { const r = cv.getBoundingClientRect(), x = (e.clientX - r.left) * W / r.width, y = (e.clientY - r.top) * H / r.height; let best = null, bd = 30; B.units.forEach(u => { const d = Math.hypot(u.x - x, u.y - y); if (u.alive && d < bd) { bd = d; best = u; } }); sel = best; shown = ''; });
+    who.onchange = () => pick(who.value);
+    // first person needs someone to follow: with nobody picked it takes the marksman, whose lane shows the map best
+    $(s, '.fb-fp').onchange = e => { fp = e.target.checked; if (fp && !sel) pick('marksman'); if (fp && speed > 2) { speed = 1; sync(); } };
+    cv.addEventListener('click', e => { if (fp) return; const r = cv.getBoundingClientRect(), x = (e.clientX - r.left) * W / r.width, y = (e.clientY - r.top) * H / r.height; let best = null, bd = 30; B.units.forEach(u => { const d = Math.hypot(u.x - x, u.y - y); if (u.alive && d < bd) { bd = d; best = u; } }); pick(best ? best.def.key : ''); });
     fresh(true);
-    window.__fps = { get B() { return B; }, set speed(v) { speed = v; sync(); }, pause() { run = false; sync(); }, pick: k => { sel = B.units.find(u => u.def.key === k); shown = ''; }, heat: v => { heat = v; $(s, '.fb-heat').checked = v; } };
+    window.__fps = { get B() { return B; }, set speed(v) { speed = v; sync(); }, pause() { run = false; sync(); }, pick, heat: v => { heat = v; $(s, '.fb-heat').checked = v; }, fp: v => { fp = v; $(s, '.fb-fp').checked = v; if (v && !sel) pick('marksman'); } };
     return dt => {
       if (run) { acc += Math.min(dt, .1) * speed; while (acc >= 1 / 60) { B.step(1 / 60); acc -= 1 / 60; } }
       if (B.over && run) { run = false; sync(); }
-      drawBattle(g, B, sel, heat || B.over);
+      if (fp && sel && sel.alive && !B.over) {
+        T.use(g); g.clearRect(0, 0, W, H); g.save(); g.beginPath(); g.roundRect(0, 0, W, H, 14); g.clip();
+        const warn = FPV.draw(g, B, sel, cam, { W, H, walls, plan, drawUnit, tok, TEAM, BADGE, dt: Math.min(dt, .1) });
+        FPV.mini(g, B, sel, { W, H, TEAM, plan }, W - 272, 14, .25);
+        // head-up display: score, who you are, health, and whether this is your moment
+        T.label(`${TEAM[0].name} ${B.score[0]}`, 18, 24, 'left', TEAM[0].col, 17); T.label(`${TEAM[1].name} ${B.score[1]}`, 150, 24, 'left', TEAM[1].col, 17);
+        const hp = clamp(sel.hp / sel.hpMax), inEdge = B.t - (sel.edgeT || -9) < 1.2, E = FPSSIM.EDGE[sel.def.key];
+        T.label(`${sel.def.name} · ${sel.kills} kills, ${sel.deaths} deaths`, 18, H - 58, 'left', TEAM[sel.team].col, 17);
+        g.fillStyle = '#1d2433'; g.fillRect(18, H - 40, 264, 14); g.fillStyle = TEAM[sel.team].col; g.fillRect(20, H - 38, 260 * hp, 10);
+        if (sel.def.block) { g.fillStyle = '#1d2433'; g.fillRect(18, H - 48, 264, 8); g.fillStyle = sel.broken ? C.red : C.gold; g.fillRect(20, H - 46, 260 * sel.sh / sel.def.block, 4); }   // shield stamina
+        if (E) T.label(inEdge ? `In its moment: ${E[0]}` : `Favoured moment: ${E[0]}`, 18, H - 14, 'left', inEdge ? C.goldInk : C.muted, 15, inEdge ? '#fde9b8' : 'rgba(255,252,244,.9)');
+        let n = 0; BADGE.forEach(([k, icon]) => { if (sel.st[k] > 0 && n < 5) { stampTok(g, tok('status/' + icon, 64), 306 + n * 30, H - 33, 0, .26, .26); n++; } });
+        if (warn) T.stamp(warn, W / 2, 74, C.redDk, 1, 20);
+        g.restore();
+      } else {
+        drawBattle(g, B, sel, heat || B.over);
+        if (fp && sel && !sel.alive && !B.over) T.stamp(`${sel.def.name} is down: back in ${Math.max(0, sel.dead).toFixed(1)} s`, W / 2, 70, TEAM[sel.team].col, 1, 22);
+      }
       // the side panel only rewrites when its text changes
       const sc = B.script(), wait = sc.n < 10;
-      const rows = FPSSIM.SCRIPT.map(([k, name, unit]) => `<tr class="${wait ? '' : sc[k][1] ? 'met' : 'miss'}"><td>${wait ? '·' : sc[k][1] ? '✓' : '✗'}</td><td>${name}<small>${wait ? 'measuring…' : `${sc[k][0]} ${k === 'mid' && B.opt.midShut ? '' : unit}`}</small></td></tr>`).join('');
-      const txt = sel ? `<b style="color:${TEAM[sel.team].col}">${sel.def.name}</b> · ${sel.kills} kills, ${sel.deaths} deaths · lane: ${laneName[sel.lane]}<br>${sel.def.does}` : 'Change one thing and the same battle restarts. Click a token to follow it. A faded sci-fi token is cloaked.';
+      const rows = B.lines.map(([k, name, unit]) => `<tr class="${wait ? '' : sc[k][1] ? 'met' : 'miss'}"><td>${wait ? '·' : sc[k][1] ? '✓' : '✗'}</td><td>${name}<small>${wait ? 'measuring…' : `${sc[k][0]} ${k === 'mid' && B.opt.midShut ? '' : unit}`}</small></td></tr>`).join('');
+      const E = sel && FPSSIM.EDGE[sel.def.key], share = sel && sel.dealt ? Math.round((sel.dealtFav || 0) / sel.dealt * 100) : 0;
+      const txt = sel ? `<b style="color:${TEAM[sel.team].col}">${sel.def.name}</b> · ${sel.kills} kills, ${sel.deaths} deaths · ${laneName[sel.lane]}<br>${E ? `<b>Hits about twice as hard</b> ${E[1]}. ${share}% of its damage so far came from that moment.` : sel.def.does}` : 'Change one thing and the same battle restarts. Click a token to follow it. A faded sci-fi token is cloaked.';
       const key = rows + txt; if (key !== shown) { shown = key; say(board, rows); say(out, txt); }
+    };
+  });
+
+  /* ---------- 4. three lopsided maps ---------- */
+  canvasDemo('fps-maps', (s, cv, g) => {
+    const built = {}, uname = Object.fromEntries(ROSTER.map(u => [u.key, u.name]));
+    let key = FPSMAPS[0].key, map, seed = 1, B, speed = 4, run = true, acc = 0, shown = '', pickF = -1, t = 0;
+    const out = $(s, '.fx-out'), feat = $(s, '.fx-feat'), board = $(s, '.fx-script'), seg = $(s, '.fx-map');
+    seg.innerHTML = FPSMAPS.map(m => `<button class="btn" data-k="${m.key}">${m.name}</button>`).join('');
+    const sync = () => { $(s, '.fx-play').textContent = run ? '⏸ Pause' : '▶ Play'; $$(s, '.fx-speed .btn').forEach(b => b.classList.toggle('on', +b.dataset.v === speed)); $$(seg, '.btn').forEach(b => b.classList.toggle('on', b.dataset.k === key)); };
+    const fresh = keep => { if (!keep) seed++; map = built[key] = built[key] || FPSMAPS.find(m => m.key === key).build(); B = FPSSIM.create(map, { seed, goal: 100, swap: $(s, '.fx-swap').checked }); run = true; shown = ''; sync(); };
+    $$(seg, '.btn').forEach(b => b.onclick = () => { key = b.dataset.k; pickF = -1; fresh(true); });
+    $(s, '.fx-play').onclick = () => { if (B.over) fresh(); else { run = !run; sync(); } };
+    $(s, '.fx-new').onclick = () => fresh();
+    $(s, '.fx-end').onclick = () => { let n = 0; while (!B.over && n++ < 200000) B.step(1 / 30); };
+    $$(s, '.fx-speed .btn').forEach(b => b.onclick = () => { speed = +b.dataset.v; sync(); });
+    $(s, '.fx-swap').onchange = () => fresh(true);
+    feat.addEventListener('click', e => { const tr = e.target.closest('tr'); if (tr) { pickF = pickF === +tr.dataset.i ? -1 : +tr.dataset.i; shown = ''; } });
+    fresh(true);
+    window.__fpsMaps = { get B() { return B; }, map: k => { key = k; pickF = -1; fresh(true); }, pause() { run = false; sync(); }, feature: i => { pickF = i; shown = ''; }, swap: v => { $(s, '.fx-swap').checked = v; fresh(true); }, set speed(v) { speed = v; sync(); } };
+    const fmt = v => v >= 1000 ? (v / 1000).toFixed(1) + 'k' : String(Math.round(v)), names = (top, n = 2) => top.slice(0, n).map(([k]) => uname[k]).join(', ');
+    return dt => {
+      t += dt;
+      if (run) { acc += Math.min(dt, .1) * speed; while (acc >= 1 / 60) { B.step(1 / 60); acc -= 1 / 60; } }
+      if (B.over && run) { run = false; sync(); }
+      drawBattle(g, B, null, B.over);
+      // numbered badges on the features; the picked one gets a ring
+      const F = B.features();
+      g.save(); F.forEach((f, i) => {
+        const [x, y] = f.at, on = i === pickF;
+        if (on) { g.strokeStyle = C.gold; g.lineWidth = 4; g.beginPath(); g.arc(x, y, 34 + 4 * Math.sin(t * 5), 0, TAU); g.stroke(); }
+        g.fillStyle = on ? C.gold : '#fffaf0'; g.strokeStyle = C.goldInk; g.lineWidth = 2.5; g.beginPath(); g.arc(x, y - 22, 11, 0, TAU); g.fill(); g.stroke();
+        g.fillStyle = C.goldInk; g.font = '800 13px Montserrat, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(i + 1, x, y - 21.5);
+      }); g.restore();
+      const rowsF = F.map((f, i) => {
+        const who = f.hz ? [f.top.length ? `set up by ${names(f.top)}` : '', f.caught && f.caught.length ? `hit most: ${names(f.caught, 1)}` : ''].filter(Boolean).join(' · ') : names(f.top, 3);
+        const val = f.hz ? `${fmt(f.val)} damage, ${f.deaths} ${f.deaths === 1 ? 'death' : 'deaths'}` : `${fmt(f.val)} ${f.unit}`;
+        return `<tr data-i="${i}" class="${f.met ? 'met' : ''}${i === pickF ? ' on' : ''}"><td>${i + 1}</td><td>${f.name}${f.pattern ? ` <i>${f.pattern}</i>` : ''}<small>${val}${who ? ' · ' + who : ''}</small></td></tr>`;
+      }).join('');
+      const sc = B.script(), wait = sc.n < 10;
+      const rows = B.lines.map(([k, name, unit]) => `<tr class="${wait ? '' : sc[k][1] ? 'met' : 'miss'}" title="${unit}"><td>${wait ? '·' : sc[k][1] ? '✓' : '✗'}</td><td>${name} <span>${wait ? '…' : sc[k][0]}</span></td></tr>`).join('');
+      const f = F[pickF], side = B.opt.swap ? 'Sci-fi spawn in the west, Modern in the east.' : 'Modern spawn in the west, Sci-fi in the east.';
+      const txt = f ? `<b class="accent">${f.name}.</b> ${f.text}${f.who ? ` <b>Built for:</b> ${f.who}.` : ''}` : `<b class="accent">${map.name}.</b> ${map.lopsided} ${side} Click a feature for what it does.`;
+      const k2 = rowsF + rows + txt; if (k2 !== shown) { shown = k2; say(feat, rowsF); say(board, rows); say(out, txt); }
     };
   });
 })();
