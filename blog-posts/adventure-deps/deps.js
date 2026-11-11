@@ -2,22 +2,27 @@
    Each puzzle needs items and gives items. Solving every puzzle whose needs are met, wave after wave, lays the chart out
    in columns: the column is the earliest wave a puzzle can be solved in, and several puzzles in one column are
    parallel branches the player can take in any order. A puzzle no wave reaches is a dead end; the classic one is a key
-   locked behind its own lock. The lighthouse puzzles are original, built for this page. */
+   locked behind its own lock. The office-building puzzles are original, built for this page: a corporate
+   adventure from the lobby lost-and-found up to a pitch in the 30th-floor boardroom. */
 (function () {
   const C = TD.C;
+  // [puzzle, needs, gives, where in the building]
   const PRESETS = {
     linear: { label: 'One long chain', acts: [
-      ['Search the beach', [], ['rope']], ['Climb to the shed', ['rope'], ['crowbar']], ['Pry open the cellar', ['crowbar'], ['oil']],
-      ['Trade oil to the fisher', ['oil'], ['key']], ['Open the keeper\'s desk', ['key'], ['lens']], ['Unlock the tower door', ['lens'], ['stairs']],
-      ['Light the beacon', ['stairs'], ['goal']]] },
+      ['Search the lobby lost-and-found', [], ['badge'], 'lobby'], ['Slip into the supply closet', ['badge'], ['keycard'], '3rd floor'],
+      ['Open the server room', ['keycard'], ['drive'], 'basement'], ['Trade the drive to the receptionist', ['drive'], ['code'], 'lobby'],
+      ['Crack the manager\'s desk', ['code'], ['memo'], '12th floor'], ['Call the executive elevator', ['memo'], ['lift'], 'elevator bank'],
+      ['Pitch in the boardroom', ['lift'], ['goal'], '30th floor']] },
     parallel: { label: 'Parallel branches', acts: [
-      ['Search the beach', [], ['rope']], ['Talk to the fisher', [], ['key']], ['Climb to the shed', ['rope'], ['crowbar']],
-      ['Pry open the cellar', ['crowbar'], ['oil']], ['Open the keeper\'s desk', ['key'], ['lens']], ['Unlock the tower door', ['key'], ['stairs']],
-      ['Light the beacon', ['oil', 'lens', 'stairs'], ['goal']]] },
+      ['Search the lobby lost-and-found', [], ['badge'], 'lobby'], ['Chat up the receptionist', [], ['code'], 'lobby'],
+      ['Slip into the supply closet', ['badge'], ['keycard'], '3rd floor'], ['Open the server room', ['keycard'], ['drive'], 'basement'],
+      ['Crack the manager\'s desk', ['code'], ['memo'], '12th floor'], ['Call the executive elevator', ['code'], ['lift'], 'elevator bank'],
+      ['Pitch in the boardroom', ['drive', 'memo', 'lift'], ['goal'], '30th floor']] },
     dead: { label: 'A key behind its lock', acts: [
-      ['Search the beach', [], ['rope']], ['Talk to the fisher', [], ['key']], ['Climb to the shed', ['rope', 'crowbar'], ['crowbar']],
-      ['Pry open the cellar', ['crowbar'], ['oil']], ['Open the keeper\'s desk', ['key'], ['lens']], ['Unlock the tower door', ['key'], ['stairs']],
-      ['Light the beacon', ['oil', 'lens', 'stairs'], ['goal']]] },
+      ['Search the lobby lost-and-found', [], ['badge'], 'lobby'], ['Chat up the receptionist', [], ['code'], 'lobby'],
+      ['Slip into the supply closet', ['badge', 'keycard'], ['keycard'], '3rd floor'], ['Open the server room', ['keycard'], ['drive'], 'basement'],
+      ['Crack the manager\'s desk', ['code'], ['memo'], '12th floor'], ['Call the executive elevator', ['code'], ['lift'], 'elevator bank'],
+      ['Pitch in the boardroom', ['drive', 'memo', 'lift'], ['goal'], '30th floor']] },
   };
   function solve(acts) {
     const have = new Set(), depth = acts.map(() => -1); let w = 0, changed = true;
@@ -75,9 +80,10 @@
           const [x, y] = at(i), vis = colOf(i) <= reveal, goal = a[2].includes('goal'), dead = S.depth[i] < 0;
           g.globalAlpha = vis ? 1 : .25;
           GK.box(g, x, y - 40, BW, 80, dead ? '#fbe3e0' : goal ? '#fff3d6' : '#fffaf0', dead ? C.red : goal ? C.gold : '#cdbf9f', 9, 2);
-          GK.wrap(g, a[0], x + 8, y - 21, BW - 16, 15, C.ink, 12, 700);
-          GK.text(g, `needs: ${a[1].length ? a[1].join(', ') : 'nothing'}`, x + 8, y + 16, dead ? C.redDk : C.muted, 10.5, 'left', 600);
-          GK.text(g, goal ? 'the goal' : `gives: ${a[2].join(', ')}`, x + 8, y + 32, goal ? C.goldInk : C.good, 10.5, 'left', 700);
+          GK.text(g, a[3].toUpperCase(), x + 8, y - 26, dead ? C.redDk : goal ? C.goldInk : '#8e86a8', 9.5, 'left', 700);
+          GK.wrap(g, a[0], x + 8, y - 10, BW - 16, 14, C.ink, 11.5, 700);
+          GK.text(g, `needs: ${a[1].length ? a[1].join(', ') : 'nothing'}`, x + 8, y + 20, dead ? C.redDk : C.muted, 10.5, 'left', 600);
+          GK.text(g, goal ? 'the goal' : `gives: ${a[2].join(', ')}`, x + 8, y + 34, goal ? C.goldInk : C.good, 10.5, 'left', 700);
           g.globalAlpha = 1;
         });
         // readouts
@@ -85,7 +91,7 @@
         GK.big(g, `${S.width}`, 'most puzzles open at once', 200, 512, S.width > 1 ? C.good : C.ink);
         GK.big(g, `${S.depth.filter(d => d < 0).length}`, 'puzzles never solvable', 420, 512, S.depth.some(d => d < 0) ? C.redDk : C.good);
         GK.wrap(g, S.won ? (S.width > 1 ? 'Parallel branches: when one puzzle stumps the player, another is open.' : 'A single chain: one stuck puzzle stops the whole game.')
-          : 'Dead end: the crowbar that opens the shed is inside the shed, so the goal is out of reach.', 640, 506, 380, 19, S.won ? C.ink : C.redDk, 14, 600);
+          : 'Dead end: the keycard that opens the supply closet is locked inside the supply closet, so the boardroom is out of reach.', 640, 506, 380, 19, S.won ? C.ink : C.redDk, 14, 600);
         ui.stats(`<div><b>${S.width}</b><span>most open at once</span></div><div class="${S.won ? 'g' : ''}"><b>${S.won ? 'yes' : 'no'}</b><span>can the game be finished?</span></div>`);
         ui.out('Each puzzle is a lock with its keys. Lay them out by the earliest wave they open and the chart shows both the breadth a player can wander and any lock that never opens.');
       },
