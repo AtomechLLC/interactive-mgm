@@ -18,18 +18,20 @@
    damage interrupts. Slowed, rooted, stunned or simply slow units fail those answers, which is what makes set-ups matter.
 
    A map may also carry environmental features (maps.js), and every use of one is counted per token in battle.use:
-   windows (shots pass, units do not), vents (only small units fit), ledges (a one-way drop off high ground), high
+   windows (a unit sees through; shots break the pane, and a broken pane is an opening until it is reglazed), vents (only small units fit), ledges (a one-way drop off high ground), high
    rooms (a quarter more reach and 15% more damage shooting down, 15% less taken from below), cover (halves shots that cross it; blasts,
    melee and shots from above ignore it), dark rooms (a unit inside is seen only up close, when marked, or when it
    has just fired), posts (where a holding unit sets up) and hazards. Hazards are the movement patterns from the
-   PvE hazards page: a crushing door, a patrolling cart, a rotating arm, a flame across a corridor and expansive
-   fuel drums. They hurt both squads. Units wait for them and step out of them, so a hazard mostly kills whoever
+   PvE hazards page: a crushing door, a patrolling cart, a rotating or spiralling arm, a flame across a corridor,
+   expansive fuel drums, a boulder in the path, an eruption, a collapsing whirlpool, fire winding along a trench,
+   a jumping slime, a ricocheting ball and a tethered beast. They hurt both squads. Units wait for them and step out of them, so a hazard mostly kills whoever
    has been slowed, rooted, stunned or confused, and that kill is credited to the token that set it up.
 
    FPSSIM.create(map, { seed, goal, swap, midShut, bench }) returns the battle; battle.step(dt) advances it.
    swap puts each squad in the other spawn, midShut walls up the middle doorway, bench is a list of unit keys left out. */
 (function (root) {
-  const TAU = Math.PI * 2, RESPAWN = 3, GUARD = 1.5, SIGHT = 640, LOCK = .3, SH_WAIT = 1.2, SH_REGEN = 14;
+  const CHEER = .08, EMOTES = ['😎', '🎉', '💪', '🔥', '👋', '😤', '🫡', '✌️'];   // one kill in twelve or so gets an emoji
+  const TAU = Math.PI * 2, RESPAWN = 3, GUARD = 1.5, SIGHT = 640, LOCK = .3, SH_WAIT = 1.2, SH_REGEN = 14, GLASS = 40, REGLAZE = 30;   // a pane takes 40 points of fire and is replaced 30 s after it breaks
   const LANES = ['long', 'mid', 'tun'];
   const SCALE = .36;   // pace only: how long a battle lasts. Who wins a fight is decided by EDGE.
   // each token's favoured moment: [label shown on a favoured hit, the moment in words]
@@ -64,7 +66,7 @@
   LINES.feat = ['feat', 'Every feature earns its place', 'features changed the fighting'];
   LINES.haz = ['haz', 'Hazards decide fights, not the battle', 'of deaths were caused by a hazard'];
   // what a feature is counted in: [battle.use tag, unit]
-  const COUNT = { high: ['high', 'damage dealt from above'], cover: ['cover', 'damage stopped by cover'], window: ['window', 'damage dealt through glass'], dark: ['dark', 'damage dealt to targets in the dark'], vent: ['vent', 'trips through the vent'], room: ['room', 'trips through it'] };
+  const COUNT = { high: ['high', 'damage dealt from above'], cover: ['cover', 'damage stopped by cover'], window: ['window', 'damage dealt through broken panes'], dark: ['dark', 'damage dealt to targets in the dark'], vent: ['vent', 'trips through the vent'], room: ['room', 'trips through it'] };
   // lane = weights for [long, mid, tunnels]. shot: bullet (instant), bolt (plasma projectile), rail (aimed), rocket, arc (psion), melee, none.
   const ROSTER = [
     // modern
@@ -86,7 +88,7 @@
     { key: 'cyborg', team: 1, name: 'Cyborg', hp: 185, spd: 100, range: 30, dmg: 27, rate: .5, shot: 'melee', close: true, lane: [0, 2, 5], pow: 'charge', cd: 6, does: 'A melee bruiser. Charges across a room, knocks its target down, then stays on top of it.' },
     { key: 'xeno-swarm', team: 1, crawl: true, clones: 3, size: .8, name: 'Xeno Swarm', hp: 55, spd: 128, range: 26, dmg: 6, rate: .22, shot: 'melee', close: true, lane: [0, 1, 6], pow: 'leap', cd: 5, does: 'Three bodies in one roster slot. They spawn together, take the same lane, and each leaps onto a target and leaves it bleeding. Killing one body scores nothing: the kill counts when the last of the three falls, and then all three come back together.' },
     { key: 'psion', team: 1, name: 'Psion', hp: 80, spd: 86, range: 270, dmg: 19, rate: .7, shot: 'arc', lane: [3, 2, 1], pow: 'confuse', cd: 7, does: 'Attacks with arcs of energy. Channels a confusion on one enemy, who then wanders and cannot act. Any damage to the psion breaks the channel.' },
-    { key: 'cloaker', team: 1, name: 'Cloaker', hp: 75, spd: 104, range: 160, dmg: 17, rate: .3, shot: 'bolt', cloak: true, lane: [3, 0, 3], does: 'Invisible until it fires or an enemy comes very close. Its first shot out of cloak deals triple damage.' },
+    { key: 'cloaker', team: 1, name: 'Cloaker', hp: 75, spd: 104, range: 160, dmg: 17, rate: .3, shot: 'bolt', cloak: true, lane: [3, 0, 3], does: 'Invisible until it fires, is marked or hit, or an enemy comes within a tile and a half; then everyone sees it for a moment. Its first shot out of cloak deals triple damage.' },
     { key: 'repair-bot', team: 1, crawl: true, name: 'Repair Bot', hp: 85, spd: 100, range: 150, dmg: 9, rate: .45, shot: 'bolt', heals: 17, size: .85, lane: [1, 3, 1], does: 'Follows whoever is missing the most health (usually the mech) and repairs them with a beam.' },
     { key: 'blinker', team: 1, name: 'Blinker', hp: 95, spd: 94, range: 220, dmg: 17, rate: .36, shot: 'bolt', lane: [3, 1, 3], pow: 'blink', cd: 5, does: 'Teleports to a new angle on its target and strikes hard in the moment after.' },
   ];
@@ -96,7 +98,7 @@
   const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 
   function create(map, opt = {}) {
-    const R = rng(opt.seed || 1), goal = opt.goal || 100, scale = opt.scale || SCALE;
+    const E = rng((opt.seed || 1) * 977 + 5), R = rng(opt.seed || 1), goal = opt.goal || 100, scale = opt.scale || SCALE;
     const rooms = map.P.rooms, ids = Object.keys(rooms), doors = map.P.doors;
     const adj = {}; ids.forEach(id => adj[id] = []);
     const kd = map.keyDoor || ['MidW', 'MidE'], midDoor = doors.find(d => d.a === kd[0] && d.b === kd[1]), bases = opt.swap ? [map.bases[1], map.bases[0]] : map.bases;
@@ -109,22 +111,23 @@
     };
     const roomAt = (x, y, hint) => { if (hint && inRoom(rooms[hint], x, y)) return hint; for (const id of ids) if (inRoom(rooms[id], x, y)) return id; return null; };
     // what a doorway lets through. mode 'see' is a shot or a look, 'walk' is a unit moving now, 'plan' is a route (a crusher
-    // door that is shut for a moment still belongs on a route). A window passes shots only, a vent passes small units only,
+    // door that is shut for a moment still belongs on a route). A window lets a unit see through but stops shots until it has been shot out; after that it is an opening
+    // for shots and units until it is reglazed. A vent passes small units only,
     // a ledge is a one-way drop from room d.a (fliers ignore that).
     const can = (e, from, u, mode) => {
       const k = e.d.kind; if (e.d.shut && mode !== 'plan') return false;
       if (mode === 'see') return k !== 'vent';
-      return k === 'window' ? false : k === 'vent' ? !!(u && u.def.crawl) : k === 'ledge' ? e.d.a === from || !!(u && u.def.fly) : true;
+      return k === 'window' ? !!e.d.broken : k === 'vent' ? !!(u && u.def.crawl) : k === 'ledge' ? e.d.a === from || !!(u && u.def.fly) : true;
     };
     // a clear line: every sample is on a floor, and each change of room happens at a doorway between those two rooms
-    let via = null;   // set by los(): 'window' or 'ledge' if the line crossed one
+    let via = null, pane = null;   // set by los(): 'window' or 'ledge' if the line crossed one, and the first unbroken pane on it
     function los(a, b, mode = 'see', u) {
-      const L = dist(a, b), n = Math.max(1, Math.ceil(L / 7)); let cur = roomAt(a.x, a.y, a.room); via = null;
+      const L = dist(a, b), n = Math.max(1, Math.ceil(L / 7)); let cur = roomAt(a.x, a.y, a.room); via = null; pane = null;
       if (!cur) return false;
       for (let i = 1; i <= n; i++) {
         const x = a.x + (b.x - a.x) * i / n, y = a.y + (b.y - a.y) * i / n, r = roomAt(x, y, cur);
         if (!r) return false;
-        if (r !== cur) { const e = adj[cur].find(e => e.to === r && can(e, cur, u, mode) && Math.hypot(e.d.m[0] - x, e.d.m[1] - y) < e.d.gw / 2 + 5); if (!e) return false; if (e.d.kind === 'window' || e.d.kind === 'ledge') via = e.d.kind; cur = r; }
+        if (r !== cur) { const e = adj[cur].find(e => e.to === r && can(e, cur, u, mode) && Math.hypot(e.d.m[0] - x, e.d.m[1] - y) < e.d.gw / 2 + 5); if (!e) return false; if (e.d.kind === 'window' || e.d.kind === 'ledge') via = e.d.kind; if (e.d.kind === 'window' && !e.d.broken && !pane) pane = e.d; cur = r; }
       }
       return true;
     }
@@ -136,13 +139,14 @@
       const out = []; let c = to; while (prev[c]) { out.unshift(prev[c].d); c = prev[c].c; } return out;
     }
     const crawlAdj = {}; ids.forEach(id => crawlAdj[id] = [...adj[id]].sort((a, b) => (b.d.kind === 'vent') - (a.d.kind === 'vent')));   // small units try a vent first
+    const panes = doors.filter(d => d.kind === 'window'); panes.forEach(d => { d.hp = GLASS; d.broken = false; d.fixT = 0; });
     const cover = (map.cover || []).map(c => ({ x: c[0], y: c[1], room: roomAt(c[0], c[1]) }));
     const high = id => !!(rooms[id] && rooms[id].high);
     // a shooter on high ground reaches a quarter further at a target below
     const reach = (u, e) => u.def.range * (high(u.room) && !high(e.room) ? 1.25 : 1);
-    const spot = (id, pad = 22) => { const r = rooms[id]; for (let i = 0; i < 30; i++) { const xs = r.pts.map(p => p[0]), ys = r.pts.map(p => p[1]); const x = Math.min(...xs) + pad + R() * (Math.max(...xs) - Math.min(...xs) - pad * 2), y = Math.min(...ys) + pad + R() * (Math.max(...ys) - Math.min(...ys) - pad * 2); if (inRoom(r, x, y)) return { x, y }; } return { x: r.c[0], y: r.c[1] }; };
+    const spot = (id, pad = 22) => { const r = rooms[id]; if (r.circle) { const a = R() * TAU, k = Math.sqrt(R()) * (r.circle[2] - pad); return { x: r.circle[0] + Math.cos(a) * k, y: r.circle[1] + Math.sin(a) * k }; } for (let i = 0; i < 30; i++) { const xs = r.pts.map(p => p[0]), ys = r.pts.map(p => p[1]); const x = Math.min(...xs) + pad + R() * (Math.max(...xs) - Math.min(...xs) - pad * 2), y = Math.min(...ys) + pad + R() * (Math.max(...ys) - Math.min(...ys) - pad * 2); if (inRoom(r, x, y)) return { x, y }; } return { x: r.c[0], y: r.c[1] }; };
 
-    const B = { t: 0, score: [0, 0], goal, over: false, winner: -1, units: [], shots: [], zones: [], fx: [], feed: [], deaths: [], midFlips: 0, midHold: -1, first: null, rooms, los, teams: TEAMS, opt, midDoor, map, use: {}, haz: [], danger: [], hzDeaths: 0 };
+    const B = { t: 0, score: [0, 0], goal, over: false, winner: -1, units: [], shots: [], zones: [], fx: [], feed: [], deaths: [], midFlips: 0, midHold: -1, first: null, rooms, los, teams: TEAMS, opt, midDoor, map, use: {}, haz: [], danger: [], hzDeaths: 0, cheers: 0 };
     const note = (tag, u, amt) => { const t = B.use[tag] = B.use[tag] || {}; t[u.def.key] = (t[u.def.key] || 0) + amt; };
     const fx = (type, o) => { B.fx.push({ type, age: 0, ttl: .4, ...o }); if (B.fx.length > 160) B.fx.shift(); };
 
@@ -166,10 +170,13 @@
     }
     const foes = u => B.units.filter(e => e.alive && e.team !== u.team);
     const mates = u => B.units.filter(e => e.alive && e.team === u.team && e !== u);
-    const cloaked = e => e.def.cloak && B.t - e.lastFire > 2 && !(e.st.marked > 0);
+    // cloaked until it fires, is marked, is hit, or an enemy comes within a tile and a half. Being spotted shows it to everyone for a moment,
+    // so nothing is ever shot at while it is drawn faded.
+    const cloaked = e => e.def.cloak && B.t - e.lastFire > 2 && !(e.st.marked > 0) && B.t - (e.spotT || -9) > 1.2;
     // a unit in a dark room shows only up close, when marked, or for a moment after it fires
     const dim = e => rooms[e.room].dark && !(e.st.marked > 0) && B.t - e.lastFire > .8;
-    const hidden = (e, u) => (cloaked(e) && dist(e, u) > 80) || (dim(e) && dist(e, u) > 130);
+    const hidden = (e, u) => cloaked(e) || (dim(e) && dist(e, u) > 130);
+    const spot1 = (u, e) => { if (B.t - (e.spotT || -9) > 1.2) fx('text', { x: e.x, y: e.y - 20, text: 'spotted', ttl: .7 }); e.spotT = B.t; };
     const held = (src, tgt) => { tgt.ctrlBy = src; tgt.ctrlT = B.t; };   // who slowed, rooted, stunned or confused it last
     const busy = u => u.st.stun > 0 || u.st.confuse > 0;
     // a spawn room is safe ground: nobody in their own spawn can be hurt, targeted or hunted, and nobody shoots from inside one
@@ -202,7 +209,7 @@
     function hurt(src, tgt, amt, kind, from) {
       if (!tgt.alive || tgt.st.guard > 0 || home(tgt) || B.over) return 0;
       if (tgt.def.dodge && kind !== 'dot' && kind !== 'blast' && R() < tgt.def.dodge) { fx('text', { x: tgt.x, y: tgt.y - 18, text: 'miss', ttl: .5 }); return 0; }
-      amt *= scale;
+      amt *= scale; if (tgt.def.cloak && kind !== 'dot' && cloaked(tgt)) spot1(src, tgt);   // a stray blast or bolt gives it away
       let fav = false;
       if (kind !== 'dot') {
         const m = edge(src, tgt, kind); amt *= m; fav = m >= 1.4;
@@ -246,6 +253,8 @@
       fx('dead', { x: tgt.x, y: tgt.y, ttl: 1.4, team: tgt.team });
       B.feed.unshift({ t: B.t, k: src ? src.id : -1, v: tgt.id, kind, hz: hz ? hz.name : null }); if (B.feed.length > 6) B.feed.pop();
       if (!B.first && src) B.first = { k: src.id, v: tgt.id };
+      // now and then the winner of a fight celebrates (its own dice, so the battle itself is unchanged)
+      if (src && src.alive && B.t - (src.emoT || -99) > 20 && E() < CHEER) { src.emoT = B.t; fx('emote', { of: src, text: EMOTES[Math.floor(E() * EMOTES.length)], ttl: 1.6 }); B.cheers++; }
       if (src && B.score[src.team] >= goal) { B.over = true; B.winner = src.team; }
       return true;
     }
@@ -265,6 +274,7 @@
       if (kill(credit, u, 'hazard', h)) { B.hzDeaths++; note('hz:' + h.type + ':death', u, 1); if (credit) note('hz:' + h.type + ':setup', credit, 1); }
     }
     const hits = (u, x, y, r) => u.alive && Math.hypot(u.x - x, u.y - y) < r + 8 * (u.def.size || 1);
+    const frac = v => v - Math.floor(v), radial = z => u => { const dx = u.x - z.x, dy = u.y - z.y, L = Math.hypot(dx, dy) || 1; return [dx / L, dy / L]; };
     const across = (z, n) => u => { const k = (u.x - z.x) * n[0] + (u.y - z.y) * n[1] >= 0 ? 1 : -1; return [n[0] * k, n[1] * k]; };
     function hazards(dt) {
       const D = B.danger = [];
@@ -282,12 +292,12 @@
           [0, .35, .7].forEach(t => { const z = { x: h.x + vx * t, y: h.y + vy * t }; push(z.x, z.y, h.r, h, across(z, n)); });
           B.units.forEach(u => { if (!u.def.fly && hits(u, h.x, h.y, h.r) && B.t - (u.hz[h.i] || -9) > 1) hazHurt(u, h.dmg || 45, h, .5); });
         } else if (h.type === 'rotor') {   // Rotation: an arm that sweeps a room
-          h.ang = (B.t + (h.phase || 0)) / h.period * TAU;
+          h.ang = (B.t + (h.phase || 0)) / h.period * TAU; const len = h.cur = h.amp ? h.len + h.amp * Math.sin(B.t * TAU / h.breath) : h.len;   // Spiral: the arm also grows and shrinks
           const out = u => { const dx = u.x - h.x, dy = u.y - h.y, L = Math.hypot(dx, dy) || 1; const v = [dx / L * .8 - dy / L * .6, dy / L * .8 + dx / L * .6]; return v; };
-          for (let arm = 0; arm < 2; arm++) for (const look of [0, .3, .6]) for (let r = 26; r <= h.len; r += 24) { const a = h.ang + arm * Math.PI + look; push(h.x + Math.cos(a) * r, h.y + Math.sin(a) * r, 11, h, out); }
+          for (let arm = 0; arm < 2; arm++) for (const look of [0, .3, .6]) for (let r = 26; r <= len; r += 24) { const a = h.ang + arm * Math.PI + look; push(h.x + Math.cos(a) * r, h.y + Math.sin(a) * r, 11, h, out); }
           B.units.forEach(u => {
             if (u.def.fly || !u.alive || B.t - (u.hz[h.i] || -9) < 1) return;
-            const dx = u.x - h.x, dy = u.y - h.y, L = Math.hypot(dx, dy); if (L > h.len + 6) return;
+            const dx = u.x - h.x, dy = u.y - h.y, L = Math.hypot(dx, dy); if (L > len + 6) return;
             for (let arm = 0; arm < 2; arm++) { const a = h.ang + arm * Math.PI, al = dx * Math.cos(a) + dy * Math.sin(a), pr = Math.abs(dx * Math.sin(a) - dy * Math.cos(a)); if (al > -4 && pr < 5 + 8 * (u.def.size || 1)) { hazHurt(u, h.dmg || 40, h, .4); break; } }
           });
         } else if (h.type === 'jet') {   // Across: a flame out of a wall that turns on and off
@@ -295,6 +305,50 @@
           const dx = h.b[0] - h.a[0], dy = h.b[1] - h.a[1], L = Math.hypot(dx, dy), n = [-dy / L, dx / L];
           if (h.live || h.warn) for (let k = 0; k <= L; k += 20) { const z = { x: h.a[0] + dx * k / L, y: h.a[1] + dy * k / L }; push(z.x, z.y, h.w, h, across(z, n)); }
           if (h.live) B.units.forEach(u => { if (!u.alive) return; const al = ((u.x - h.a[0]) * dx + (u.y - h.a[1]) * dy) / L, pr = Math.abs((u.x - h.a[0]) * n[0] + (u.y - h.a[1]) * n[1]); if (al > -6 && al < L + 6 && pr < h.w) hazHurt(u, (h.dmg || 70) * dt, h, 0); });
+        } else if (h.type === 'roll') {   // In Path: a boulder released down a corridor
+          const ph = (B.t + (h.phase || 0)) % h.period, k = (ph - h.wait) / h.go, dx = h.b[0] - h.a[0], dy = h.b[1] - h.a[1], L = Math.hypot(dx, dy), n = [-dy / L, dx / L];
+          h.warn = k < 0 && ph > h.wait - 1; h.on = k >= 0 && k <= 1; h.x = h.a[0] + dx * Math.max(0, Math.min(1, k)); h.y = h.a[1] + dy * Math.max(0, Math.min(1, k));
+          if (h.warn || h.on) [0, .3, .6].forEach(t => { const z = { x: h.x + dx / h.go * t, y: h.y + dy / h.go * t }; push(z.x, z.y, h.r, h, across(z, n)); });
+          if (h.on) B.units.forEach(u => { if (!u.def.fly && hits(u, h.x, h.y, h.r) && B.t - (u.hz[h.i] || -9) > 1) hazHurt(u, h.dmg || 55, h, .6); });
+        } else if (h.type === 'erupt') {   // Eruption: a vent that throws boulders at marked spots
+          const cyc = Math.floor(B.t / h.period), ph = B.t - cyc * h.period; h.spots = [];
+          for (let i = 0; i < h.n; i++) {
+            const a = frac(Math.sin((cyc * 7.13 + i * 3.7 + h.i) * 12.9898) * 43758.5453) * TAU, r = Math.sqrt(frac(Math.sin((cyc * 3.31 + i * 9.1 + h.i) * 78.233) * 12543.21)) * h.R;
+            const z = { x: h.x + Math.cos(a) * r, y: h.y + Math.sin(a) * r }, land = h.warnT + i * .3;
+            if (ph < land) { h.spots.push({ x: z.x, y: z.y, k: ph / land }); if (ph > land - h.warnT) push(z.x, z.y, h.r, h, radial(z)); }
+            else if (ph - dt < land) { fx('boom', { x: z.x, y: z.y, r: h.r, ttl: .35 }); B.units.forEach(u => { if (hits(u, z.x, z.y, h.r - 8)) hazHurt(u, h.dmg || 45, h, .3); }); }
+          }
+        } else if (h.type === 'collapse') {   // Collapsing: a whirlpool that closes on its eye
+          const ph = (B.t + (h.phase || 0)) % h.period; h.safe = ph < h.close ? h.R - (h.R - h.eye) * ph / h.close : ph < h.close + h.hold ? h.eye : h.R;
+          if (h.safe < h.R - 3) {
+            const mid = (h.safe + h.R) / 2, w = (h.R - h.safe) / 2, n = Math.max(6, Math.ceil(TAU * mid / (w * 1.5 + 5))), inward = u => { const dx = h.x - u.x, dy = h.y - u.y, L = Math.hypot(dx, dy) || 1; return [dx / L, dy / L]; };
+            for (let i = 0; i < n; i++) push(h.x + Math.cos(i / n * TAU) * mid, h.y + Math.sin(i / n * TAU) * mid, w, h, inward);
+            B.units.forEach(u => { if (!u.alive || u.def.fly) return; const L = Math.hypot(u.x - h.x, u.y - h.y); if (L > h.safe + 4 && L < h.R) hazHurt(u, (h.dmg || 40) * dt, h, 0); });
+          }
+        } else if (h.type === 'trench') {   // Winding: fire running along a trench
+          if (!h.sm) { h.sm = []; for (let i = 0; i < h.pts.length - 1; i++) { const p = h.pts[i], q = h.pts[i + 1], L = Math.hypot(q[0] - p[0], q[1] - p[1]); for (let k = 0; k < L; k += 14) h.sm.push({ x: p[0] + (q[0] - p[0]) * k / L, y: p[1] + (q[1] - p[1]) * k / L }); } }
+          const head = h.head = ((B.t + (h.phase || 0)) % h.period) / h.period * (h.sm.length + h.burn + 6) - 6;
+          for (let i = Math.max(0, Math.floor(head - h.burn)); i < Math.min(h.sm.length, head + 5); i++) {
+            const z = h.sm[i]; push(z.x, z.y, h.w, h, radial(z));
+            if (i <= head) B.units.forEach(u => { if (u.alive && !u.def.fly && Math.hypot(u.x - z.x, u.y - z.y) < h.w && u.hzT !== B.t) { u.hzT = B.t; hazHurt(u, (h.dmg || 60) * dt, h, 0); } });
+          }
+        } else if (h.type === 'hop') {   // Jump: a slime that bounces from spot to spot
+          const T = (B.t + (h.phase || 0)) / h.hopT, n = h.pts.length, step = Math.floor(T), k = T - step, p = h.pts[step % n], q = h.pts[(step + 1) % n];
+          h.x = p[0] + (q[0] - p[0]) * k; h.y = p[1] + (q[1] - p[1]) * k; h.k = k; h.to = q;
+          if (k > .3) push(q[0], q[1], h.r, h, radial({ x: q[0], y: q[1] }));
+          if (h.last !== step) { if (h.last != null) { fx('boom', { x: p[0], y: p[1], r: h.r, ttl: .3 }); B.units.forEach(u => { if (!u.def.fly && hits(u, p[0], p[1], h.r - 8)) hazHurt(u, h.dmg || 45, h, .4); }); } h.last = step; }
+        } else if (h.type === 'bounce') {   // Ricochet: a ball bouncing between the walls
+          const tri = v => { v = ((v % 2) + 2) % 2; return v < 1 ? v : 2 - v; }, w = h.box[2] - h.box[0], hh = h.box[3] - h.box[1];
+          const at = t => ({ x: h.box[0] + tri(t * h.vx / w) * w, y: h.box[1] + tri(t * h.vy / hh + .37) * hh }), now = at(B.t); h.x = now.x; h.y = now.y;
+          [0, .25, .5].forEach(t => { const z = at(B.t + t); push(z.x, z.y, h.r, h, radial(z)); });
+          B.units.forEach(u => { if (!u.def.fly && hits(u, h.x, h.y, h.r) && B.t - (u.hz[h.i] || -9) > 1) hazHurt(u, h.dmg || 40, h, .4); });
+        } else if (h.type === 'leash') {   // Tethered: a beast on a chain that goes for whoever comes inside its reach
+          if (h.px == null) { h.px = h.x; h.py = h.y; h.rest = 0; }
+          let tg = null, bd = h.L; if ((h.rest -= dt) <= 0) B.units.forEach(u => { if (u.alive && !u.def.fly && !home(u) && !(u.st.guard > 0)) { const k = Math.hypot(u.x - h.x, u.y - h.y); if (k < bd) { bd = k; tg = u; } } });
+          const gx = tg ? tg.x : h.x, gy = tg ? tg.y : h.y, dx = gx - h.px, dy = gy - h.py, L = Math.hypot(dx, dy), st = h.spd * dt * (tg ? 1 : .5);
+          if (L > st) { h.px += dx / L * st; h.py += dy / L * st; } else { h.px = gx; h.py = gy; }
+          if (tg && Math.hypot(tg.x - h.px, tg.y - h.py) < 15) { hazHurt(tg, h.dmg || 40, h, .3); h.rest = 1.1; }
+          const z = { x: h.px, y: h.py }; push(z.x, z.y, 12, h, radial(z));
         } else if (h.type === 'barrel') {   // Expansive: a fuel drum that goes off when the fight reaches it
           if (h.state === 'fuse') {
             push(h.x, h.y, h.r - 14, h, u => { const dx = u.x - h.x, dy = u.y - h.y, L = Math.hypot(dx, dy) || 1; return [dx / L, dy / L]; });
@@ -319,7 +373,9 @@
       }
       return best;
     }
-    const blast = (src, x, y, r, dmg) => { fx('burst', { x, y, r, team: src.team, ttl: .45 }); if (drums.length) spark(x, y, src, 1, r + 10); foes(src).forEach(e => { const d = Math.hypot(e.x - x, e.y - y); if (d < r) hurt(src, e, dmg * (1 - .5 * d / r), 'blast', { x, y }); }); };
+    // fire that reaches a pane goes into the pane; when it breaks, the window is an opening
+    function smash(d, amt, src) { d.hp -= amt; d.hitT = B.t; if (d.hp <= 0) { d.broken = true; d.fixT = B.t + REGLAZE; fx('shatter', { x: d.m[0], y: d.m[1], ttl: .6 }); note('glass', src, 1); } }
+    const blast = (src, x, y, r, dmg) => { fx('burst', { x, y, r, team: src.team, ttl: .45 }); panes.forEach(d => { if (!d.broken && Math.hypot(d.m[0] - x, d.m[1] - y) < r + 10) smash(d, GLASS, src); }); if (drums.length) spark(x, y, src, 1, r + 10); foes(src).forEach(e => { const d = Math.hypot(e.x - x, e.y - y); if (d < r) hurt(src, e, dmg * (1 - .5 * d / r), 'blast', { x, y }); }); };
     const canDodge = u => u.alive && !busy(u) && !(u.st.root > 0) && !u.dash && !u.aim && !u.chan && !(u.wind > 0);
     // a straight shot: flies from a toward b and on to `reach`, and stops at the first wall
     const bolt = (u, e, o) => { const L = dist(u, e) || 1; B.shots.push({ type: 'bolt', src: u, x: u.x, y: u.y, vx: (e.x - u.x) / L, vy: (e.y - u.y) / L, room: u.room, left: u.def.range * 1.25, team: u.team, ang: Math.atan2(e.y - u.y, e.x - u.x), ...o }); };
@@ -328,6 +384,7 @@
       const d = u.def; let dmg = d.dmg;
       if (d.cloak && B.t - u.lastFire > 2) { dmg *= 3; fx('text', { x: u.x, y: u.y - 20, text: 'ambush', ttl: .7 }); }
       u.lastFire = B.t;
+      if (panes.length && (d.shot === 'bullet' || d.shot === 'rail' || d.shot === 'arc')) { los(u, e); if (pane) { const p = pane; fx('tracer', { x: u.x, y: u.y, x2: p.m[0], y2: p.m[1], team: u.team, ttl: .12 }); smash(p, dmg, u); return; } }
       if (d.shot === 'bullet') { const k = dist(u, e) / reach(u, e), fall = k < .5 ? 1 : 1 - .6 * (k - .5) / .5;   // bullets lose up to 60% of their damage over the far half of their range
         fx('tracer', { x: u.x, y: u.y, x2: e.x, y2: e.y, team: u.team, ttl: .09, weak: fall < .7 }); hurt(u, e, dmg * fall, 'shot', u); }
       else if (d.shot === 'rail') {
@@ -348,7 +405,7 @@
         case 'mark': if (e && de < d.range) { e.st.marked = 4; fx('ping', { x: e.x, y: e.y, r: 26, team: u.team }); used(); } break;
         case 'suppress': if (e && de < d.range) {
           const a = Math.atan2(e.y - u.y, e.x - u.x); fx('cone', { x: u.x, y: u.y, ang: a, r: 220, team: u.team, ttl: .7 });
-          foes(u).forEach(f => { let da = Math.atan2(f.y - u.y, f.x - u.x) - a; da = Math.atan2(Math.sin(da), Math.cos(da)); if (Math.abs(da) < .5 && dist(u, f) < 220 && los(u, f)) { f.st.slow = 2.5; held(u, f); hurt(u, f, 9, 'shot', u); } }); used();
+          foes(u).forEach(f => { let da = Math.atan2(f.y - u.y, f.x - u.x) - a; da = Math.atan2(Math.sin(da), Math.cos(da)); if (Math.abs(da) < .5 && dist(u, f) < 220 && !hidden(f, u) && los(u, f)) { f.st.slow = 2.5; held(u, f); hurt(u, f, 9, 'shot', u); } }); used();
         } break;
         case 'bash': if (e && de < 36) { e.st.stun = 1.2; held(u, e); fx('burst', { x: e.x, y: e.y, r: 22, team: u.team, ttl: .3 }); hurt(u, e, 22, 'melee', u); used(); } break;
         case 'grenade': if (e && de < 300 && de > 70) { B.shots.push({ type: 'grenade', src: u, x: u.x, y: u.y, sx: u.x, sy: u.y, tx: e.x, ty: e.y, fuse: .95, t: 0, team: u.team }); B.zones.push({ kind: 'grenade', x: e.x, y: e.y, r: 62, t: .95, t0: .95, team: u.team }); used(); } break;
@@ -373,7 +430,8 @@
     }
 
     function decide(u) {
-      const d = u.def, es = foes(u).filter(e => !hidden(e, u) && !(e.st.guard > 0) && !home(e));
+      const d = u.def; foes(u).forEach(e => { if (e.def.cloak && cloaked(e) && dist(u, e) < 60 && los(u, e)) spot1(u, e); });
+      const es = foes(u).filter(e => !hidden(e, u) && !(e.st.guard > 0) && !home(e));
       const seen = es.filter(e => dist(u, e) < SIGHT && los(u, e));
       // who to shoot
       let tgt = null, score = -1e9;
@@ -460,6 +518,7 @@
       if (B.over) { B.fx.forEach(f => f.age += dt); B.fx = B.fx.filter(f => f.age < f.ttl); return; }
       B.t += dt;
       if (B.haz.length) hazards(dt);
+      panes.forEach(d => { if (d.broken && B.t > d.fixT && !B.units.some(u => u.alive && Math.hypot(u.x - d.m[0], u.y - d.m[1]) < 26)) { d.broken = false; d.hp = GLASS; } });
       for (const u of B.units) {
         if (!u.alive) { if ((u.dead -= dt) <= 0) spawn(u); continue; }
         const st = u.st, d = u.def;
@@ -548,6 +607,7 @@
         if (s.type === 'bolt') {
           const st = s.spd * dt, nx = s.x + s.vx * st, ny = s.y + s.vy * st;
           if ((s.left -= st) <= 0 || !los({ x: s.x, y: s.y, room: s.room }, { x: nx, y: ny })) return false;
+          if (pane) { smash(pane, s.dmg, s.src); return false; }
           s.x = nx; s.y = ny; s.room = roomAt(nx, ny, s.room);
           const e = B.units.find(f => f.alive && f.team !== s.team && !(f.st.guard > 0) && Math.hypot(f.x - nx, f.y - ny) < 6 + 12 * (f.def.size || 1));
           if (!e) return true;

@@ -15,7 +15,7 @@
 
   // student tokens, drawn once into a small canvas each so a frame is only bitmap copies
   const cache = {};
-  function tok(path, px = 128) {
+  function tok(path, px = 256) {
     let c = cache[path];
     if (!c) { c = cache[path] = { cv: null }; const im = new Image(); im.onload = () => { const cv = document.createElement('canvas'); cv.width = cv.height = px; cv.getContext('2d').drawImage(im, 0, 0, px, px); c.cv = cv; }; im.src = SVG + path + '.svg'; }
     return c.cv;
@@ -24,7 +24,7 @@
   ROSTER.forEach(unitTok);
   ['stun', 'slow', 'root', 'marked', 'confuse', 'haste', 'burn', 'bleed', 'heal', 'invulnerable', 'damage-up', 'channeling', 'dead', 'shield'].forEach(n => tok('status/' + n, 64));
   ['ally', 'enemy'].forEach(s => ['circle', 'ring', 'cone', 'line', 'burst', 'lightning', 'projectile', 'target-circle'].forEach(n => tok(`telegraphs/${n}-${s}`, 256)));
-  ['arrows/charge-ally', 'arrows/charge-enemy', 'arrows/leap-ally', 'arrows/leap-enemy', 'props/bomb', 'props/vortex', 'tokens/neutral-creature'].forEach(n => tok(n));
+  ['arrows/charge-ally', 'arrows/charge-enemy', 'arrows/leap-ally', 'arrows/leap-enemy', 'props/bomb', 'props/vortex', 'props/barrel', 'props/rock', 'tokens/neutral-creature'].forEach(n => tok(n));
 
   let plan = null;
   // what plan.js does not draw: glass, vent grilles, ledges, and the fixed parts of the hazards
@@ -33,7 +33,7 @@
     map.P.doors.forEach(d => {
       const a = [d.m[0] - d.e[0] * d.gw / 2, d.m[1] - d.e[1] * d.gw / 2], z = [d.m[0] + d.e[0] * d.gw / 2, d.m[1] + d.e[1] * d.gw / 2], n = [-d.e[1], d.e[0]];
       g.lineCap = 'butt';
-      if (d.kind === 'window') { g.strokeStyle = '#8fd0ee'; g.lineWidth = 7; g.beginPath(); g.moveTo(...a); g.lineTo(...z); g.stroke(); g.strokeStyle = INK; g.lineWidth = 1.2; [-3.5, 3.5].forEach(k => { g.beginPath(); g.moveTo(a[0] + n[0] * k, a[1] + n[1] * k); g.lineTo(z[0] + n[0] * k, z[1] + n[1] * k); g.stroke(); }); }
+      if (d.kind === 'window') { /* drawn each frame by drawGlass: a pane cracks and breaks */ }
       else if (d.kind === 'vent') { g.strokeStyle = '#4a4f6b'; g.lineWidth = 12; g.beginPath(); g.moveTo(...a); g.lineTo(...z); g.stroke(); g.strokeStyle = '#c9c4b4'; g.lineWidth = 1.5; for (let k = 3; k < d.gw; k += 5) { const p = [a[0] + d.e[0] * k, a[1] + d.e[1] * k]; g.beginPath(); g.moveTo(p[0] + n[0] * 5, p[1] + n[1] * 5); g.lineTo(p[0] - n[0] * 5, p[1] - n[1] * 5); g.stroke(); } }
       else if (d.kind === 'ledge') {
         const rb = map.P.rooms[d.b].c, k = (rb[0] - d.m[0]) * n[0] + (rb[1] - d.m[1]) * n[1] > 0 ? 1 : -1;
@@ -43,7 +43,14 @@
     });
     (map.hazards || []).forEach(h => {
       if (h.type === 'patrol') { g.strokeStyle = 'rgba(28,36,80,.4)'; g.lineWidth = 2; [-7, 7].forEach(k => { g.beginPath(); g.moveTo(h.a[0], h.a[1] + k); g.lineTo(h.b[0], h.b[1] + k); g.stroke(); }); for (let x = h.a[0]; x <= h.b[0]; x += 22) { g.beginPath(); g.moveTo(x, h.a[1] - 10); g.lineTo(x, h.a[1] + 10); g.stroke(); } }
-      else if (h.type === 'rotor') { g.strokeStyle = 'rgba(229,50,45,.35)'; g.lineWidth = 2; g.setLineDash([6, 6]); g.beginPath(); g.arc(h.x, h.y, h.len, 0, TAU); g.stroke(); g.setLineDash([]); }
+      else if (h.type === 'rotor') { g.strokeStyle = 'rgba(229,50,45,.35)'; g.lineWidth = 2; g.setLineDash([6, 6]); g.beginPath(); g.arc(h.x, h.y, h.len + (h.amp || 0), 0, TAU); g.stroke(); g.setLineDash([]); }
+      else if (h.type === 'roll') { g.strokeStyle = 'rgba(28,36,80,.3)'; g.lineWidth = 2; g.setLineDash([2, 9]); g.beginPath(); g.moveTo(...h.a); g.lineTo(...h.b); g.stroke(); g.setLineDash([]); g.fillStyle = '#4a4f6b'; g.beginPath(); g.arc(h.a[0], h.a[1], h.r + 4, 0, TAU); g.fill(); }
+      else if (h.type === 'erupt') { g.fillStyle = '#4a4f6b'; g.beginPath(); g.arc(h.x, h.y, 13, 0, TAU); g.fill(); g.fillStyle = '#ff8a2a'; g.beginPath(); g.arc(h.x, h.y, 7, 0, TAU); g.fill(); g.strokeStyle = 'rgba(229,50,45,.3)'; g.lineWidth = 2; g.setLineDash([6, 6]); g.beginPath(); g.arc(h.x, h.y, h.R + h.r, 0, TAU); g.stroke(); g.setLineDash([]); }
+      else if (h.type === 'collapse') { g.fillStyle = 'rgba(77,158,200,.28)'; g.beginPath(); g.arc(h.x, h.y, h.R, 0, TAU); g.fill(); g.strokeStyle = 'rgba(40,110,150,.5)'; g.lineWidth = 2; for (let r = h.eye; r < h.R; r += 16) { g.beginPath(); g.arc(h.x, h.y, r, r * .2, r * .2 + 4.4); g.stroke(); } }
+      else if (h.type === 'trench') { g.strokeStyle = '#4a4033'; g.lineWidth = 9; g.lineJoin = 'round'; g.lineCap = 'round'; g.beginPath(); h.pts.forEach((p, i) => i ? g.lineTo(...p) : g.moveTo(...p)); g.stroke(); g.strokeStyle = '#1f1a14'; g.lineWidth = 4; g.stroke(); }
+      else if (h.type === 'hop') { h.pts.forEach(p => { g.strokeStyle = 'rgba(58,138,44,.45)'; g.lineWidth = 2; g.setLineDash([4, 5]); g.beginPath(); g.arc(p[0], p[1], h.r, 0, TAU); g.stroke(); g.setLineDash([]); }); }
+      else if (h.type === 'bounce') { g.strokeStyle = 'rgba(28,36,80,.25)'; g.lineWidth = 1.5; g.setLineDash([3, 6]); g.strokeRect(h.box[0] - h.r, h.box[1] - h.r, h.box[2] - h.box[0] + 2 * h.r, h.box[3] - h.box[1] + 2 * h.r); g.setLineDash([]); }
+      else if (h.type === 'leash') { g.strokeStyle = 'rgba(229,50,45,.3)'; g.lineWidth = 2; g.setLineDash([6, 6]); g.beginPath(); g.arc(h.x, h.y, h.L, 0, TAU); g.stroke(); g.setLineDash([]); g.fillStyle = '#4a4f6b'; g.beginPath(); g.arc(h.x, h.y, 6, 0, TAU); g.fill(); }
       else if (h.type === 'jet') { g.fillStyle = '#4a4f6b'; [h.a, h.b].forEach(p => { g.beginPath(); g.arc(p[0], p[1], 7, 0, TAU); g.fill(); }); g.strokeStyle = 'rgba(255,138,42,.35)'; g.lineWidth = 2; g.setLineDash([4, 6]); g.beginPath(); g.moveTo(...h.a); g.lineTo(...h.b); g.stroke(); g.setLineDash([]); }
     });
   }
@@ -53,9 +60,9 @@
   // im drawn so that the point (ax, ay) of its 100 x 100 box sits at (x, y), turned by rot, at k px per unit
   function stampTok(g, im, x, y, rot, kx, ky, ax = 50, ay = 50, a = 1) { if (!im || a <= 0) return; g.save(); g.globalAlpha *= a; g.translate(x, y); g.rotate(rot); g.drawImage(im, -ax * kx, -ay * ky, 100 * kx, 100 * ky); g.restore(); }
   // a token whose disc (centre 42,56; radius 32 of 100) lands on (x, y) with radius r, inside a ring in its team's colour
-  function drawUnit(g, def, x, y, r, a = 1) {
+  function drawUnit(g, def, x, y, r, a = 1, disc = true) {
     const k = r / 32; g.save(); g.globalAlpha *= a;
-    g.fillStyle = TEAM[def.team].col; g.beginPath(); g.arc(x, y, r + 3, 0, TAU); g.fill();
+    if (disc) { g.fillStyle = TEAM[def.team].col; g.beginPath(); g.arc(x, y, r + 3, 0, TAU); g.fill(); }
     const im = unitTok(def); if (im) g.drawImage(im, x - 42 * k, y - 56 * k, 100 * k, 100 * k); else { g.fillStyle = '#8a8f9c'; g.beginPath(); g.arc(x, y, r, 0, TAU); g.fill(); }
     g.restore();
   }
@@ -130,6 +137,18 @@
 
   /* ---------- 3. the battle ---------- */
   const BADGE = [['guard', 'invulnerable'], ['stun', 'stun'], ['confuse', 'confuse'], ['root', 'root'], ['slow', 'slow'], ['marked', 'marked'], ['burn', 'burn'], ['bleed', 'bleed'], ['haste', 'haste'], ['amp', 'damage-up']];
+  // glass: a pane shows its damage as cracks, and a broken one is an opening with shards on the floor
+  function drawGlass(g, B) {
+    B.map.P.doors.forEach(d => {
+      if (d.kind !== 'window') return;
+      const a = [d.m[0] - d.e[0] * d.gw / 2, d.m[1] - d.e[1] * d.gw / 2], z = [d.m[0] + d.e[0] * d.gw / 2, d.m[1] + d.e[1] * d.gw / 2], n = [-d.e[1], d.e[0]];
+      g.lineCap = 'butt';
+      if (d.broken) { g.fillStyle = '#8fd0ee'; for (let i = 0; i < 9; i++) { const t = (i * .37 + .1) % 1, k = ((i * 7) % 5 - 2) * 4; g.fillRect(a[0] + (z[0] - a[0]) * t + n[0] * k - 2, a[1] + (z[1] - a[1]) * t + n[1] * k - 2, 4, 3); } return; }
+      const hit = B.t - (d.hitT || -9) < .15; g.strokeStyle = hit ? '#fff' : '#8fd0ee'; g.lineWidth = 7; g.beginPath(); g.moveTo(...a); g.lineTo(...z); g.stroke();
+      g.strokeStyle = PLAN.INK; g.lineWidth = 1.2; [-3.5, 3.5].forEach(k => { g.beginPath(); g.moveTo(a[0] + n[0] * k, a[1] + n[1] * k); g.lineTo(z[0] + n[0] * k, z[1] + n[1] * k); g.stroke(); });
+      const cracks = Math.round((1 - d.hp / 40) * 5); for (let i = 0; i < cracks; i++) { const t = (i * .29 + .15) % 1, p = [a[0] + (z[0] - a[0]) * t, a[1] + (z[1] - a[1]) * t]; g.beginPath(); g.moveTo(p[0] - n[0] * 4 - d.e[0] * 3, p[1] - n[1] * 4 - d.e[1] * 3); g.lineTo(p[0], p[1]); g.lineTo(p[0] + n[0] * 4 - d.e[0] * 2, p[1] + n[1] * 4 - d.e[1] * 2); g.stroke(); }
+    });
+  }
   function drawHaz(g, B) {
     B.haz.forEach(h => {
       if (h.type === 'crush') {
@@ -140,12 +159,29 @@
         g.save(); g.translate(h.x, h.y); g.fillStyle = '#3a4160'; g.strokeStyle = PLAN.INK; g.lineWidth = 2; g.beginPath(); g.roundRect(-h.r - 3, -h.r + 2, h.r * 2 + 6, h.r * 2 - 4, 6); g.fill(); g.stroke();
         g.fillStyle = C.gold; for (let i = -1; i <= 1; i++) g.fillRect(i * 13 - 3, -h.r + 2, 6, h.r * 2 - 4); g.fillStyle = C.red; g.beginPath(); g.arc(0, 0, 5, 0, TAU); g.fill(); g.restore();
       } else if (h.type === 'rotor') {
-        g.save(); g.translate(h.x, h.y); g.rotate(h.ang || 0); g.strokeStyle = '#3a4160'; g.lineWidth = 8; g.lineCap = 'round'; g.beginPath(); g.moveTo(-h.len, 0); g.lineTo(h.len, 0); g.stroke();
-        g.strokeStyle = C.red; g.beginPath(); g.moveTo(-h.len, 0); g.lineTo(-h.len + 16, 0); g.moveTo(h.len, 0); g.lineTo(h.len - 16, 0); g.stroke(); g.restore();
+        g.save(); const len = h.cur || h.len; g.translate(h.x, h.y); g.rotate(h.ang || 0); g.strokeStyle = '#3a4160'; g.lineWidth = 8; g.lineCap = 'round'; g.beginPath(); g.moveTo(-len, 0); g.lineTo(len, 0); g.stroke();
+        g.strokeStyle = C.red; g.beginPath(); g.moveTo(-len, 0); g.lineTo(-len + 16, 0); g.moveTo(len, 0); g.lineTo(len - 16, 0); g.stroke(); g.restore();
         g.fillStyle = C.gold; g.strokeStyle = PLAN.INK; g.lineWidth = 2.5; g.beginPath(); g.arc(h.x, h.y, 11, 0, TAU); g.fill(); g.stroke();
       } else if (h.type === 'jet') {
         if (h.warn) { g.strokeStyle = C.red; g.lineWidth = 2 + 5 * (h.k || 0); g.setLineDash([5, 5]); g.beginPath(); g.moveTo(...h.a); g.lineTo(...h.b); g.stroke(); g.setLineDash([]); }
         if (h.live) { const L = Math.hypot(h.b[0] - h.a[0], h.b[1] - h.a[1]); for (let k = 0; k <= L; k += 9) { const f = .5 + .5 * Math.sin(B.t * 31 + k * 1.7), x = h.a[0] + (h.b[0] - h.a[0]) * k / L, y = h.a[1] + (h.b[1] - h.a[1]) * k / L; g.fillStyle = `rgba(255,${138 + Math.round(70 * f)},42,.75)`; g.beginPath(); g.arc(x, y, h.w * (.55 + .4 * f), 0, TAU); g.fill(); } }
+      } else if (h.type === 'roll') {
+        if (h.warn && Math.floor(B.t * 10) % 2) { g.strokeStyle = C.red; g.lineWidth = 3; g.beginPath(); g.arc(h.a[0], h.a[1], h.r + 8, 0, TAU); g.stroke(); }
+        if (h.on) { const im = tok('props/rock'); g.fillStyle = 'rgba(28,36,80,.2)'; g.beginPath(); g.arc(h.x + 3, h.y + 4, h.r, 0, TAU); g.fill(); if (im) stampTok(g, im, h.x, h.y, B.t * 6, h.r / 34, h.r / 34); else { g.fillStyle = '#8a8274'; g.beginPath(); g.arc(h.x, h.y, h.r, 0, TAU); g.fill(); } }
+      } else if (h.type === 'erupt') {
+        (h.spots || []).forEach(p => { g.strokeStyle = C.red; g.lineWidth = 2.5; g.beginPath(); g.arc(p.x, p.y, h.r, 0, TAU); g.stroke(); g.fillStyle = 'rgba(229,50,45,.16)'; g.beginPath(); g.arc(p.x, p.y, h.r * p.k, 0, TAU); g.fill(); const bx = h.x + (p.x - h.x) * p.k, by = h.y + (p.y - h.y) * p.k - Math.sin(p.k * Math.PI) * 30; g.fillStyle = '#ff8a2a'; g.beginPath(); g.arc(bx, by, 6, 0, TAU); g.fill(); });
+      } else if (h.type === 'collapse') {
+        if (h.safe < h.R - 3) { g.save(); g.fillStyle = 'rgba(30,96,140,.45)'; g.beginPath(); g.arc(h.x, h.y, h.R, 0, TAU); g.arc(h.x, h.y, h.safe, 0, TAU, true); g.fill('evenodd'); g.strokeStyle = '#fffaf0'; g.lineWidth = 2; g.beginPath(); g.arc(h.x, h.y, h.safe, B.t * 3, B.t * 3 + 5); g.stroke(); g.restore(); }
+      } else if (h.type === 'trench') {
+        if (h.sm) for (let i = Math.max(0, Math.floor(h.head - h.burn)); i < Math.min(h.sm.length, h.head + 5); i++) { const z = h.sm[i], lit = i <= h.head, f = .5 + .5 * Math.sin(B.t * 29 + i * 1.9); if (lit) { g.fillStyle = `rgba(255,${130 + Math.round(80 * f)},42,.8)`; g.beginPath(); g.arc(z.x, z.y, h.w * (.5 + .35 * f), 0, TAU); g.fill(); } else { g.fillStyle = 'rgba(229,50,45,.35)'; g.beginPath(); g.arc(z.x, z.y, 5, 0, TAU); g.fill(); } }
+      } else if (h.type === 'hop') {
+        const up = Math.sin((h.k || 0) * Math.PI) * 34; if (h.k > .3) { g.strokeStyle = C.red; g.lineWidth = 2.5; g.beginPath(); g.arc(h.to[0], h.to[1], h.r, 0, TAU); g.stroke(); }
+        g.fillStyle = 'rgba(28,36,80,.2)'; g.beginPath(); g.ellipse(h.x, h.y, 13 - up * .15, 7 - up * .08, 0, 0, TAU); g.fill(); g.fillStyle = '#5fbf4a'; g.strokeStyle = '#3a8a2c'; g.lineWidth = 2; g.beginPath(); g.arc(h.x, h.y - up, 12, 0, TAU); g.fill(); g.stroke();
+      } else if (h.type === 'bounce') {
+        g.fillStyle = 'rgba(28,36,80,.2)'; g.beginPath(); g.arc(h.x + 3, h.y + 4, h.r, 0, TAU); g.fill(); g.fillStyle = '#a3a9c0'; g.strokeStyle = '#62688a'; g.lineWidth = 2.5; g.beginPath(); g.arc(h.x, h.y, h.r, 0, TAU); g.fill(); g.stroke(); g.fillStyle = '#fff'; g.beginPath(); g.arc(h.x - h.r * .3, h.y - h.r * .3, h.r * .25, 0, TAU); g.fill();
+      } else if (h.type === 'leash') {
+        const px = h.px ?? h.x, py = h.py ?? h.y; g.strokeStyle = '#4a4f6b'; g.lineWidth = 2.5; g.setLineDash([3, 3]); g.beginPath(); g.moveTo(h.x, h.y); g.lineTo(px, py); g.stroke(); g.setLineDash([]);
+        g.fillStyle = C.red; g.beginPath(); g.arc(px, py, 12, 0, TAU); g.fill(); const im = tok('tokens/neutral-creature'); if (im) stampTok(g, im, px, py, 0, .22, .22);
       } else if (h.type === 'barrel') {
         if (h.state === 'gone') { g.fillStyle = 'rgba(40,30,30,.22)'; g.beginPath(); g.arc(h.x, h.y, 13, 0, TAU); g.fill(); return; }
         if (h.state === 'fuse') { g.strokeStyle = C.red; g.lineWidth = 3; g.beginPath(); g.arc(h.x, h.y, h.r, 0, TAU); g.stroke(); g.fillStyle = 'rgba(229,50,45,.14)'; g.fill(); }
@@ -155,7 +191,7 @@
   }
   function drawBattle(g, B, sel, heat) {
     T.use(g); base(g, B.map);
-    drawHaz(g, B);
+    drawGlass(g, B); drawHaz(g, B);
     if (B.opt.midShut) { const d = B.midDoor; g.strokeStyle = PLAN.INK; g.lineWidth = 9; g.lineCap = 'butt'; g.beginPath(); g.moveTo(d.m[0] - d.e[0] * d.gw / 2, d.m[1] - d.e[1] * d.gw / 2); g.lineTo(d.m[0] + d.e[0] * d.gw / 2, d.m[1] + d.e[1] * d.gw / 2); g.stroke(); }
     labels(g, B.map);
     // death map: one dot where each unit fell, in the colour of the squad that lost it
@@ -210,10 +246,12 @@
       else if (f.type === 'arc') { const L = Math.hypot(f.x2 - f.x, f.y2 - f.y); g.save(); g.translate((f.x + f.x2) / 2, (f.y + f.y2) / 2); g.rotate(Math.atan2(f.y2 - f.y, f.x2 - f.x) + Math.PI / 2 - .34); g.globalAlpha = a; const im = tel('lightning', f.team), kk = L / 97; if (im) g.drawImage(im, -50 * kk * .5, -50 * kk, 100 * kk * .5, 100 * kk); g.restore(); }
       else if (f.type === 'burst') stampTok(g, tel('burst', f.team), f.x, f.y, k, f.r / 46 * (.5 + .5 * k), f.r / 46 * (.5 + .5 * k), 50, 50, a);
       else if (f.type === 'boom') { g.save(); g.globalAlpha = a * .8; g.fillStyle = '#ff8a2a'; g.beginPath(); g.arc(f.x, f.y, f.r * (.4 + .6 * k), 0, TAU); g.fill(); g.fillStyle = '#ffe08a'; g.beginPath(); g.arc(f.x, f.y, f.r * .5 * (1 - k), 0, TAU); g.fill(); g.restore(); }
+      else if (f.type === 'emote') { if (f.of.alive) { const pop = Math.min(1, f.age / .18), up = 30 + 6 * Math.sin(f.age * 7); g.save(); g.globalAlpha = Math.min(1, a * 3); g.font = `${Math.round(22 * pop)}px 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = '#fffaf0'; g.strokeStyle = C.ink; g.lineWidth = 1.5; g.beginPath(); g.arc(f.of.x, f.of.y - up, 15 * pop, 0, TAU); g.fill(); g.stroke(); g.fillStyle = C.ink; g.fillText(f.text, f.of.x, f.of.y - up + 1); g.restore(); } }
+      else if (f.type === 'shatter') { g.save(); g.globalAlpha = a; g.fillStyle = '#bfe6f7'; for (let i = 0; i < 10; i++) { const an = i * .63, r = 8 + 26 * k; g.fillRect(f.x + Math.cos(an) * r - 2, f.y + Math.sin(an) * r - 2, 4, 4); } g.restore(); }
       else if (f.type === 'slash') stampTok(g, tel('burst', f.team), f.x, f.y, 0, .22, .22, 50, 50, a);
       else if (f.type === 'dead') stampTok(g, tok('status/dead', 64), f.x, f.y - k * 10, 0, .22, .22, 50, 50, Math.min(1, a * 2));
       else if (f.type === 'text' && f.team != null) { g.save(); g.globalAlpha = Math.max(0, a); g.font = '700 13px Montserrat, Jost, sans-serif'; g.textAlign = 'center'; g.lineWidth = 4; g.strokeStyle = '#fffaf0'; g.strokeText(f.text, f.x, f.y - k * 12); g.fillStyle = TEAM[f.team].col; g.fillText(f.text, f.x, f.y - k * 12); g.restore(); }   // a favoured hit, named in the squad's colour
-      else if (f.type === 'text') T.popText(f.text, f.x, f.y - k * 14, C.ink, a);
+      else if (f.type === 'text') { g.save(); g.globalAlpha = Math.max(0, a); g.font = '700 12px Montserrat, Jost, sans-serif'; g.textAlign = 'center'; g.lineWidth = 3.5; g.strokeStyle = '#fffaf0'; g.strokeText(f.text, f.x, f.y - k * 12); g.fillStyle = C.ink; g.fillText(f.text, f.x, f.y - k * 12); g.restore(); }
     });
     // score strip along the top edge, kill feed along the bottom edge
     const sc = B.score, bw = 300;
@@ -313,12 +351,14 @@
       const rowsF = F.map((f, i) => {
         const who = f.hz ? [f.top.length ? `set up by ${names(f.top)}` : '', f.caught && f.caught.length ? `hit most: ${names(f.caught, 1)}` : ''].filter(Boolean).join(' · ') : names(f.top, 3);
         const val = f.hz ? `${fmt(f.val)} damage, ${f.deaths} ${f.deaths === 1 ? 'death' : 'deaths'}` : `${fmt(f.val)} ${f.unit}`;
+        if (F.length > 6) return `<tr data-i="${i}" class="${f.met ? 'met' : ''}${i === pickF ? ' on' : ''}"><td>${i + 1}</td><td>${f.name}${f.pattern ? ` <i>${f.pattern}</i>` : ''} <span>${f.hz ? `${fmt(f.val)} dmg · ${f.deaths}☠` : `${fmt(f.val)}`}</span></td></tr>`;
         return `<tr data-i="${i}" class="${f.met ? 'met' : ''}${i === pickF ? ' on' : ''}"><td>${i + 1}</td><td>${f.name}${f.pattern ? ` <i>${f.pattern}</i>` : ''}<small>${val}${who ? ' · ' + who : ''}</small></td></tr>`;
       }).join('');
       const sc = B.script(), wait = sc.n < 10;
       const rows = B.lines.map(([k, name, unit]) => `<tr class="${wait ? '' : sc[k][1] ? 'met' : 'miss'}" title="${unit}"><td>${wait ? '·' : sc[k][1] ? '✓' : '✗'}</td><td>${name} <span>${wait ? '…' : sc[k][0]}</span></td></tr>`).join('');
       const f = F[pickF], side = B.opt.swap ? 'Sci-fi spawn in the west, Modern in the east.' : 'Modern spawn in the west, Sci-fi in the east.';
-      const txt = f ? `<b class="accent">${f.name}.</b> ${f.text}${f.who ? ` <b>Built for:</b> ${f.who}.` : ''}` : `<b class="accent">${map.name}.</b> ${map.lopsided} ${side} Click a feature for what it does.`;
+      const used = f && f.hz ? ` <b>So far:</b> ${fmt(f.val)} damage and ${f.deaths} ${f.deaths === 1 ? 'death' : 'deaths'}${f.top.length ? `, kills set up by ${names(f.top)}` : ''}${f.caught && f.caught.length ? `; hit most: ${names(f.caught, 2)}` : ''}.` : f && F.length > 6 ? ` <b>So far:</b> ${fmt(f.val)} ${f.unit}${f.top.length ? `, most by ${names(f.top, 3)}` : ''}.` : '';
+      const txt = f ? `<b class="accent">${f.name}.</b> ${f.text}${f.who ? ` <b>Built for:</b> ${f.who}.` : ''}${used}` : `<b class="accent">${map.name}.</b> ${map.lopsided} ${side} Click a feature for what it does.`;
       const k2 = rowsF + rows + txt; if (k2 !== shown) { shown = k2; say(feat, rowsF); say(board, rows); say(out, txt); }
     };
   });

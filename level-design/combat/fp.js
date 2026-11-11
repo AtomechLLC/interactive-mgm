@@ -1,11 +1,11 @@
 /* First-person follow view for the battle (battle.js calls FPV.draw). The floor plan is extruded into walls and
-   ray-cast one screen column at a time from the followed unit's position and facing; every other unit, shot and
-   telegraph is a billboard or a floor ellipse placed by the same projection and hidden behind nearer walls.
+   ray-cast one screen column at a time from the followed unit's position and facing; every other unit is a capsule body
+   wearing its token as a face, and every shot and telegraph is a billboard or a floor ellipse placed by the same projection and hidden behind nearer walls.
    Nothing here changes the battle: it reads the same state the top-down view draws.
    FPV.walls(P, shutDoor) -> wall segments (room edges with the doorways cut out)
    FPV.draw(g, B, u, cam, o) with o = { W, H, walls, plan, drawUnit, tok, TEAM, dt } */
 (function () {
-  const TAU = Math.PI * 2, FOV = 1.2, WALL = 64, EYE = WALL / 2, STEP = 2;
+  const TAU = Math.PI * 2, FOV = 1.2, WALL = 64, EYE = WALL / 2, STEP = 2, NEARK = 7;   // NEARK: the most a billboard is magnified
   const mix = (a, b, k) => a.map((v, i) => Math.round(v + (b[i] - v) * k)), rgb = c => `rgb(${c[0]},${c[1]},${c[2]})`;
   const FOG = [226, 218, 200], STONE = [86, 92, 140], STONE2 = [62, 67, 112];
 
@@ -60,27 +60,42 @@
     // everything that is not a wall, far to near
     const items = [];
     B.zones.forEach(zn => items.push({ kind: 'zone', x: zn.x, y: zn.y, r: zn.r, team: zn.team, k: 1 - zn.t / zn.t0 }));
-    B.units.forEach(e => { if (e === u || !e.alive) return; const cl = B.cloaked(e); if (cl && e.team !== u.team && Math.hypot(e.x - u.x, e.y - u.y) > 80) return; if (e.def.bubble && !(e.st.stun > 0)) items.push({ kind: 'zone', x: e.x, y: e.y, r: e.def.bubble, team: e.team, k: .25, soft: true }); items.push({ kind: 'unit', x: e.x, y: e.y, e, a: cl ? .35 : 1 }); });
+    B.units.forEach(e => { if (e === u || !e.alive) return; const cl = B.cloaked(e); if (cl && e.team !== u.team) return; if (e.def.bubble && !(e.st.stun > 0)) items.push({ kind: 'zone', x: e.x, y: e.y, r: e.def.bubble, team: e.team, k: .25, soft: true }); items.push({ kind: 'unit', x: e.x, y: e.y, e, a: cl ? .35 : 1 }); });
     B.shots.forEach(s => items.push({ kind: 'shot', x: s.x, y: s.y, s }));
     B.fx.forEach(f => { if (f.type === 'dead' || f.type === 'burst' || f.type === 'text' || f.type === 'ring') items.push({ kind: 'fx', x: f.x, y: f.y, f }); });
     items.forEach(it => it.p = P(it.x, it.y));
     items.filter(it => it.p.f > 6).sort((a, b) => b.p.f - a.p.f).forEach(it => {
-      const { f, x, k } = it.p, floor = hor + EYE * k;
+      // near plane: a billboard closer than about a tile fades out and stops growing, so nothing fills the screen or is cut by the frame
+      const { f, x } = it.p, k = it.kind === 'zone' ? it.p.k : Math.min(it.p.k, NEARK), near = it.kind === 'zone' ? 1 : Math.max(0, Math.min(1, (f - 20) / 30)), floor = hor + EYE * k;
+      if (near <= 0) return;
       if (it.kind === 'zone') {
         const rx = it.r * k, ry = Math.max(2, it.r * k * EYE / f);
         seen(x - rx, x + rx, Math.max(6, f - it.r * .6), () => { g.globalAlpha = it.soft ? .22 : .35 + .4 * it.k; g.fillStyle = TEAM[it.team].soft; g.beginPath(); g.ellipse(x, floor, rx, ry, 0, 0, TAU); g.fill(); g.globalAlpha = it.soft ? .5 : .95; g.strokeStyle = TEAM[it.team].col; g.lineWidth = it.soft ? 2 : 4; g.setLineDash(it.soft ? [] : [10, 7]); g.stroke(); });
       } else if (it.kind === 'unit') {
-        const e = it.e, size = 30 * (e.def.size || 1) * k, r = size / 2, cy = floor - r - 3 * k;
+        // a capsule body in the squad's colour, with the token worn as its face. The face slides round the body with the
+        // unit's facing and is gone when it has its back to the camera.
+        const e = it.e, sz = e.def.size || 1, bw = 24 * sz * k, bh = (e.def.fly ? 26 : 46) * sz * k, r = bw / 2, base = floor - (e.def.fly ? 22 * k : 0), top = base - bh, cy = top + r * 1.05;
+        let turn = Math.atan2(cam.y - e.y, cam.x - e.x) - e.face; turn = Math.atan2(Math.sin(turn), Math.cos(turn));   // 0 = looking straight at the camera
         seen(x - r - 4, x + r + 4, f, () => {
-          g.fillStyle = 'rgba(40,30,20,.22)'; g.beginPath(); g.ellipse(x, floor, r, Math.max(1.5, r * EYE / f), 0, 0, TAU); g.fill();
-          o.drawUnit(g, e.def, x, cy, r, it.a);
-          const w = size * 1.1, hp = Math.max(0, e.hp / e.hpMax); g.fillStyle = '#1d2433'; g.fillRect(x - w / 2 - 1, cy - r - 9 * Math.min(1, k * 2) - 4, w + 2, 6); g.fillStyle = TEAM[e.team].col; g.fillRect(x - w / 2, cy - r - 9 * Math.min(1, k * 2) - 3, w * hp, 4);
-          let n = 0; o.BADGE.forEach(([key, icon]) => { if (e.st[key] > 0 && n < 3) { const bs = Math.max(10, r * .7), im = o.tok('status/' + icon, 64); if (im) g.drawImage(im, x + r - n * bs, cy + r - bs, bs, bs); n++; } });
-          if (e === u.target) { g.strokeStyle = '#ffb951'; g.lineWidth = 2.5; g.beginPath(); g.arc(x, cy, r + 7, 0, TAU); g.stroke(); }
+          g.globalAlpha = near * it.a;
+          g.fillStyle = 'rgba(40,30,20,.22)'; g.beginPath(); g.ellipse(x, floor, r * 1.1, Math.max(1.5, r * 1.1 * EYE / f), 0, 0, TAU); g.fill();
+          const col = TEAM[e.team].col, sh = g.createLinearGradient(x - r, 0, x + r, 0); sh.addColorStop(0, 'rgba(0,0,0,.34)'); sh.addColorStop(.3, 'rgba(255,255,255,.2)'); sh.addColorStop(.55, 'rgba(0,0,0,0)'); sh.addColorStop(1, 'rgba(0,0,0,.4)');
+          g.beginPath(); g.roundRect(x - r, top, bw, bh, r); g.fillStyle = col; g.fill(); g.fillStyle = sh; g.fill(); g.strokeStyle = '#1d2433'; g.lineWidth = Math.max(1, Math.min(3, r * .12)); g.stroke();
+          g.fillStyle = 'rgba(29,36,51,.3)'; g.fillRect(x - r, top + bh * .62, bw, Math.max(1, bh * .05));   // a belt, so the body reads as upright
+          if (Math.abs(turn) < 1.75) {
+            const off = Math.sin(turn) * r * .55, wide = Math.max(.25, Math.cos(turn * .8)), fr = r * .86;
+            g.save(); g.beginPath(); g.roundRect(x - r, top, bw, bh, r); g.clip(); g.translate(x - off, cy); g.scale(wide, 1);
+            o.drawUnit(g, e.def, 0, 0, fr, 1, false); g.restore();
+          }
+          g.globalAlpha = near;
+          const w = Math.max(18, bw * 1.2), hp = Math.max(0, e.hp / e.hpMax), by = top - Math.max(6, 6 * Math.min(k, 2)); g.fillStyle = '#1d2433'; g.fillRect(x - w / 2 - 1, by - 1, w + 2, 6); g.fillStyle = col; g.fillRect(x - w / 2, by, w * hp, 4);
+          let n = 0; o.BADGE.forEach(([key, icon]) => { if (e.st[key] > 0 && n < 3) { const bs = Math.max(10, r * .7), im = o.tok('status/' + icon, 64); if (im) g.drawImage(im, x + r - n * bs, base - bs, bs, bs); n++; } });
+          if (e === u.target) { g.strokeStyle = '#ffb951'; g.lineWidth = 2.5; g.beginPath(); g.roundRect(x - r - 5, top - 5, bw + 10, bh + 10, r + 5); g.stroke(); }
         });
       } else if (it.kind === 'shot') {
         const s = it.s, lift = s.type === 'grenade' ? Math.sin((s.k || 0) * Math.PI) * 40 : s.type === 'dog' ? -EYE * .7 : s.type === 'drone' ? 34 : 0, r = (s.type === 'rocket' || s.big ? 7 : s.type === 'dog' ? 9 : s.type === 'grenade' ? 7 : s.type === 'drone' ? 9 : 4) * Math.min(k, 2.2), cy = hor - lift * k;
         seen(x - r - 2, x + r + 2, f, () => {
+          g.globalAlpha = near;
           if (s.type === 'dog') { g.fillStyle = TEAM[s.team].col; g.beginPath(); g.arc(x, cy, r * 1.15, 0, TAU); g.fill(); const im = o.tok('tokens/neutral-creature'); if (im) g.drawImage(im, x - r, cy - r, r * 2, r * 2); }
           else if (s.type === 'grenade') { const im = o.tok('props/bomb'); if (im) g.drawImage(im, x - r * 1.4, cy - r * 1.4, r * 2.8, r * 2.8); }
           else { g.fillStyle = s.type === 'drone' ? '#1d2433' : TEAM[s.team].soft; g.strokeStyle = TEAM[s.team].col; g.lineWidth = Math.max(1.5, r * .4); g.beginPath(); g.arc(x, cy, Math.max(2, r), 0, TAU); g.fill(); g.stroke(); }
@@ -88,7 +103,7 @@
       } else {
         const fx = it.f, a = 1 - fx.age / fx.ttl;
         seen(x - 60 * k, x + 60 * k, f, () => {
-          g.globalAlpha = Math.max(0, a);
+          g.globalAlpha = Math.max(0, a) * near;
           if (fx.type === 'dead') { const im = o.tok('status/dead', 64), r = 13 * k; if (im) g.drawImage(im, x - r, hor - r - fx.age * 14 * k, r * 2, r * 2); }
           else if (fx.type === 'burst') { const im = tel('burst', fx.team), r = fx.r * k * (.5 + .5 * fx.age / fx.ttl); if (im) g.drawImage(im, x - r, hor + EYE * k * .4 - r, r * 2, r * 2); }
           else if (fx.type === 'ring') { const rx = fx.r * k, ry = Math.max(2, rx * EYE / f); g.strokeStyle = TEAM[fx.team].col; g.lineWidth = 5; g.beginPath(); g.ellipse(x, floor, rx, ry, 0, 0, TAU); g.stroke(); }
@@ -126,7 +141,7 @@
     const hit = B.t - (u.hitT || -9); if (hit < .25) { const v = g.createRadialGradient(W / 2, H / 2, H * .3, W / 2, H / 2, H * .75); v.addColorStop(0, 'rgba(229,50,45,0)'); v.addColorStop(1, `rgba(229,50,45,${.5 * (1 - hit / .25)})`); g.fillStyle = v; g.fillRect(0, 0, W, H); }
     g.strokeStyle = 'rgba(28,36,80,.75)'; g.lineWidth = 2; g.beginPath(); g.moveTo(W / 2 - 12, hor); g.lineTo(W / 2 - 4, hor); g.moveTo(W / 2 + 4, hor); g.lineTo(W / 2 + 12, hor); g.moveTo(W / 2, hor - 12); g.lineTo(W / 2, hor - 4); g.moveTo(W / 2, hor + 4); g.lineTo(W / 2, hor + 12); g.stroke();
     // the unit's own weapon: its token, low and to the right, kicking when it fires
-    const kick = Math.max(0, 1 - (B.t - u.lastFire) / .12); o.drawUnit(g, u.def, gun.x + 40, H - 24 + kick * 8, 54, B.cloaked(u) ? .45 : 1);
+    const kick = Math.max(0, 1 - (B.t - u.lastFire) / .12); o.drawUnit(g, u.def, gun.x + 40, H - 24 + kick * 8, 54, B.cloaked(u) ? .45 : 1, false);   // no team disc behind your own token: it read as a stray blue shape
     return warn;
   }
 
