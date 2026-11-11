@@ -135,7 +135,7 @@
     text(g, label, x, y - 40, { size: 12.5, w: 800, col: C.muted });
     card(g, x, y, w, 52, { edge: C.navy, lw: 3, r: 8, shadow: false });
     g.save(); g.beginPath(); g.rect(x - w / 2 + 3, y - 23, w - 6, 46); g.clip();
-    const off = (1 - k) * 46 * 3; wrap(g, val, x, y - off - (val.length > 18 ? 7 : 0), w - 14, { size: 13.5, w: 700, lh: 15, align: 'center', col });
+    const off = (1 - k) * 46 * 3; wrap(g, val, x, y - off, w - 14, { valign: 'middle', size: 13.5, w: 700, lh: 15, align: 'center', col });
     if (k < 1) { g.fillStyle = 'rgba(21,32,68,.08)'; g.fillRect(x - w / 2, y - 23, w, 46); }
     g.restore();
   }

@@ -98,7 +98,7 @@
         });
       });
       text(g, 'Special moves', 286, 318, { align: 'left', size: 13, w: 800 });
-      sp.forEach((m, j) => { const x = 470 + j * 186, k = ease(ph(s, .7 + j * .12, 1 + j * .12)); card(g, x, 318, 176, 50, { fill: m ? '#fde9b8' : 'rgba(255,250,240,.5)', edge: m ? '#e0a92d' : '#cdbf9f', shadow: false, r: 8, dash: m ? [] : [5, 5] }); g.save(); g.globalAlpha = k; wrap(g, m || 'open slot', x, 318 - (m && m.length > 18 ? 8 : 0), 164, { size: 13.5, w: 800, align: 'center', lh: 16, col: m ? '#7a4a00' : C.muted }); g.restore(); });
+      sp.forEach((m, j) => { const x = 470 + j * 186, k = ease(ph(s, .7 + j * .12, 1 + j * .12)); card(g, x, 318, 176, 50, { fill: m ? '#fde9b8' : 'rgba(255,250,240,.5)', edge: m ? '#e0a92d' : '#cdbf9f', shadow: false, r: 8, dash: m ? [] : [5, 5] }); g.save(); g.globalAlpha = k; wrap(g, m || 'open slot', x, 318, 164, { valign: 'middle', size: 13.5, w: 800, align: 'center', lh: 16, col: m ? '#7a4a00' : C.muted }); g.restore(); });
       text(g, 'Super', 286, 390, { align: 'left', size: 13, w: 800 });
       card(g, 470, 390, 176, 50, { fill: '#eadcfb', edge: '#a77fe0', shadow: false, r: 8 }); text(g, su, 470, 390, { size: 13.5, w: 800, col: '#4b2286', a: ease(ph(s, 1.1, 1.4)) });
       wrap(g, 'The template stays: 6 standing, 6 crouching, 6 jumping, 3 specials, 1 super. Only the contents change, so each character is easy to plan and easy to contrast.', 290, 446, 700, { size: 15, w: 700, lh: 20, col: C.navy });

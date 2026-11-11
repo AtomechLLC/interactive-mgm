@@ -55,11 +55,11 @@
         arrow(g, [x, y], [x2, y2], on ? C.navy : '#b9b09a', 3, { pad0: 50, pad1: 50, bend: -34 });
         card(g, x, y, 130, 70, { fill: on ? '#fff3c4' : '#fffaf0', edge: on ? C.gold : '#cdbf9f', lw: on ? 4 : 2, shadow: false });
         text(g, String(j + 1), x - 54, y - 22, { size: 13, w: 800, col: C.muted });
-        wrap(g, n, x, y - (n.length > 14 ? 9 : 0), 112, { size: 14, w: 800, align: 'center', lh: 17 });
+        wrap(g, n, x, y, 112, { valign: 'middle', size: 14, w: 800, align: 'center', lh: 17 });
       });
       text(g, `Step ${i + 1}`, cx, cy, { size: 20, w: 800, display: true, col: C.navy });
       card(g, cx, 446, 320, 70, { fill: '#fff3c4', edge: C.gold, lw: 2, shadow: false });
-      wrap(g, STEPS[i][1], cx, 446 - (STEPS[i][1].length > 34 ? 9 : 0), 290, { size: 15, w: 700, lh: 19, align: 'center', col: C.navy });
+      wrap(g, STEPS[i][1], cx, 446, 290, { valign: 'middle', size: 15, w: 700, lh: 19, align: 'center', col: C.navy });
       text(g, 'then again', cx, 548, { size: 13, col: C.muted, it: true });
     },
     side(t) { const i = Math.floor(t / PH); return { out: `<b>${i + 1}. ${STEPS[i][0]}.</b> ${STEPS[i][1]}.` }; },

@@ -37,7 +37,7 @@
       const h = BH(b[1]) * (b[2] === 'gone' ? 1 : a), drop = b[2] === 'after' ? (1 - a) * 80 : 0;
       g.save(); g.globalAlpha = b[2] === 'gone' ? a : Math.min(1, a * 1.5);
       card(g, x, top - h / 2 - drop, 100, h - 3, { fill: col.fill, edge: col.edge, lw: 2, r: 6, shadow: false });
-      if (h > 20) wrap(g, b[0], x, top - h / 2 - drop - (b[0].length > 14 ? 7 : 0), 92, { size: 11, w: 700, lh: 13, align: 'center', col: col.col });
+      if (h > 20) wrap(g, b[0], x, top - h / 2 - drop, 92, { valign: 'middle', size: 11, w: 700, lh: 13, align: 'center', col: col.col });
       g.restore(); top -= h;
     });
     text(g, label, x, y + 30, { size: 13, w: 800, col: col.col });

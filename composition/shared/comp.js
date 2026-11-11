@@ -37,13 +37,15 @@
     if (o.stroke) { g.lineWidth = o.stroke; g.strokeStyle = o.strokeCol || '#fffaf0'; g.lineJoin = 'round'; g.strokeText(s, x, y); }
     g.fillText(s, x, y); g.restore();
   }
-  // wraps s into lines no wider than w; returns the lines (draws them when o.draw is not false)
+  // wraps s into lines no wider than w; returns the lines (draws them when o.draw is not false).
+  // o.valign: 'middle' centres the whole block of lines on y (otherwise y is the first line).
   function wrap(g, s, x, y, w, o = {}) {
     g.save(); g.font = `${o.it ? 'italic ' : ''}${o.w || 500} ${o.size || 15}px ${o.display ? 'Montserrat, ' : ''}Jost, sans-serif`;
     const words = String(s).split(' '), lines = []; let cur = '';
     words.forEach(wd => { const t = cur ? cur + ' ' + wd : wd; if (g.measureText(t).width > w && cur) { lines.push(cur); cur = wd; } else cur = t; });
     if (cur) lines.push(cur); g.restore();
-    if (o.draw !== false) lines.forEach((l, i) => text(g, l, x, y + i * (o.lh || (o.size || 15) * 1.3), { ...o, align: o.align || 'left' }));
+    const lh = o.lh || (o.size || 15) * 1.3, y0 = o.valign === 'middle' ? y - (lines.length - 1) * lh / 2 : y;
+    if (o.draw !== false) lines.forEach((l, i) => text(g, l, x, y0 + i * lh, { ...o, align: o.align || 'left' }));
     return lines;
   }
   function card(g, x, y, w, h, o = {}) {
