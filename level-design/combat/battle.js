@@ -224,6 +224,10 @@
         if (u.broken) { g.save(); g.setLineDash([3, 5]); g.strokeStyle = C.red; g.lineWidth = 2; g.beginPath(); g.arc(u.x, u.y, r + 6, u.face - 1.0, u.face + 1.0); g.stroke(); g.restore(); }
         else { g.strokeStyle = 'rgba(29,36,51,.25)'; g.lineWidth = 4; g.beginPath(); g.arc(u.x, u.y, r + 6, u.face - 1.0, u.face + 1.0); g.stroke(); g.strokeStyle = B.t - (u.blockT || -9) < .2 ? '#fff' : '#1d2433'; g.beginPath(); g.arc(u.x, u.y, r + 6, u.face - k, u.face + k); g.stroke(); }
       }
+      if (d.cling && u.onWall) {   // on a wall: legs gripping it, and a shadow thrown onto the floor beside it
+        const w = B.wallPt(u.room, u.x, u.y), ox = -w.nx, oy = -w.ny; g.strokeStyle = '#4b2e63'; g.lineWidth = 2.2; g.lineCap = 'round';
+        for (let i = -1.5; i <= 1.5; i++) { const tx = -oy * i * 6, ty = ox * i * 6; g.beginPath(); g.moveTo(u.x + tx * .6 + ox * r * .5, u.y + ty * .6 + oy * r * .5); g.lineTo(u.x + tx * 1.3 + ox * (w.d + 3), u.y + ty * 1.3 + oy * (w.d + 3)); g.stroke(); }
+      } else
       if (d.key === 'xeno-swarm') for (let i = 0; i < 4; i++) { const a = B.t * 3 + i * TAU / 4; g.fillStyle = '#4b2e63'; g.beginPath(); g.arc(u.x + Math.cos(a) * (r + 7), u.y + Math.sin(a) * (r + 7), 3.2, 0, TAU); g.fill(); }
       // health bar and status badges
       const w = 26 * (d.size || 1), hp = clamp(u.hp / u.hpMax); g.globalAlpha = ghost;

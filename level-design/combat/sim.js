@@ -86,7 +86,7 @@
     { key: 'hover-drone', team: 1, fly: true, crawl: true, flank: true, name: 'Hover Drone', hp: 60, spd: 150, range: 175, dmg: 9, rate: .15, shot: 'bolt', dodge: .3, size: .85, lane: [3, 0, 3], does: 'Fast and fragile, always on an outer lane. 30% of shots miss it.' },
     { key: 'shield-drone', team: 1, fly: true, crawl: true, name: 'Shield Drone', hp: 80, spd: 110, range: 0, dmg: 0, rate: 1, shot: 'none', bubble: 72, size: .85, lane: [1, 3, 1], does: 'Unarmed. Floats behind the toughest squadmate in the field (usually the mech) and projects a bubble; shots from outside it deal half damage.' },
     { key: 'cyborg', team: 1, name: 'Cyborg', hp: 185, spd: 100, range: 30, dmg: 27, rate: .5, shot: 'melee', close: true, lane: [0, 2, 5], pow: 'charge', cd: 6, does: 'A melee bruiser. Charges across a room, knocks its target down, then stays on top of it.' },
-    { key: 'xeno-swarm', team: 1, crawl: true, clones: 3, size: .8, name: 'Xeno Swarm', hp: 55, spd: 128, range: 26, dmg: 6, rate: .22, shot: 'melee', close: true, lane: [0, 1, 6], pow: 'leap', cd: 5, does: 'Three bodies in one roster slot. They spawn together, take the same lane, and each leaps onto a target and leaves it bleeding. Killing one body scores nothing: the kill counts when the last of the three falls, and then all three come back together.' },
+    { key: 'xeno-swarm', team: 1, crawl: true, cling: true, clones: 3, size: .8, name: 'Xeno Swarm', hp: 55, spd: 128, range: 26, dmg: 6, rate: .22, shot: 'melee', close: true, lane: [0, 1, 6], pow: 'leap', cd: 3.5, does: 'Three bodies in one roster slot. They spawn together, take the same lane and run along the walls, out of reach of anything that sweeps the floor. Each leaps off a wall onto a target, leaves it bleeding, bites for a moment and goes back to the wall to leap again; it cannot leap from open floor. Killing one body scores nothing: the kill counts when the last of the three falls, and then all three come back together.' },
     { key: 'psion', team: 1, name: 'Psion', hp: 80, spd: 86, range: 270, dmg: 19, rate: .7, shot: 'arc', lane: [3, 2, 1], pow: 'confuse', cd: 7, does: 'Attacks with arcs of energy. Channels a confusion on one enemy, who then wanders and cannot act. Any damage to the psion breaks the channel.' },
     { key: 'cloaker', team: 1, name: 'Cloaker', hp: 75, spd: 104, range: 160, dmg: 17, rate: .3, shot: 'bolt', cloak: true, lane: [3, 0, 3], does: 'Invisible until it fires, is marked or hit, or an enemy comes within a tile and a half; then everyone sees it for a moment. Its first shot out of cloak deals triple damage.' },
     { key: 'repair-bot', team: 1, crawl: true, name: 'Repair Bot', hp: 85, spd: 100, range: 150, dmg: 9, rate: .45, shot: 'bolt', heals: 17, size: .85, lane: [1, 3, 1], does: 'Follows whoever is missing the most health (usually the mech) and repairs them with a beam.' },
@@ -110,6 +110,28 @@
       return c;
     };
     const roomAt = (x, y, hint) => { if (hint && inRoom(rooms[hint], x, y)) return hint; for (const id of ids) if (inRoom(rooms[id], x, y)) return id; return null; };
+    // walls, for units that cling to them (def.cling). wallPt: the nearest point of a room's wall, set in by INSET, and how far away
+    // it is. wallRoute: the way from a to b round the room's walls, the shorter way of the two.
+    const INSET = 9;
+    const wallPt = (id, x, y) => {
+      const r = rooms[id];
+      if (r.circle) { const dx = x - r.circle[0], dy = y - r.circle[1], L = Math.hypot(dx, dy) || 1, k = r.circle[2] - INSET; return { x: r.circle[0] + dx / L * k, y: r.circle[1] + dy / L * k, d: Math.abs(r.circle[2] - L), i: 0, room: id, nx: -dx / L, ny: -dy / L }; }
+      let best = null;
+      r.pts.forEach((p, i) => {
+        const q = r.pts[(i + 1) % r.pts.length], ex = q[0] - p[0], ey = q[1] - p[1], L = Math.hypot(ex, ey), t = Math.max(INSET, Math.min(L - INSET, ((x - p[0]) * ex + (y - p[1]) * ey) / L));
+        const fx = p[0] + ex / L * t, fy = p[1] + ey / L * t, d = Math.hypot(x - fx, y - fy);
+        if (!best || d < best.d) { let nx = -ey / L, ny = ex / L; if ((r.c[0] - fx) * nx + (r.c[1] - fy) * ny < 0) { nx = -nx; ny = -ny; } best = { x: fx + nx * INSET, y: fy + ny * INSET, d, i, room: id, nx, ny }; }
+      });
+      return best;
+    };
+    const wallRoute = (id, a, b) => {
+      const r = rooms[id]; if (r.circle) return [b];
+      const n = r.pts.length, ia = wallPt(id, a.x, a.y).i, ib = wallPt(id, b.x, b.y).i; if (ia === ib) return [b];
+      const corner = k => { const p = r.pts[k], L = Math.hypot(r.c[0] - p[0], r.c[1] - p[1]) || 1; return { x: p[0] + (r.c[0] - p[0]) / L * INSET * 1.5, y: p[1] + (r.c[1] - p[1]) / L * INSET * 1.5 }; };
+      const fwd = [], back = []; for (let k = ia; k !== ib; k = (k + 1) % n) fwd.push(corner((k + 1) % n)); for (let k = ia; k !== ib; k = (k + n - 1) % n) back.push(corner(k));
+      const len = l => [a, ...l, b].reduce((s, p, i, all) => i ? s + Math.hypot(p.x - all[i - 1].x, p.y - all[i - 1].y) : 0, 0);
+      return [...(len(fwd) <= len(back) ? fwd : back), b];
+    };
     // what a doorway lets through. mode 'see' is a shot or a look, 'walk' is a unit moving now, 'plan' is a route (a crusher
     // door that is shut for a moment still belongs on a route). A window lets a unit see through but stops shots until it has been shot out; after that it is an opening
     // for shots and units until it is reglazed. A vent passes small units only,
@@ -178,6 +200,7 @@
     const hidden = (e, u) => cloaked(e) || (dim(e) && dist(e, u) > 130);
     const spot1 = (u, e) => { if (B.t - (e.spotT || -9) > 1.2) fx('text', { x: e.x, y: e.y - 20, text: 'spotted', ttl: .7 }); e.spotT = B.t; };
     const held = (src, tgt) => { tgt.ctrlBy = src; tgt.ctrlT = B.t; };   // who slowed, rooted, stunned or confused it last
+    const air = u => u.def.fly || u.onWall;   // out of reach of what sweeps the floor
     const busy = u => u.st.stun > 0 || u.st.confuse > 0;
     // a spawn room is safe ground: nobody in their own spawn can be hurt, targeted or hunted, and nobody shoots from inside one
     const home = u => u.room === bases[u.team];
@@ -290,13 +313,13 @@
           h.x = h.a[0] + (h.b[0] - h.a[0]) * k; h.y = h.a[1] + (h.b[1] - h.a[1]) * k;
           const vx = (h.b[0] - h.a[0]) * vk, vy = (h.b[1] - h.a[1]) * vk, L = Math.hypot(h.b[0] - h.a[0], h.b[1] - h.a[1]), n = [-(h.b[1] - h.a[1]) / L, (h.b[0] - h.a[0]) / L];
           [0, .35, .7].forEach(t => { const z = { x: h.x + vx * t, y: h.y + vy * t }; push(z.x, z.y, h.r, h, across(z, n)); });
-          B.units.forEach(u => { if (!u.def.fly && hits(u, h.x, h.y, h.r) && B.t - (u.hz[h.i] || -9) > 1) hazHurt(u, h.dmg || 45, h, .5); });
+          B.units.forEach(u => { if (!air(u) && hits(u, h.x, h.y, h.r) && B.t - (u.hz[h.i] || -9) > 1) hazHurt(u, h.dmg || 45, h, .5); });
         } else if (h.type === 'rotor') {   // Rotation: an arm that sweeps a room
           h.ang = (B.t + (h.phase || 0)) / h.period * TAU; const len = h.cur = h.amp ? h.len + h.amp * Math.sin(B.t * TAU / h.breath) : h.len;   // Spiral: the arm also grows and shrinks
           const out = u => { const dx = u.x - h.x, dy = u.y - h.y, L = Math.hypot(dx, dy) || 1; const v = [dx / L * .8 - dy / L * .6, dy / L * .8 + dx / L * .6]; return v; };
           for (let arm = 0; arm < 2; arm++) for (const look of [0, .3, .6]) for (let r = 26; r <= len; r += 24) { const a = h.ang + arm * Math.PI + look; push(h.x + Math.cos(a) * r, h.y + Math.sin(a) * r, 11, h, out); }
           B.units.forEach(u => {
-            if (u.def.fly || !u.alive || B.t - (u.hz[h.i] || -9) < 1) return;
+            if (air(u) || !u.alive || B.t - (u.hz[h.i] || -9) < 1) return;
             const dx = u.x - h.x, dy = u.y - h.y, L = Math.hypot(dx, dy); if (L > len + 6) return;
             for (let arm = 0; arm < 2; arm++) { const a = h.ang + arm * Math.PI, al = dx * Math.cos(a) + dy * Math.sin(a), pr = Math.abs(dx * Math.sin(a) - dy * Math.cos(a)); if (al > -4 && pr < 5 + 8 * (u.def.size || 1)) { hazHurt(u, h.dmg || 40, h, .4); break; } }
           });
@@ -309,7 +332,7 @@
           const ph = (B.t + (h.phase || 0)) % h.period, k = (ph - h.wait) / h.go, dx = h.b[0] - h.a[0], dy = h.b[1] - h.a[1], L = Math.hypot(dx, dy), n = [-dy / L, dx / L];
           h.warn = k < 0 && ph > h.wait - 1; h.on = k >= 0 && k <= 1; h.x = h.a[0] + dx * Math.max(0, Math.min(1, k)); h.y = h.a[1] + dy * Math.max(0, Math.min(1, k));
           if (h.warn || h.on) [0, .3, .6].forEach(t => { const z = { x: h.x + dx / h.go * t, y: h.y + dy / h.go * t }; push(z.x, z.y, h.r, h, across(z, n)); });
-          if (h.on) B.units.forEach(u => { if (!u.def.fly && hits(u, h.x, h.y, h.r) && B.t - (u.hz[h.i] || -9) > 1) hazHurt(u, h.dmg || 55, h, .6); });
+          if (h.on) B.units.forEach(u => { if (!air(u) && hits(u, h.x, h.y, h.r) && B.t - (u.hz[h.i] || -9) > 1) hazHurt(u, h.dmg || 55, h, .6); });
         } else if (h.type === 'erupt') {   // Eruption: a vent that throws boulders at marked spots
           const cyc = Math.floor(B.t / h.period), ph = B.t - cyc * h.period; h.spots = [];
           for (let i = 0; i < h.n; i++) {
@@ -323,28 +346,28 @@
           if (h.safe < h.R - 3) {
             const mid = (h.safe + h.R) / 2, w = (h.R - h.safe) / 2, n = Math.max(6, Math.ceil(TAU * mid / (w * 1.5 + 5))), inward = u => { const dx = h.x - u.x, dy = h.y - u.y, L = Math.hypot(dx, dy) || 1; return [dx / L, dy / L]; };
             for (let i = 0; i < n; i++) push(h.x + Math.cos(i / n * TAU) * mid, h.y + Math.sin(i / n * TAU) * mid, w, h, inward);
-            B.units.forEach(u => { if (!u.alive || u.def.fly) return; const L = Math.hypot(u.x - h.x, u.y - h.y); if (L > h.safe + 4 && L < h.R) hazHurt(u, (h.dmg || 40) * dt, h, 0); });
+            B.units.forEach(u => { if (!u.alive || air(u)) return; const L = Math.hypot(u.x - h.x, u.y - h.y); if (L > h.safe + 4 && L < h.R) hazHurt(u, (h.dmg || 40) * dt, h, 0); });
           }
         } else if (h.type === 'trench') {   // Winding: fire running along a trench
           if (!h.sm) { h.sm = []; for (let i = 0; i < h.pts.length - 1; i++) { const p = h.pts[i], q = h.pts[i + 1], L = Math.hypot(q[0] - p[0], q[1] - p[1]); for (let k = 0; k < L; k += 14) h.sm.push({ x: p[0] + (q[0] - p[0]) * k / L, y: p[1] + (q[1] - p[1]) * k / L }); } }
           const head = h.head = ((B.t + (h.phase || 0)) % h.period) / h.period * (h.sm.length + h.burn + 6) - 6;
           for (let i = Math.max(0, Math.floor(head - h.burn)); i < Math.min(h.sm.length, head + 5); i++) {
             const z = h.sm[i]; push(z.x, z.y, h.w, h, radial(z));
-            if (i <= head) B.units.forEach(u => { if (u.alive && !u.def.fly && Math.hypot(u.x - z.x, u.y - z.y) < h.w && u.hzT !== B.t) { u.hzT = B.t; hazHurt(u, (h.dmg || 60) * dt, h, 0); } });
+            if (i <= head) B.units.forEach(u => { if (u.alive && !air(u) && Math.hypot(u.x - z.x, u.y - z.y) < h.w && u.hzT !== B.t) { u.hzT = B.t; hazHurt(u, (h.dmg || 60) * dt, h, 0); } });
           }
         } else if (h.type === 'hop') {   // Jump: a slime that bounces from spot to spot
           const T = (B.t + (h.phase || 0)) / h.hopT, n = h.pts.length, step = Math.floor(T), k = T - step, p = h.pts[step % n], q = h.pts[(step + 1) % n];
           h.x = p[0] + (q[0] - p[0]) * k; h.y = p[1] + (q[1] - p[1]) * k; h.k = k; h.to = q;
           if (k > .3) push(q[0], q[1], h.r, h, radial({ x: q[0], y: q[1] }));
-          if (h.last !== step) { if (h.last != null) { fx('boom', { x: p[0], y: p[1], r: h.r, ttl: .3 }); B.units.forEach(u => { if (!u.def.fly && hits(u, p[0], p[1], h.r - 8)) hazHurt(u, h.dmg || 45, h, .4); }); } h.last = step; }
+          if (h.last !== step) { if (h.last != null) { fx('boom', { x: p[0], y: p[1], r: h.r, ttl: .3 }); B.units.forEach(u => { if (!air(u) && hits(u, p[0], p[1], h.r - 8)) hazHurt(u, h.dmg || 45, h, .4); }); } h.last = step; }
         } else if (h.type === 'bounce') {   // Ricochet: a ball bouncing between the walls
           const tri = v => { v = ((v % 2) + 2) % 2; return v < 1 ? v : 2 - v; }, w = h.box[2] - h.box[0], hh = h.box[3] - h.box[1];
           const at = t => ({ x: h.box[0] + tri(t * h.vx / w) * w, y: h.box[1] + tri(t * h.vy / hh + .37) * hh }), now = at(B.t); h.x = now.x; h.y = now.y;
           [0, .25, .5].forEach(t => { const z = at(B.t + t); push(z.x, z.y, h.r, h, radial(z)); });
-          B.units.forEach(u => { if (!u.def.fly && hits(u, h.x, h.y, h.r) && B.t - (u.hz[h.i] || -9) > 1) hazHurt(u, h.dmg || 40, h, .4); });
+          B.units.forEach(u => { if (!air(u) && hits(u, h.x, h.y, h.r) && B.t - (u.hz[h.i] || -9) > 1) hazHurt(u, h.dmg || 40, h, .4); });
         } else if (h.type === 'leash') {   // Tethered: a beast on a chain that goes for whoever comes inside its reach
           if (h.px == null) { h.px = h.x; h.py = h.y; h.rest = 0; }
-          let tg = null, bd = h.L; if ((h.rest -= dt) <= 0) B.units.forEach(u => { if (u.alive && !u.def.fly && !home(u) && !(u.st.guard > 0)) { const k = Math.hypot(u.x - h.x, u.y - h.y); if (k < bd) { bd = k; tg = u; } } });
+          let tg = null, bd = h.L; if ((h.rest -= dt) <= 0) B.units.forEach(u => { if (u.alive && !air(u) && !home(u) && !(u.st.guard > 0)) { const k = Math.hypot(u.x - h.x, u.y - h.y); if (k < bd) { bd = k; tg = u; } } });
           const gx = tg ? tg.x : h.x, gy = tg ? tg.y : h.y, dx = gx - h.px, dy = gy - h.py, L = Math.hypot(dx, dy), st = h.spd * dt * (tg ? 1 : .5);
           if (L > st) { h.px += dx / L * st; h.py += dy / L * st; } else { h.px = gx; h.py = gy; }
           if (tg && Math.hypot(tg.x - h.px, tg.y - h.py) < 15) { hazHurt(tg, h.dmg || 40, h, .3); h.rest = 1.1; }
@@ -362,7 +385,7 @@
       }
     }
     // the first danger circle a unit at (x, y) would be standing in; fliers pass over the ones on the floor
-    const threat = (u, x, y, pad) => B.danger.find(z => !(u.def.fly && z.floor) && Math.hypot(x - z.x, y - z.y) < z.r + pad);
+    const threat = (u, x, y, pad) => B.danger.find(z => !(air(u) && z.floor) && Math.hypot(x - z.x, y - z.y) < z.r + pad);
     // the spot behind a crate that puts it between this unit and its target
     function coverSpot(u, tgt) {
       let best = null, bd = 130;
@@ -415,7 +438,7 @@
         case 'overcharge': if (e && de < d.range) { bolt(u, e, { big: true, spd: 520, dmg: 34, burn: 3 }); used(); } break;
         case 'stomp': if (foes(u).some(f => dist(u, f) < 70)) { u.wind = .6; B.zones.push({ kind: 'stomp', x: u.x, y: u.y, r: 86, t: .6, t0: .6, team: u.team, src: u }); used(); } break;
         case 'charge': if (e && de > 60 && de < 280 && los(u, e, 'walk', u)) { u.dash = { tgt: e, spd: 520, hit: 40, stun: .7, arc: false, x0: u.x, y0: u.y }; fx('dash', { x: u.x, y: u.y, x2: e.x, y2: e.y, team: u.team, ttl: .5 }); used(); } break;
-        case 'leap': if (e && de > 45 && de < 175 && los(u, e, 'walk', u)) { u.dash = { tgt: e, spd: 430, hit: 12, bleed: 4, arc: true, x0: u.x, y0: u.y }; fx('leap', { x: u.x, y: u.y, x2: e.x, y2: e.y, team: u.team, ttl: .5 }); used(); } break;
+        case 'leap': if (e && u.onWall && de > 45 && de < 200 && los(u, e, 'walk', u)) { note('wall', u, 1); u.biteT = B.t + 1.5; u.dash = { tgt: e, spd: 430, hit: 12, bleed: 4, arc: true, x0: u.x, y0: u.y }; fx('leap', { x: u.x, y: u.y, x2: e.x, y2: e.y, team: u.team, ttl: .5 }); used(); } break;
         case 'confuse': if (e && de < d.range && !(e.st.confuse > 0)) { u.chan = { tgt: e, t: .7, t0: .7, at: B.t }; used(); } break;
         case 'blink': if (e) {
           for (let i = 0; i < 12; i++) {
@@ -473,7 +496,10 @@
         const flank = d.flank && tgt.room === u.room ? { x: tgt.x - Math.cos(tgt.face) * 70, y: tgt.y - Math.sin(tgt.face) * 70 } : null;
         if (flank && roomAt(flank.x, flank.y, u.room) === u.room && dist(u, flank) > 24) g = { ...flank, room: u.room };   // hover drone: get behind it
         else if (cv) g = dist(u, cv) > 6 ? cv : null;                                                                 // fight from behind a crate
-        else if (d.close || dd > reach(u, tgt) * (d.band || .85)) g = { x: tgt.x, y: tgt.y, room: tgt.room };
+        else if (d.cling && tgt.room === u.room && !(B.t < (u.biteT || 0)) && !(u.powCd > 1.2 && dd < 40)) {   // back to the wall nearest the target, to leap again
+          const p = wallPt(u.room, tgt.x, tgt.y), q = dist(p, tgt) > 50 ? p : wallPt(u.room, u.x, u.y); g = dist(u, q) > 5 ? { x: q.x, y: q.y, room: u.room, wall: true } : null;
+        }
+        else if (d.close || dd > reach(u, tgt) * (d.band || .85)) g = { x: tgt.x, y: tgt.y, room: tgt.room, direct: d.cling && tgt.room === u.room };
         else if (d.plant) g = null;                                                                                    // heavy gunner: stand and fire
         else if (!d.hold && (u.wander -= .2) <= 0) { u.wander = .8 + R() * .8; const p = { x: u.x + (R() - .5) * 70, y: u.y + (R() - .5) * 70 }; if (roomAt(p.x, p.y, u.room) === u.room) g = { ...p, room: u.room }; }
         else g = u.goalPt && u.goalPt.room === u.room && !d.hold ? u.goalPt : null;
@@ -496,6 +522,14 @@
       const rp = g ? roomPath(u.room, g.room, u) : null; if (!rp) g = null;
       u.goalPt = g;
       u.path = g ? [...rp.map(dr => ({ x: dr.m[0] + dr.e[0] * dr.gw * u.off, y: dr.m[1] + dr.e[1] * dr.gw * u.off })), { x: g.x, y: g.y }] : [];
+      // a clinging unit goes round by the walls: to the wall first, then along it to each doorway, and it ends on a wall unless it is going in to bite
+      if (d.cling && g && !g.direct) {
+        const out = []; let cur = u.room, at = { x: u.x, y: u.y };
+        const w0 = wallPt(cur, u.x, u.y); if (w0.d > INSET + 4) { out.push({ x: w0.x, y: w0.y }); at = w0; }
+        rp.forEach((dr, i) => { const p = u.path[i]; out.push(...wallRoute(cur, at, p)); at = p; cur = dr.a === cur ? dr.b : dr.a; });
+        const end = g.wall ? g : wallPt(g.room, g.x, g.y); if (cur === g.room) out.push(...wallRoute(cur, at, { x: end.x, y: end.y })); else out.push({ x: g.x, y: g.y });
+        u.path = out;
+      }
       if (!busy(u) && d.pow && u.powCd <= 0 && !home(u)) power(u);
     }
 
@@ -526,6 +560,7 @@
         if (st.burn > 0) hurt(st.burnBy, u, 6 * dt, 'dot'); if (!u.alive) continue;
         if (st.bleed > 0) hurt(st.bleedBy, u, 6 * dt, 'dot'); if (!u.alive) continue;
         u.shotCd -= dt; u.powCd -= dt;
+        if (d.cling) u.onWall = !u.dash && wallPt(u.room, u.x, u.y).d < INSET + 5;
         // shield stamina refills like stamina: nothing for a moment after the last block, then steadily; a dropped shield is back at half
         if (d.block && u.sh < d.block && B.t - (u.blockT || -9) > SH_WAIT) { u.sh = Math.min(d.block, u.sh + SH_REGEN * dt); if (u.broken && u.sh >= d.block / 2) u.broken = false; }
         if (u.broken) B.shieldDown = (B.shieldDown || 0) + dt;
@@ -691,7 +726,7 @@
       return { ...f, val: Math.round(sum(o)), unit, top: top(o), met: sum(o) >= (f.min || 1) };
     });
     B.lines = (map.script || ['front', 'lanes', 'range', 'mid', 'edge']).map(k => LINES[k]);
-    B.cloaked = cloaked;
+    B.cloaked = cloaked; B.wallPt = wallPt;
     return B;
   }
   root.FPSSIM = { create, ROSTER, TEAMS, SCRIPT, EDGE, LINES };
