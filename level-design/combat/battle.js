@@ -207,7 +207,7 @@
       else if (f.type === 'ring') { const r = f.r * (.4 + .6 * k); stampTok(g, tel('ring', f.team), f.x, f.y, 0, r / 45, r / 45, 50, 50, a); }
       else if (f.type === 'ping') { const r = f.r * (.5 + .5 * k); stampTok(g, tel('target-circle', f.team), f.x, f.y, 0, r / 46, r / 46, 50, 50, a); }
       else if (f.type === 'dash') { const L = Math.hypot(f.x2 - f.x, f.y2 - f.y); stampTok(g, tok(`arrows/charge-${TEAM[f.team].tel}`), f.x, f.y, Math.atan2(f.y2 - f.y, f.x2 - f.x) + Math.PI / 2, .3, L / 92, 50, 96, a); }
-      else if (f.type === 'leap') { const L = Math.hypot(f.x2 - f.x, f.y2 - f.y) / 74; stampTok(g, tok(`arrows/leap-${TEAM[f.team].tel}`), f.x, f.y, Math.atan2(f.y2 - f.y, f.x2 - f.x) - .11, L, L * .7, 12, 88, a); }
+      else if (f.type === 'leap') { /* no arrow: the body is seen leaving the wall */ }
       else if (f.type === 'blink') { [[f.x, f.y], [f.x2, f.y2]].forEach(p => stampTok(g, tok('props/vortex'), p[0], p[1], k * 5, .34, .34, 50, 50, a)); g.save(); g.globalAlpha = a * .7; g.setLineDash([4, 7]); g.strokeStyle = TEAM[f.team].col; g.lineWidth = 2.5; g.beginPath(); g.moveTo(f.x, f.y); g.lineTo(f.x2, f.y2); g.stroke(); g.restore(); }
     });
     // units
