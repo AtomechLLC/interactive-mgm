@@ -18,7 +18,7 @@
    damage interrupts. Slowed, rooted, stunned or simply slow units fail those answers, which is what makes set-ups matter.
 
    A map may also carry environmental features (maps.js), and every use of one is counted per token in battle.use:
-   windows (shots pass, units do not), vents (only small units fit), ledges (a one-way drop off high ground), high
+   windows (a unit sees through; shots break the pane, and a broken pane is an opening until it is reglazed), vents (only small units fit), ledges (a one-way drop off high ground), high
    rooms (a quarter more reach and 15% more damage shooting down, 15% less taken from below), cover (halves shots that cross it; blasts,
    melee and shots from above ignore it), dark rooms (a unit inside is seen only up close, when marked, or when it
    has just fired), posts (where a holding unit sets up) and hazards. Hazards are the movement patterns from the
@@ -31,7 +31,7 @@
    swap puts each squad in the other spawn, midShut walls up the middle doorway, bench is a list of unit keys left out. */
 (function (root) {
   const CHEER = .08, EMOTES = ['😎', '🎉', '💪', '🔥', '👋', '😤', '🫡', '✌️'];   // one kill in twelve or so gets an emoji
-  const TAU = Math.PI * 2, RESPAWN = 3, GUARD = 1.5, SIGHT = 640, LOCK = .3, SH_WAIT = 1.2, SH_REGEN = 14;
+  const TAU = Math.PI * 2, RESPAWN = 3, GUARD = 1.5, SIGHT = 640, LOCK = .3, SH_WAIT = 1.2, SH_REGEN = 14, GLASS = 40, REGLAZE = 30;   // a pane takes 40 points of fire and is replaced 30 s after it breaks
   const LANES = ['long', 'mid', 'tun'];
   const SCALE = .36;   // pace only: how long a battle lasts. Who wins a fight is decided by EDGE.
   // each token's favoured moment: [label shown on a favoured hit, the moment in words]
@@ -66,7 +66,7 @@
   LINES.feat = ['feat', 'Every feature earns its place', 'features changed the fighting'];
   LINES.haz = ['haz', 'Hazards decide fights, not the battle', 'of deaths were caused by a hazard'];
   // what a feature is counted in: [battle.use tag, unit]
-  const COUNT = { high: ['high', 'damage dealt from above'], cover: ['cover', 'damage stopped by cover'], window: ['window', 'damage dealt through glass'], dark: ['dark', 'damage dealt to targets in the dark'], vent: ['vent', 'trips through the vent'], room: ['room', 'trips through it'] };
+  const COUNT = { high: ['high', 'damage dealt from above'], cover: ['cover', 'damage stopped by cover'], window: ['window', 'damage dealt through broken panes'], dark: ['dark', 'damage dealt to targets in the dark'], vent: ['vent', 'trips through the vent'], room: ['room', 'trips through it'] };
   // lane = weights for [long, mid, tunnels]. shot: bullet (instant), bolt (plasma projectile), rail (aimed), rocket, arc (psion), melee, none.
   const ROSTER = [
     // modern
@@ -111,22 +111,23 @@
     };
     const roomAt = (x, y, hint) => { if (hint && inRoom(rooms[hint], x, y)) return hint; for (const id of ids) if (inRoom(rooms[id], x, y)) return id; return null; };
     // what a doorway lets through. mode 'see' is a shot or a look, 'walk' is a unit moving now, 'plan' is a route (a crusher
-    // door that is shut for a moment still belongs on a route). A window passes shots only, a vent passes small units only,
+    // door that is shut for a moment still belongs on a route). A window lets a unit see through but stops shots until it has been shot out; after that it is an opening
+    // for shots and units until it is reglazed. A vent passes small units only,
     // a ledge is a one-way drop from room d.a (fliers ignore that).
     const can = (e, from, u, mode) => {
       const k = e.d.kind; if (e.d.shut && mode !== 'plan') return false;
       if (mode === 'see') return k !== 'vent';
-      return k === 'window' ? false : k === 'vent' ? !!(u && u.def.crawl) : k === 'ledge' ? e.d.a === from || !!(u && u.def.fly) : true;
+      return k === 'window' ? !!e.d.broken : k === 'vent' ? !!(u && u.def.crawl) : k === 'ledge' ? e.d.a === from || !!(u && u.def.fly) : true;
     };
     // a clear line: every sample is on a floor, and each change of room happens at a doorway between those two rooms
-    let via = null;   // set by los(): 'window' or 'ledge' if the line crossed one
+    let via = null, pane = null;   // set by los(): 'window' or 'ledge' if the line crossed one, and the first unbroken pane on it
     function los(a, b, mode = 'see', u) {
-      const L = dist(a, b), n = Math.max(1, Math.ceil(L / 7)); let cur = roomAt(a.x, a.y, a.room); via = null;
+      const L = dist(a, b), n = Math.max(1, Math.ceil(L / 7)); let cur = roomAt(a.x, a.y, a.room); via = null; pane = null;
       if (!cur) return false;
       for (let i = 1; i <= n; i++) {
         const x = a.x + (b.x - a.x) * i / n, y = a.y + (b.y - a.y) * i / n, r = roomAt(x, y, cur);
         if (!r) return false;
-        if (r !== cur) { const e = adj[cur].find(e => e.to === r && can(e, cur, u, mode) && Math.hypot(e.d.m[0] - x, e.d.m[1] - y) < e.d.gw / 2 + 5); if (!e) return false; if (e.d.kind === 'window' || e.d.kind === 'ledge') via = e.d.kind; cur = r; }
+        if (r !== cur) { const e = adj[cur].find(e => e.to === r && can(e, cur, u, mode) && Math.hypot(e.d.m[0] - x, e.d.m[1] - y) < e.d.gw / 2 + 5); if (!e) return false; if (e.d.kind === 'window' || e.d.kind === 'ledge') via = e.d.kind; if (e.d.kind === 'window' && !e.d.broken && !pane) pane = e.d; cur = r; }
       }
       return true;
     }
@@ -138,6 +139,7 @@
       const out = []; let c = to; while (prev[c]) { out.unshift(prev[c].d); c = prev[c].c; } return out;
     }
     const crawlAdj = {}; ids.forEach(id => crawlAdj[id] = [...adj[id]].sort((a, b) => (b.d.kind === 'vent') - (a.d.kind === 'vent')));   // small units try a vent first
+    const panes = doors.filter(d => d.kind === 'window'); panes.forEach(d => { d.hp = GLASS; d.broken = false; d.fixT = 0; });
     const cover = (map.cover || []).map(c => ({ x: c[0], y: c[1], room: roomAt(c[0], c[1]) }));
     const high = id => !!(rooms[id] && rooms[id].high);
     // a shooter on high ground reaches a quarter further at a target below
@@ -371,7 +373,9 @@
       }
       return best;
     }
-    const blast = (src, x, y, r, dmg) => { fx('burst', { x, y, r, team: src.team, ttl: .45 }); if (drums.length) spark(x, y, src, 1, r + 10); foes(src).forEach(e => { const d = Math.hypot(e.x - x, e.y - y); if (d < r) hurt(src, e, dmg * (1 - .5 * d / r), 'blast', { x, y }); }); };
+    // fire that reaches a pane goes into the pane; when it breaks, the window is an opening
+    function smash(d, amt, src) { d.hp -= amt; d.hitT = B.t; if (d.hp <= 0) { d.broken = true; d.fixT = B.t + REGLAZE; fx('shatter', { x: d.m[0], y: d.m[1], ttl: .6 }); note('glass', src, 1); } }
+    const blast = (src, x, y, r, dmg) => { fx('burst', { x, y, r, team: src.team, ttl: .45 }); panes.forEach(d => { if (!d.broken && Math.hypot(d.m[0] - x, d.m[1] - y) < r + 10) smash(d, GLASS, src); }); if (drums.length) spark(x, y, src, 1, r + 10); foes(src).forEach(e => { const d = Math.hypot(e.x - x, e.y - y); if (d < r) hurt(src, e, dmg * (1 - .5 * d / r), 'blast', { x, y }); }); };
     const canDodge = u => u.alive && !busy(u) && !(u.st.root > 0) && !u.dash && !u.aim && !u.chan && !(u.wind > 0);
     // a straight shot: flies from a toward b and on to `reach`, and stops at the first wall
     const bolt = (u, e, o) => { const L = dist(u, e) || 1; B.shots.push({ type: 'bolt', src: u, x: u.x, y: u.y, vx: (e.x - u.x) / L, vy: (e.y - u.y) / L, room: u.room, left: u.def.range * 1.25, team: u.team, ang: Math.atan2(e.y - u.y, e.x - u.x), ...o }); };
@@ -380,6 +384,7 @@
       const d = u.def; let dmg = d.dmg;
       if (d.cloak && B.t - u.lastFire > 2) { dmg *= 3; fx('text', { x: u.x, y: u.y - 20, text: 'ambush', ttl: .7 }); }
       u.lastFire = B.t;
+      if (panes.length && (d.shot === 'bullet' || d.shot === 'rail' || d.shot === 'arc')) { los(u, e); if (pane) { const p = pane; fx('tracer', { x: u.x, y: u.y, x2: p.m[0], y2: p.m[1], team: u.team, ttl: .12 }); smash(p, dmg, u); return; } }
       if (d.shot === 'bullet') { const k = dist(u, e) / reach(u, e), fall = k < .5 ? 1 : 1 - .6 * (k - .5) / .5;   // bullets lose up to 60% of their damage over the far half of their range
         fx('tracer', { x: u.x, y: u.y, x2: e.x, y2: e.y, team: u.team, ttl: .09, weak: fall < .7 }); hurt(u, e, dmg * fall, 'shot', u); }
       else if (d.shot === 'rail') {
@@ -513,6 +518,7 @@
       if (B.over) { B.fx.forEach(f => f.age += dt); B.fx = B.fx.filter(f => f.age < f.ttl); return; }
       B.t += dt;
       if (B.haz.length) hazards(dt);
+      panes.forEach(d => { if (d.broken && B.t > d.fixT && !B.units.some(u => u.alive && Math.hypot(u.x - d.m[0], u.y - d.m[1]) < 26)) { d.broken = false; d.hp = GLASS; } });
       for (const u of B.units) {
         if (!u.alive) { if ((u.dead -= dt) <= 0) spawn(u); continue; }
         const st = u.st, d = u.def;
@@ -601,6 +607,7 @@
         if (s.type === 'bolt') {
           const st = s.spd * dt, nx = s.x + s.vx * st, ny = s.y + s.vy * st;
           if ((s.left -= st) <= 0 || !los({ x: s.x, y: s.y, room: s.room }, { x: nx, y: ny })) return false;
+          if (pane) { smash(pane, s.dmg, s.src); return false; }
           s.x = nx; s.y = ny; s.room = roomAt(nx, ny, s.room);
           const e = B.units.find(f => f.alive && f.team !== s.team && !(f.st.guard > 0) && Math.hypot(f.x - nx, f.y - ny) < 6 + 12 * (f.def.size || 1));
           if (!e) return true;

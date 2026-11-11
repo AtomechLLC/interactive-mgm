@@ -3,7 +3,7 @@
    environmental features that some tokens can use and others cannot. All three are our own layouts.
 
    1. Kiln Terraces    the west spawn owns a raised terrace over the yard; the east gets a vent under it and a door into the yard
-   2. Glass Arcade     a gallery fires through glass into the atrium; the east has a stair between them, the west an unlit stockroom
+   2. Glass Arcade     a gallery looks through breakable glass into the atrium; the east has a stair between them, the west an unlit stockroom
    3. Sluice Reactor   every lane carries a hazard from the PvE hazards page (pve-interactions/hazards), and the two spawns
                        meet different ones on the way to the middle
 
@@ -15,7 +15,7 @@
    manor plans in ../shared/manorgen.js.
 
    Each build() returns what FPSMAP.build() returns, plus what sim.js reads for features:
-     doors of kind 'window' (shots only), 'vent' (small units only), 'ledge' (a one-way drop from the first room named)
+     doors of kind 'window' (see-through, breakable), 'vent' (small units only), 'ledge' (a one-way drop from the first room named)
      rooms with high: true or dark: true
      cover [[x, y]...]      crates that halve a shot crossing them
      posts [{ side, keys, x, y, room }]   where holding tokens set up; side 0 is whoever spawns in the west
@@ -93,10 +93,10 @@
     return {
       key: 'arcade', name: 'Glass Arcade', theme: 'glass and darkness', P, lanes, laneOf: lanesOf(lanes, ['Stair']), bases: ['A', 'B'], W, H, cover, glass: true, watch: ['Stair'],
       laneNames: { long: 'the gallery', mid: 'the atrium', tun: 'the service side' },
-      lopsided: 'The gallery fires into the atrium through glass that nothing can walk through. The east spawn has a stair from the gallery straight into the middle. The west has no stair; it has an unlit stockroom that opens onto the atrium floor.',
+      lopsided: 'The gallery looks into the atrium through glass that has to be shot out before anything passes. The east spawn has a stair from the gallery straight into the middle. The west has no stair; it has an unlit stockroom that opens onto the atrium floor.',
       posts: [{ side: 0, keys: ['marksman', 'psion'], x: 400, y: 134, room: 'Gal' }, { side: 0, keys: ['rocketeer'], x: 520, y: 134, room: 'Gal' }, { side: 1, keys: ['marksman', 'psion'], x: 640, y: 134, room: 'Gal' }, { side: 1, keys: ['rocketeer'], x: 520, y: 134, room: 'Gal' }],
       features: [
-        { name: 'Gallery glass', kind: 'window', at: [520, 150], min: 150, who: 'Marksman, Rocketeer, Psion', text: 'Four windows: a shot passes, a unit does not. A token at the glass fights the atrium without being reachable from it, so melee tokens have to walk the long way round to answer.' },
+        { name: 'Gallery glass', kind: 'window', at: [520, 150], min: 100, who: 'Marksman, Rocketeer, Blinker', text: 'Four panes. A token sees through glass but its shots go into the pane first. A rifle needs four hits, a marksman or a blast needs one. A broken pane is an opening to shoot and walk through, so the first squad to shoot one out has made itself a door. Panes are replaced after 30 seconds.' },
         { name: 'Unlit stockroom', kind: 'dark', at: [280, 452], min: 100, who: 'Cloaker, Xeno Swarm, Cyborg, Riot Shield', text: 'A token in the dark is seen only from about three tiles, when it is marked, or for a moment after it fires. Short-range tokens cross it unseen, and long guns have nothing to aim at.' },
         { name: 'The east stair', kind: 'room', room: 'Stair', at: [820, 190], min: 6, who: 'whoever spawns east', text: 'A two-door turn between the gallery and the middle that only the east side has. The count is how often a token used it.' },
         { name: 'Atrium crates', kind: 'cover', at: [520, 290], min: 80, who: 'Rifleman, Trooper, Heavy Gunner', text: 'The same crates as the yard, in a room that is also watched through glass from two sides.' },
