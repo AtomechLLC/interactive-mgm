@@ -19,7 +19,7 @@
 
    A map may also carry environmental features (maps.js), and every use of one is counted per token in battle.use:
    windows (shots pass, units do not), vents (only small units fit), ledges (a one-way drop off high ground), high
-   rooms (more reach and damage shooting down, less taken from below), cover (halves shots that cross it; blasts,
+   rooms (a quarter more reach and 15% more damage shooting down, 15% less taken from below), cover (halves shots that cross it; blasts,
    melee and shots from above ignore it), dark rooms (a unit inside is seen only up close, when marked, or when it
    has just fired), posts (where a holding unit sets up) and hazards. Hazards are the movement patterns from the
    PvE hazards page: a crushing door, a patrolling cart, a rotating arm, a flame across a corridor and expansive
@@ -84,7 +84,7 @@
     { key: 'hover-drone', team: 1, fly: true, crawl: true, flank: true, name: 'Hover Drone', hp: 60, spd: 150, range: 175, dmg: 9, rate: .15, shot: 'bolt', dodge: .3, size: .85, lane: [3, 0, 3], does: 'Fast and fragile, always on an outer lane. 30% of shots miss it.' },
     { key: 'shield-drone', team: 1, fly: true, crawl: true, name: 'Shield Drone', hp: 80, spd: 110, range: 0, dmg: 0, rate: 1, shot: 'none', bubble: 72, size: .85, lane: [1, 3, 1], does: 'Unarmed. Floats behind the toughest squadmate in the field (usually the mech) and projects a bubble; shots from outside it deal half damage.' },
     { key: 'cyborg', team: 1, name: 'Cyborg', hp: 185, spd: 100, range: 30, dmg: 27, rate: .5, shot: 'melee', close: true, lane: [0, 2, 5], pow: 'charge', cd: 6, does: 'A melee bruiser. Charges across a room, knocks its target down, then stays on top of it.' },
-    { key: 'xeno-swarm', team: 1, crawl: true, name: 'Xeno Swarm', hp: 125, spd: 128, range: 26, dmg: 11, rate: .22, shot: 'melee', close: true, lane: [0, 1, 6], pow: 'leap', cd: 5, does: 'Rushes through the tunnels, leaps onto a target and leaves it bleeding.' },
+    { key: 'xeno-swarm', team: 1, crawl: true, clones: 3, size: .8, name: 'Xeno Swarm', hp: 55, spd: 128, range: 26, dmg: 6, rate: .22, shot: 'melee', close: true, lane: [0, 1, 6], pow: 'leap', cd: 5, does: 'Three bodies in one roster slot. They spawn together, take the same lane, and each leaps onto a target and leaves it bleeding. Killing one body scores nothing: the kill counts when the last of the three falls, and then all three come back together.' },
     { key: 'psion', team: 1, name: 'Psion', hp: 80, spd: 86, range: 270, dmg: 19, rate: .7, shot: 'arc', lane: [3, 2, 1], pow: 'confuse', cd: 7, does: 'Attacks with arcs of energy. Channels a confusion on one enemy, who then wanders and cannot act. Any damage to the psion breaks the channel.' },
     { key: 'cloaker', team: 1, name: 'Cloaker', hp: 75, spd: 104, range: 160, dmg: 17, rate: .3, shot: 'bolt', cloak: true, lane: [3, 0, 3], does: 'Invisible until it fires or an enemy comes very close. Its first shot out of cloak deals triple damage.' },
     { key: 'repair-bot', team: 1, crawl: true, name: 'Repair Bot', hp: 85, spd: 100, range: 150, dmg: 9, rate: .45, shot: 'bolt', heals: 17, size: .85, lane: [1, 3, 1], does: 'Follows whoever is missing the most health (usually the mech) and repairs them with a beam.' },
@@ -131,10 +131,11 @@
     function roomPath(from, to, u) {
       if (from === to) return [];
       const prev = { [from]: null }, q = [from];
-      while (q.length) { const c = q.shift(); if (c === to) break; for (const e of adj[c]) if (!(e.to in prev) && can(e, c, u, 'plan')) { prev[e.to] = { c, d: e.d }; q.push(e.to); } }
+      while (q.length) { const c = q.shift(); if (c === to) break; for (const e of (u && u.def.crawl ? crawlAdj : adj)[c]) if (!(e.to in prev) && can(e, c, u, 'plan')) { prev[e.to] = { c, d: e.d }; q.push(e.to); } }
       if (!(to in prev)) return null;
       const out = []; let c = to; while (prev[c]) { out.unshift(prev[c].d); c = prev[c].c; } return out;
     }
+    const crawlAdj = {}; ids.forEach(id => crawlAdj[id] = [...adj[id]].sort((a, b) => (b.d.kind === 'vent') - (a.d.kind === 'vent')));   // small units try a vent first
     const cover = (map.cover || []).map(c => ({ x: c[0], y: c[1], room: roomAt(c[0], c[1]) }));
     const high = id => !!(rooms[id] && rooms[id].high);
     // a shooter on high ground reaches a quarter further at a target below
@@ -147,13 +148,18 @@
 
     ROSTER.forEach((def, i) => {
       if ((opt.bench || []).includes(def.key)) return;
-      const u = { id: B.units.length, def, team: def.team, hpMax: def.hp, kills: 0, deaths: 0, off: (R() - .5) * .6, st: {} };
-      B.units.push(u); spawn(u, true);
+      // a token with clones is several bodies sharing one roster slot (pack): they respawn together and score as one
+      for (let c = 0; c < (def.clones || 1); c++) {
+        const u = { id: B.units.length, def, team: def.team, hpMax: def.hp, kills: 0, deaths: 0, off: (R() - .5) * .6, st: {}, pack: def.clones ? def.key : null };
+        B.units.push(u); spawn(u, true);
+      }
     });
     function spawn(u, first) {
       const base = bases[u.team], p = spot(base);
       Object.assign(u, { x: p.x, y: p.y, room: base, hp: u.hpMax, alive: true, dead: 0, face: bases[u.team] === map.bases[1] ? Math.PI : 0, evade: null, side: null, chan: null, wind: 0, shotCd: R() * .4, powCd: (u.def.cd || 0) * (.3 + R() * .5), think: R() * .2, target: null, heal: null, path: [], goalPt: null, phase: 'lane', aim: null, dash: null, lastFire: -9, st: { guard: first ? 0 : GUARD } });
       const w = u.def.lane, tot = w[0] + w[1] + w[2]; let k = R() * tot, li = 0; while (k > w[li]) { k -= w[li]; li++; }
+      if (u.pack) { const m = B.units.find(m => m !== u && m.pack === u.pack && m.team === u.team && m.bornT === B.t); if (m) li = m.li; }   // the pack takes one lane
+      u.li = li; u.bornT = B.t;
       const route = map.lanes[LANES[li]]; u.lane = LANES[li]; u.route = (u.team ? !opt.swap : !!opt.swap) ? [...route].reverse() : [...route]; u.ri = 1; u.wander = 0;
       u.sh = u.def.block || 0; u.broken = false; u.half = bases[u.team] === map.bases[0] ? 0 : 1; u.post = null; u.hz = {};
       if (map.posts) { const ps = map.posts.filter(p => p.side === u.half && p.keys.includes(u.def.key)); if (ps.length) { u.post = ps[Math.floor(R() * ps.length)]; if (LANES.includes(map.laneOf[u.post.room])) u.lane = map.laneOf[u.post.room]; } }
@@ -208,7 +214,7 @@
       const tags = [];
       if (kind === 'shot' && from && from.room) {
         const up = high(from.room) && !high(tgt.room);
-        if (up) { amt *= 1.25; tags.push('high'); } else if (high(tgt.room) && !high(from.room)) amt *= .7;
+        if (up) { amt *= 1.15; tags.push('high'); } else if (high(tgt.room) && !high(from.room)) amt *= .85;
         // cover: a crate between the shooter and a target standing against it stops half the shot
         if (cover.length && !up) { const L = dist(from, tgt); for (const c of cover) { const k = Math.hypot(c.x - tgt.x, c.y - tgt.y); if (k < 30 && k > 1 && L > k + 20 && ((c.x - tgt.x) * (from.x - tgt.x) + (c.y - tgt.y) * (from.y - tgt.y)) / (k * L) > .6) { amt *= .5; note('cover', tgt, amt); tgt.coverT = B.t; break; } } }
         if (map.glass && los(from, tgt) && via === 'window') tags.push('window');
@@ -231,13 +237,17 @@
     }
     // src is null when a hazard kills a unit nobody set up: the death counts, the kill is nobody's
     function kill(src, tgt, kind, hz) {
-      tgt.alive = false; tgt.dead = RESPAWN; tgt.deaths++; tgt.target = null; tgt.aim = null; tgt.dash = null;
+      tgt.alive = false; tgt.target = null; tgt.aim = null; tgt.dash = null;
+      const pack = tgt.pack ? B.units.filter(m => m.pack === tgt.pack && m.team === tgt.team) : null;
+      if (pack && pack.some(m => m.alive)) { tgt.dead = 1e9; fx('dead', { x: tgt.x, y: tgt.y, ttl: .8, team: tgt.team }); return false; }   // one body of a pack: no score until the last falls
+      (pack || [tgt]).forEach(m => m.dead = RESPAWN); tgt.deaths++;
       if (src) { src.kills++; B.score[src.team]++; }
       B.deaths.push({ x: tgt.x, y: tgt.y, team: tgt.team, room: tgt.room, d: src ? dist(src, tgt) : 0, kind, hz: hz ? hz.type : null, fav: hz ? false : kind === 'dot' ? !!tgt.hitFav && tgt.hitBy === src : !!tgt.hitFav });
       fx('dead', { x: tgt.x, y: tgt.y, ttl: 1.4, team: tgt.team });
       B.feed.unshift({ t: B.t, k: src ? src.id : -1, v: tgt.id, kind, hz: hz ? hz.name : null }); if (B.feed.length > 6) B.feed.pop();
       if (!B.first && src) B.first = { k: src.id, v: tgt.id };
       if (src && B.score[src.team] >= goal) { B.over = true; B.winner = src.team; }
+      return true;
     }
     /* ---- hazards: each is a pure function of the clock, as on the PvE hazards page ---- */
     (map.hazards || []).forEach(h => (h.type === 'barrel' ? h.at.map(p => ({ ...h, x: p[0], y: p[1], state: 'idle', t: 0 })) : [{ ...h }]).forEach(o => { o.i = B.haz.length; if (o.type === 'crush') o.d = doors.find(d => d.a === o.door[0] && d.b === o.door[1]); B.haz.push(o); }));
@@ -252,8 +262,7 @@
       if (u.hp > 0) return;
       // the kill goes to whoever lit the drum, else whoever held the victim in place, else whoever hit it in the last three seconds
       const credit = by && by.team !== u.team ? by : cc || (u.foeBy && u.foeBy.team !== u.team && B.t - u.foeT < 3 ? u.foeBy : null);
-      B.hzDeaths++; note('hz:' + h.type + ':death', u, 1); if (credit) note('hz:' + h.type + ':setup', credit, 1);
-      kill(credit, u, 'hazard', h);
+      if (kill(credit, u, 'hazard', h)) { B.hzDeaths++; note('hz:' + h.type + ':death', u, 1); if (credit) note('hz:' + h.type + ':setup', credit, 1); }
     }
     const hits = (u, x, y, r) => u.alive && Math.hypot(u.x - x, u.y - y) < r + 8 * (u.def.size || 1);
     const across = (z, n) => u => { const k = (u.x - z.x) * n[0] + (u.y - z.y) * n[1] >= 0 ? 1 : -1; return [n[0] * k, n[1] * k]; };
@@ -349,7 +358,7 @@
         case 'overcharge': if (e && de < d.range) { bolt(u, e, { big: true, spd: 520, dmg: 34, burn: 3 }); used(); } break;
         case 'stomp': if (foes(u).some(f => dist(u, f) < 70)) { u.wind = .6; B.zones.push({ kind: 'stomp', x: u.x, y: u.y, r: 86, t: .6, t0: .6, team: u.team, src: u }); used(); } break;
         case 'charge': if (e && de > 60 && de < 280 && los(u, e, 'walk', u)) { u.dash = { tgt: e, spd: 520, hit: 40, stun: .7, arc: false, x0: u.x, y0: u.y }; fx('dash', { x: u.x, y: u.y, x2: e.x, y2: e.y, team: u.team, ttl: .5 }); used(); } break;
-        case 'leap': if (e && de > 45 && de < 175 && los(u, e, 'walk', u)) { u.dash = { tgt: e, spd: 430, hit: 22, bleed: 4, arc: true, x0: u.x, y0: u.y }; fx('leap', { x: u.x, y: u.y, x2: e.x, y2: e.y, team: u.team, ttl: .5 }); used(); } break;
+        case 'leap': if (e && de > 45 && de < 175 && los(u, e, 'walk', u)) { u.dash = { tgt: e, spd: 430, hit: 12, bleed: 4, arc: true, x0: u.x, y0: u.y }; fx('leap', { x: u.x, y: u.y, x2: e.x, y2: e.y, team: u.team, ttl: .5 }); used(); } break;
         case 'confuse': if (e && de < d.range && !(e.st.confuse > 0)) { u.chan = { tgt: e, t: .7, t0: .7, at: B.t }; used(); } break;
         case 'blink': if (e) {
           for (let i = 0; i < 12; i++) {
@@ -595,7 +604,7 @@
     // every feature of the map, with how much it was used and by whom: { ...feature, val, unit, top: [[key, amount]...], met }
     B.features = () => (map.features || []).map(f => {
       const sum = o => Object.values(o || {}).reduce((a, b) => a + b, 0), top = o => Object.entries(o || {}).sort((a, b) => b[1] - a[1]).slice(0, 3);
-      if (f.hz) { const dead = B.use['hz:' + f.hz + ':death'], set = B.use['hz:' + f.hz + ':setup']; return { ...f, val: sum(dead), unit: 'deaths', top: top(set), caught: top(dead), met: sum(dead) >= (f.min || 1) }; }
+      if (f.hz) { const dead = B.use['hz:' + f.hz + ':death'], set = B.use['hz:' + f.hz + ':setup'], hit = B.use['hz:' + f.hz + ':hit']; return { ...f, val: Math.round(sum(hit)), deaths: sum(dead), unit: 'damage dealt by it', top: top(set), caught: top(hit), met: sum(hit) >= (f.min || 1) }; }
       const [tag, unit] = COUNT[f.kind], o = B.use[f.kind === 'room' ? 'room:' + f.room : tag];
       return { ...f, val: Math.round(sum(o)), unit, top: top(o), met: sum(o) >= (f.min || 1) };
     });
