@@ -168,9 +168,13 @@
     const h = x < -.15 ? L.leftAx.split(' · ')[0].toLowerCase() : x > .15 ? L.rightAx.split(' · ')[0].toLowerCase() : 'between';
     return { near: near[0][1] < .2 ? null : near[0][0], v, h, w };
   }
+  // the learner's diamond is kept in this browser, so the spell idea generator on the next slide themes its spells with it
+  const LS = 'mgm-elemental-diamond';
+  const loadL = () => { try { const o = JSON.parse(localStorage.getItem(LS)) || {}; const L = { ...DEF }; Object.keys(DEF).forEach(k => { if (typeof o[k] === 'string' && o[k].trim()) L[k] = o[k]; }); return L; } catch (e) { return { ...DEF }; } };
+  const saveL = L => { try { localStorage.setItem(LS, JSON.stringify(L)); } catch (e) { /* private window */ } };
   scene('elemental-diamond', {
     dur: 11.2,
-    state: () => ({ p: [.4, -.4], L: { ...DEF }, drag: false }),
+    state: () => ({ p: [.4, -.4], L: loadL(), drag: false }),
     init(s, st, api) {
       pointer(api.cv, (x, y, type) => {
         const nx = (x - DX) / DR, ny = (y - DY) / DR;
@@ -178,8 +182,8 @@
         if (type === 'up') st.drag = false;
         if (st.drag && (type === 'down' || type === 'move')) { let px = nx, py = ny; const d = Math.abs(px) + Math.abs(py); if (d > 1) { px /= d; py /= d; } st.p = [px, py]; }
       });
-      $$(s, '.ed-in').forEach(inp => { inp.value = st.L[inp.dataset.k]; inp.oninput = () => { api.manual(); st.L[inp.dataset.k] = inp.value || '…'; }; });
-      $(s, '.ed-reset').onclick = () => { st.L = { ...DEF }; $$(s, '.ed-in').forEach(inp => inp.value = st.L[inp.dataset.k]); };
+      $$(s, '.ed-in').forEach(inp => { inp.value = st.L[inp.dataset.k]; inp.oninput = () => { api.manual(); st.L[inp.dataset.k] = inp.value || '…'; saveL(st.L); }; });
+      $(s, '.ed-reset').onclick = () => { st.L = { ...DEF }; saveL(st.L); $$(s, '.ed-in').forEach(inp => inp.value = st.L[inp.dataset.k]); };
       $(s, '.ed-save').onclick = () => { const a = document.createElement('a'); a.href = api.cv.toDataURL('image/png'); a.download = 'my-elemental-diamond.png'; a.click(); };
     },
     draw(g, t, st, tour) {

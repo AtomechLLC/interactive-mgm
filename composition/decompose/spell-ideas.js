@@ -4,7 +4,12 @@
    that column. A column can hold more than one note, as in the deck's worked examples (Fireball, Spiritual Weapon).
    Coherent mode only draws values that agree with each other (a heal goes to an ally, a cone starts at the caster); Wild mode
    draws anything and names the clashes as design prompts. Options after the slide's "..." (dashed notes), the statuses,
-   resources, themes, purposes and keyword mapping are this page's additions. */
+   resources, purposes and keyword mapping are this page's additions.
+   The theme comes from the Elemental Diamond (slide 257): drag the point between Lightning, Earth, Chemical and Plague. The
+   nearest corner (and a close second) names and colours the spell; the axes tilt the draw: up is offensive (damage, charge,
+   teleport, missiles, beams), down is defensive (shield, heal, stun, knockback, pets, traps), left prefers physical statuses,
+   right prefers mental ones. Corner names are shared with the Elemental Diamond slide through localStorage, so a learner's
+   renamed diamond themes their spells; the tilt follows the corner's position, not its name. */
 (function () {
   const { $, $$ } = FPF.kit;
   const { icon, text, wrap, card, chip, TONE, panel, scene, pointer, inBox, clamp, ease } = CK;
@@ -22,37 +27,51 @@
   const CASTS = ['Caster Position', 'Chosen Target Location', 'Enemy Target Loc', 'Predefined Environmental Location', 'Target Current Location', 'None'];
   // values that sit past the slide's "..." are drawn dashed
   const EXTRA = new Set(['Chain', 'Beam', 'Shield', 'Pull', 'AoE', 'Healing', 'Mobility', 'Summon', 'Zone Control', 'Buff', 'Debuff', 'Stealth']);
-  // status effects that fill "Apply <Status Effect>": [name, harmful?, keyword, purposes]
+  // status effects that fill "Apply <Status Effect>": [harmful?, keyword, purposes, physical 0 .. mental 1 (null: examples only)]
   const STATUS = {
-    Burning: [1, 'Sustained Damage', ['Enemy regenerates health', 'Enemy still alive']],
-    Chilled: [1, 'Snare', ['Enemy runs away', 'Enemy closes in too fast']],
-    Rooted: [1, 'Snare', ['Enemy chasing you', 'Need to escape']],
-    Silenced: [1, 'CC', ['Enemy caster keeps casting']],
-    Poisoned: [1, 'Sustained Damage', ['Enemy heals itself', 'Enemy still alive']],
-    Weakened: [1, 'Debuff', ['Enemy hits too hard']],
-    Exposed: [1, 'Debuff', ['Team needs a focus target']],
-    Paralyzed: [1, 'CC', ['Enemy is faster than you']],
-    Hasted: [0, 'Buff', ['Ally needs to get there faster']],
-    Regenerating: [0, 'Healing', ['Party worn down after a fight']],
-    Stealthed: [0, 'Stealth', ['Too many eyes on you']],
-    Empowered: [0, 'Buff', ['Big burst window coming']],
+    Burning: [1, 'Sustained Damage', ['Enemy regenerates health', 'Enemy still alive'], 0],
+    Corroded: [1, 'Debuff', ['Enemy armor is too thick'], 0],
+    Rooted: [1, 'Snare', ['Enemy chasing you', 'Need to escape'], 0],
+    Chilled: [1, 'Snare', ['Enemy runs away', 'Enemy closes in too fast'], .15],
+    Shocked: [1, 'CC', ['Enemy acts too often'], .3],
+    Weakened: [1, 'Debuff', ['Enemy hits too hard'], .35],
+    Exposed: [1, 'Debuff', ['Team needs a focus target'], .6],
+    Infected: [1, 'Sustained Damage', ['Enemy heals itself', 'Enemy still alive'], .75],
+    Silenced: [1, 'CC', ['Enemy caster keeps casting'], 1],
+    Feared: [1, 'CC', ['Enemy guards the objective', 'Enemy is too close'], 1],
+    Confused: [1, 'Disruption', ['Enemies outnumber you'], 1],
+    Paralyzed: [1, 'CC', ['Enemy is faster than you'], null],
+    Fortified: [0, 'Protection', ['Big hit incoming'], 0],
+    Hasted: [0, 'Buff', ['Ally needs to get there faster'], .2],
+    Regenerating: [0, 'Healing', ['Party worn down after a fight'], .6],
+    Empowered: [0, 'Buff', ['Big burst window coming'], .8],
+    Stealthed: [0, 'Stealth', ['Too many eyes on you'], .95],
   };
-  const HARMFUL = Object.keys(STATUS).filter(k => STATUS[k][0]), HELPFUL = Object.keys(STATUS).filter(k => !STATUS[k][0]);
+  const DRAWN = Object.keys(STATUS).filter(k => STATUS[k][3] != null);
+  const HARMFUL = DRAWN.filter(k => STATUS[k][0]), HELPFUL = DRAWN.filter(k => !STATUS[k][0]);
   const RESOURCES = ['30 Rage', '3 Combo Points', '2nd level spell slot', '1 Soul Shard', 'Full Focus bar', '1 of 2 charges', '40 Mana'];
   const NEEDS_HARM = ['Target is Burning', 'Target is Rooted', 'Target is Exposed', 'You are Stealthed', 'Target below 20% health'];
   const NEEDS_HELP = ['Ally below 30% health', 'You are Empowered', 'Ally is Stunned'];
-  // packaging themes: [adjective, colour, name words, icons by role]
-  const THEMES = {
-    Fire: ['Burning', 'red', ['Searing', 'Cinder', 'Ember', 'Flame'], { hit: 'wow-spell_fire_flamebolt.jpg', area: 'wow-spell_shadow_rainoffire.jpg', trap: 'wow-spell_fire_selfdestruct.jpg', help: 'wow-spell_fire_firearmor.jpg', pet: 'wow-spell_shadow_summoninfernal.jpg' }],
-    Frost: ['Freezing', 'pale blue', ['Frost', 'Glacial', 'Rime', 'Ice'], { hit: 'wow-spell_frost_frostbolt02.jpg', area: 'wow-spell_frost_frostnova.jpg', trap: 'wow-spell_frost_chainsofice.jpg', help: 'wow-spell_frost_frostarmor02.jpg', pet: 'wow-spell_frost_summonwaterelemental_2.jpg' }],
-    Holy: ['Radiant', 'golden', ['Radiant', 'Dawn', 'Hallowed', 'Sun'], { hit: 'wow-spell_holy_holybolt.jpg', area: 'wow-spell_holy_searinglight.jpg', trap: 'wow-spell_holy_sealofmight.jpg', help: 'wow-spell_holy_flashheal.jpg', pet: 'wow-spell_holy_auraoflight.jpg' }],
-    Shadow: ['Shadowy', 'violet', ['Shadow', 'Umbral', 'Dusk', 'Hollow'], { hit: 'wow-spell_shadow_lifedrain02.jpg', area: 'wow-spell_shadow_mindrot.jpg', trap: 'wow-spell_shadow_charm.jpg', help: 'wow-ability_vanish.jpg', pet: 'wow-spell_shadow_summoninfernal.jpg' }],
-    Nature: ['Thorny', 'green', ['Bramble', 'Verdant', 'Thorn', 'Wild'], { hit: 'wow-spell_nature_stormreach.jpg', area: 'wow-spell_nature_tranquility.jpg', trap: 'wow-spell_nature_earthbind.jpg', help: 'wow-spell_nature_healingwavegreater.jpg', pet: 'wow-ability_hunter_pet_turtle.jpg' }],
-    Lightning: ['Crackling', 'electric blue', ['Storm', 'Thunder', 'Static', 'Volt'], { hit: 'wow-spell_nature_lightning.jpg', area: 'wow-spell_nature_thunderclap.jpg', trap: 'wow-spell_nature_lightningshield.jpg', help: 'wow-spell_nature_bloodlust.jpg', pet: 'wow-spell_nature_lightningoverload.jpg' }],
-    Arcane: ['Shimmering', 'purple', ['Arcane', 'Astral', 'Mirror', 'Rune'], { hit: 'wow-spell_nature_wispsplode.jpg', area: 'wow-spell_nature_wispsplode.jpg', trap: 'wow-spell_fire_rune.jpg', help: 'wow-spell_arcane_blink.jpg', pet: 'wow-spell_nature_magicimmunity.jpg' }],
-    Water: ['Surging', 'sea-green', ['Tidal', 'Brine', 'Torrent', 'Mist'], { hit: 'wow-spell_frost_summonwaterelemental_2.jpg', area: 'wow-ability_druid_typhoon.jpg', trap: 'wow-inv_misc_volatilewater.jpg', help: 'wow-spell_nature_giftofthewaterspirit.jpg', pet: 'wow-spell_frost_summonwaterelemental_2.jpg' }],
-    Steel: ['Gleaming', 'silver', ['Iron', 'Steel', 'Brutal', 'Rending'], { hit: 'wow-ability_warrior_savageblow.jpg', area: 'wow-ability_shockwave.jpg', trap: 'wow-ability_warrior_shieldbash.jpg', help: 'wow-ability_warrior_shieldwall.jpg', pet: 'wow-ability_warrior_battleshout.jpg' }],
+  // the Elemental Diamond's corners (slide 257): default name, icon, colour, packaging adjective and hue, name words
+  const ELS = {
+    top: { def: 'Lightning', gi: 'lightning-arc', col: '#d6aa28', adj: 'Crackling', hue: 'gold', words: ['Storm', 'Thunder', 'Static', 'Volt'], ax: 'Light · Ethereal · Offensive' },
+    bottom: { def: 'Earth', gi: 'earth-crack', col: '#8a5a2a', adj: 'Heavy', hue: 'stone', words: ['Stone', 'Granite', 'Quake', 'Boulder'], ax: 'Heavy · Hard · Defensive' },
+    left: { def: 'Chemical', gi: 'acid', col: '#4c9a52', adj: 'Corrosive', hue: 'green', words: ['Acid', 'Caustic', 'Vitriol', 'Alkali'], ax: 'Inorganic · Corrosion · Physical effects' },
+    right: { def: 'Plague', gi: 'biohazard', col: '#8a4fd6', adj: 'Festering', hue: 'violet', words: ['Plague', 'Blight', 'Fever', 'Rot'], ax: 'Organic · Infection · Mental effects' },
   };
+  const SLOTS = ['top', 'right', 'bottom', 'left'], LS = 'mgm-elemental-diamond';
+  const stored = () => { try { return JSON.parse(localStorage.getItem(LS)) || {}; } catch (e) { return {}; } };
+  const NAMES = {}; SLOTS.forEach(k => NAMES[k] = ELS[k].def);
+  const loadNames = () => { const o = stored(); SLOTS.forEach(k => NAMES[k] = String(o[k] || '').replace('…', '').trim() || ELS[k].def); };
+  const saveNames = () => { try { localStorage.setItem(LS, JSON.stringify({ ...stored(), ...NAMES })); } catch (e) { /* private window */ } };
+  const custom = k => NAMES[k] !== ELS[k].def;
+  // where a point [x, y] sits: y -1 is the top corner. Returns the nearest corner, a close second, and the two tilts (0..1)
+  function elOf(p) {
+    const [x, y] = p, w = { top: Math.max(0, -y), bottom: Math.max(0, y), left: Math.max(0, -x), right: Math.max(0, x) };
+    const o = SLOTS.slice().sort((a, b) => w[b] - w[a]);
+    const a = w[o[0]] < .05 ? pick(SLOTS) : o[0], b = w[o[1]] >= .3 && o[1] !== a ? o[1] : null;
+    return { a, b, off: (1 - y) / 2, ment: (1 + x) / 2 };
+  }
   // packaging nouns by proxy, then by shape
   const NOUNS = {
     Missile: { 'Single Target': ['orb', 'bolt', 'shard', 'javelin'], 'Circular Area': ['comet', 'bomb', 'meteor'], Line: ['lance', 'spear'], Chain: ['spark', 'ricocheting disc'] },
@@ -134,8 +153,13 @@
   const some = (a, n) => [...a].sort(() => R() - .5).slice(0, n);
   // second payloads that read as one spell
   const PAIRS = { Damage: ['Apply Status', 'Knockback', 'Stun'], Stun: ['Damage'], Charge: ['Stun', 'Damage', 'Apply Status'], Knockback: ['Damage'], Teleport: ['Damage', 'Apply Status'], Heal: ['Apply Status', 'Shield'], Shield: ['Apply Status'], Pull: ['Damage', 'Stun'], 'Spell Cast Interrupt': ['Apply Status'], 'Apply Status': ['Damage'] };
-  function drawPay(two, wild) {
-    let a = pick(PAYLOADS), b = null;
+  const wpick = (arr, wf) => { const ws = arr.map(wf); let x = R() * ws.reduce((m, n) => m + n, 0); for (let i = 0; i < arr.length; i++) { x -= ws[i]; if (x <= 0) return arr[i]; } return arr[arr.length - 1]; };
+  const UP = ['Damage', 'Charge', 'Teleport', 'Spell Cast Interrupt'], DOWN = ['Shield', 'Heal', 'Stun', 'Knockback', 'Pull'];
+  const payW = e => p => (UP.includes(p) ? .35 + 2.3 * e.off : DOWN.includes(p) ? .35 + 2.3 * (1 - e.off) : 1.4) * (p === 'Spell Cast Interrupt' ? .5 + e.ment : ['Knockback', 'Pull'].includes(p) ? 1.5 - e.ment : 1);
+  const proxyW = e => p => ['Missile', 'Beam'].includes(p) ? .4 + 1.8 * e.off : ['Pet', 'Trap / Device'].includes(p) ? .4 + 1.8 * (1 - e.off) : 1;
+  const statusW = e => k => .25 + 1.75 * (1 - Math.abs(STATUS[k][3] - e.ment));
+  function drawPay(two, wild, e) {
+    let a = wild ? pick(PAYLOADS) : wpick(PAYLOADS, payW(e)), b = null;
     if (two && R() < .4) {
       b = pick(wild ? PAYLOADS.filter(p => p !== a) : PAIRS[a]);
     }
@@ -143,25 +167,21 @@
     if (a === 'Apply Status' && b) pay.reverse();
     return pay;
   }
-  function drawStatus(d, wild) {
+  function drawStatus(d, wild, e) {
     if (!has(d, 'Apply Status')) return null;
-    if (wild) return pick(Object.keys(STATUS));
+    if (wild) return pick(DRAWN);
     const k = d.pay.filter(p => p !== 'Apply Status').map(kind);
-    return pick(k.includes('harm') || k.includes('move') ? HARMFUL : k.includes('help') ? HELPFUL : Object.keys(STATUS));
+    return wpick(k.includes('harm') || k.includes('move') ? HARMFUL : k.includes('help') ? HELPFUL : DRAWN, statusW(e));
   }
   function packOf(d) {
     const N = NOUNS[d.proxy], nouns = has(d, 'Charge') ? ['dash', 'leap', 'trail'] : has(d, 'Teleport') ? ['flash', 'step', 'portal'] : N.any || N[d.shape] || N['Single Target'] || ['orb'];
-    const [adj, col] = THEMES[d.theme];
-    return d.proxy === 'Pet' ? `${adj} ${pick(nouns)}` : `${adj} ${col} ${pick(nouns)}`;
+    const { a, b } = d.el, adj = custom(a) ? NAMES[a] : ELS[a].adj, hue = b ? (custom(b) ? NAMES[b].toLowerCase() : ELS[b].hue) : custom(a) ? '' : ELS[a].hue;
+    return (d.proxy === 'Pet' && !b ? `${adj} ${pick(nouns)}` : `${adj} ${hue} ${pick(nouns)}`).replace(/  +/g, ' ');
   }
   function nameOf(d) {
     const p = d.pay.find(x => x !== 'Apply Status'), help = STATUS[d.status] && !STATUS[d.status][0];
     const noun = d.proxy === 'Pet' ? pick(['Familiar', 'Guardian', 'Sentinel']) : d.proxy === 'Trap / Device' && !p ? pick(['Snare', 'Rune', 'Totem']) : pick(NAME_NOUN[p || (help ? 'ApplyHelp' : 'Apply')]);
-    return `${pick(THEMES[d.theme][2])} ${noun}`;
-  }
-  function iconOf(d) {
-    const I = THEMES[d.theme][3];
-    return payKinds(d).includes('help') ? I.help : d.proxy === 'Pet' ? I.pet : d.proxy === 'Trap / Device' ? I.trap : d.shape === 'Circular Area' || d.shape === 'Cone' ? I.area : I.hit;
+    return `${custom(d.el.a) ? NAMES[d.el.a] : pick(ELS[d.el.a].words)} ${noun}`;
   }
   function purposeOf(d) {
     let ps = [];
@@ -199,21 +219,24 @@
     let d;
     for (let a = 0; a < 800; a++) {
       d = { game: prev?.game || 'Your game', show: {} };
+      const e = elOf(opt.pt);
       const keep = c => lock[c] && prev;
       if (keep('pay')) { d.pay = [...prev.pay]; d.status = prev.status; if (prev.show.pay) d.show.pay = prev.show.pay; }
-      else { d.pay = drawPay(opt.two, opt.wild); d.status = drawStatus(d, opt.wild); }
-      d.proxy = keep('proxy') ? prev.proxy : pick(opt.wild ? PROXIES : allowedProxy(d));
+      else { d.pay = drawPay(opt.two, opt.wild, e); d.status = drawStatus(d, opt.wild, e); }
+      d.proxy = keep('proxy') ? prev.proxy : opt.wild ? pick(PROXIES) : wpick(allowedProxy(d), proxyW(e));
       d.shape = keep('shape') ? prev.shape : pick(opt.wild ? SHAPES : allowedShape(d));
       d.targets = keep('targets') ? [...prev.targets] : opt.wild ? some(TARGETS, R() < .7 ? 1 : 2).sort((x, y) => TARGETS.indexOf(x) - TARGETS.indexOf(y)) : [...pick(allowedTargets(d))];
       d.cast = keep('cast') ? [...prev.cast] : opt.wild ? some(CASTS, R() < .7 ? 1 : 2) : [...pick(allowedCast(d))];
       d.cond = keep('cond') ? { ...prev.cond } : drawCond(d, opt.wild);
       if (keep('cond') && prev.show.cond) d.show.cond = prev.show.cond;
-      if (keep('pack')) { d.theme = prev.theme; d.pack = prev.pack; } else { d.theme = pick(Object.keys(THEMES)); d.pack = packOf(d); }
+      d.el = keep('pack') && prev.el ? prev.el : { a: e.a, b: e.b };
+      d.pack = keep('pack') ? prev.pack : packOf(d);
+      d.elName = keep('pack') ? prev.elName : [d.el.a, d.el.b].filter(Boolean).map(k => NAMES[k]).join(' + ');
       d.purpose = keep('purpose') ? [...prev.purpose] : purposeOf(d);
       d.keys = keep('keys') ? [...prev.keys] : keysOf(d);
       ['shape', 'proxy', 'targets', 'cast'].forEach(c => { if (keep(c) && prev.show[c]) d.show[c] = prev.show[c]; });
       d.name = lock.name && prev ? prev.name : nameOf(d);
-      d.icon = lock.name && prev ? prev.icon : iconOf(d);
+      if (lock.name && prev) ['icon', 'pic', 'gi', 'gcol'].forEach(k => { if (prev[k]) d[k] = prev[k]; }); else { d.gi = ELS[d.el.a].gi; d.gcol = ELS[d.el.a].col; }
       d.game = lock.name && prev ? prev.game : 'Your game';
       d.clash = clashes(d);
       if (opt.wild || !d.clash.length) return d;
@@ -251,40 +274,31 @@
     const cast = d.cast.map(c => CAST_TXT[c]).find(Boolean) || '';
     return `${verb} ${a} ${d.pack.toLowerCase()}${where}${cast}${self && tg.length ? ' (you included)' : ''} to ${eff.join(' and ')}.`;
   }
-  // how many coherent skeletons (shape × proxy × payload × targets × cast) the rules allow, before purpose and packaging
-  const SKELETONS = (() => {
-    let n = 0; const pays = [];
-    PAYLOADS.forEach(a => { pays.push([a]); PAIRS[a].forEach(b => pays.push(a === 'Apply Status' ? [b, a] : [a, b])); });
-    pays.forEach(pay => (pay.includes('Apply Status') ? Object.keys(STATUS) : [null]).forEach(status => {
-      const d = { pay, status };
-      const k = payKinds(d); if (k.includes('help') && (k.includes('harm') || k.includes('move'))) return;
-      allowedProxy(d).forEach(proxy => { d.proxy = proxy; allowedShape(d).forEach(shape => { d.shape = shape; allowedTargets(d).forEach(t => { d.targets = t; n += new Set(allowedCast(d).map(c => c.join())).size; }); }); });
-    }));
-    return n;
-  })();
 
   // ---------- the walk-through: the deck's two examples, three rolls, a locked payload, then wild ----------
   R = mulberry(74);
-  const T1 = roll(null, {}, { two: true });
+  const PT = [[0, -.9], [0, .9], [.9, 0], [-.5, .45]];
+  const T1 = roll(null, {}, { two: true, pt: PT[0] });
   const LK = { pay: true, targets: true };
-  const T2 = roll(T1, LK, { two: true }), T3 = roll(T2, LK, { two: true });
-  let T4; for (let i = 0; i < 40 && !(T4?.clash.length >= 2); i++) T4 = roll(null, {}, { two: true, wild: true });
+  const T2 = roll(T1, LK, { two: true, pt: PT[1] }), T3 = roll(T2, LK, { two: true, pt: PT[2] });
+  let T4; for (let i = 0; i < 40 && !(T4?.clash.length >= 2); i++) T4 = roll(null, {}, { two: true, wild: true, pt: PT[3] });
   R = Math.random;
   const TOUR = [
-    [0, EX[0], {}, 'The deck’s first example: <b>Fireball</b> (World of Warcraft), one sticky note per column, two where it does two things.'],
-    [7, EX[1], {}, 'The second: <b>Spiritual Weapon</b> (D&D). Same columns; a pet instead of a missile, and three problems it solves.'],
-    [14, T1, {}, '🎲 Roll: one value for every column, drawn so the columns agree. The pitch at the bottom reads it back as a spell.'],
-    [18, T2, LK, '🔒 Lock Payload and Valid Targets, then roll again: same job, new shape, delivery and look.'],
-    [22, T3, LK, 'Again: locking a column and rolling the rest is how one payload becomes a family of spells.'],
-    [26, T4, {}, 'Wild mode draws anything. The clashes become prompts: answer one and you may have something new.'],
+    [0, EX[0], {}, 'The deck’s first example: <b>Fireball</b> (World of Warcraft), one sticky note per column, two where it does two things.', null],
+    [7, EX[1], {}, 'The second: <b>Spiritual Weapon</b> (D&D). Same columns; a pet instead of a missile, and three problems it solves.', null],
+    [14, T1, {}, '🎲 Roll with the point on <b>Lightning</b>: light, ethereal, offensive. The diamond picks the look and tilts the payload and proxy.', PT[0]],
+    [18, T2, LK, '🔒 Lock Payload and Valid Targets, drag the point to <b>Earth</b>: same job, in a heavy, defensive delivery.', PT[1]],
+    [22, T3, LK, 'Drag to <b>Plague</b>: the same payload a third way. One payload, a family of spells across your elements.', PT[2]],
+    [26, T4, {}, 'Wild mode, between Chemical and Earth: any combination. The clashes become prompts to answer.', PT[3]],
   ];
   const DUR = 31;
 
+  const MX = 864, MY = 452, MR = 76;
   const NOTE = '#7fd7c6', HEAD = '#c9ec9b', ORANGE = '#f6a96b', CX = j => 189 + j * 99, NY = i => 120 + i * 54;
   function view(t, st, tour) {
-    if (!tour) return { d: st.d, prev: st.prev, at: st.at, lock: st.lock, i: -1 };
+    if (!tour) return { d: st.d, prev: st.prev, at: st.at, lock: st.lock, i: -1, pt: st.pt };
     let i = 0; while (i + 1 < TOUR.length && t >= TOUR[i + 1][0]) i++;
-    return { d: TOUR[i][1], prev: i ? TOUR[i - 1][1] : null, at: TOUR[i][0] + (i < 2 ? .2 : 0), lock: TOUR[i][2], i, slow: i < 2 };
+    return { d: TOUR[i][1], prev: i ? TOUR[i - 1][1] : null, at: TOUR[i][0] + (i < 2 ? .2 : 0), lock: TOUR[i][2], i, slow: i < 2, pt: TOUR[i][4] };
   }
   function lockIcon(g, x, y, on) {
     g.save(); g.strokeStyle = on ? C.goldInk : 'rgba(93,97,140,.45)'; g.fillStyle = on ? C.gold : 'rgba(255,250,240,.9)'; g.lineWidth = 2;
@@ -304,10 +318,11 @@
 
   scene('spell-ideas', {
     dur: DUR,
-    state: () => ({ d: null, prev: null, at: -9, lock: {}, two: true, wild: false }),
+    state: () => { const x = Math.random() * 1.6 - .8, y = (Math.random() * 2 - 1) * (1 - Math.abs(x)); return { d: null, prev: null, at: -9, lock: {}, two: true, wild: false, pt: [x, y], drag: false }; },
     init(s, st, api) {
-      st.d = roll(null, {}, { two: true });
-      const opt = () => ({ two: st.two, wild: st.wild });
+      loadNames();
+      st.d = roll(null, {}, { two: true, pt: st.pt });
+      const opt = () => ({ two: st.two, wild: st.wild, pt: st.pt });
       const set = (d, keepPrev) => { api.manual(); st.prev = keepPrev === false ? null : st.d; st.d = d; st.at = st.t; fill(); };
       const doRoll = lock => set(roll(st.d, lock || st.lock, opt()));
       $(s, '.si-roll').onclick = () => doRoll();
@@ -326,13 +341,20 @@
         if (k === 'game') { d.game = v || 'Your game'; st.lock.name = true; }
       });
       fill();
+      // the diamond's corner names, shared with the Elemental Diamond slide
+      $$(s, '.si-el').forEach(inp => { inp.value = NAMES[inp.dataset.k]; inp.oninput = () => { api.manual(); NAMES[inp.dataset.k] = inp.value.trim() || ELS[inp.dataset.k].def; saveNames(); }; });
+      $(s, '.si-el-reset').onclick = () => { SLOTS.forEach(k => NAMES[k] = ELS[k].def); saveNames(); $$(s, '.si-el').forEach(inp => inp.value = NAMES[inp.dataset.k]); doRoll(); };
       $(s, '.si-copy').onclick = () => {
-        const d = st.d, n = notes(d), txt = [`${d.name} (${d.game})`, ...COLS.map(([, h], j) => `${h}: ${n[j].join('; ')}`), `Pitch: ${pitch(d)}`].join('\n');
+        const d = st.d, n = notes(d), txt = [`${d.name} (${d.game})`, ...(d.elName ? [`Theme: ${d.elName}`] : []), ...COLS.map(([, h], j) => `${h}: ${n[j].join('; ')}`), `Pitch: ${pitch(d)}`].join('\n');
         const done = () => { const b = $(s, '.si-copy'); b.textContent = 'Copied'; setTimeout(() => b.textContent = 'Copy as text', 1200); };
         (navigator.clipboard?.writeText(txt) || Promise.reject()).then(done, () => { const ta = document.createElement('textarea'); ta.value = txt; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); done(); });
       };
       $(s, '.si-save').onclick = () => { const a = document.createElement('a'); a.href = api.cv.toDataURL('image/png'); a.download = `spell-idea-${st.d.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.png`; a.click(); };
       pointer(api.cv, (x, y, type) => {
+        const nx = (x - MX) / MR, ny = (y - MY) / MR;
+        if (type === 'up') { if (st.drag) { st.drag = false; doRoll(); } return; }
+        if (type === 'down' && Math.abs(nx) + Math.abs(ny) <= 1.3) { if (st.tour) { api.manual(); st.at = -9; } st.drag = true; }
+        if (st.drag) { let px = nx, py = ny; const m = Math.abs(px) + Math.abs(py); if (m > 1) { px /= m; py /= m; } st.pt = [px, py]; return; }
         if (type !== 'down') return;
         if (st.tour) { api.manual(); st.at = -9; }
         if (inBox(x, y, 66, 166, 116, 220)) { const l = {}; COLS.forEach(([c]) => l[c] = true); doRoll(l); return; }
@@ -343,7 +365,7 @@
       });
     },
     draw(g, t, st, tour) {
-      const { d, prev, at, lock, i: ti, slow } = view(t, st, tour), since = t - at;
+      const { d, prev, at, lock, i: ti, slow, pt } = view(t, st, tour), since = t - at;
       const N = notes(d), P = prev ? notes(prev) : null;
       panel(g, 8, 8, 1024, 296, { title: '' });
       // name column
@@ -355,7 +377,7 @@
       g.save(); g.globalAlpha = kN;
       if (d.icon) icon(g, d.icon, 66, 250, 56, { lw: 3 });
       else if (d.pic) { card(g, 66, 250, 56, 56, { fill: '#fff6dc', edge: C.navy, r: 6, shadow: false, lw: 3 }); CK.pic(g, d.pic, 66, 250, 48); }
-      else if (d.gi) { card(g, 66, 250, 56, 56, { fill: '#3a3f73', edge: C.navy, r: 6, shadow: false, lw: 3 }); GI.draw(g, d.gi, 66, 250, 40, '#ffe7a8'); }
+      else if (d.gi) { card(g, 66, 250, 56, 56, { fill: d.gcol || '#3a3f73', edge: C.navy, r: 6, shadow: false, lw: 3 }); GI.draw(g, d.gi, 66, 250, 40, d.gcol ? '#fff' : '#ffe7a8'); }
       g.restore();
       // the nine columns
       COLS.forEach(([c, h], j) => {
@@ -377,7 +399,7 @@
       panel(g, 8, 314, 676, 263, { title: d.clash.length ? 'The pitch, and the clashes to answer' : 'The pitch' });
       g.save(); g.globalAlpha = kP;
       text(g, d.name, 30, 360, { size: 26, w: 800, display: true, align: 'left', col: C.navy });
-      text(g, d.game, 30, 388, { size: 13, w: 600, align: 'left', col: C.muted });
+      text(g, d.elName ? `${d.game} · ${d.elName}` : d.game, 30, 388, { size: 13, w: 600, align: 'left', col: C.muted });
       const pl = wrap(g, pitch(d), 30, 420, 630, { size: 17, w: 500, lh: 23, col: C.ink });
       let y = 420 + pl.length * 23 + 8;
       if (d.cond.k !== 'none') { text(g, `Requires: ${d.show.cond ? d.show.cond[0].replace(/^Require /, '') : d.cond.v}`, 30, y, { size: 14, w: 700, align: 'left', col: C.goldInk }); y += 24; }
@@ -385,15 +407,20 @@
       if (d.clash.length) d.clash.slice(0, 3).forEach(c => { chip(g, '?', 40, y, { ...TONE.gold, size: 13, width: 22 }); wrap(g, c, 58, y, 600, { size: 14, w: 600, col: C.goldInk }); y += 24; });
       else { let kx = 30; d.keys.forEach(k => { kx += chip(g, k, kx, y, { ...TONE.blue, size: 13, align: 'left' }) + 8; }); }
       g.restore();
-      // the levers
-      panel(g, 696, 314, 336, 263, { title: 'How to use it' });
-      const L = [['🎲', 'Roll fills every column that is not locked.'], ['🔒', 'Click a green header to lock that column.'], ['↻', 'Click a note to reroll only its column.'], ['✎', 'Click the name to reroll just the name.']];
-      L.forEach(([ic, s], k) => { text(g, ic, 718, 356 + k * 30, { size: 16 }); text(g, s, 736, 356 + k * 30, { size: 13.5, w: 600, align: 'left', col: C.ink }); });
-      const locked = COLS.filter(([c]) => lock[c]).map(([, h]) => h.replace(/ \(.*| Type/, ''));
-      text(g, locked.length ? `Locked: ${locked.join(', ')}` : 'Nothing locked', 714, 484, { size: 13.5, w: 700, align: 'left', col: locked.length ? C.goldInk : C.muted });
-      text(g, `${SKELETONS.toLocaleString('en-US')} coherent skeletons`, 714, 514, { size: 15, w: 800, align: 'left', col: C.navy });
-      text(g, 'shape × proxy × payload × targets × cast,', 714, 534, { size: 12.5, align: 'left', col: C.muted });
-      text(g, 'before any purpose or packaging', 714, 551, { size: 12.5, align: 'left', col: C.muted });
+      // the Elemental Diamond: the point themes the next roll
+      panel(g, 696, 314, 336, 263, { title: 'Theme: drag the point' });
+      const e = pt ? elOf(pt) : null;
+      g.save(); g.strokeStyle = 'rgba(93,97,140,.3)'; g.lineWidth = 1.5; g.setLineDash([4, 4]); g.beginPath(); g.moveTo(MX, MY - MR); g.lineTo(MX, MY + MR); g.moveTo(MX - MR, MY); g.lineTo(MX + MR, MY); g.stroke(); g.setLineDash([]);
+      g.fillStyle = 'rgba(255,250,240,.75)'; g.strokeStyle = C.navy; g.lineWidth = 2.5; g.beginPath(); g.moveTo(MX, MY - MR); g.lineTo(MX + MR, MY); g.lineTo(MX, MY + MR); g.lineTo(MX - MR, MY); g.closePath(); g.fill(); g.stroke(); g.restore();
+      [['top', MX, MY - MR], ['right', MX + MR, MY], ['bottom', MX, MY + MR], ['left', MX - MR, MY]].forEach(([k, x, y]) => {
+        const E = ELS[k], on = e && e.a === k, second = e && e.b === k, side = k === 'left' || k === 'right', sx = k === 'left' ? -1 : 1;
+        g.save(); g.fillStyle = on ? E.col : '#fffaf0'; g.strokeStyle = E.col; g.lineWidth = second ? 5 : 3; g.beginPath(); g.arc(x, y, 18, 0, Math.PI * 2); g.fill(); g.stroke(); g.restore();
+        GI.draw(g, E.gi, x, y, 22, on ? '#fff' : E.col);
+        const ax = E.ax.split(' · ');
+        if (side) { text(g, NAMES[k], x + sx * 34, y + 30, { size: 13.5, w: 800, display: true, col: E.col }); text(g, `${ax[0]} · ${ax[1]}`, x + sx * 34, y + 46, { size: 9.5, col: C.muted }); text(g, ax[2], x + sx * 34, y + 58, { size: 9.5, col: C.muted }); }
+        else { const ly = k === 'top' ? y - 6 : y + 2; text(g, NAMES[k], x + 26, ly, { size: 13.5, w: 800, display: true, col: E.col, align: 'left' }); text(g, E.ax, x + 26, ly + 15, { size: 9.5, col: C.muted, align: 'left' }); }
+      });
+      if (pt) { g.save(); g.fillStyle = C.gold; g.strokeStyle = C.navy; g.lineWidth = 2.5; g.beginPath(); g.arc(MX + pt[0] * MR, MY + pt[1] * MR, 9, 0, Math.PI * 2); g.fill(); g.stroke(); g.restore(); }
       if (tour && ti >= 0) text(g, ti < 2 ? 'Worked example' : ti < 5 ? 'Coherent roll' : 'Wild roll', 1018, 330, { size: 12, w: 700, align: 'right', col: C.muted });
     },
     side(t, st, tour) {
