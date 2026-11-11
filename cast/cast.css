@@ -1,0 +1,16 @@
+/* The stick figure cast deck: page-only tweaks on top of dgms.css */
+.mt-side .seg .btn.cast-btn { display: inline-flex; align-items: center; gap: 6px; }
+.mt-side .seg .btn.cast-btn i { width: 12px; height: 12px; border-radius: 50%; display: inline-block; border: 2px solid rgba(0,0,0,.35); }
+.cast-card { background: #fffaf0; border: 2px solid #cdbf9f; border-left: 8px solid #2ea3dc; border-radius: 12px; padding: 10px 14px; margin-top: 6px; }
+.cast-card h3 { font-family: var(--display); font-size: 26px; margin: 0; color: var(--ink); }
+.cast-card .role { font-size: 15px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+.cast-card dl { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; margin: 8px 0; font-size: 15px; color: var(--ink); }
+.cast-card dt { color: var(--muted); }
+.cast-card dd { margin: 0; font-weight: 600; }
+.cast-card p { font-size: 16px; line-height: 1.38; margin: 6px 0 0; color: var(--ink); }
+.cast-code { background: #152044; color: #e8ecf8; border-radius: 10px; padding: 10px 12px; font-size: 13px; line-height: 1.45; white-space: pre-wrap; word-break: break-word; margin: 8px 0 0; }
+.lb-ab { display: flex; gap: 8px; align-items: center; margin: 4px 0; }
+.lb-ab select { font: 600 15px Jost, sans-serif; padding: 4px 6px; border-radius: 8px; border: 2px solid #cdbf9f; background: #fffaf0; color: var(--ink); }
+.slide .mt-side ol.cast-rules { margin: 0; padding-left: 22px; font-size: 16px; line-height: 1.38; color: var(--ink); }
+.slide .mt-side ol.cast-rules li { font-size: 16px; line-height: 1.38; margin: 0 0 7px; }
+.mt-side code { font-size: .9em; background: #efe6d2; padding: 0 4px; border-radius: 4px; }
