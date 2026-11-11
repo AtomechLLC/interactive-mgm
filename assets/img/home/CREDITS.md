@@ -264,6 +264,6 @@ Genre breakdowns (Blog Posts):
 | `level-design--cover.svg` | [checked-shield](https://game-icons.net/1x1/lorc/checked-shield.html) | Lorc |
 | `level-design--wayfinding.svg` | [compass](https://game-icons.net/1x1/lorc/compass.html) | Lorc |
 | `level-design--pacing.svg` | [heart-beats](https://game-icons.net/1x1/lorc/heart-beats.html) | Lorc |
-| `level-design--gates.svg`, `--scripting.svg`, `--lighting.svg`, `--playtest.svg` | drawn for this site | own work |
+| `level-design--gates.svg`, `--scripting.svg`, `--lighting.svg`, `--playtest.svg`, `--floors.svg`, `--massing.svg`, `--balance.svg`, `--envart.svg` | drawn for this site | own work |
 | `coop-interactions--conversion.svg` | [trade](https://game-icons.net/1x1/lorc/trade.html) | Lorc |
 | `coop-interactions--economy.svg` | [price-tag](https://game-icons.net/1x1/delapouite/price-tag.html) | Delapouite |
