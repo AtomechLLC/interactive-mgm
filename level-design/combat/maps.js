@@ -32,7 +32,7 @@
   /* ---- 1. Kiln Terraces: height ---- */
   function terraces() {
     const P = root.PLAN.make(); frame(P);
-    P.rect('Ter', 140, 60, 470, 170, { lab: 'Upper Terrace', tint: HIGH, high: true });
+    P.rect('Ter', 140, 60, 470, 170, { lab: 'Upper Terrace', tint: HIGH, high: true, labAt: [290, 82] });
     P.rect('Duct', 140, 170, 330, 250, { tint: '#e2dccb' });
     P.rect('Wm', 140, 250, 330, 340, {});
     P.rect('Yard', 330, 170, 700, 400, { lab: 'Kiln Yard', tint: SAND, labAt: [560, 372] });
@@ -73,7 +73,7 @@
     P.rect('Wm', 140, 250, 300, 340, {});
     P.rect('Stair', 740, 150, 900, 230, { lab: 'East Stair' });
     P.rect('Em', 740, 230, 900, 340, {});
-    P.rect('Stock', 140, 400, 420, 535, { lab: 'Unlit Stockroom', tint: DARK, dark: true });
+    P.rect('Stock', 140, 400, 420, 535, { lab: 'Unlit Stockroom', tint: DARK, dark: true, labAt: [280, 510] });
     P.rect('S2', 420, 440, 680, 535, { lab: 'Service Hall' }); P.rect('S3', 680, 400, 900, 535, {});
     door(P, 'An', 'Gal', 140, 105, 90); door(P, 'Gal', 'Bn', 900, 105, 90);
     door(P, 'A', 'Wm', 140, 295, 90); door(P, 'Wm', 'Atr', 300, 295, 90); door(P, 'Atr', 'Em', 740, 295, 90); door(P, 'Em', 'B', 900, 295, 90);
@@ -90,7 +90,7 @@
       posts: [{ side: 0, keys: ['marksman', 'psion'], x: 400, y: 134, room: 'Gal' }, { side: 0, keys: ['rocketeer'], x: 520, y: 134, room: 'Gal' }, { side: 1, keys: ['marksman', 'psion'], x: 640, y: 134, room: 'Gal' }, { side: 1, keys: ['rocketeer'], x: 520, y: 134, room: 'Gal' }],
       features: [
         { name: 'Gallery glass', kind: 'window', at: [520, 150], min: 150, who: 'Marksman, Rocketeer, Psion', text: 'Four windows: a shot passes, a unit does not. A token at the glass fights the atrium without being reachable from it, so melee tokens have to walk the long way round to answer.' },
-        { name: 'Unlit stockroom', kind: 'dark', at: [280, 468], min: 100, who: 'Cloaker, Xeno Swarm, Cyborg, Riot Shield', text: 'A token in the dark is seen only from about three tiles, when it is marked, or for a moment after it fires. Short-range tokens cross it unseen, and long guns have nothing to aim at.' },
+        { name: 'Unlit stockroom', kind: 'dark', at: [280, 452], min: 100, who: 'Cloaker, Xeno Swarm, Cyborg, Riot Shield', text: 'A token in the dark is seen only from about three tiles, when it is marked, or for a moment after it fires. Short-range tokens cross it unseen, and long guns have nothing to aim at.' },
         { name: 'The east stair', kind: 'room', room: 'Stair', at: [820, 190], min: 6, who: 'whoever spawns east', text: 'A two-door turn between the gallery and the middle that only the east side has. The count is how often a token used it.' },
         { name: 'Atrium crates', kind: 'cover', at: [520, 290], min: 80, who: 'Rifleman, Trooper, Heavy Gunner', text: 'The same crates as the yard, in a room that is also watched through glass from two sides.' },
       ],
@@ -118,17 +118,17 @@
       lopsided: 'The rooms are close to mirrored; the dangers are not. The west side reaches the hub through a door that slams shut, the east through a corridor with a flame across it, and the fuel drums sit nearer the west.',
       hazards: [
         { type: 'patrol', name: 'the coolant cart', a: [215, 110], b: [825, 110], r: 20, period: 10, floor: true, dmg: 45 },
-        { type: 'rotor', name: 'the mixer arm', x: 520, y: 295, len: 92, period: 9, floor: true, dmg: 40 },
-        { type: 'crush', name: 'the blast door', door: ['Wm', 'Hub'], period: 5.5, shut: 1.8, warnT: .45, dmg: 85 },
-        { type: 'jet', name: 'a wall flame', a: [790, 253], b: [790, 337], w: 13, on: 1.3, off: 2.6, warnT: .4, dmg: 90 },
-        { type: 'jet', name: 'a wall flame', a: [484, 175], b: [556, 175], w: 13, on: 1.1, off: 3, warnT: .4, phase: 2, dmg: 90 },
+        { type: 'rotor', name: 'the mixer arm', x: 520, y: 295, len: 86, period: 9, floor: true, dmg: 32 },
+        { type: 'crush', name: 'the blast door', door: ['Wm', 'Hub'], period: 5, shut: 1.8, warnT: .3, dmg: 85 },
+        { type: 'jet', name: 'a wall flame', a: [790, 253], b: [790, 337], w: 16, on: 1.6, off: 2.4, warnT: .25, dmg: 90 },
+        { type: 'jet', name: 'a wall flame', a: [484, 175], b: [556, 175], w: 14, on: 1.3, off: 2.8, warnT: .25, phase: 2, dmg: 90 },
         { type: 'barrel', name: 'a fuel drum', at: [[270, 470], [335, 512], [470, 508], [585, 468], [760, 505]], r: 74, dmg: 70 },
       ],
       features: [
         { name: 'Coolant cart', hz: 'patrol', pattern: 'Patrolling', at: [520, 110], min: 60, text: 'A machine that runs the length of the long lane and back. Tokens step to the wall to let it pass; a token that is aiming, rooted or slowed is run down. The drones fly over it.' },
         { name: 'Mixer arm', hz: 'rotor', pattern: 'Rotation', at: [520, 295], min: 100, text: 'An arm sweeping the hub. Its tip moves faster than most tokens walk, so the middle of the room is only safe in the gap behind the arm. The drones fly over it; the mech is too slow for it.' },
-        { name: 'Blast door', hz: 'crush', pattern: 'Crushing', at: [360, 295], min: 40, text: 'The west door into the hub slams shut every few seconds, and blocks shots while it is shut. Anything fast simply waits. Whatever is held in the doorway when it closes is crushed, and the kill goes to the token that held it there.' },
-        { name: 'Wall flames', hz: 'jet', pattern: 'Across', at: [790, 295], min: 40, text: 'A flame across the east corridor and another across the north connector, on a timer. They cut the east side’s way into the hub into short windows.' },
+        { name: 'Blast door', hz: 'crush', pattern: 'Crushing', at: [360, 295], min: 1, text: 'The west door into the hub slams shut every few seconds, and blocks shots while it is shut. Anything fast simply waits. Whatever is held in the doorway when it closes is crushed, and the kill goes to the token that held it there.' },
+        { name: 'Wall flames', hz: 'jet', pattern: 'Across', at: [790, 295], min: 1, text: 'A flame across the east corridor and another across the north connector, on a timer. They cut the east side’s way into the hub into short windows.' },
         { name: 'Fuel drums', hz: 'barrel', pattern: 'Expansive', at: [470, 508], min: 100, text: 'A blast near a drum always sets it off, a stray shot sometimes does, and one drum sets off the next. The blast hurts both squads; the kill goes to whoever lit it.' },
       ],
       script: ['front', 'lanes', 'edge', 'feat', 'haz'],
