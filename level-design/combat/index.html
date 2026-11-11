@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Combat · Level Design Book</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="../shared/blog.css">
+<style>
+  /* the squads slide: two rows of tokens, one description */
+  .fr-grid { display: grid; gap: 14px; margin-top: 6px; }
+  .fr-team h4 { font-family: var(--display); font-size: 17px; text-transform: uppercase; letter-spacing: .06em; color: var(--tc); margin: 0 0 6px; }
+  .fr-row { display: grid; grid-template-columns: repeat(10, 1fr); gap: 10px; }
+  .fr-u { background: #fffaf0; border: 2px solid #cdbf9f; border-top: 6px solid var(--tc); border-radius: 12px; padding: 8px 4px 8px; cursor: pointer; display: grid; justify-items: center; gap: 2px; font: 600 15px Jost, sans-serif; color: var(--ink); }
+  .fr-u img { width: 92px; height: 92px; }
+  .fr-u.on { background: #fde9b8; border-color: #e0a92d; border-top-color: var(--tc); }
+  .slide .fr-out { font-size: 21px; line-height: 1.45; color: var(--ink); margin: 18px 0 0; min-height: 4.4em; }
+  .fr-out .chip { margin-top: 8px; }
+  table.fb-script { width: 100%; border-collapse: collapse; font-size: 15px; color: var(--ink); }
+  table.fb-script td { padding: 3px 4px; border-bottom: 1px solid #e3d8bf; font-weight: 600; vertical-align: top; }
+  table.fb-script td:first-child { width: 22px; font-weight: 800; color: var(--muted); }
+  table.fb-script tr.met td:first-child { color: #2fae63; }
+  table.fb-script tr.miss td:first-child { color: #e5322d; }
+  table.fb-script small { display: block; font-weight: 500; font-size: 13px; color: var(--muted); }
+  .mt-side label.chk { font-size: 15px; margin: 4px 0; }
+  .mt-side label.chk input { width: 17px; height: 17px; }
+  .fb-bench { font: 600 14px Jost, sans-serif; padding: 3px 6px; border-radius: 8px; border: 2px solid #cdbf9f; background: #fffaf0; color: var(--ink); max-width: 230px; }
+  .slide .fb-out { font-size: 15px; line-height: 1.35; margin-top: 8px; }
+</style>
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · Level Design Book · Combat', home: '../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<section class="slide" data-title="A three-lane arena" data-demo="fps-map">
+  <div class="kicker">combat · studying a famous map</div>
+  <h2 class="sm">Saltworks: a study of <span class="accent">Dust II</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>What we borrowed</h4>
+      <div class="seg fm-view"></div>
+      <h4 class="fm-metric"></h4>
+      <div class="mt-stats fm-stats"></div>
+      <p class="mt-out fm-out"></p>
+      <p class="src">Reference studied: Dust II, from Counter-Strike (Valve). Saltworks borrows its structure only: three lanes, a long sightline, a doorway in the middle, connectors and set-back spawns. The layout is our own, mirrored for team deathmatch, and drawn with this section’s floor-plan kit. One tile is 40 px.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Two squads of ten" data-demo="fps-roster">
+  <div class="kicker">combat · who is fighting</div>
+  <h2 class="sm">Two squads, <span class="accent">twenty jobs</span></h2>
+  <div class="fr-grid"></div>
+  <p class="fr-out"></p>
+</section>
+
+<section class="slide" data-title="First to 100 kills" data-demo="fps-battle">
+  <div class="kicker">combat · the map under load</div>
+  <h2 class="sm">Ten against ten, <span class="accent">first to 100</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <div class="row wrap"><button class="btn fb-play">⏸ Pause</button><button class="btn fb-new">↻ New battle</button><button class="btn fb-end">⏭ To the end</button></div>
+      <div class="seg fb-speed"><button class="btn" data-v="1">1×</button><button class="btn" data-v="2">2×</button><button class="btn" data-v="4">4×</button><button class="btn" data-v="8">8×</button></div>
+      <h4>Change one thing</h4>
+      <label class="chk"><input type="checkbox" class="fb-shut"> Wall up the middle doorway</label>
+      <label class="chk"><input type="checkbox" class="fb-swap"> Swap the spawns</label>
+      <label class="chk fb-pick">Bench <select class="fb-bench"></select></label>
+      <label class="chk"><input type="checkbox" class="fb-heat"> Show where units fell</label>
+      <h4>The battle we designed for</h4>
+      <table class="fb-script"></table>
+      <p class="mt-out fb-out"></p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="../shared/topdown.js"></script>
+<script src="../shared/plan.js"></script>
+<script src="map.js"></script>
+<script src="sim.js"></script>
+<script src="battle.js"></script>
+</body>
+</html>
