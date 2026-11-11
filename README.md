@@ -377,6 +377,14 @@ Home page `blog-posts/index.html` (cards from `PAGES`), for the posts in funsmit
   - `loose-lock/`: set gate looseness, read the props and try a random two-tool kit in three rooms; exact counts of the 15 kits beside your tries and time.
   - `two-threads/`: wire six timing-lock puzzles into a dependency chart and play it; charts open threads over time, misses and the story order.
   - `sequence-the-lesson/`: order eight push-block levels into a course; flags levels needing two unseen ideas and records your time and resets on each.
+  - `break-my-mission/`: choose no rule, a wall, a fail state or a recovery for four freedoms; seven scripted playtesters run the mission and all rule sets are enumerated.
+  - `word-budget/`: set each of three choices to branch, bottleneck or flag; exact word shares per reading beside your own tags.
+  - `place-the-tower/`: pick a tower height and place three; computed line of sight over a generated heightmap, then your steps, wrong turns and unaided finds.
+  - `idle-seconds/`: one seat of ten in a team board game under two switchable rules; seconds with no decision and decisions made beside measured win rates.
+  - `frame-the-fight/`: the same arena fight at close, middle and far zoom; off-screen hits, click accuracy and your own weight rating.
+  - `twelve-units/`: a 40-second skirmish under capped-selection and modern interface rules; actions per minute, idle production and outcome.
+  - `pick-the-netcode/`: pick a network model for four briefs; a small stated model computes bandwidth, delay and load, beside the shipped answers.
+  - `retire-the-risk/`: order six tasks into a year; a coin decides whether the core works and both outcomes are shown exactly.
 - GIFs in `gifs/`: rebuild them all with `sh blog-posts/tools/record-all.sh` while serving InteractiveMGM on 127.0.0.1:8191. They are 1920×1080 with the side panel hidden.
 - `shared/`: `blog.css` layout, a copy of the top-down kit, `bunny.js` (the invisible bunny marker) and `icons.js` (the depth icons plus potion, bomb, chest, heart and dice icons from game-icons.net). `img/`: World of Warcraft spell icons from wow.zamimg.com (sources in `img/sources.json`).
 
