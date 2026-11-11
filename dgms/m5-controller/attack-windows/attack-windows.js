@@ -691,10 +691,11 @@
     const tourBtn = $(s, '.hs-tour');
     $$(s, '.hs-pick .btn').forEach(b => b.onclick = () => { st.tour = false; tourBtn.classList.remove('on'); st.pick = +b.dataset.i; });
     tourBtn.onclick = () => { st.tour = true; st.t = 0; tourBtn.classList.add('on'); };
-    const S = 12, A = 3, R = 15;   // the attacker's strike: contact on frame 12
+    const S = 12, A = 3, R = 15;   // the attacker's strike: active from frame 12
+    const HF = S + 1, FZ = 8;       // the hit frame, when the sweep reaches the target, and the freeze length
     function cell(i, x, y, w, h, f, hi) {
       g.save();
-      const freeze = i === 1 && f >= S && f < S + 8;
+      const freeze = i === 1 && f >= HF && f < HF + FZ;
       if (freeze) { const sh = shakeAt(f * 3, 3); g.translate(sh.x, sh.y); }
       g.fillStyle = hi ? 'rgba(255,250,236,.98)' : C.paper; g.strokeStyle = hi ? C.gold : C.line; g.lineWidth = hi ? 4 : 2;
       g.beginPath(); g.roundRect(x, y, w, h, 12); g.fill(); g.stroke();
@@ -703,45 +704,47 @@
       lab(g, STYLES[i].game, x + w - 16, y + 22, { col: C.muted, size: 15, align: 'right' });
       const gy = y + 196; ground(g, x + 20, x + w - 20, gy);
       // time as each side experiences it: the freeze holds both in place
-      const tf = i === 1 ? (f < S ? f : f < S + 8 ? S : f - 8) : f;
+      const tf = i === 1 ? (f < HF ? f : f < HF + FZ ? HF : f - FZ) : f;
       const pa = pose(Math.min(tf, S + A + R), S, S + A, S + A + R);
       const ax = x + 150, tx = x + 300;
       let tArm = .9, tLean = 0, tFlash = 0, tSquash = 1, tX = tx, tAct = '', tCut = null;
-      const hitAge = tf - S;
+      const hitAge = tf - HF;
       if (i === 0) {   // keeps attacking on its own rhythm
         const q = f % 20; const tp = pose(q, 8, 10, 20); tArm = tp.arm; tLean = tp.lean;
-        tFlash = f >= S && f < S + 2 ? .4 : 0;
+        tFlash = f >= HF && f < HF + 2 ? .4 : 0;
       } else if (i === 1) {
-        if (f >= S && f < S + 8) tFlash = .6;
+        if (f >= HF && f < HF + FZ) tFlash = .6;
         if (hitAge > 0) tX = tx + 40 * easeOut(hitAge / 8);
       } else if (i === 2) {   // was winding up its own attack, the hit cancels it
-        if (f < S) { const tp = pose(f - 4, 16, 19, 30); tArm = f >= 4 ? tp.arm : .9; tLean = f >= 4 ? tp.lean : 0; }
-        else { const k = clamp((f - S) / 14); tArm = lerp(-1.6, .9, ease(k)); tLean = -.3 * (1 - k); tFlash = f - S < 3 ? .7 : 0; }
-      } else if (i === 3 && f >= S) {
-        const k = clamp((f - S - 4) / 26); tFlash = f - S < 3 ? .7 : 0;
+        if (f < HF) { const tp = pose(f - 4, 16, 19, 30); tArm = f >= 4 ? tp.arm : .9; tLean = f >= 4 ? tp.lean : 0; }
+        else { const k = clamp((f - HF) / 14); tArm = lerp(-1.6, .9, ease(k)); tLean = -.3 * (1 - k); tFlash = f - HF < 3 ? .7 : 0; }
+      } else if (i === 3 && f >= HF) {
+        const k = clamp((f - HF - 4) / 26); tFlash = f - HF < 3 ? .7 : 0;
         tLean = -1.45 * ease(k); tSquash = lerp(1, .82, clamp(k * 2)); tArm = lerp(.9, 1.6, k);
       }
       if (pa.ph === 'active') trail(g, { x: ax, y: gy, s: .7, weapon: 'sword' }, q => pose(Math.max(S, q), S, S + A, S + A + R).arm, tf);
       knight(g, { x: ax, y: gy, s: .7, arm: pa.arm, lean: pa.lean, weapon: 'sword' });
       knight(g, { x: tX, y: gy, s: .7, face: -1, arm: tArm, lean: tLean, squash: tSquash, weapon: 'sword', col: C.foe, dark: C.foeDk, flash: tFlash });
-      if (f >= S && f < S + 5 && i !== 0) spark(g, tx - 30, gy - 80, i === 1 ? Math.min(hitAge, 1) : f - S, 22);
+      if (i !== 0 && hitAge >= 0 && hitAge < 5) spark(g, tx - 30, gy - 80, hitAge, 22);   // the freeze holds the spark at its first frame
       // health bar
-      const hp = f >= S ? .62 : 1; g.fillStyle = 'rgba(168,32,28,.2)'; g.fillRect(tX - 30, y + 52, 60, 6); g.fillStyle = C.red; g.fillRect(tX - 30, y + 52, 60 * hp, 6);
-      if (f >= S && f < S + 16) lab(g, '-38', tX + 38, y + 56 - (f - S) * .8, { col: C.redDk, size: 15, weight: 700 });
-      if (i === 1 && f >= S && f < S + 8) lab(g, 'freeze', x + w / 2, y + 84, { col: C.navy, size: 16, weight: 700, align: 'center' });
+      const hp = f >= HF ? .62 : 1; g.fillStyle = 'rgba(168,32,28,.2)'; g.fillRect(tX - 30, y + 52, 60, 6); g.fillStyle = C.red; g.fillRect(tX - 30, y + 52, 60 * hp, 6);
+      if (f >= HF && f < HF + 16) lab(g, '-38', tX + 38, y + 56 - (f - HF) * .8, { col: C.redDk, size: 15, weight: 700 });
+      if (i === 1 && f >= HF && f < HF + FZ) lab(g, 'freeze', x + w / 2, y + 84, { col: C.navy, size: 16, weight: 700, align: 'center' });
       // mini frame strips
       const sx = x + 96, sw = w - 116, pf = sw / HS_L;
       lab(g, 'Attacker', x + 16, y + 222, { col: C.blue, size: 13, weight: 700 });
       lab(g, 'Target', x + 16, y + 248, { col: C.foe, size: 13, weight: 700 });
-      const fz = i === 1 ? 8 : 0;
-      const aS = [{ a: 0, b: S, col: PH.startup }, { a: S, b: S + fz, col: '#9aa0bf' }, { a: S + fz, b: S + fz + A, col: PH.active }, { a: S + fz + A, b: S + fz + A + R, col: PH.recovery }];
+      // the freeze lands inside the active window: the hitbox stays live through it, and recovery waits for the release
+      const fz = i === 1 ? FZ : 0;
+      const aS = [{ a: 0, b: S, col: PH.startup }, { a: S, b: HF, col: PH.active }, { a: HF, b: HF + fz, col: PH.active, label: 'freeze', hatch: 'rgba(255,255,255,.35)' },
+        { a: HF + fz, b: S + A + fz, col: PH.active }, { a: S + A + fz, b: S + A + fz + R, col: PH.recovery }];
       const tS = [
         [{ a: 0, b: HS_L, col: '#9fdcae', label: 'keeps acting', txt: C.ink }],
-        [{ a: 0, b: S, col: '#c9cbd9' }, { a: S, b: S + 8, col: '#9aa0bf', label: 'freeze', txt: '#fff' }, { a: S + 8, b: S + 18, col: C.purple, label: 'knockback' }],
-        [{ a: 4, b: S, col: '#f4c58f', label: 'its attack', txt: C.ink }, { a: S, b: S + 14, col: C.purple, label: 'hitstun' }],
-        [{ a: 0, b: S, col: '#c9cbd9' }, { a: S, b: S + 42, col: C.purple, label: 'crumple', hatch: 'rgba(255,255,255,.25)' }],
+        [{ a: 0, b: HF, col: '#c9cbd9' }, { a: HF, b: HF + FZ, col: '#9aa0bf', label: 'freeze', txt: '#fff' }, { a: HF + FZ, b: HF + FZ + 10, col: C.purple, label: 'knockback' }],
+        [{ a: 4, b: HF, col: '#f4c58f', label: 'its attack', txt: C.ink }, { a: HF, b: HF + 14, col: C.purple, label: 'hitstun' }],
+        [{ a: 0, b: HF, col: '#c9cbd9' }, { a: HF, b: HF + 42, col: C.purple, label: 'crumple', hatch: 'rgba(255,255,255,.25)' }],
       ][i];
-      TL.strip(g, sx, y + 212, sw, HS_L, aS, { h: 18, ticks: false, labels: false });
+      TL.strip(g, sx, y + 212, sw, HS_L, aS, { h: 18, ticks: false });
       TL.strip(g, sx, y + 238, sw, HS_L, tS, { h: 18, ticks: false });
       g.fillStyle = C.navy; g.fillRect(sx + Math.min(f, HS_L) * pf - 1, y + 206, 2, 56);
       g.restore();
