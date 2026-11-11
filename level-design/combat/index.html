@@ -25,9 +25,11 @@
   table.fb-script tr.met td:first-child { color: #2fae63; }
   table.fb-script tr.miss td:first-child { color: #e5322d; }
   table.fb-script small { display: block; font-weight: 500; font-size: 13px; color: var(--muted); }
-  .mt-side label.chk { font-size: 15px; margin: 4px 0; }
+  .mt-side label.chk { font-size: 15px; margin: 3px 0; }
+  .mt-side h4 { margin: 5px 0 3px; }
+  table.fb-script small { line-height: 1.2; }
   .mt-side label.chk input { width: 17px; height: 17px; }
-  .fb-bench { font: 600 14px Jost, sans-serif; padding: 3px 6px; border-radius: 8px; border: 2px solid #cdbf9f; background: #fffaf0; color: var(--ink); max-width: 230px; }
+  .fb-bench, .fb-follow { font: 600 14px Jost, sans-serif; padding: 3px 6px; border-radius: 8px; border: 2px solid #cdbf9f; background: #fffaf0; color: var(--ink); max-width: 230px; }
   .slide .fb-out { font-size: 15px; line-height: 1.35; margin-top: 8px; }
 </style>
 <script>
@@ -74,6 +76,9 @@
       <label class="chk"><input type="checkbox" class="fb-swap"> Swap the spawns</label>
       <label class="chk fb-pick">Bench <select class="fb-bench"></select></label>
       <label class="chk"><input type="checkbox" class="fb-heat"> Show where units fell</label>
+      <h4>Follow a token</h4>
+      <label class="chk fb-pick"><select class="fb-follow"></select></label>
+      <label class="chk"><input type="checkbox" class="fb-fp"> First-person view</label>
       <h4>The battle we designed for</h4>
       <table class="fb-script"></table>
       <p class="mt-out fb-out"></p>
@@ -88,6 +93,7 @@
 <script src="../shared/plan.js"></script>
 <script src="map.js"></script>
 <script src="sim.js"></script>
+<script src="fp.js"></script>
 <script src="battle.js"></script>
 </body>
 </html>

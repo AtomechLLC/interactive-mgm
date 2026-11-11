@@ -1,7 +1,8 @@
 /* Combat on a map: three slides drawn on one floor plan (map.js) and one simulation (sim.js).
    1. the map study: lanes, longest sightlines and doorways, all measured from the plan itself
    2. the two squads: every token with the behaviour or power the simulation gives it
-   3. the battle: ten modern tokens against ten sci-fi tokens, respawning until one side has 100 kills
+   3. the battle: ten modern tokens against ten sci-fi tokens, respawning until one side has 100 kills,
+      seen from above or through the eyes of one followed token (fp.js)
    Every unit, telegraph, arrow, status badge and prop is a student token from student-tokens/vector-basics/svg. */
 (function () {
   const { $, $$, demo, canvasDemo, say } = FPF.kit;
@@ -97,7 +98,8 @@
       const pick = k => {
         const u = ROSTER.find(x => x.key === k); $$(grid, '.fr-u').forEach(b => b.classList.toggle('on', b.dataset.k === k));
         const w = { bullet: 'rifle fire', bolt: 'plasma bolts', rail: 'aimed shots', rocket: 'rockets', arc: 'energy arcs', melee: 'melee', none: 'no weapon' }[u.shot], ln = u.lane.indexOf(Math.max(...u.lane));
-        say(out, `<b style="color:${TEAM[u.team].col}">${u.name}.</b> ${u.does}<br><span class="chip">${u.hp} health</span> <span class="chip">${w}${u.range > 40 ? `, ${(u.range / TILE).toFixed(1)} tiles` : ''}</span> <span class="chip">${u.spd > 110 ? 'fast' : u.spd < 75 ? 'slow' : 'walking pace'}</span> <span class="chip gold">prefers ${Object.values(laneName)[ln]}</span>`);
+        const E = FPSSIM.EDGE[u.key];
+        say(out, `<b style="color:${TEAM[u.team].col}">${u.name}.</b> ${u.does}${E ? ` <b class="accent">Its moment:</b> it hits about twice as hard ${E[1]}.` : ''}<br><span class="chip">${u.hp} health</span> <span class="chip">${w}${u.range > 40 ? `, ${(u.range / TILE).toFixed(1)} tiles` : ''}</span> <span class="chip">${u.spd > 110 ? 'fast' : u.spd < 75 ? 'slow' : 'walking pace'}</span> <span class="chip gold">prefers ${Object.values(laneName)[ln]}</span>`);
       };
       $$(grid, '.fr-u').forEach(b => b.onclick = () => pick(b.dataset.k)); pick('marksman');
       window.__fpsPick = pick;
@@ -158,6 +160,7 @@
       else if (f.type === 'burst') stampTok(g, tel('burst', f.team), f.x, f.y, k, f.r / 46 * (.5 + .5 * k), f.r / 46 * (.5 + .5 * k), 50, 50, a);
       else if (f.type === 'slash') stampTok(g, tel('burst', f.team), f.x, f.y, 0, .22, .22, 50, 50, a);
       else if (f.type === 'dead') stampTok(g, tok('status/dead', 64), f.x, f.y - k * 10, 0, .22, .22, 50, 50, Math.min(1, a * 2));
+      else if (f.type === 'text' && f.team != null) { g.save(); g.globalAlpha = Math.max(0, a); g.font = '700 13px Montserrat, Jost, sans-serif'; g.textAlign = 'center'; g.lineWidth = 4; g.strokeStyle = '#fffaf0'; g.strokeText(f.text, f.x, f.y - k * 12); g.fillStyle = TEAM[f.team].col; g.fillText(f.text, f.x, f.y - k * 12); g.restore(); }   // a favoured hit, named in the squad's colour
       else if (f.type === 'text') T.popText(f.text, f.x, f.y - k * 14, C.ink, a);
     });
     // score strip along the top edge, kill feed along the bottom edge
@@ -169,11 +172,18 @@
   }
 
   canvasDemo('fps-battle', (s, cv, g) => {
-    let seed = 1, B, speed = 2, run = true, sel = null, acc = 0, shown = '', heat = false;
-    const out = $(s, '.fb-out'), board = $(s, '.fb-script'), bench = $(s, '.fb-bench');
-    bench.innerHTML = '<option value="">nobody</option>' + ROSTER.map(u => `<option value="${u.key}">${TEAM[u.team].name}: ${u.name}</option>`).join('');
+    let seed = 1, B, speed = 2, run = true, sel = null, acc = 0, shown = '', heat = false, fp = false, walls = [], follow = '';
+    const cam = { ang: 0, x: 0, y: 0 };
+    const out = $(s, '.fb-out'), board = $(s, '.fb-script'), bench = $(s, '.fb-bench'), who = $(s, '.fb-follow');
+    const opts = ROSTER.map(u => `<option value="${u.key}">${TEAM[u.team].name}: ${u.name}</option>`).join('');
+    bench.innerHTML = '<option value="">nobody</option>' + opts; who.innerHTML = '<option value="">nobody</option>' + opts;
+    const pick = key => { follow = key || ''; sel = B.units.find(u => u.def.key === follow) || null; who.value = sel ? follow : ''; if (sel) cam.ang = sel.face; shown = ''; };
     // a lever restarts the same battle (same seed) with one thing changed, so the two runs can be compared
-    const fresh = keep => { if (!keep) seed++; B = FPSSIM.create(MAP, { seed, goal: 100, swap: $(s, '.fb-swap').checked, midShut: $(s, '.fb-shut').checked, bench: bench.value ? [bench.value] : [] }); sel = null; run = true; shown = ''; sync(); };
+    const fresh = keep => {
+      if (!keep) seed++;
+      B = FPSSIM.create(MAP, { seed, goal: 100, swap: $(s, '.fb-swap').checked, midShut: $(s, '.fb-shut').checked, bench: bench.value ? [bench.value] : [] });
+      walls = FPV.walls(MAP.P, B.opt.midShut ? B.midDoor : null); run = true; pick(follow); sync();
+    };
     const sync = () => { $(s, '.fb-play').textContent = run ? '⏸ Pause' : '▶ Play'; $$(s, '.fb-speed .btn').forEach(b => b.classList.toggle('on', +b.dataset.v === speed)); };
     $(s, '.fb-play').onclick = () => { if (B.over) fresh(); else { run = !run; sync(); } };
     $(s, '.fb-new').onclick = () => fresh();
@@ -181,17 +191,37 @@
     $$(s, '.fb-speed .btn').forEach(b => b.onclick = () => { speed = +b.dataset.v; sync(); });
     [$(s, '.fb-swap'), $(s, '.fb-shut'), bench].forEach(el => el.onchange = () => fresh(true));
     $(s, '.fb-heat').onchange = e => { heat = e.target.checked; };
-    cv.addEventListener('click', e => { const r = cv.getBoundingClientRect(), x = (e.clientX - r.left) * W / r.width, y = (e.clientY - r.top) * H / r.height; let best = null, bd = 30; B.units.forEach(u => { const d = Math.hypot(u.x - x, u.y - y); if (u.alive && d < bd) { bd = d; best = u; } }); sel = best; shown = ''; });
+    who.onchange = () => pick(who.value);
+    // first person needs someone to follow: with nobody picked it takes the marksman, whose lane shows the map best
+    $(s, '.fb-fp').onchange = e => { fp = e.target.checked; if (fp && !sel) pick('marksman'); if (fp && speed > 2) { speed = 1; sync(); } };
+    cv.addEventListener('click', e => { if (fp) return; const r = cv.getBoundingClientRect(), x = (e.clientX - r.left) * W / r.width, y = (e.clientY - r.top) * H / r.height; let best = null, bd = 30; B.units.forEach(u => { const d = Math.hypot(u.x - x, u.y - y); if (u.alive && d < bd) { bd = d; best = u; } }); pick(best ? best.def.key : ''); });
     fresh(true);
-    window.__fps = { get B() { return B; }, set speed(v) { speed = v; sync(); }, pause() { run = false; sync(); }, pick: k => { sel = B.units.find(u => u.def.key === k); shown = ''; }, heat: v => { heat = v; $(s, '.fb-heat').checked = v; } };
+    window.__fps = { get B() { return B; }, set speed(v) { speed = v; sync(); }, pause() { run = false; sync(); }, pick, heat: v => { heat = v; $(s, '.fb-heat').checked = v; }, fp: v => { fp = v; $(s, '.fb-fp').checked = v; if (v && !sel) pick('marksman'); } };
     return dt => {
       if (run) { acc += Math.min(dt, .1) * speed; while (acc >= 1 / 60) { B.step(1 / 60); acc -= 1 / 60; } }
       if (B.over && run) { run = false; sync(); }
-      drawBattle(g, B, sel, heat || B.over);
+      if (fp && sel && sel.alive && !B.over) {
+        T.use(g); g.clearRect(0, 0, W, H); g.save(); g.beginPath(); g.roundRect(0, 0, W, H, 14); g.clip();
+        const warn = FPV.draw(g, B, sel, cam, { W, H, walls, plan, drawUnit, tok, TEAM, BADGE, dt: Math.min(dt, .1) });
+        FPV.mini(g, B, sel, { W, H, TEAM, plan }, W - 272, 14, .25);
+        // head-up display: score, who you are, health, and whether this is your moment
+        T.label(`${TEAM[0].name} ${B.score[0]}`, 18, 24, 'left', TEAM[0].col, 17); T.label(`${TEAM[1].name} ${B.score[1]}`, 150, 24, 'left', TEAM[1].col, 17);
+        const hp = clamp(sel.hp / sel.hpMax), inEdge = B.t - (sel.edgeT || -9) < 1.2, E = FPSSIM.EDGE[sel.def.key];
+        T.label(`${sel.def.name} · ${sel.kills} kills, ${sel.deaths} deaths`, 18, H - 58, 'left', TEAM[sel.team].col, 17);
+        g.fillStyle = '#1d2433'; g.fillRect(18, H - 40, 264, 14); g.fillStyle = TEAM[sel.team].col; g.fillRect(20, H - 38, 260 * hp, 10);
+        if (E) T.label(inEdge ? `In its moment: ${E[0]}` : `Favoured moment: ${E[0]}`, 18, H - 14, 'left', inEdge ? C.goldInk : C.muted, 15, inEdge ? '#fde9b8' : 'rgba(255,252,244,.9)');
+        let n = 0; BADGE.forEach(([k, icon]) => { if (sel.st[k] > 0 && n < 5) { stampTok(g, tok('status/' + icon, 64), 306 + n * 30, H - 33, 0, .26, .26); n++; } });
+        if (warn) T.stamp(warn, W / 2, 74, C.redDk, 1, 20);
+        g.restore();
+      } else {
+        drawBattle(g, B, sel, heat || B.over);
+        if (fp && sel && !sel.alive && !B.over) T.stamp(`${sel.def.name} is down: back in ${Math.max(0, sel.dead).toFixed(1)} s`, W / 2, 70, TEAM[sel.team].col, 1, 22);
+      }
       // the side panel only rewrites when its text changes
       const sc = B.script(), wait = sc.n < 10;
       const rows = FPSSIM.SCRIPT.map(([k, name, unit]) => `<tr class="${wait ? '' : sc[k][1] ? 'met' : 'miss'}"><td>${wait ? '·' : sc[k][1] ? '✓' : '✗'}</td><td>${name}<small>${wait ? 'measuring…' : `${sc[k][0]} ${k === 'mid' && B.opt.midShut ? '' : unit}`}</small></td></tr>`).join('');
-      const txt = sel ? `<b style="color:${TEAM[sel.team].col}">${sel.def.name}</b> · ${sel.kills} kills, ${sel.deaths} deaths · lane: ${laneName[sel.lane]}<br>${sel.def.does}` : 'Change one thing and the same battle restarts. Click a token to follow it. A faded sci-fi token is cloaked.';
+      const E = sel && FPSSIM.EDGE[sel.def.key], share = sel && sel.dealt ? Math.round((sel.dealtFav || 0) / sel.dealt * 100) : 0;
+      const txt = sel ? `<b style="color:${TEAM[sel.team].col}">${sel.def.name}</b> · ${sel.kills} kills, ${sel.deaths} deaths · ${laneName[sel.lane]}<br>${E ? `<b>Hits about twice as hard</b> ${E[1]}. ${share}% of its damage so far came from that moment.` : sel.def.does}` : 'Change one thing and the same battle restarts. Click a token to follow it. A faded sci-fi token is cloaked.';
       const key = rows + txt; if (key !== shown) { shown = key; say(board, rows); say(out, txt); }
     };
   });

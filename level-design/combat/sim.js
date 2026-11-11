@@ -6,7 +6,12 @@
 
    The ideal session this is judged against (SCRIPT below, measured by battle.script()), not the win rate:
    the squads meet in the middle third of the map; every lane sees fighting; Long Dock kills happen at range and
-   Pump Tunnels kills up close; and the middle doorway changes hands. Both squads use one damage scale.
+   Pump Tunnels kills up close; the middle doorway changes hands; and most kills land in the killer's favoured moment.
+
+   Damage is contextual, not equal. Every token has one favoured moment (EDGE below): a place, a range or a state of
+   its target in which its hits count for about double, and outside which they count for less than normal. The
+   imbalance is meant to be sharp, so a token dominates when the map or its squad hands it that moment and loses
+   when it is caught outside it.
 
    Telegraphed powers can be answered: units walk out of a grenade or stomp circle, sidestep an aimed shot once its
    line locks, plasma bolts fly straight and miss a target that has moved, and a psion's confusion is a channel that
@@ -17,37 +22,58 @@
 (function (root) {
   const TAU = Math.PI * 2, RESPAWN = 3, GUARD = 1.5, SIGHT = 640, LOCK = .3;
   const LANES = ['long', 'mid', 'tun'];
-  const SCALE = .36;   // one damage scale for both squads: it sets how long a battle lasts, never who wins
+  const SCALE = .36;   // pace only: how long a battle lasts. Who wins a fight is decided by EDGE.
+  // each token's favoured moment: [label shown on a favoured hit, the moment in words]
+  const EDGE = {
+    'rifleman': ['sweet spot', 'at two to four and a half tiles, the range a rifle is built for'],
+    'heavy-gunner': ['planted', 'once it has stood still for a moment; on the move its fire is wild'],
+    'riot-shield': ['point blank', 'inside a tile and a half, where the shield has already won the approach'],
+    'marksman': ['long shot', 'at six tiles or more; inside three tiles the scope is a handicap'],
+    'grenadier': ['confined', 'when the blast goes off in the tunnels or a connector, where there is nowhere to go'],
+    'rocketeer': ['armour', 'against the mech; rockets are wasted on small targets'],
+    'drone-operator': ['marked', 'against a target its drone or a rifleman has marked'],
+    'k9-handler': ['held', 'while the dog holds the target in place'],
+    'commander': ['with the squad', 'with three or more squadmates beside it; alone it is the weakest gun on the map'],
+    'trooper': ['focus fire', 'on a target a squadmate hit a moment ago, or one already burning'],
+    'mech': ['open ground', 'in the middle lane; in the tunnels and connectors it cannot bring its guns to bear'],
+    'hover-drone': ['flank', 'from behind its target'],
+    'cyborg': ['rush', 'on the charge and for two seconds after it lands'],
+    'xeno-swarm': ['bleeding', 'on a target that is already bleeding from its leap'],
+    'psion': ['mind-locked', 'on a confused target'],
+    'cloaker': ['isolated', 'on a target with no squadmate within three tiles'],
+    'blinker': ['blink strike', 'in the second and a half after a blink'],
+  };
   const SCRIPT = [
     ['front', 'Squads meet in the middle third', 'of deaths in the middle third'],
     ['lanes', 'Every lane sees fighting', 'of deaths in the quietest lane'],
     ['range', 'Long Dock at range, tunnels up close', 'tiles: typical kill distance, long lane and tunnels'],
     ['mid', 'The middle doorway changes hands', 'changes of holder'],
+    ['edge', 'Kills land in a favoured moment', 'of kills came from the killer’s favoured moment'],
   ];
   // lane = weights for [long, mid, tunnels]. shot: bullet (instant), bolt (plasma projectile), rail (aimed), rocket, arc (psion), melee, none.
   const ROSTER = [
     // modern
-    { key: 'rifleman', team: 0, name: 'Rifleman', hp: 100, spd: 92, range: 240, dmg: 11, rate: .32, shot: 'bullet', lane: [3, 2, 3], pow: 'mark', cd: 8, does: 'Baseline rifle. Marks its target, so the whole squad deals 25% more damage to it.' },
-    { key: 'heavy-gunner', team: 0, name: 'Heavy Gunner', hp: 150, spd: 68, range: 215, dmg: 6, rate: .11, shot: 'bullet', lane: [1, 3, 1], pow: 'suppress', cd: 8, does: 'Slow, with a fast-firing machine gun. Suppressing fire slows every enemy in a cone.' },
+    { key: 'rifleman', team: 0, band: .45, name: 'Rifleman', hp: 100, spd: 92, range: 240, dmg: 11, rate: .32, shot: 'bullet', lane: [3, 2, 3], pow: 'mark', cd: 8, does: 'Baseline rifle. Marks its target, so the whole squad deals 25% more damage to it.' },
+    { key: 'heavy-gunner', team: 0, plant: true, name: 'Heavy Gunner', hp: 150, spd: 68, range: 215, dmg: 6, rate: .11, shot: 'bullet', lane: [1, 3, 1], pow: 'suppress', cd: 8, does: 'Slow, with a fast-firing machine gun. Suppressing fire slows every enemy in a cone.' },
     { key: 'riot-shield', team: 0, name: 'Riot Shield', hp: 170, spd: 84, range: 105, dmg: 9, rate: .4, shot: 'bullet', close: true, lane: [0, 2, 5], pow: 'bash', cd: 6, does: 'Leads the push through the tunnels. Its shield stops 70% of damage from the front; a bash stuns.' },
     { key: 'marksman', team: 0, name: 'Marksman', hp: 80, spd: 80, range: 520, dmg: 95, rate: 1.9, shot: 'rail', aim: .75, hold: true, lane: [8, 1, 0], does: 'Takes the long lane and holds at range. The aim line locks a moment before the shot, so a quick target can sidestep it; a slow, rooted or stunned one cannot.' },
     { key: 'medic', team: 0, name: 'Medic', hp: 90, spd: 96, range: 180, dmg: 7, rate: .4, shot: 'bullet', heals: 17, lane: [2, 2, 2], does: 'Follows the most wounded squadmate and heals them with a beam. Shoots only when nobody needs help.' },
-    { key: 'grenadier', team: 0, name: 'Grenadier', hp: 100, spd: 88, range: 250, dmg: 9, rate: .36, shot: 'bullet', lane: [1, 2, 4], pow: 'grenade', cd: 4.5, does: 'Lobs a grenade at a marked circle. Enemies walk out of it if they can, so it lands on the slowed, rooted and stunned.' },
-    { key: 'rocketeer', team: 0, name: 'Rocketeer', hp: 95, spd: 82, range: 330, dmg: 64, rate: 2.7, shot: 'rocket', big: true, lane: [4, 2, 1], does: 'Fires slow rockets that splash. Picks the toughest enemy in view, and its warhead deals double damage to the mech.' },
+    { key: 'grenadier', team: 0, name: 'Grenadier', hp: 100, spd: 88, range: 250, dmg: 9, rate: .36, shot: 'bullet', lane: [0, 1, 6], pow: 'grenade', cd: 4.5, does: 'Lobs a grenade at a marked circle. Enemies walk out of it if they can, so it lands on the slowed, rooted and stunned.' },
+    { key: 'rocketeer', team: 0, name: 'Rocketeer', hp: 95, spd: 82, range: 330, dmg: 64, rate: 2.7, shot: 'rocket', big: true, lane: [4, 2, 1], does: 'Fires slow rockets that splash. Picks the toughest enemy in view, and its warhead is built for armour.' },
     { key: 'drone-operator', team: 0, name: 'Drone Operator', hp: 85, spd: 86, range: 210, dmg: 8, rate: .34, shot: 'bullet', lane: [3, 2, 3], pow: 'recon', cd: 7, does: 'Sends a recon drone over the walls. It marks everyone near where it lands, including a cloaked enemy.' },
     { key: 'k9-handler', team: 0, name: 'K9 Handler', hp: 100, spd: 90, range: 220, dmg: 10, rate: .34, shot: 'bullet', lane: [1, 1, 4], pow: 'dog', cd: 7, does: 'Releases a dog that runs an enemy down, bites and roots it in place.' },
     { key: 'commander', team: 0, name: 'Commander', hp: 115, spd: 88, range: 220, dmg: 10, rate: .36, shot: 'bullet', leads: true, lane: [1, 2, 1], pow: 'rally', cd: 11, does: 'Stays with the biggest group. Squadmates nearby fire 20% faster, and a rally call speeds them up.' },
     // sci-fi
     { key: 'trooper', team: 1, name: 'Trooper', hp: 100, spd: 92, range: 240, dmg: 17, rate: .36, shot: 'bolt', lane: [3, 2, 3], pow: 'overcharge', cd: 7, does: 'Baseline plasma rifle. Bolts fly straight, so a moving target at range can be missed. Every few seconds it fires an overcharged bolt that sets the target burning.' },
     { key: 'mech', team: 1, name: 'Mech', hp: 330, spd: 58, range: 235, dmg: 12, rate: .22, shot: 'bolt', size: 1.45, lane: [1, 4, 0], pow: 'stomp', cd: 6, does: 'Three units’ worth of health and a slow walk down the middle. It winds up a stomp that knocks down everyone still next to it. Too slow to sidestep aimed shots or rockets.' },
-    { key: 'hover-drone', team: 1, name: 'Hover Drone', hp: 60, spd: 150, range: 175, dmg: 9, rate: .15, shot: 'bolt', dodge: .3, size: .85, lane: [3, 0, 3], does: 'Fast and fragile, always on an outer lane. 30% of shots miss it.' },
+    { key: 'hover-drone', team: 1, flank: true, name: 'Hover Drone', hp: 60, spd: 150, range: 175, dmg: 9, rate: .15, shot: 'bolt', dodge: .3, size: .85, lane: [3, 0, 3], does: 'Fast and fragile, always on an outer lane. 30% of shots miss it.' },
     { key: 'shield-drone', team: 1, name: 'Shield Drone', hp: 80, spd: 110, range: 0, dmg: 0, rate: 1, shot: 'none', bubble: 72, size: .85, lane: [1, 3, 1], does: 'Unarmed. Floats behind the toughest squadmate in the field (usually the mech) and projects a bubble; shots from outside it deal half damage.' },
     { key: 'cyborg', team: 1, name: 'Cyborg', hp: 185, spd: 100, range: 30, dmg: 27, rate: .5, shot: 'melee', close: true, lane: [0, 2, 5], pow: 'charge', cd: 6, does: 'A melee bruiser. Charges across a room, knocks its target down, then stays on top of it.' },
     { key: 'xeno-swarm', team: 1, name: 'Xeno Swarm', hp: 125, spd: 128, range: 26, dmg: 11, rate: .22, shot: 'melee', close: true, lane: [0, 1, 6], pow: 'leap', cd: 5, does: 'Rushes through the tunnels, leaps onto a target and leaves it bleeding.' },
     { key: 'psion', team: 1, name: 'Psion', hp: 80, spd: 86, range: 270, dmg: 19, rate: .7, shot: 'arc', lane: [3, 2, 1], pow: 'confuse', cd: 7, does: 'Attacks with arcs of energy. Channels a confusion on one enemy, who then wanders and cannot act. Any damage to the psion breaks the channel.' },
     { key: 'cloaker', team: 1, name: 'Cloaker', hp: 75, spd: 104, range: 160, dmg: 17, rate: .3, shot: 'bolt', cloak: true, lane: [3, 0, 3], does: 'Invisible until it fires or an enemy comes very close. Its first shot out of cloak deals triple damage.' },
     { key: 'repair-bot', team: 1, name: 'Repair Bot', hp: 85, spd: 100, range: 150, dmg: 9, rate: .45, shot: 'bolt', heals: 17, size: .85, lane: [1, 3, 1], does: 'Follows whoever is missing the most health (usually the mech) and repairs them with a beam.' },
-    { key: 'blinker', team: 1, name: 'Blinker', hp: 95, spd: 94, range: 220, dmg: 17, rate: .36, shot: 'bolt', lane: [3, 1, 3], pow: 'blink', cd: 5, does: 'Teleports to a new angle on its target and deals 50% more damage for a moment after.' },
+    { key: 'blinker', team: 1, name: 'Blinker', hp: 95, spd: 94, range: 220, dmg: 17, rate: .36, shot: 'bolt', lane: [3, 1, 3], pow: 'blink', cd: 5, does: 'Teleports to a new angle on its target and strikes hard in the moment after.' },
   ];
   const TEAMS = ['Modern', 'Sci-fi'];
 
@@ -108,10 +134,41 @@
     // a spawn room is safe ground: nobody in their own spawn can be hurt, targeted or hunted, and nobody shoots from inside one
     const home = u => u.room === bases[u.team];
 
+    // how much a hit counts for, given who is hitting whom, where and in what state (see EDGE)
+    function edge(u, e, kind) {
+      const tiles = dist(u, e) / 40, lane = map.laneOf[e.room], tight = lane === 'tun' || lane === 'link';
+      switch (u.def.key) {
+        case 'rifleman': return tiles >= 2 && tiles <= 4.5 ? 1.7 : .7;
+        case 'heavy-gunner': return B.t - (u.movedT || 0) > .7 ? 1.8 : .5;
+        case 'riot-shield': return tiles < 1.6 ? 2.4 : .5;
+        case 'marksman': return tiles >= 6 ? 1.8 : tiles < 3 ? .4 : 1;
+        case 'grenadier': return kind === 'blast' && tight ? 1.9 : .7;
+        case 'rocketeer': return e.def.size > 1.2 ? 2.2 : .8;
+        case 'drone-operator': return e.st.marked > 0 ? 1.9 : .6;
+        case 'k9-handler': return e.st.root > 0 ? 2.2 : .75;
+        case 'commander': { const n = mates(u).filter(m => dist(u, m) < 130).length; return n >= 3 ? 1.9 : n ? .9 : .5; }
+        case 'trooper': return e.st.burn > 0 || (e.hitBy && e.hitBy !== u && e.hitBy.team === u.team && B.t - e.hitT < .6) ? 1.7 : .8;
+        case 'mech': return lane === 'mid' ? 1.5 : tight ? .5 : .9;
+        case 'hover-drone': { let da = Math.atan2(u.y - e.y, u.x - e.x) - e.face; da = Math.abs(Math.atan2(Math.sin(da), Math.cos(da))); return da > 2 ? 2.4 : .6; }
+        case 'cyborg': return u.st.rush > 0 || u.dash ? 2 : .8;
+        case 'xeno-swarm': return e.st.bleed > 0 ? 1.9 : .7;
+        case 'psion': return e.st.confuse > 0 ? 2.6 : .7;
+        case 'cloaker': return foes(u).some(m => m !== e && dist(m, e) < 120) ? .6 : 1.8;
+        case 'blinker': return u.st.amp > 0 ? 2.2 : .6;
+      }
+      return .8;
+    }
     function hurt(src, tgt, amt, kind, from) {
       if (!tgt.alive || tgt.st.guard > 0 || home(tgt) || B.over) return 0;
       if (tgt.def.dodge && kind !== 'dot' && kind !== 'blast' && R() < tgt.def.dodge) { fx('text', { x: tgt.x, y: tgt.y - 18, text: 'miss', ttl: .5 }); return 0; }
       amt *= scale;
+      let fav = false;
+      if (kind !== 'dot') {
+        const m = edge(src, tgt, kind); amt *= m; fav = m >= 1.4;
+        if (fav && B.t - (src.edgeT || -9) > 1.4) { src.edgeT = B.t; fx('text', { x: tgt.x, y: tgt.y - 22, text: EDGE[src.def.key][0], ttl: .8, team: src.team }); }
+        src.dealt = (src.dealt || 0) + amt; if (fav) src.dealtFav = (src.dealtFav || 0) + amt;
+        tgt.hitBy = src; tgt.hitFav = fav;
+      }
       if (tgt.st.marked > 0) amt *= 1.25;
       if (tgt.def.key === 'riot-shield' && from && kind !== 'dot' && !busy(tgt)) {
         let da = Math.atan2(from.y - tgt.y, from.x - tgt.x) - tgt.face; da = Math.atan2(Math.sin(da), Math.cos(da));
@@ -125,20 +182,19 @@
     function kill(src, tgt, kind) {
       tgt.alive = false; tgt.dead = RESPAWN; tgt.deaths++; tgt.target = null; tgt.aim = null; tgt.dash = null;
       src.kills++; B.score[src.team]++;
-      B.deaths.push({ x: tgt.x, y: tgt.y, team: tgt.team, room: tgt.room, d: dist(src, tgt), kind });
+      B.deaths.push({ x: tgt.x, y: tgt.y, team: tgt.team, room: tgt.room, d: dist(src, tgt), kind, fav: kind === 'dot' ? !!tgt.hitFav && tgt.hitBy === src : !!tgt.hitFav });
       fx('dead', { x: tgt.x, y: tgt.y, ttl: 1.4, team: tgt.team });
       B.feed.unshift({ t: B.t, k: src.id, v: tgt.id, kind }); if (B.feed.length > 6) B.feed.pop();
       if (!B.first) B.first = { k: src.id, v: tgt.id };
       if (B.score[src.team] >= goal) { B.over = true; B.winner = src.team; }
     }
-    const blast = (src, x, y, r, dmg, armour) => { fx('burst', { x, y, r, team: src.team, ttl: .45 }); foes(src).forEach(e => { const d = Math.hypot(e.x - x, e.y - y); if (d < r) hurt(src, e, dmg * (1 - .5 * d / r) * (armour && e.def.size > 1.2 ? 2 : 1), 'blast', { x, y }); }); };
+    const blast = (src, x, y, r, dmg) => { fx('burst', { x, y, r, team: src.team, ttl: .45 }); foes(src).forEach(e => { const d = Math.hypot(e.x - x, e.y - y); if (d < r) hurt(src, e, dmg * (1 - .5 * d / r), 'blast', { x, y }); }); };
     const canDodge = u => u.alive && !busy(u) && !(u.st.root > 0) && !u.dash && !u.aim && !u.chan && !(u.wind > 0);
     // a straight shot: flies from a toward b and on to `reach`, and stops at the first wall
     const bolt = (u, e, o) => { const L = dist(u, e) || 1; B.shots.push({ type: 'bolt', src: u, x: u.x, y: u.y, vx: (e.x - u.x) / L, vy: (e.y - u.y) / L, room: u.room, left: u.def.range * 1.25, team: u.team, ang: Math.atan2(e.y - u.y, e.x - u.x), ...o }); };
 
     function fire(u, e) {
       const d = u.def; let dmg = d.dmg;
-      if (u.st.amp > 0) dmg *= 1.5;
       if (d.cloak && B.t - u.lastFire > 2) { dmg *= 3; fx('text', { x: u.x, y: u.y - 20, text: 'ambush', ttl: .7 }); }
       u.lastFire = B.t;
       if (d.shot === 'bullet') { const k = dist(u, e) / d.range, fall = k < .5 ? 1 : 1 - .6 * (k - .5) / .5;   // bullets lose up to 60% of their damage over the far half of their range
@@ -178,7 +234,7 @@
             const a = R() * TAU, r = 80 + R() * 80, p = { x: e.x + Math.cos(a) * r, y: e.y + Math.sin(a) * r }; p.room = roomAt(p.x, p.y);
             if (p.room && !bases.includes(p.room) && roomAt(p.x + 10, p.y) && roomAt(p.x - 10, p.y) && roomAt(p.x, p.y + 10) && roomAt(p.x, p.y - 10) && los(p, e)) {
               fx('blink', { x: u.x, y: u.y, x2: p.x, y2: p.y, team: u.team, ttl: .5 });
-              u.x = p.x; u.y = p.y; u.room = p.room; u.path = []; u.st.amp = 1.6; used(); break;
+              u.x = p.x; u.y = p.y; u.room = p.room; u.path = []; u.st.amp = 2.5; used(); break;
             }
           }
         } break;
@@ -194,7 +250,7 @@
         const dd = dist(u, e); let s = -dd;
         if (d.big) s += e.hpMax * 2;                              // rocketeer: the toughest thing in view
         if (d.hold && dd < d.range) s += 300 - e.hp + (e.def.size > 1.2 ? 250 : 0) + (e.st.root > 0 || e.st.stun > 0 || e.st.slow > 0 ? 200 : 0);   // marksman: whoever cannot sidestep (the mech, anyone held in place), then whoever one shot will finish
-        if (d.cloak) s -= e.hpMax;                                // cloaker: soft targets
+        if (d.cloak) s -= e.hpMax + (foes(u).some(m => m !== e && dist(m, e) < 120) ? 200 : 0);   // cloaker: soft targets, isolated first
         if (e.st.marked > 0) s += 60;
         if (e === u.target) s += 30;
         if (s > score) { score = s; tgt = e; }
@@ -224,7 +280,10 @@
       if (lead && !(tgt && !d.heals && !d.bubble && dist(u, tgt) < d.range)) { if (dist(u, lead) > (d.heals ? 70 : d.bubble ? 10 : 55)) g = { x: lead.x, y: lead.y, room: lead.room }; }
       else if (tgt) {
         const dd = dist(u, tgt);
-        if (d.close || dd > d.range * .85) g = { x: tgt.x, y: tgt.y, room: tgt.room };
+        const flank = d.flank && tgt.room === u.room ? { x: tgt.x - Math.cos(tgt.face) * 70, y: tgt.y - Math.sin(tgt.face) * 70 } : null;
+        if (flank && roomAt(flank.x, flank.y, u.room) === u.room && dist(u, flank) > 24) g = { ...flank, room: u.room };   // hover drone: get behind it
+        else if (d.close || dd > d.range * (d.band || .85)) g = { x: tgt.x, y: tgt.y, room: tgt.room };
+        else if (d.plant) g = null;                                                                                    // heavy gunner: stand and fire
         else if (!d.hold && (u.wander -= .2) <= 0) { u.wander = .8 + R() * .8; const p = { x: u.x + (R() - .5) * 70, y: u.y + (R() - .5) * 70 }; if (roomAt(p.x, p.y, u.room) === u.room) g = { ...p, room: u.room }; }
         else g = u.goalPt && u.goalPt.room === u.room && !d.hold ? u.goalPt : null;
         if (u.phase === 'lane') u.phase = 'hunt';
@@ -250,7 +309,7 @@
 
     function moveTo(u, x, y, step) {
       const dx = x - u.x, dy = y - u.y, L = Math.hypot(dx, dy);
-      if (L > .01) u.mv = Math.atan2(dy, dx);
+      if (L > .01) { u.mv = Math.atan2(dy, dx); if (step > .01) u.movedT = B.t; }
       if (L <= step) { u.x = x; u.y = y; return true; }
       u.x += dx / L * step; u.y += dy / L * step; return false;
     }
@@ -284,7 +343,7 @@
           if (!e.alive) u.dash = null;
           else if (moveTo(u, e.x, e.y, u.dash.spd * dt) || dist(u, e) < 20) {
             hurt(u, e, u.dash.hit, 'melee', u); if (u.dash.stun) e.st.stun = Math.max(e.st.stun || 0, u.dash.stun); if (u.dash.bleed) { e.st.bleed = u.dash.bleed; e.st.bleedBy = u; }
-            fx('burst', { x: e.x, y: e.y, r: 20, team: u.team, ttl: .25 }); u.dash = null;
+            fx('burst', { x: e.x, y: e.y, r: 20, team: u.team, ttl: .25 }); if (!u.dash.arc) u.st.rush = 2; u.dash = null;
           }
           const r = roomAt(u.x, u.y, u.room); if (r) u.room = r; else u.dash = null;
           continue;
@@ -303,7 +362,7 @@
           else if (u.side && (u.side.t -= dt) > 0) dir = u.side.dir; else u.side = null;
           if (dir) for (const [cx, cy] of [dir, [-dir[1], dir[0]], [dir[1], -dir[0]]]) {
             const nx = u.x + cx * sp * dt, ny = u.y + cy * sp * dt, r = roomAt(nx + cx * 8, ny + cy * 8, u.room);
-            if (r && (r === u.room || adj[u.room].some(a => a.to === r && Math.hypot(a.d.m[0] - nx, a.d.m[1] - ny) < a.d.gw / 2)) && r !== bases[1 - u.team]) { u.x = nx; u.y = ny; u.room = roomAt(nx, ny, u.room) || u.room; dodging = true; break; }
+            if (r && (r === u.room || adj[u.room].some(a => a.to === r && Math.hypot(a.d.m[0] - nx, a.d.m[1] - ny) < a.d.gw / 2)) && r !== bases[1 - u.team]) { u.x = nx; u.y = ny; u.movedT = B.t; u.room = roomAt(nx, ny, u.room) || u.room; dodging = true; break; }
           }
         }
         // move (not while lining up a shot)
@@ -359,7 +418,7 @@
           const dx = s.tx - s.x, dy = s.ty - s.y, L = Math.hypot(dx, dy), st = s.spd * dt; s.ang = Math.atan2(dy, dx);
           const nx = s.x + dx / (L || 1) * st, ny = s.y + dy / (L || 1) * st;
           if (L <= st || (s.type === 'rocket' && !roomAt(nx, ny))) {
-            if (s.type === 'rocket') blast(s.src, s.x, s.y, 48, s.dmg, true);
+            if (s.type === 'rocket') blast(s.src, s.x, s.y, 48, s.dmg);
             else { fx('ping', { x: s.tx, y: s.ty, r: 90, team: s.team, ttl: .7 }); foes(s.src).forEach(f => { if (Math.hypot(f.x - s.tx, f.y - s.ty) < 90) { f.st.marked = 5; hurt(s.src, f, 8, 'blast', null); } }); }
             return false;
           }
@@ -389,10 +448,10 @@
       const share = l => D.filter(k => map.laneOf[k.room] === l).length / n, quiet = Math.min(share('long'), share('mid'), share('tun'));
       const med = l => { const a = D.filter(k => map.laneOf[k.room] === l && k.room !== 'An' && k.room !== 'Bn' && k.room !== 'As' && k.room !== 'Bs' && k.kind !== 'dot').map(k => k.d).sort((p, q) => p - q); return a.length ? a[a.length >> 1] / 40 : 0; };
       const lg = med('long'), tn = med('tun');
-      return { front: [Math.round(mid3 * 100) + '%', mid3 >= .45], lanes: [Math.round(quiet * 100) + '%', quiet >= .15], range: [lg.toFixed(1) + ' and ' + tn.toFixed(1), lg >= tn * 1.5 && lg > 0], mid: [opt.midShut ? 'walled up' : String(B.midFlips), !opt.midShut && B.midFlips >= 6], thirds: [0, 1, 2].map(t => D.filter(k => third(k.x) === t).length / n), n: D.length };
+      return { front: [Math.round(mid3 * 100) + '%', mid3 >= .45], lanes: [Math.round(quiet * 100) + '%', quiet >= .15], range: [lg.toFixed(1) + ' and ' + tn.toFixed(1), lg >= tn * 1.5 && lg > 0], mid: [opt.midShut ? 'walled up' : String(B.midFlips), !opt.midShut && B.midFlips >= 6], edge: [Math.round(D.filter(k => k.fav).length / n * 100) + '%', D.filter(k => k.fav).length / n >= .5], thirds: [0, 1, 2].map(t => D.filter(k => third(k.x) === t).length / n), n: D.length };
     };
     B.cloaked = cloaked;
     return B;
   }
-  root.FPSSIM = { create, ROSTER, TEAMS, SCRIPT };
+  root.FPSSIM = { create, ROSTER, TEAMS, SCRIPT, EDGE };
 })(typeof window !== 'undefined' ? window : globalThis);
