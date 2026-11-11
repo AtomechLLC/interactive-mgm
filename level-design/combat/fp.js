@@ -83,7 +83,7 @@
       } else if (it.kind === 'unit') {
         // a capsule body in the squad's colour, with the token worn as its face. The face slides round the body with the
         // unit's facing and is gone when it has its back to the camera.
-        const e = it.e, sz = e.def.size || 1, bw = 24 * sz * k, bh = (e.def.fly ? 26 : 46) * sz * k, r = bw / 2, base = floor - (e.def.fly ? 22 * k : 0), top = base - bh, cy = top + r * 1.05;
+        const e = it.e, sz = e.def.size || 1, bw = 24 * sz * k, bh = (e.def.fly ? 26 : 46) * sz * k, r = bw / 2, base = floor - (e.def.fly ? 22 * k : e.onWall ? 30 * sz * k : e.dash && e.dash.arc ? 16 * k : 0), top = base - bh   /* a clinging unit sits up on the wall */, cy = top + r * 1.05;
         let turn = Math.atan2(cam.y - e.y, cam.x - e.x) - e.face; turn = Math.atan2(Math.sin(turn), Math.cos(turn));   // 0 = looking straight at the camera
         seen(x - r - 4, x + r + 4, f, () => {
           g.globalAlpha = near * it.a;

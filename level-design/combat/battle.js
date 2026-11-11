@@ -207,7 +207,7 @@
       else if (f.type === 'ring') { const r = f.r * (.4 + .6 * k); stampTok(g, tel('ring', f.team), f.x, f.y, 0, r / 45, r / 45, 50, 50, a); }
       else if (f.type === 'ping') { const r = f.r * (.5 + .5 * k); stampTok(g, tel('target-circle', f.team), f.x, f.y, 0, r / 46, r / 46, 50, 50, a); }
       else if (f.type === 'dash') { const L = Math.hypot(f.x2 - f.x, f.y2 - f.y); stampTok(g, tok(`arrows/charge-${TEAM[f.team].tel}`), f.x, f.y, Math.atan2(f.y2 - f.y, f.x2 - f.x) + Math.PI / 2, .3, L / 92, 50, 96, a); }
-      else if (f.type === 'leap') { const L = Math.hypot(f.x2 - f.x, f.y2 - f.y) / 74; stampTok(g, tok(`arrows/leap-${TEAM[f.team].tel}`), f.x, f.y, Math.atan2(f.y2 - f.y, f.x2 - f.x) - .11, L, L * .7, 12, 88, a); }
+      else if (f.type === 'leap') { /* no arrow: the body is seen leaving the wall */ }
       else if (f.type === 'blink') { [[f.x, f.y], [f.x2, f.y2]].forEach(p => stampTok(g, tok('props/vortex'), p[0], p[1], k * 5, .34, .34, 50, 50, a)); g.save(); g.globalAlpha = a * .7; g.setLineDash([4, 7]); g.strokeStyle = TEAM[f.team].col; g.lineWidth = 2.5; g.beginPath(); g.moveTo(f.x, f.y); g.lineTo(f.x2, f.y2); g.stroke(); g.restore(); }
     });
     // units
@@ -224,6 +224,10 @@
         if (u.broken) { g.save(); g.setLineDash([3, 5]); g.strokeStyle = C.red; g.lineWidth = 2; g.beginPath(); g.arc(u.x, u.y, r + 6, u.face - 1.0, u.face + 1.0); g.stroke(); g.restore(); }
         else { g.strokeStyle = 'rgba(29,36,51,.25)'; g.lineWidth = 4; g.beginPath(); g.arc(u.x, u.y, r + 6, u.face - 1.0, u.face + 1.0); g.stroke(); g.strokeStyle = B.t - (u.blockT || -9) < .2 ? '#fff' : '#1d2433'; g.beginPath(); g.arc(u.x, u.y, r + 6, u.face - k, u.face + k); g.stroke(); }
       }
+      if (d.cling && u.onWall) {   // on a wall: legs gripping it, and a shadow thrown onto the floor beside it
+        const w = B.wallPt(u.room, u.x, u.y), ox = -w.nx, oy = -w.ny; g.strokeStyle = '#4b2e63'; g.lineWidth = 2.2; g.lineCap = 'round';
+        for (let i = -1.5; i <= 1.5; i++) { const tx = -oy * i * 6, ty = ox * i * 6; g.beginPath(); g.moveTo(u.x + tx * .6 + ox * r * .5, u.y + ty * .6 + oy * r * .5); g.lineTo(u.x + tx * 1.3 + ox * (w.d + 3), u.y + ty * 1.3 + oy * (w.d + 3)); g.stroke(); }
+      } else
       if (d.key === 'xeno-swarm') for (let i = 0; i < 4; i++) { const a = B.t * 3 + i * TAU / 4; g.fillStyle = '#4b2e63'; g.beginPath(); g.arc(u.x + Math.cos(a) * (r + 7), u.y + Math.sin(a) * (r + 7), 3.2, 0, TAU); g.fill(); }
       // health bar and status badges
       const w = 26 * (d.size || 1), hp = clamp(u.hp / u.hpMax); g.globalAlpha = ghost;
