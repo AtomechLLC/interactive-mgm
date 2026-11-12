@@ -5,7 +5,7 @@
   const $ = (r, q) => r.querySelector(q), $$ = (r, q) => [...r.querySelectorAll(q)];
   const FPS = 60, F = s => Math.round(s * FPS);
   const LEAD = 0.45, TAIL = 0.7;                 // idle before the attack starts, and after both are free
-  const POS = { phalanx: 360, claw: 580 }, GROUND = 40;
+  const POS = { phalanx: 360, claw: 605 }, GROUND = 40;
 
   const ATTACK = {
     phalanx: { anim: 'Sword and Board Punch Attack', idle: 'Sword and Board Idle', label: 'Phalanx' },
@@ -36,6 +36,9 @@
         const R = { phalanx: scene.rig('phalanx'), claw: scene.rig('claw') };
         R.phalanx.x = POS.phalanx; R.phalanx.y = GROUND; R.phalanx.faceRight = true;
         R.claw.x = POS.claw; R.claw.y = GROUND; R.claw.faceRight = false;      // facing each other
+        // the probe hovers: lift it until its body is level with Phalanx's head
+        R.phalanx.pose(ATTACK.phalanx.idle, 0); R.claw.pose(ATTACK.claw.idle, 0);
+        R.claw.y = GROUND + (R.claw.bone('Body').y - R.phalanx.bone('Head').y);
         S.R = R;
 
         // contact window per attacker: Phalanx keys a hitbox; the probe has none, so we measure when its claw is furthest forward
