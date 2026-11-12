@@ -29,7 +29,7 @@
   const part = (slot, v) => PARTS.find(p => p[0] === slot && p[1] === v);
   const uses = p => CARDS.filter(c => c[p[0]] === p[1]).length;
   const pid = p => p[0] + ':' + p[1];
-  const CW = 156, CH = 142, cx = i => 92 + (i % 4) * 170, cy = i => 116 + Math.floor(i / 4) * 152;
+  const CW = 162, CH = 152, cx = i => 100 + (i % 4) * 178, cy = i => 120 + Math.floor(i / 4) * 166;
   const HL = ['fire:kill', 'move:walk', 'stomp:hurt'];
   const STEPS = [[0, 'players'], [3.6, 'flip'], [6.2, 'tally'], [7.6, 'hl0'], [10.2, 'hl1'], [12.6, 'hl2'], [15.2, 'space'], [19.5, 'end']];
   const DUR = 20;
@@ -49,12 +49,16 @@
       enemy(g, c, 0, -12, 70, t);
       text(g, c.name, 0, CH / 2 - 20, { size: c.name.length > 13 ? 13 : 15, w: 700, display: true });
     } else {
-      enemy(g, c, -CW / 2 + 26, -CH / 2 + 24, 30, t);
-      text(g, c.name, -CW / 2 + 46, -CH / 2 + 24, { align: 'left', size: c.name.length > 13 ? 11 : 12.5, w: 700, display: true });
+      // header: sprite + name, shrunk to fit beside the sprite; then three label-over-chip rows with even gaps
+      enemy(g, c, -CW / 2 + 24, -CH / 2 + 22, 30, t);
+      g.save(); let ns = 13; g.font = `700 ${ns}px Montserrat, Jost, sans-serif`;
+      while (ns > 9 && g.measureText(c.name).width > CW - 54) { ns -= .5; g.font = `700 ${ns}px Montserrat, Jost, sans-serif`; }
+      g.restore();
+      text(g, c.name, -CW / 2 + 44, -CH / 2 + 22, { align: 'left', size: ns, w: 700, display: true });
       ['move', 'stomp', 'fire'].forEach((sl, j) => {
-        const p = part(sl, c[sl]), yy = -12 + j * 34;
-        text(g, SLOT[sl], -CW / 2 + 10, yy - 11, { align: 'left', size: 10.5, w: 600, col: C.muted });
-        chip(g, p[2], 0, yy + 6, { ...TONE[p[3]], size: 12.5, width: CW - 18 });
+        const p = part(sl, c[sl]), yy = -CH / 2 + 44 + j * 37;
+        text(g, SLOT[sl], -CW / 2 + 12, yy, { align: 'left', size: 10.5, w: 600, col: C.muted });
+        chip(g, p[2], 0, yy + 16, { ...TONE[p[3]], size: 12, width: CW - 22 });
       });
     }
     g.restore();
@@ -62,19 +66,19 @@
   function tally(g, a, hl) {
     if (a <= 0) return;
     g.save(); g.globalAlpha = a;
-    panel(g, 768, 22, 256, 470, { title: 'How often each part is used' });
-    let y = 66;
+    panel(g, 768, cy(0) - CH / 2, 256, cy(8) - cy(0) + CH, { title: 'How often each part is used' });
+    let y = cy(0) - CH / 2 + 50;
     ['move', 'stomp', 'fire'].forEach(sl => {
-      text(g, SLOT[sl], 784, y, { align: 'left', size: 13, w: 700, col: C.ink, display: true }); y += 20;
+      text(g, SLOT[sl], 784, y, { align: 'left', size: 13, w: 700, col: C.ink, display: true }); y += 23;
       PARTS.filter(p => p[0] === sl).forEach(p => {
         const n = uses(p), on = hl === pid(p);
         g.save(); g.globalAlpha *= hl && !on ? .35 : 1;
         chip(g, p[2], 784, y, { ...TONE[p[3]], size: 12, width: 112, align: 'left' });
         for (let k = 0; k < n; k++) { g.fillStyle = TONE[p[3]].edge; g.beginPath(); g.roundRect(904 + k * 9, y - 7, 7, 14, 2); g.fill(); }
         text(g, '×' + n, 904 + n * 9 + 5, y + 1, { align: 'left', size: 12, w: 700, col: C.muted });
-        g.restore(); y += 24;
+        g.restore(); y += 27;
       });
-      y += 6;
+      y += 10;
     });
     g.restore();
   }
@@ -101,7 +105,7 @@
         st.view = L.on('flip') ? 'studio' : 'player';
       }
       const studio = tallyA > 0;
-      text(g, studio ? 'What the studio built: 3 questions, 12 answers' : 'What players see: 12 enemies', studio ? 384 : 384, 28, { size: 20, w: 800, display: true, col: studio ? C.navy : C.ink });
+      text(g, studio ? 'What the studio built: 3 questions, 12 answers' : 'What players see: 12 enemies', 356, 24, { size: 20, w: 800, display: true, col: studio ? C.navy : C.ink });
       g.save(); if (studio) { g.translate(lerp(0, -10, tallyA), 0); }
       CARDS.forEach((c, i) => {
         const p = hl ? hl.split(':') : null;
@@ -111,7 +115,7 @@
       tally(g, tallyA, hl);
       if (hl) {
         const p = PARTS.find(q => pid(q) === hl);
-        text(g, `${SLOT[p[0]]}: “${p[2]}” is reused by ${uses(p)} of 12 enemies`, 384, 556, { size: 17, w: 700, col: TONE[p[3]].col });
+        text(g, `${SLOT[p[0]]}: “${p[2]}” is reused by ${uses(p)} of 12 enemies`, 356, 556, { size: 17, w: 700, col: TONE[p[3]].col });
       }
       if (space > 0) {
         g.save(); g.globalAlpha = space; g.fillStyle = 'rgba(255,252,244,.86)'; g.fillRect(0, 0, 1040, 585); g.restore();
