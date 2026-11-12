@@ -12,7 +12,7 @@
     let r = 720, c = [500, 500];
     for (let i = 0; i < PH.length; i++) {
       const [a, b, rr] = PH[i], prevR = i ? PH[i - 1][2] : 720, prevC = i ? cs[i - 1] : [500, 500];
-      if (t < a) { r = prevR; c = prevC; break; }
+      if (t < a) break;   // keep the shape the earlier phases left (it may still be mid-shrink)
       const k = clamp((t - a) / (b - a)); r = lerp(prevR, rr, k); c = [lerp(prevC[0], cs[i][0], k), lerp(prevC[1], cs[i][1], k)];
     }
     return { r, c };
@@ -67,6 +67,8 @@
           g.save(); g.beginPath(); g.rect(mx, my, ms, ms); g.arc(mx + z.c[0] * k, my + z.c[1] * k, z.r * k, 0, 6.2832, true); g.clip();
           g.fillStyle = 'rgba(138,79,214,.45)'; g.fillRect(mx, my, ms, ms); g.restore();
           g.strokeStyle = '#fff'; g.lineWidth = 3; g.beginPath(); g.arc(mx + z.c[0] * k, my + z.c[1] * k, z.r * k, 0, 6.2832); g.stroke();
+          const nx = PH.findIndex(p => mt < p[1]);   // the next safe zone, shown ahead of the storm as in Fortnite
+          if (nx >= 0) { const c2 = sim.cs[nx]; g.setLineDash([8, 6]); g.lineWidth = 2; g.beginPath(); g.arc(mx + c2[0] * k, my + c2[1] * k, PH[nx][2] * k, 0, 6.2832); g.stroke(); g.setLineDash([]); }
           const ph = PH.findIndex(p => mt < p[1]);
           if (ph >= 0 && mt >= PH[ph][0]) GK.text(g, 'the storm is closing', mx + 12, my + ms - 12, '#fff', 14, 'left', 700);
         }

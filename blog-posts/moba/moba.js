@@ -14,8 +14,24 @@
   const AD = 60, WIND = .25, CD = 1, END = 10;
   const WAVE = [0, 1, 2, 3, 4, 5].map(i => {
     const melee = i < 3, r = GK.rng(i + 4);
-    return { melee, hp: melee ? 477 : 296, gold: melee ? 21 : 14, start: 1 + r() * .6, dps: (melee ? 70 : 48) + r() * 20, x: melee ? 700 : 810, y: 140 + (i % 3) * 85 + (melee ? 0 : 20) };
+    return { melee, hp: melee ? 477 : 296, gold: melee ? 21 : 14, start: 1 + r() * .6, dps: (melee ? 70 : 48) + r() * 20, x: melee ? 610 : 705, y: 140 + (i % 3) * 85 };
   });
+  // the waves walk in and meet: red from the right (arriving as each starts taking damage), blue from the left by 1 s
+  const ease = k => 1 - (1 - k) * (1 - k);
+  function redPos(i, t) {
+    const m = WAVE[i]; let x = lerp(1090, m.x, ease(clamp(t / m.start)));
+    if (m.melee && t >= m.start) x -= Math.max(0, Math.sin((t - m.start) * 6.5 + i)) * 9;   // melee swing toward the blue line
+    return [x, m.y];
+  }
+  function bluePos(row, melee, t, st) {
+    const y = 140 + row * 85; let x = lerp(-50, melee ? 548 : 455, ease(clamp(t / 1.1)));
+    if (melee) {
+      const foe = st[row];   // the red melee minion in this row
+      if (foe.dead != null) x = lerp(x, WAVE[row + 3].x - 62, clamp((t - foe.dead) / .6));   // step up to the caster behind it
+      if (t >= 1.1) x += Math.max(0, Math.sin(t * 6.5 + row * 2)) * 9;
+    }
+    return [x, y];
+  }
   function wave(t, attacks) {     // replay: each minion's health and who killed it, given the player's attacks
     const st = WAVE.map(m => ({ hp: m.hp, dead: null, by: null }));
     const events = attacks.map(a => ({ t: a.t + WIND, i: a.i })).sort((a, b) => a.t - b.t);
@@ -49,7 +65,7 @@
       if (ui.tour) { ui.stopTour(); mine = []; t0 = ui.t; }
       const lt = ui.t - t0, st = wave(lt, mine), last = mine[mine.length - 1];
       if (last && lt < last.t + CD) return;
-      WAVE.forEach((m, i) => { if (Math.hypot(x - m.x, y - m.y) < 34 && st[i].dead == null) mine.push({ t: lt, i }); });
+      WAVE.forEach((m, i) => { const [px, py] = redPos(i, lt); if (Math.hypot(x - px, y - py) < 34 && st[i].dead == null) mine.push({ t: lt, i }); });
     });
     const DUR = END * 2;
     return {
@@ -64,14 +80,21 @@
         g.fillStyle = '#b8a77d'; g.fillRect(16, 110, 1008, 200);
         GK.head(g, label, 34, 46, 'left', '#fff', 18);
         // ally minions
-        [0, 1, 2].forEach(k => { [[430, 120 + k * 85, 'melee'], [350, 150 + k * 85, 'caster']].forEach(([x, y, kind]) => { const im = IMG(`lol-minion-${kind}-blue`); if (im) g.drawImage(im, x - 26, y - 26, 52, 52); }); });
+        [0, 1, 2].forEach(k => [true, false].forEach(melee => { const [x, y] = bluePos(k, melee, lt, st), im = IMG(`lol-minion-${melee ? 'melee' : 'caster'}-blue`); if (im) g.drawImage(im, x - 26, y - 26, 52, 52); }));
+        // ranged bolts: blue casters at the front red minion in their row, red casters at the blue melee minion
+        [0, 1, 2].forEach(k => {
+          const tgt = st[k].dead == null ? k : st[k + 3].dead == null ? k + 3 : -1;
+          const ph = (lt - 1.2 - k * .3) % 1; if (lt > 1.2 && tgt >= 0 && ph < .35) { const [ax, ay] = bluePos(k, false, lt, st), [bx, by] = redPos(tgt, lt); g.fillStyle = '#57b6ff'; g.beginPath(); g.arc(lerp(ax + 18, bx - 20, ph / .35), lerp(ay, by, ph / .35), 5, 0, 6.283); g.fill(); }
+          const rc = k + 3, ph2 = (lt - WAVE[rc].start - k * .2) % 1.1;
+          if (lt > WAVE[rc].start && st[rc].dead == null && ph2 < .35) { const [ax, ay] = redPos(rc, lt), [bx, by] = bluePos(k, true, lt, st); g.fillStyle = '#ff7a6b'; g.beginPath(); g.arc(lerp(ax - 18, bx + 20, ph2 / .35), lerp(ay, by, ph2 / .35), 5, 0, 6.283); g.fill(); }
+        });
         // player
         TD.player(250, 210, 0, 1.2);
         const cool = attacks.filter(a => a.t <= lt).pop();
         if (cool && lt - cool.t < CD) { g.strokeStyle = C.gold; g.lineWidth = 4; g.beginPath(); g.arc(250, 210, 30, -Math.PI / 2, -Math.PI / 2 + (lt - cool.t) / CD * 6.283); g.stroke(); }
-        attacks.forEach(a => { const k = (lt - a.t) / WIND; if (k < 0 || k > 1) return; const m = WAVE[a.i]; g.fillStyle = C.gold; g.beginPath(); g.arc(lerp(270, m.x, k), lerp(210, m.y, k), 6, 0, 6.283); g.fill(); });
-        WAVE.forEach((m, i) => {
-          const s2 = st[i];
+        attacks.forEach(a => { const k = (lt - a.t) / WIND; if (k < 0 || k > 1) return; const [tx, ty] = redPos(a.i, lt); g.fillStyle = C.gold; g.beginPath(); g.arc(lerp(270, tx, k), lerp(210, ty, k), 6, 0, 6.283); g.fill(); });
+        WAVE.forEach((m0, i) => {
+          let m = m0; const s2 = st[i], [mx0, my0] = redPos(i, lt); m = { ...m0, x: mx0, y: my0 };
           if (s2.dead != null) {
             const age = lt - s2.dead; if (age < 1.2) { g.save(); g.globalAlpha = 1 - age / 1.2; GK.head(g, s2.by === 'you' ? `+${m.gold} gold` : 'missed', m.x, m.y - age * 30, 'center', s2.by === 'you' ? C.gold : '#fff', 18); g.restore(); }
             return;
