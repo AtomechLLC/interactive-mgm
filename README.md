@@ -19,6 +19,8 @@ Open `index.html` in a browser (no build step, works straight off disk). It list
 
 - `student-tokens/`: **Student tokens**, round battle-map tokens (enemy, player, ability, hazard and object rings) cut from the decks' art, plus `vector-basics/` (simple SVG player tokens, arrows, telegraphs, status badges and props), for students laying out encounters in Miro. Browse and download them on `student-tokens/index.html` (linked from the home page); details in `student-tokens/README.md`.
 
+- `scriptures/`: **Design scripture demos**, standalone pages built with the Pixel Art Atlas sprites (Angais, CC0, AI-generated). `PROPOSALS.md` lists ten pitches. `inchpebbles-to-mountain/` is the first spike (Ashuras, Entry 1): a hero climbs a trail of coins (inchpebbles), obstacles (yards) and camps (milestones) to a summit, with a mountain-shaped progress bar and a switch per goal size. It is one self-contained file and does not use the slide engine; the trail data (`OBST`, `CAMPS`, `ZONES`) is at the top of its script. Not yet linked from the home page.
+
 Shared engine, theme and art stay in `assets/` at the root, so a deck one level down loads `../../assets/`. `404.html` redirects the old root deck URLs (for example `/core-actions/`) to their `pvp/` homes.
 
 | Key | Action |
