@@ -107,6 +107,21 @@ The earlier version of this slide rotated rooms and chamfered corners, then join
 
 ## The rules as a generator
 
-`../shared/manorgen.js` plays the eight recipes with random numbers inside the ranges above, then mirrors and turns the plan. Its `check(plan)` reads only the finished geometry and scores fourteen rules: grid count from wall directions, the turns, boundary weights, the round anchor, the two curves, the tower's bite, that every door joins the rooms it claims, door widths, no door facing a door, no overlapping rooms, a stair on every seam, lighter walls outside, loops through the outdoors, and neighbours of different size.
+`../shared/manorgen.js` starts every plan from a recipe and then has to deliver it. A recipe says what the manor must contain: the hall (nave and one aisle, nave and two aisles, a square great hall, or a nave with a transept), one to four towers, one to three wings and the shape of each (a two-room bar, an L, a T, or a wing wrapped round a court), whether there is a walled garden, and which edge rooms it has (loggia, apse, porch, outbuilding). `recipe(seed, asked)` keeps anything you ask for and rolls the rest.
 
-`node level-design/layout/manor-smoke.js 1000` draws a thousand first drafts, reports how often each rule holds, then breaks four rules on purpose and confirms the matching check catches each one. The generator covers one family of plan: the same arrangement of hall, tower, two wings and outbuilding with different proportions and orientation. It does not yet invent a different arrangement.
+`generate()` builds the recipe from parts, each one a rule from the study above:
+
+- The tower's size sets the hall. The heavy round tower nests in the corner between the hall and its lower hall, and both of its doors sit on its flat faces.
+- Each wing hinges on a hall corner and turns onto its own grid by 14 to 24 degrees. The turns are unequal and never all one way. The wedge the turn opens belongs to the hall, and a stair lies in that seam or at the wing's head.
+- Extra towers are lesser turrets, about half the big tower's radius, on outside corners. The apse stays at a third.
+- The garden, porch, loggia and outbuilding use thin walls, so the plan gets lighter toward its edge.
+- Doors are not at fixed positions. The ones that join the parts are cut first; the rest are picked from the free outside walls until the routes loop, and a door is never placed straight across a room from another.
+- Room sizes are nudged while building so that neighbours do not come out the same size.
+
+About one plan in ten is the study plan itself (the fixed arrangement measured above), so the original stays in the family.
+
+`check(plan)` reads only the finished geometry and scores fifteen rules. Three that used to describe one arrangement are now stated as the principle behind them: "one main grid, one more for each wing" (was: three grids), "turns small, unequal, not all one way" (was: two opposite turns), and "one big curve, the others clearly smaller" (was: two curves, one a third of the other). The main grid is found from the tower's flat faces, not from which grid has the most wall. The fifteenth rule, "delivers the recipe", counts towers, wings and named rooms in the drawing and compares them with what was asked.
+
+`node level-design/layout/manor-smoke.js 1000` reports, for a thousand seeds: how often each rule holds on a first draft (84.6% pass all fifteen; the old single arrangement scored 85.8% on fourteen), that every seed reaches a passing plan with redraws, how much variety comes out (802 different recipes, 630 different arrangements and 888 different room graphs, where the old generator scored 1 of each), that all 240 recipes asked for directly are delivered, and that four rules broken on purpose are each caught.
+
+What it still does not do: the hall is always one rectangle with the tower on one of its corners, wings attach to the hall and never to each other, and nothing here judges whether a plan is fun to play.
