@@ -74,6 +74,24 @@
   </div>
 </section>
 
+<section class="slide" data-title="Motion from Phalanx" data-demo="clips">
+  <div class="kicker">Reference: the stick figure cast</div>
+  <h2 class="sm">Motion from <span class="accent">a real rig</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Clip</h4>
+      <div class="seg cl-pick"></div>
+      <h4>Character</h4>
+      <div class="seg cl-who"></div>
+      <h4>Playback</h4>
+      <div class="seg cl-speed"><button class="btn" data-r="1">Real time</button><button class="btn on" data-r=".33">⅓ speed</button><button class="btn" data-r=".15">Slower</button></div>
+      <pre class="cast-code cl-code"></pre>
+      <p class="src">Joint angles sampled frame by frame from Phalanx, Atomech's Spine rig, at 30 fps (<code>assets/cast-motion.js</code>). Red frames are where her hitbox is live in the rig.</p>
+    </div>
+  </div>
+</section>
+
 <section class="slide" data-title="Who plays which part" data-demo="guide">
   <div class="kicker">Reference: the stick figure cast</div>
   <h2 class="sm">Same part, <span class="accent">same actor</span></h2>
@@ -98,6 +116,7 @@
 <script src="../assets/deck.js"></script>
 <script src="../assets/kit.js"></script>
 <script src="../assets/cast.js"></script>
+<script src="../assets/cast-motion.js"></script>
 <script src="cast-deck.js"></script>
 </body>
 </html>

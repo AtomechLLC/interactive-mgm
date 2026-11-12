@@ -201,33 +201,21 @@
       else if (k < wu + ac) { const q = (k - wu) / ac; arm = lerp(sty.light ? -2.2 : -2.6, 1.2, ease(q)); trail = q; lean = sty.light ? .1 : .22; step = sty.light ? 0 : 14 * q; if (sty.light && sw.cur.combo === sty.chain) spin = q * TAU; }
       else { const q = (k - wu - ac) / (len - wu - ac); arm = lerp(1.2, -.4, ease(q)); lean = lerp(sty.light ? .1 : .22, 0, q); step = sty.light ? 0 : 14 * (1 - q); trail = 1 + q; }
     }
-    g.save(); g.translate(x + step, y);
-    if (spin) g.scale(Math.cos(spin), 1);
-    g.rotate(lean);
-    g.lineCap = 'round'; g.strokeStyle = '#2b2f4a'; g.lineWidth = sty.light ? 9 : 13;
-    // legs
-    g.beginPath(); g.moveTo(0, -60); g.lineTo(-16, 0); g.moveTo(0, -60); g.lineTo(18, 0); g.stroke();
-    // torso and head
-    g.lineWidth = sty.light ? 14 : 22; g.beginPath(); g.moveTo(0, -60); g.lineTo(0, -116); g.stroke();
-    g.fillStyle = sty.light ? '#e8e2d6' : '#6b6a72'; g.beginPath(); g.arc(0, -134, sty.light ? 14 : 16, 0, TAU); g.fill();
-    if (!sty.light) { g.fillStyle = '#4a4952'; g.fillRect(-14, -138, 28, 6); }
-    if (sty.light) { g.fillStyle = sty.col; g.fillRect(-7, -128, 14, 30); }
-    // weapon arm
-    const sx = 0, sy = -108, al = sty.light ? 46 : 40;
-    const hx = sx + Math.cos(arm) * al, hy = sy + Math.sin(arm) * al;
-    g.strokeStyle = '#2b2f4a'; g.lineWidth = sty.light ? 7 : 10; g.beginPath(); g.moveTo(sx, sy); g.lineTo(hx, hy); g.stroke();
-    // weapon: a short chained blade, or a greatsword
-    const wl = sty.light ? 34 : 96;
-    g.strokeStyle = sty.light ? '#d9dde8' : '#b9bccb'; g.lineWidth = sty.light ? 6 : 10;
-    g.beginPath(); g.moveTo(hx, hy); g.lineTo(hx + Math.cos(arm) * wl, hy + Math.sin(arm) * wl); g.stroke();
-    if (sty.light) { g.strokeStyle = 'rgba(200,55,45,.6)'; g.lineWidth = 2; g.setLineDash([3, 4]); g.beginPath(); g.moveTo(hx, hy); g.lineTo(sx - 20, sy + 20); g.stroke(); g.setLineDash([]); }
-    // swing trail
+    // drawn with the shared cast (assets/cast.js): Wisp for the light chained blade, Bram for the greatsword
+    const RD = 180 / Math.PI, id = sty.light ? 'wisp' : 'bram', S = sty.light ? 1.05 : .95;
+    const opts = q => ({ x: x + step, y, s: S, face: spin ? (Math.cos(spin) || .01) : 1, weapon: sty.light ? 'dagger' : 'greatsword', pose: CAST.hold(90 - q * RD, { lean: lean * RD }) });
+    // swing trail, traced by the weapon tip
     if (trail > 0 && trail < 2) {
-      const a = trail <= 1 ? 1 : 2 - trail, r = al + wl * (sty.light ? 1 : .85);
-      g.strokeStyle = sty.light ? `rgba(255,140,90,${.7 * a})` : `rgba(240,220,170,${.55 * a})`; g.lineWidth = sty.light ? 10 : 18;
-      g.beginPath(); g.arc(sx, sy, r, sty.light ? -2.2 : -2.6, Math.min(1.2, lerp(-2.2, 1.2, clamp(trail)))); g.stroke();
+      const a = trail <= 1 ? 1 : 2 - trail, a0 = sty.light ? -2.2 : -2.6, a1 = Math.min(1.2, lerp(a0, 1.2, clamp(trail)));
+      g.save(); g.strokeStyle = sty.light ? `rgba(255,140,90,${.7 * a})` : `rgba(240,220,170,${.55 * a})`; g.lineWidth = sty.light ? 10 : 18; g.lineCap = 'round'; g.beginPath();
+      for (let q = 0; q <= 12; q++) { const p = CAST.tip(id, opts(lerp(a0, a1, q / 12))); q ? g.lineTo(p.x, p.y) : g.moveTo(p.x, p.y); }
+      g.stroke(); g.restore();
     }
-    g.restore();
+    CAST.draw(g, id, opts(arm));
+    if (sty.light) {   // the chain from the blade back to the wrist
+      const p = CAST.points(id, opts(arm));
+      g.strokeStyle = 'rgba(200,55,45,.6)'; g.lineWidth = 2; g.setLineDash([3, 4]); g.beginPath(); g.moveTo(p.handF.x, p.handF.y); g.lineTo(p.sh.x - 20, p.sh.y + 30); g.stroke(); g.setLineDash([]);
+    }
   }
   function timeline(g, sty, f, x, y, w, t) {
     // the last few seconds of swings as frame bars: windup, active, recovery
