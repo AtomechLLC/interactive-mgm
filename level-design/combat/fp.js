@@ -30,6 +30,11 @@
     let da = u.face - cam.ang; da = Math.atan2(Math.sin(da), Math.cos(da)); cam.ang += da * Math.min(1, o.dt * 7);
     cam.x = u.x; cam.y = u.y;
     const ca = Math.cos(cam.ang), sa = Math.sin(cam.ang);
+    // a followed swarm body that hangs from the ceiling sees the room upside down: the whole view rolls over as it climbs up
+    // and rolls back as it leaps. The eye is at half the wall's height, so a half turn is all it takes. The head-up display stays upright.
+    cam.roll = (cam.roll || 0) + ((u.def.cling && u.onWall ? 1 : 0) - (cam.roll || 0)) * Math.min(1, o.dt * 6); if (cam.roll < .002) cam.roll = 0; if (cam.roll > .998) cam.roll = 1;
+    g.save();
+    if (cam.roll) { const a = cam.roll * Math.PI, zoom = Math.abs(Math.cos(a)) + W / H * Math.abs(Math.sin(a)); g.translate(W / 2, H / 2); g.rotate(a); g.scale(zoom, zoom); g.translate(-W / 2, -H / 2); }
     // ceiling and floor
     const here = o.rooms && o.rooms[u.room], hm = here && MAT(here.mat);
     let gr = g.createLinearGradient(0, 0, 0, hor); gr.addColorStop(0, here && here.sky ? '#a9d3ea' : hm && hm.dim ? '#8f8478' : '#f6f1e2'); gr.addColorStop(1, rgb(FOG)); g.fillStyle = gr; g.fillRect(0, 0, W, hor);
@@ -85,8 +90,8 @@
         // where it is on the plan; a leap drops it onto its target, and it climbs back up when it returns to the wall.
         const e = it.e, sz = e.def.size || 1, rw = 11 * sz, r = rw * k;
         let want = rw;   // height of the orb's centre above the floor, in world units
-        if (e.onWall) want = WALL - rw - 1;
-        else if (e.dash) { const d0 = Math.hypot(e.dash.x0 - e.dash.tgt.x, e.dash.y0 - e.dash.tgt.y) || 1, p = Math.max(0, Math.min(1, 1 - Math.hypot(e.x - e.dash.tgt.x, e.y - e.dash.tgt.y) / d0)); want = (WALL - rw - 1) * (1 - p * p) + (rw + 6) * p * p; }
+        if (e.onWall) want = WALL - rw;   // its top touches the ceiling
+        else if (e.dash) { const d0 = Math.hypot(e.dash.x0 - e.dash.tgt.x, e.dash.y0 - e.dash.tgt.y) || 1, p = Math.max(0, Math.min(1, 1 - Math.hypot(e.x - e.dash.tgt.x, e.y - e.dash.tgt.y) / d0)); want = (WALL - rw) * (1 - p * p) + (rw + 6) * p * p; }
         e.fpH = e.dash ? want : e.fpH == null ? want : e.fpH + (want - e.fpH) * Math.min(1, o.dt * 6);
         const cy = floor - e.fpH * k, ceil = floor - WALL * k, hang = e.fpH > WALL * .6;
         let turn = Math.atan2(cam.y - e.y, cam.x - e.x) - e.face; turn = Math.atan2(Math.sin(turn), Math.cos(turn));
@@ -94,7 +99,6 @@
           g.globalAlpha = near * it.a * .8;
           g.fillStyle = 'rgba(40,30,20,.2)'; g.beginPath(); g.ellipse(x, floor, r, Math.max(1.5, r * EYE / f), 0, 0, TAU); g.fill();
           g.globalAlpha = near * it.a;
-          if (hang) { g.strokeStyle = '#4b2e63'; g.lineWidth = Math.max(1, Math.min(3, r * .14)); g.lineCap = 'round'; [-.75, -.25, .25, .75].forEach(q => { g.beginPath(); g.moveTo(x + q * r * .9, cy - r * .6); g.lineTo(x + q * r * 1.5, ceil); g.stroke(); }); }
           const col = TEAM[e.team].col, sh = g.createRadialGradient(x - r * .35, cy - r * .4, r * .1, x, cy, r); sh.addColorStop(0, 'rgba(255,255,255,.35)'); sh.addColorStop(.5, 'rgba(0,0,0,0)'); sh.addColorStop(1, 'rgba(0,0,0,.42)');
           g.beginPath(); g.arc(x, cy, r, 0, TAU); g.fillStyle = col; g.fill();
           if (Math.abs(turn) < 1.75) { const off = Math.sin(turn) * r * .5, wide = Math.max(.25, Math.cos(turn * .8)); g.save(); g.beginPath(); g.arc(x, cy, r, 0, TAU); g.clip(); g.translate(x - off, cy); g.scale(wide, hang ? -1 : 1); o.drawUnit(g, e.def, 0, 0, r * .9, 1, false); g.restore(); }   // upside down while it hangs
@@ -174,6 +178,7 @@
       if (B.t - (e.beamT || -9) < .12 && e.beamTo && e.beamTo.alive) line(e.x, e.y, e.beamTo.x, e.beamTo.y, '#2fb36a', 4, .8, [6, 5]);
     });
     if (B.zones.some(zn => zn.team !== u.team && Math.hypot(u.x - zn.x, u.y - zn.y) < zn.r)) warn = 'Inside a blast circle: get out';
+    g.restore();
     // hit flash, then the head-up display
     const hit = B.t - (u.hitT || -9); if (hit < .25) { const v = g.createRadialGradient(W / 2, H / 2, H * .3, W / 2, H / 2, H * .75); v.addColorStop(0, 'rgba(229,50,45,0)'); v.addColorStop(1, `rgba(229,50,45,${.5 * (1 - hit / .25)})`); g.fillStyle = v; g.fillRect(0, 0, W, H); }
     g.strokeStyle = 'rgba(28,36,80,.75)'; g.lineWidth = 2; g.beginPath(); g.moveTo(W / 2 - 12, hor); g.lineTo(W / 2 - 4, hor); g.moveTo(W / 2 + 4, hor); g.lineTo(W / 2 + 12, hor); g.moveTo(W / 2, hor - 12); g.lineTo(W / 2, hor - 4); g.moveTo(W / 2, hor + 4); g.lineTo(W / 2, hor + 12); g.stroke();
