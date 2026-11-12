@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Stick Figure Cast · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/deck.css">
+<link rel="stylesheet" href="../assets/kit.css">
+<link rel="stylesheet" href="../dgms/shared/dgms.css">
+<link rel="stylesheet" href="cast.css">
+<script>
+  window.DECK = { title: 'The Stick Figure Cast · reusable characters for side-view demos', home: '../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<section class="slide" data-title="Meet the cast" data-demo="lineup">
+  <div class="kicker">Reference: the stick figure cast</div>
+  <h2 class="sm">Nine characters, <span class="accent">one rig</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Pick a character</h4>
+      <div class="seg ln-pick"></div>
+      <div class="cast-card ln-card"></div>
+      <p class="src">Every figure is drawn by <code>assets/cast.js</code>. Click a figure on the stage to pick it too.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Pose sheet" data-demo="sheet">
+  <div class="kicker">Reference: the stick figure cast</div>
+  <h2 class="sm">Every pose, <span class="accent">by name</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>View</h4>
+      <div class="seg sh-mode"><button class="btn on" data-m="char">One character</button><button class="btn" data-m="pose">One pose</button></div>
+      <h4>Character</h4>
+      <div class="seg sh-pick"></div>
+      <label class="chk"><input type="checkbox" class="sh-ghost"> Draw as ghosts (key-pose style)</label>
+      <p class="mt-out sh-out"></p>
+      <p class="src">Click a pose to see it across the whole cast. Pose names are what you pass as <code>pose</code>.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Pose lab" data-demo="lab">
+  <div class="kicker">Reference: the stick figure cast</div>
+  <h2 class="sm">Poses in <span class="accent">motion</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Character</h4>
+      <div class="seg lb-pick"></div>
+      <h4>Motion</h4>
+      <div class="seg lb-motion"><button class="btn on" data-m="slash">Slash</button><button class="btn" data-m="thrust">Thrust</button><button class="btn" data-m="walk">Walk</button><button class="btn" data-m="run">Run</button><button class="btn" data-m="roll">Roll</button><button class="btn" data-m="blend">Blend two poses</button></div>
+      <div class="lb-strike">
+        <label class="rng">Startup <b data-v="S"></b><input type="range" data-k="S" min="3" max="36" value="14"></label>
+        <label class="rng">Active <b data-v="A"></b><input type="range" data-k="A" min="1" max="12" value="4"></label>
+        <label class="rng">Recovery <b data-v="R"></b><input type="range" data-k="R" min="4" max="44" value="22"></label>
+      </div>
+      <div class="lb-blend">
+        <div class="lb-ab"><select class="lb-a"></select><span>→</span><select class="lb-b"></select></div>
+        <label class="rng">Blend <b data-v="K"></b><input type="range" data-k="K" min="0" max="100" value="50"></label>
+      </div>
+      <div class="row wrap"><label class="chk"><input type="checkbox" class="lb-ghost" checked> Key poses</label><label class="chk"><input type="checkbox" class="lb-joints"> Joints and hurtbox</label></div>
+      <pre class="cast-code lb-code"></pre>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Motion from Phalanx" data-demo="clips">
+  <div class="kicker">Reference: the stick figure cast</div>
+  <h2 class="sm">Motion from <span class="accent">a real rig</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Clip</h4>
+      <div class="seg cl-pick"></div>
+      <h4>Character</h4>
+      <div class="seg cl-who"></div>
+      <h4>Playback</h4>
+      <div class="seg cl-speed"><button class="btn" data-r="1">Real time</button><button class="btn on" data-r=".33">⅓ speed</button><button class="btn" data-r=".15">Slower</button></div>
+      <pre class="cast-code cl-code"></pre>
+      <p class="src">Joint angles sampled frame by frame from Phalanx, Atomech's Spine rig, at 30 fps (<code>assets/cast-motion.js</code>). Red frames are where her hitbox is live in the rig.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Who plays which part" data-demo="guide">
+  <div class="kicker">Reference: the stick figure cast</div>
+  <h2 class="sm">Same part, <span class="accent">same actor</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Casting rules</h4>
+      <ol class="cast-rules">
+        <li><b>Pip is always you.</b> Blue means the player on every page.</li>
+        <li><b>Rook is the other player.</b> Same build as Pip, so a duel compares timing, not bodies.</li>
+        <li><b>Bram and Wisp carry weight.</b> Heavy versus quick, greatsword versus dagger.</li>
+        <li><b>Grub is PvE.</b> Monsters, telegraphs, enemy attacks.</li>
+        <li><b>Sam is the ruler.</b> Metrics, crowds and bystanders.</li>
+        <li><b>Status goes on top.</b> Use <code>flash</code>, <code>tint</code> and <code>ghost</code>; never recolour a character to mean something else.</li>
+      </ol>
+      <p class="src">Each panel is a small scene built only from the cast and its helpers.</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../assets/deck.js"></script>
+<script src="../assets/kit.js"></script>
+<script src="../assets/cast.js"></script>
+<script src="../assets/cast-motion.js"></script>
+<script src="cast-deck.js"></script>
+</body>
+</html>

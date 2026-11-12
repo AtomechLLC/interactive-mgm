@@ -17,13 +17,13 @@
   }
   const band = h => h <= .5 ? ['r', 'not cover: knee height or lower'] : h < 1 ? ['y', 'between bands: neither knee nor waist height, harder to read at a glance'] : h <= 1.25 ? ['g', 'low cover: waist height, you can shoot over it'] : h < 1.75 ? ['y', 'between bands: too tall to shoot over, too short to stand behind'] : ['g', 'high cover: head height, lean around its corner to shoot'];
 
+  // the player (Pip) and the enemy (Rook) from the shared cast (assets/cast.js), scaled so the top of the head sits
+  // exactly at top: the crouch is 1.1 m and standing is 1.8 m, as the sight lines assume
   function figure(g, x, top, col, foot = GY) {
-    const h = foot - top;
-    g.fillStyle = col; g.strokeStyle = C.navy; g.lineWidth = 2.5;
-    g.beginPath(); g.roundRect(x - 16, top + h * .17, 32, h * .83, 12); g.fill(); g.stroke();
-    g.beginPath(); g.arc(x, top + h * .09, Math.min(15, h * .09), 0, Math.PI * 2); g.fill(); g.stroke();
+    const id = col === C.red ? 'rook' : 'pip', face = id === 'rook' ? -1 : 1, crouch = foot - top < (yOf(0) - yOf(1.5));
+    const pose = crouch ? 'crouch' : 'idle', b = CAST.box(id, { pose, weapon: null });
+    CAST.draw(g, id, { x, y: foot, s: (foot - top) / b.h, face, pose, weapon: null });
   }
-
   canvasDemo('cover', (s, cv, g) => {
     let ch = 1.1, stance = 'crouch', el = 0, t = 0;
     const seg = (sel, f) => $$(s, sel + ' .btn').forEach(b => b.onclick = () => { $$(s, sel + ' .btn').forEach(x => x.classList.toggle('on', x === b)); f(b.dataset.v); ui(); });

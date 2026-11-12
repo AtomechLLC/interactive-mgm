@@ -27,26 +27,13 @@
   const pickAt = (seed, n) => ORDER[Math.floor(hash(seed, n) * 3)];
   const txt = (g, s, x, y, font, col = C.ink, al = 'left') => { g.font = font; g.fillStyle = col; g.textAlign = al; g.textBaseline = 'middle'; g.fillText(s, x, y); };
 
+  // the player is Pip from the shared cast (assets/cast.js). o.sword is the blade angle in radians (0 forward, negative up),
+  // o.roll curls into a dodge roll, o.lift raises off the floor.
   function knight(g, x, y, o = {}) {
-    g.save(); g.translate(x, y - (o.lift || 0));
-    if (o.roll != null) {   // curled into a roll
-      g.translate(0, -22); g.rotate(o.roll);
-      g.fillStyle = '#5562eb'; g.strokeStyle = C.navy; g.lineWidth = 3; g.beginPath(); g.arc(0, 0, 22, 0, 7); g.fill(); g.stroke();
-      g.strokeStyle = '#fff'; g.beginPath(); g.arc(0, 0, 12, 0, 4); g.stroke();
-      g.restore(); return;
-    }
-    g.scale(o.face || 1, 1);
-    g.fillStyle = '#5562eb'; g.strokeStyle = C.navy; g.lineWidth = 3;
-    g.beginPath(); g.roundRect(-14, -52, 28, 52, 9); g.fill(); g.stroke();
-    g.fillStyle = '#c9d0f5'; g.beginPath(); g.arc(0, -64, 13, 0, 7); g.fill(); g.stroke();
-    g.fillStyle = C.navy; g.fillRect(2, -67, 9, 4);
-    // sword
-    const a = o.sword ?? -0.6, len = o.len || 46;
-    g.save(); g.translate(8, -32); g.rotate(a);
-    g.fillStyle = '#9a5a06'; g.fillRect(-4, -3, 10, 6);
-    g.fillStyle = '#e8ecf8'; g.strokeStyle = C.navy; g.lineWidth = 2; g.beginPath(); g.moveTo(6, -4); g.lineTo(6 + len, 0); g.lineTo(6, 4); g.closePath(); g.fill(); g.stroke();
-    g.restore();
-    g.restore();
+    const RD = 180 / Math.PI, S = .58;
+    const lunge = o.sword === 0 && o.len > 50 ? clamp((o.len - 46) / 80) : 0;   // a long blade means the thrust is out
+    const pose = o.roll != null ? { base: 'tuck', spin: o.roll * RD } : lunge ? CAST.mix('guard', 'thrust', lunge) : CAST.hold(90 - (o.sword ?? -0.6) * RD);
+    CAST.draw(g, 'pip', { x, y, s: S, face: o.face || 1, pose: { ...(typeof pose === 'string' ? { base: pose } : pose), lift: (o.lift || 0) / S }, shadow: false });
   }
   function foe(g, x, y, kind, flash, knock, a = 1) {
     g.save(); g.globalAlpha *= a; g.translate(x + knock, y);

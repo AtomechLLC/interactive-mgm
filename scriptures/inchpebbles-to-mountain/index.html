@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inchpebbles to Mountain</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@500;700&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Layout: close-up trail scene on the left, mountain-shaped progress bar on the right, goal-tier ledger underneath. */
+:root{
+  --bg:#f3f5f1; --panel:#ffffff; --fg:#1d2a2c; --muted:#5d6b6c; --line:#d5dbd6;
+  --inch:#c98a00; --yard:#2f7fb8; --mile:#c2452d; --mount:#6a4bb5;
+  --meadow:#7fbf6a; --forest:#3f7d52; --ridge:#8d8f99; --snow:#dfeaf2; --trail:#3a3f4a; --trail-done:#f2b632;
+  --display:"Pixelify Sans","Trebuchet MS",sans-serif; --body:Inter,system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#141a1d; --panel:#1c2428; --fg:#e8eeea; --muted:#9aa8a6; --line:#2e3a3d;
+  --inch:#f2b632; --yard:#63b3ea; --mile:#f0795f; --mount:#a98cf0;
+  --meadow:#5f9c50; --forest:#2f6243; --ridge:#6d707b; --snow:#c9d8e3; --trail:#11151a; --trail-done:#f2b632; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#141a1d; --panel:#1c2428; --fg:#e8eeea; --muted:#9aa8a6; --line:#2e3a3d;
+  --inch:#f2b632; --yard:#63b3ea; --mile:#f0795f; --mount:#a98cf0;
+  --meadow:#5f9c50; --forest:#2f6243; --ridge:#6d707b; --snow:#c9d8e3; --trail:#11151a; --trail-done:#f2b632; color-scheme:dark }
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.5}
+.wrap{max-width:1080px;margin:0 auto;padding-block:20px 32px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+h1{font-family:var(--display);font-weight:700;font-size:30px;line-height:1.1;margin:0;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:68ch}
+.stage{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:16px;align-items:stretch}
+.pane{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.pane h2{font-family:var(--display);font-weight:500;font-size:16px;margin:0;display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.pane h2 span{font-family:var(--body);font-size:12px;color:var(--muted);font-weight:500}
+canvas{width:100%;aspect-ratio:224/140;image-rendering:pixelated;border-radius:3px;display:block}
+.latest{min-height:44px;display:flex;gap:8px;align-items:center;font-size:14px}
+.chip{font-family:var(--display);font-size:13px;padding:1px 8px;border-radius:3px;color:#fff;white-space:nowrap}
+.chip.inch{background:var(--inch);color:#1d1400}.chip.yard{background:var(--yard)}.chip.mile{background:var(--mile)}.chip.mount{background:var(--mount)}
+.inv{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap:8px;align-items:stretch}
+.slot{border:1px solid var(--line);border-radius:4px;padding:6px 8px;display:flex;gap:8px;align-items:center;min-width:0;background:var(--bg)}
+.slot img{width:32px;height:32px;image-rendering:pixelated;flex:none}
+.slot .k{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.slot .n{font-family:var(--display);font-size:15px;line-height:1.15}
+.pips{display:flex;gap:3px;margin-top:3px}.pips i{width:10px;height:5px;background:var(--line);border-radius:1px}.pips i.f{background:var(--mile)}
+.slot.w .pips i.f{background:var(--yard)}
+.bag{display:flex;gap:10px;align-items:center;font-variant-numeric:tabular-nums;font-weight:600}
+.bag span{display:flex;gap:3px;align-items:center}.bag img{width:20px;height:20px;image-rendering:pixelated}
+@keyframes up{0%{box-shadow:0 0 0 0 var(--trail-done);border-color:var(--trail-done)}100%{box-shadow:0 0 0 10px transparent}}
+.slot.up{animation:up .9s ease-out}
+@media (prefers-reduced-motion:reduce){.slot.up{animation:none}}
+@media (max-width:520px){.inv{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.bag{grid-column:1/-1}}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button{font:600 14px var(--body);color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:6px 12px;cursor:pointer}
+button:hover{border-color:var(--muted)}
+button:focus-visible,input:focus-visible{outline:2px solid var(--yard);outline-offset:2px}
+button[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.spacer{flex:1}
+svg{width:100%;height:auto;display:block;flex:1;max-height:440px}
+svg image{image-rendering:pixelated}
+.ledger{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.tier{background:var(--panel);border:1px solid var(--line);border-top:4px solid var(--c);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.tier.off{opacity:.55}
+.tier .name{font-family:var(--display);font-size:18px;display:flex;align-items:center;gap:8px}
+.tier .name img{width:24px;height:24px;image-rendering:pixelated}
+.tier .when{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.tier .what{font-size:13px;color:var(--muted);margin:0}
+.tier .count{font-variant-numeric:tabular-nums;font-weight:600;font-size:20px}
+.bar{height:8px;background:var(--line);border-radius:2px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--c)}
+.tier label{font-size:13px;display:flex;gap:6px;align-items:center;cursor:pointer}
+.gap{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.gap>div{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px 12px}
+.gap .k{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.gap .v{font-variant-numeric:tabular-nums;font-weight:600;font-size:22px}
+.gap .v small{font-size:13px;font-weight:500;color:var(--muted)}
+.note{font-size:13px;color:var(--muted);margin:0;max-width:75ch}
+@media (max-width:760px){.stage{grid-template-columns:1fr}.ledger{grid-template-columns:repeat(2,minmax(0,1fr))}h1{font-size:24px}svg{max-height:340px}}
+</style>
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Inchpebbles to Mountain</h1>
+    <p class="lede">One climb, four sizes of goal. Coins arrive every couple of seconds, an obstacle falls every stretch of trail, a camp marks each quarter, and the summit is the reason for all of it. Switch a tier off and watch the wait between rewards.</p>
+  </header>
+
+  <div class="controls">
+    <button id="play" type="button">Pause</button>
+    <button id="restart" type="button">Restart climb</button>
+    <span class="spacer"></span>
+    <span class="note">Speed</span>
+    <button class="spd" data-s="1" type="button" aria-pressed="true">1×</button>
+    <button class="spd" data-s="3" type="button" aria-pressed="false">3×</button>
+    <button class="spd" data-s="8" type="button" aria-pressed="false">8×</button>
+  </div>
+
+  <div class="stage">
+    <section class="pane">
+      <h2>On the trail <span id="zone">Meadow</span></h2>
+      <canvas id="cv" width="224" height="140" role="img" aria-label="Close-up of the hero walking up the trail, meeting obstacles and collecting rewards"></canvas>
+      <div class="inv" aria-label="Inventory">
+        <div class="slot w" id="slot-w"><img id="img-w" alt=""><div><div class="k">Weapon</div><div class="n" id="name-w"></div><div class="pips" id="pips-w"></div></div></div>
+        <div class="slot a" id="slot-a"><img id="img-a" alt=""><div><div class="k">Armor</div><div class="n" id="name-a"></div><div class="pips" id="pips-a"></div></div></div>
+        <div class="slot bag" id="bag"></div>
+      </div>
+      <div class="latest" id="latest" aria-live="polite"><span class="chip mount">Mountain</span><span>The goal is set: reach the summit.</span></div>
+    </section>
+    <section class="pane">
+      <h2>The whole mountain <span id="pct">0% climbed</span></h2>
+      <svg id="mt" viewBox="0 0 372 370" role="img" aria-label="Mountain-shaped progress bar with the trail, camps and summit"></svg>
+    </section>
+  </div>
+
+  <div class="ledger" id="ledger"></div>
+
+  <div class="gap">
+    <div><div class="k">Time since last reward</div><div class="v" id="since">0.0 <small>s</small></div></div>
+    <div><div class="k">Longest wait this climb</div><div class="v" id="longest">0.0 <small>s</small></div></div>
+  </div>
+  <p class="note">Ashuras (Entry 1): think in milestones, yards and inchpebbles, with goals and threats that escalate together. Each obstacle on this trail takes more hits than the one before it, the last chest in each zone upgrades the weapon slot, and each camp upgrades the armor slot. Sprites: Pixel Art Atlas (Angais, CC0), AI-generated.</p>
+</div>
+<script>
+const SPR={"hero": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABzUlEQVR4nH2SP0gbYRjGfzFnzRmLeolok0uxgTiICBVBxT90qAEVJF0K1a1DBwcpVHBTcHJR0KGjo4MgShZBUUQXEbFgyRTRYquNEUqTEJO22q/D9S6XXOILB8f7Ps/ve96Pz0bJKhfW3h9bYcfS0M3zQRXV/QgcdsjeA/B6+cwCKgmY6qjhJP7X6FTaJQCWT38UTWKKrX2hZy4RUBQRmXkrHBVu8WVuXOTmuSozm1dG/KyM+AGIJATr70M0BnsBqOt+bolvWkHbWa/TWIqPJwk+Tw7ifxWy5HR2vjNANt08vx9jOODk562dvcukId4YD+ZBzGYACWAvqhmuUoKjWJL+mSbKqis4DscZWNykb/WgxJ39B1TaJRpdbjyPMxDTBttrce52rxkOOAlHk3zL3D18B2Ot1QCEo2mkF/WGIDI9DcDomwm2LlKk73/nASSdGo6mhSzLyLJMZvfaENy8/ATA+nnScropgZZC//N426nyPs0Tqi3d7Cx9KAoxAD2qT/SoPlFb4xceb5fxcDzeLhFQFDE71Gp5SLZ8QANHNxmyvxLoq+mzticuen0OABYOL42ZVJijWZE4/m4252r/a9aSu0Ckxyu2pzl6bv4PQfWh+sZcXO0AAAAASUVORK5CYII=", "pebble": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAqUlEQVR4nGNgGGjAiF2Q6z8uDf8ZvjGiqsWiOa+4FKeNk3q7UQxBMw2i2crOGS527NBevIYw4dN8/sIZrK7Q0dGAe5MFm7Ox2QoDV69egBty5cqN/4yE/Iyu+eWTx3D+lSs3EF4gVTMMMCE7i1TNDAzQMCBkCDbNV67cYPjP8I2RkYEBEog6Ohp4XYFNMwMD1Av/Gb4xXrlyg2TNEMuRAL4kDAPoSXngAQADv1apCsaAiwAAAABJRU5ErkJggg==", "slime": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABOklEQVR4nNWSv0tCYRSGH28NEoq2mA0FDS0tQdE/kEO49WNqa4jWtv6BaKugpSmn1pC2NLAlJHMQKgiKpDC5Xh0u99INraDb4PV6f3yWa+90zuGc53C+74V/r4C4HDTF9ZavXwAImlvZDTsLj38DoBuj7M5t+yAeQHt4ZXIBgOZwk1QmjW4oAERCcY5X0y6I1GtYpErmhZn1adeJ0m/D+yeHdpxQkyxPLTFRDbsgkvfmjnZye9btCgk1CcDDbZHC4z31i1cbMugcyqYu+fx4A0C7ahBdixEJxSmd5wF4lp98i2xAIVeCvMbQQBSAck1llhi6oaDJDco1VfguNsBQv6jXVKDbWL1+B7DqYknOZGR+7M/Ym1v/GTQXD5JU7uSem7wqHd0ArYDDSG1IPzrdPKNjJp8T+9vfdeIPb6l0aII3uPAAAAAASUVORK5CYII=", "goblin": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAB7klEQVR4nIWTPWhTURiGnxtSNDEkFdtLcyUm1SDEBNPCrWTSztUliELAJepuB+3gbpaU1lUh6VboYkrF4iQ6FBwypELo0Ep7LWmMMRKlRiSBzyG5MT9XPNM57znP+7185xyFfw+x0JT/CiacysX6hI2XNd5nd4d4+6AScITldsYBQP1XC4BqqUn5wzELqzoAa0sljHzZOsH50wFR4yPEZlzkMp8x8mWS6SjjZ0dYWyoBmLACYBuMfj87QWzGRWG7iZEvc3g5jMdlY2OlOgQD2PnbLAXg2ROj6+bXvfjyReaZ7oXpMF0TKRo1ob/r5lqmbwTk+nxIAJmb1CSVi8nCqt49bwPILC9SNGr0miTTUZLpKFPXPLx6usPDqxdptNoJq6UmnVsSO8DJ9SwZoGjUCPvPCKCsPNrumiUiGuMnHDjtxxj5Mm8Az70JzARK6qDSNlleZKtQ6UuSiGgAvNursrl/hF/3Eu/AZhPpmMjj9SzPfwqzPo23h0cA7H5pcefSKX573Wzut7XXL75hNeTmrbsScjslFw9KIqIJIGOjQZmb1ERXVdFVtdtcM2XvQ5IL56b4+KnArE+j8r3Ozo8GY6PBoUpf63uDbN/VdecWFSXkdvbq9P6FPkddVRnYkwdXAgBsHTSsoYE0QwYW55Q/wmbJ7wP2Xq0AAAAASUVORK5CYII=", "troll": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAB20lEQVR4nH2TvWsUURTFf5MPhuxOCFEZdtmsOozCRAYTUJFoYZoEvxYsLSyEgIilVv4FVqbeRrCwsLSxEklEC8WIaxh0C8dBN2vWMGEwuxOzfvAssvPcN25ymnnn3nfPnPfuuxoqBP9D6xHrmRRz5VlJfoRtvsctHt95s6tgQsT5G1NoIz+Jo7ZMLpY9pq+7ZEd1AOKozWLZU0QGksWjWZ2xawFraw1+vT9HYfotJ68cpfaiiVPSOXykuO2s1cerB8siEZEOLtw+Jv9cW4gYOmQQVpo4pT0ynjuwF7/yVXHRlyRf36vz8NZ9ns1/wL1YVIprCxEAjc/r8jgJpMCJuQKX717lzM1x/GqkbFp++YmVpVjyiRkHOh1TumC7liT7JoflOqw08b2AiRmHseNZVpZi3j2pAmgDXQL4XgCA7VqElSZptFbbQLb3EQD2F8YxzRy+F2DkdYy8rjgZ6TcxgikmD17i1OmzGHpGKA4GR7f44jUwzRzF+iatrT8Y9X7WV7ffRhhuED5/qjhQBBIMm0NU65sd9puP0Tds18IpZeSezgvVuo+gJXdg5HVEIcPGoCaLfS+Q7Uy+O0HYriVs1xL8G65u3h1XL5FUK9OwXYt0Pj2qO41zOi7r/gKuYapG2VdVyAAAAABJRU5ErkJggg==", "yeti": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACIElEQVR4nH2TT0hUURTGf2+46GKC8ZUy4MQQ2EAG2qIhhJpZxFCbggiCluKihRAILiShP7gIglYq1KJFUNBCGMKklYg6qMXAkA5GNO9NjdLQ5Dh3ZHih8pjbQt+z+VN3dc+553zfd+45R6PJEUJXf9u2LbVmcQAND0LoaksWanwduv+fIJ765BUzi1GyMEoWw8+XAUhv5hBCV/XKGpiTOamE0FWbL6ScBFnZV8mcVMmcVK+Smw0goh7o6tBkjb1a3MN7qPPaGT+zmQ1ioaBqKEkIXT1bNpSs7Newz3+rqO6+QVeF43OU1PxBxtihQ/dz23eC3PkAd0+dxeuxa4iMksW59lZmMxsIoSuPwz4WX6RcqLAlC4x2trDzu8rE989MreUZnbjHh/WfPH447YI07YJcz7Fa3MOaWcKaWcIoWawvfCJ80kfFtnn3esiN3SyWD0s/ZE/GUwDEQkFujLx0A58OX+eLtevaU2t5bvV2ckxvPepC6mOWH3mD1NxBB0buRAE4fdzLfOGA6cHNKF09EWy5y5uFrAuoCaGrrp4I5V95tgsmK2bWZbGqR12eTnxlfCBGV08EADOdwLal5rFtqZnpBNsFEwCrKmhTVR5NvCcWCjL5Yg6A9rYWxuKLmOmEm+x+om1LzXE4CRejvQC8fdLv+gDG4os0PdFL/UoIXXX3DSp/IKwuXLnvDpRj+wNhdXlgvGacm26jc3dU/W+9/wBLkBqKoJ6rWAAAAABJRU5ErkJggg==", "dragon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABuUlEQVR4nI2TTUsbURSGnxkVA23QOKElWEdcZJcOogtBQf0Bmiw6heqyxYUE3ApduSpSCi5MV7pyreAHpZu6cFMotCIqWCjEGtQp1CR+l4jmuNCZZCaT4oUL98D7nvOce89VqL7EEyt+IrWaefTlawAKO6n/1KhuFkAKOynnXE3sxZLtPt0J5qIveD875dXZyRQotSCAWKbBM6Oezq9nAOQXF/AYJTcQdVVU7apPgxGyf4/Z3yz4thUP6UzoLQDcJ5FyAlY76hz1j+6gyx0P3bU1ZgQIJJs5v/7nSuLg2XtYa5HtPl1GwrrcVxfLNOTyc78AcrWSkNxAVACxCZSyzYfBsIsg1VWk4U0T6ck0n1ojXNeeoLaV7sDV69VKAi3ZDsCFCJZpoPVqAMTWMpwqKq+G0zRO/wJQKp7RMg3kcQ253WzFTW7t3TD0+4CRsM7MUQZAqZjEpvFOtGQ7S0dFAOZ3SzP0vLWG8jkBqPUmyH7cAODboUoiDOtnCk8s6I1UAAH+H0TsZ3tngPn9HICOwCPexu7ksbWM4/USSDyks5zP8MVo408efl7k6AlGGAwW2dp7IIE/rL/vFok0mMKlBfQPAAAAAElFTkSuQmCC", "coin": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABeklEQVR4nGNgoBAwYhNkZRL8j03897/3WNVjaH53Y9L/z69P/f/8+tT/71+u/v/8+tT/WH2T/9gMZkTX/PZKAcP3t3cYRGwWMby/kIeiuDDhOMOKy3dRXMKErPnltUaGXz/fYNXMwMDA0L/AkiFCVxnFi0zImv99v80gaDCJ4ev1Joa/Xz4wfP3GyTCx+jDD3Kb9cEOq0uVRDEG4QNiCgY1dhOHL/dUMv36+YeBSiWDYMXsvQ2lPIIOVtiRDY9ourGHGhMz59fMNw++PhxnYJTwYpmWVM0SW+THc2naYYde51wz1s9ywGsCCVRQKnh64xHBo7yeG/DZbBgYGBoYfd77hdwEMXJg6gYGBgYFh0+6bDHFt5nDxz68/EGcADBy88g+rOCszH6YBT1Z3oij68pOFYdEqZzj/9fFncPbvv5/gbHiCYGUS/H9pihODqKUUho3ImttmPkRJTBgp8dIUJ5xeQteMYQDMkAhdZawGoGvGagDMEGzi2HIjAAYUpmRIZN/rAAAAAElFTkSuQmCC", "gem": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABoElEQVR4nJ2Tv2sTYRjHP+9xif3hhZghpSUI3QQni2RzEydBEAWpU/6ErlXSoZOjSOlku+ji4OAgVCRUqpyDSLSBWIimhqu2SXom9ZqjufM9hzPJXVJT8QsPvO8Dn+/7ft+HV9AnVUl4/b2gXGmK4D60UZWE5/zaH4BeGJ/I740BcCd9IWSi9MPSMZGOSf5ws1tBXbm1GLqlCMJHRQMx+RPvu8b9luxClaLNvdc6ijuNmBJcW/9I7s0CrjSF6L/20bs6zxp1bl4+F+pld6u8fbQBwMg3h6qsUtCXehGCKp8Z667buR147x/gRE5zYOwAkFSSfnSAdqPo5xGjMK5CCz63SgCkYnGyU00AIo6F9gcceIODzFOkWubD3Ax3l7d5HosD8NC2ebxbxy5vYdVKXXC7tIYrTaGAP9vY6nVeptJY49HjUoXUgSEwRlea4sbCJZrilN/QGn4NgUMGHZPZsxcBMCfOI67ODIUHDDomGw8yALzSLPToCNrXHxT0pQH4WIOOViq1Xpz/kaokvCfGF+/2/Lp30gcbanIS/NcI/6rf40u/zzKYGcMAAAAASUVORK5CYII=", "heart": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAxklEQVR4nGNkQAGc/xHs74zEyDEiK7iqKgPnad9+gqQQtxwTsgLJtSsZJNeuZGBgYGCAaOD8j66ZgYGBoULKHO4iJmTN+AC6PMwQFnSFz4PD4Wxkm5HFkQETXmuJAHAX4LKBECDZBYu/SqMb8J0REi2kae54dpKBgeE7I9QFhA3BphnqAhiAGLL/G6avcGlGMwBiSM7TRyga8GlmYEBJysiA8z8koSAANs1YXIBwCUQDfs0MDEjpABvY+YcXnzQxAJKZ8KkAAIQ3WWcbryjjAAAAAElFTkSuQmCC", "chest": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACLElEQVR4nJWTQUhUURSGvxdjjvOsR2JhYAnpGGUxBIENSS2CSHBTEIjtgsKFYKEWCbarhRguQhIiEBcRubICJ4RKxIUSbgwdzXGaUlJGn8rMc944z3dazDQ5DaT9lwuXy/n/e86551fIgCp/zobC/0EVc6lXzKVeGblZIUmx7XsXZFts8deXSHxlTCLT7aL7vDLXVi6tF4/sJKimyfZfS/d5Za2vTMYb3BKZbpfxBvc2wRQ5sTEv/voS0X3eNDEReiq6zyu6zyvR52USXxmT8Qa3uPP3yhnNJXcriwRUcQCYk7cI/tzkELD2/nxWgTnXXhL7UEfjq3D6Ls+ZA4ADYHMmjmYr+LtCnHszj52IYK328/H2fQCqXHfo6jaJJhIARLestJADQL3SROnBFwBsmgHsQAurvgCzoSShals2NRUFLBp76PFrgI4CqnjKTxFeNwAIDnk4XDnCRNs+3n5JcPXGSRb6JxiYimFYSooIpVs/GF62kgLm0jOe1LUSCETp6D4BwLd3y9T05Wb1w1r/iuYQaioK6ByNJEuwjVkMS6G2upDm+ql0cJPHRTBkcu/6Udr7vvM6ZHA838miGcvswW98moxTW12Y8WIwZHLgsov9wyraQpRFM8YxzZkpYM4M0vygOPllLoWHLXNZqasOociZx9nSPAA6RyOAoaQMkzmakc8XYGMdgPDgMrlaLj0DqxiWwuMhPRX1T7Nlzv1Cx2l5dKl4N6baSTAbvwAs4iRx7sfvBgAAAABJRU5ErkJggg==", "trophy": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABx0lEQVR4nI2TTUgUYRjHf+/LmqyRTJQuFB3ERUISI6NupWgeooPUdYU9BNEt6GbdMjoaQXmpm0GXYsEFkUDEIpDYRRL2YFPLaGUb5Q7jttvs2Lwdlhn3Y9x8Ti/Px+//fx54BVUhpabYR7iuKby3qB+0rcXAIevzPAAdpx/UgISUmrKtRZzNJN/n5jl6oZdw9CYlfZpQqQjATriN1UdvOTkSIZuy6BkfJByN0do+SAigpM+gnXkKgJnu9RVa+m5XAPp0xcVvwbkpHaZ0cgmjsjaAvW78Z+tD2GVRkynktnYBABPn+xrGVMnA2Uw2CFT3+kfMJS5RyG0x+9wk/vDsrvK6wVoig10WzGQ6uRt3EOEDdN9I4bqmkN41I2OveTzxgw+r2/xcygAQOqj5VrsuRpDGF57cM/1h34HnItV1mFc7R7i/ofMmftzfu/9yJx2xNHdORLka+sVANr83AGAgmwfg2rFuAF5++wRAdd0D+EcMimfJIW6N/mnWUgsY/mo1bfacBQJc1xRm+W+NPcC/g5errwfbkppyCivKKayo4sdJtRA7pfb6aA0kKTVlpq8D2wC0aBrFd+9ZTua58iLboB4IaOauHvAPS/bQGPap95cAAAAASUVORK5CYII=", "tent": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABNUlEQVR4nGNgoCb4eTrxP0UG/Pv3nTwD/lwO+v/v3/f/MJoUlzCiu4CJiZORgYGBgZmJH8OQv/8+MqKLsaAYcDWaAab550Vnhv+cvCiKOdQ2/Ec3BMNEZib+/7ujZBlUJPkZ+K1Z0KUZhIIuoLiECV3zz4vODBFr7zOI+fAyfDz6B8OAd+sMULzHhK7g6923DAwMDAw/339nkExXwTAAHcANYGbi//91vyVcgpWdkeH37YcMj3Z+xOsKJmyakYFGsT6KIY92fmT4ePQPQ6epKAMzE/9/RnQD5DwOwxU/WGcKcSYXB8OrLZ8ZPn75yrDz3Be4fPnp1wws+GyHaWZgYGBwnXmJIVVTHK6RgQGSLlgYGBgYXm35jFXz75//Gdi5IGwjKUEUjTA1OFMdNoAtJRINcFkCAESkh0grOLu5AAAAAElFTkSuQmCC", "flag": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAApklEQVR4nGNkgAImJt7/DDjAv3+fGXHJscA0v15iysCrIsYwNeIkg+2/vyiKzB4x/MdlCBPMBtGY0wy5S/UZqp/8wWoTExPvf2SM4gJCoFKAk4GBgYEhkI8Dw1VMxBiADwy8AVjDwOzRezibg0WAoZCHBAN+/PmAEu8//jD8Z2DgJOwUJibe/xoaLv+xJSj0KCQ5GvGlxIGPBRQDONmJCCyauoAcAACZUzm8Ko3JBQAAAABJRU5ErkJggg==", "sign": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABJ0lEQVR4nM2TMUvDUBSFvxdSK6YqOJSig5DFxU0ydRMy+iv8BZKuTq4tDs7+DRECAYeiEFykiDoUumjpoBAaqVbyHOQ9kzaJunnGe8497557eVACQ1jSEJYs1ZQ1dz0bp1GjzMRMN8ySlzdjivhExkIbGMKS4eGWJp2je9puHYBwOKbr2SwsVXh/nWpNs9OXiYyFqUa9uHrRZO9gne3jR22SnkSh69k0O31p5AnOex8AVBcrALT8EafXz7nxDICzh0mGbPkj2m6dt8mUk70NAPZ31jIa1SPUDpxGjeXq91GCQUTbrdPyR+xursxFCAYRiYyFCV8bDYfknspp1AgG0Vw9c4V0QcEQllQ7yOO1Lq/4F/xzg7un3Ni/N7g1V380KHyi6PPM4hPgxW1/Ywm+RwAAAABJRU5ErkJggg==", "fire": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABNElEQVR4nI2QPUvDUBSGn0i1RqpGrYhGURRFDELFwclBXAR1FAc3l26O/gB/iLg4iZOL4FrRXSIdC1JwsDaxSEADcUhyb9N8eSDkcO97n/e8B1JL9fwvu/qyLs218VxQJiCESNC/AFGhXtUzDXoAqhe6+f/8SozwdTwVO0vbR+4OBg73RN/cWsqaQI799vILxPNbnXZsoakTzJ/PCvflq+3UZSYC9KqOa8uobnklzUcCNkoVjNfPyGW/NgnAz929OOvVKLJVvf25IQ6MEWoNB/PDxXIHAZgufrM4VmR3vSTUpzdNwFEK4ePLIz/j7XMbs6PSsGwqZTjb0bh4gKd6i8f3Asaww+aMTK50uwPB45YQhGDfERa0CYBA4yiRCLJ3BPhkdRSA67odnIc6X9MFSKsksKw/uKlkh0Wq2CoAAAAASUVORK5CYII=", "pine": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABbklEQVR4nKWSu04CQRSGv13MirKCEIIawcZYWaAxdiZWltJa+BI2vodPYa9P4KWyslwTMQpeQEhWgWF3MwbXYnEUdiExnmYmM+d88//nDIwJXTN9XTP9sTnjiktHO6SX84yDRAJ0zfT3j0tM3VRY2p0jMT87EqKNKq5cV+l8xACQdZfq2Qvd+jufvhio0YeLtw7XuDi5U2dNq8P96QNGwoy0MEjry0wv55nfTFI9eyFVzGFfPuE5DkBIQQhQ2FslsxDHrnkISyAbLYxcCtloAYRsRDaxfvWq9pntRYxEb6QFBdA10y8ebCAsgbGUQlhCJclGsBoJMzQR/bf075d77x8AZB897PNnANyarYDx6WkFUQoCv8HeLTu45SYrWY9eW+LWbDzHQXYFvbYkljQUbOJHZmvg0nMc8maawuQMt299ZW0ZauQEBKPp1gl89ccFsF6Y4Um0uH1DQb/zQwpCP2zo6w7fDzTxPxFJ/YuCL4HIsaHj2ClCAAAAAElFTkSuQmCC", "grass": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABv0lEQVR4nI2Tv0sbYRjHP3eXHGjscFGhbRz8UUKJ0oBBCrW1omiHDok4tVBaMZMunQoF/wIHN4tbAlm6CqVgC0IHpyN0iQoKcdAGRM2JRNJek74doq93uRPyLi/v836/n+d53nsOWly6Zgi/uOo8vM+lhJ9Q1wwRS0Zay+IHic72+4JvhSzkxqVB1wyP2RfmDOqaIebXpoWuGWI4/Vg03738mJAxVWbNPndB8t9KAFSsE1eSWDLC9+Uidt1SANT5tWkB8OndD9LZuISo4ZCnwt6Uwc76L2kGUHOLJm9WR6QwloyQzsa5110jsz3Js6kHTH3opzdl+LYcsOuWkls0RTobZ3SkC0Du1+v12z7yux0AbIp2dtYRQ3NRCpk9EWh+zGbznVA7AL8rjaqfzHShhkMUMnvYdUsJOI2mWcPmXJq3zNOr/QZYXDrkX6JNnlWnePDLAQAPPx+7qtBWygBcrhwBcDdf9QJebPxp7sYFKi4dclz2zo8CjRd99aiTp9EQ1YrtEeVLf0ncD/K10Lj7eVbDql5g1y1Ffk9dM8RET5ixgaDL3NGmsF8Ksl++BGDzqNHO9SwoTnErP4xziAD+A2/uqNiQdFgIAAAAAElFTkSuQmCC", "snow": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABCElEQVR4nGNgGGjAiEuCm0vuPzL/67dHONVi1YwO0A0kSfPLLz//3/zwE6shTOiav3x9iKLg1sdfDB/+MDBce/OHIXvldgyvMRLSfOj5dwYRVlaGm0+/MATqCzAwMDAwGEmpwsOEEZvmWx9/wdnX3vxhYGBgYDh+/QGDqoo0AwMDA8Pf198Yij0sGL5+e8TIQihMtEQgSsSMZRlefWNmuPn0C4OFGBvCC9xccv/PPbtNyBy4a24+/QLnN3uaogYiOYCgF2BhwMDAgGI70QZg04QM4LEw4ewlBhFWVqINaPY0Zfj67REjSjpgYGBgyF65nUGITwSnjc2epgwMDAyo6QAZEErz6JkKAME6jqPWI1GwAAAAAElFTkSuQmCC", "cloud": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAA5ElEQVR4nMVSPQ6CMBh9xa0NmnCATswk7A5cQC7gFbgIOxszF/AEJMaBicSZqZMDaaIGNoMTWAqtm76l+V6+976ffsC/QXSCUT6ocdeLRY7RgFE+CNnMErjnY7vZ4fG6r5oSmxgATtcnACAO3ClOonAycWztjRjFxhFM1U1Qu3B08flyA/f8hUjl48CFkA0Y5cNihONhv1rVxM8MaF6hTQsI2UzVxlfIBm1agObVNAYAEEb5kJX16qK458P2M0kUfpZoMrGJu16Q2R1kZT1LTqIQOqeKgZVLVOOuF0TnRv5rqz/DG15Yauj+v6LeAAAAAElFTkSuQmCC", "rock": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAB1ElEQVR4nJ2TP2hTURTGf/cZyNC8tpZXGlQoRCwPLXRIaxVdLIiLoEM3dSiIHcTBTXDu4GwHu+hQS3EQJK1CiaYdTG19idLKg5BqSKiDmjSa9B/YP9fBvkvee2mHfnDhcs/9vnO+c8+FPSxd7ZYcFl+6O+XW8m25+eKafGd2KCFN6NJZ+3EFwNrgM7nTPsWv2a+cmkwJh5z98Fhd7Dh/j125KrwCGkBoZEDE35S4rmvUkkulH2TS82TS8wzdilKvEs3Z9L9/K072hdCELmfGHwBgGGHMaC/LuSWS9ve6FgIAN6b6JEDi0SYAW5VV0okYAOWVKq9n8gBEWg1yRWStlQDA2JWE8h1/cpePyTkiZgvllep+vfNbcNBwvFll9uL500FmJx66ehFQSkKXseGbGEaYsxfOkc2mAFjM/Ob+nX7au0zSiRifF4r+HjhkM9qrAmd6LmFb08StMk2hJBe3K0y8sn29UBbWKz9dNmxrmuGxvDqzbHdmn4XRl4su3+OTBQp/Ngg3BgE4fWKXb6kDBKprQj3Xf7iHrqGpDbCZy/8lqB3x39KELiOthgocOxrgU2GdcGOQyz0tAMStMgC5YkmNtStNvVGtFfWS/XXWgVfU+6H+Ad6ovJYckDZ5AAAAAElFTkSuQmCC", "heroL": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAB1UlEQVR4nHWTP2gTcRTHP2d6NpcQU8+mhiSVGppFMaAUodgKVhRECJ2DU8HFQUsmJ6FOCnZxcHBXoUuPDg4pBbEWRERB7GKlir2oxT+YYExMen0O512Tu+ub7vf93nv3/X5/7xQCSxU/1laC3vSAduNcMWsfwyFoWpjfW5TKZuCQHi9QHNYxXvzij7XlYvmBPcFCg6Wr8nH2qoR7+2X15pTkdF0mDx8Qh/Pa84y2JSZOHQdg6Pw4xvQkq1W7Z66Y/W9vZ0iHJ1Xqz+/7NK3PGxy7/Zgr+TjDyZiLO5n4Quwcsj5vcOFu2T2fTu+jL2KxsFanNJ6kVDb9IV6+dN19flqpkTh7kBOFAbarf1m88Y6RZMTm1mqA7xbaysP3PwUgo/VQyEVZWNpkyYIzE3EAUjGFoXY/kVDLm4Fd0dBeOXcoxoNHdwA4OjPjcltPNinkogDce1MF2orPQt1qKcaHmnxbee02OaVpGovmNo1GA+fGAtZTlYmpWcy3K13o78onPldedtn196LKrYt5yem6pNKj7uKk0qOyvy8rY5lBGcsMyq57cO1kGoDljSavvvzo+IrdEO6NM5LQeGZ+dbmuDJY3mgGqHLmqHNF9kQX/jbt7dPgd7h+pdKi5Xk1y0gAAAABJRU5ErkJggg==", "w1": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABNUlEQVR4nJ2TsUrDUBSGv4iCLiGDMYXUrRlsihXBIoJ5g0DBB1ARughOIqJOvoD6FG4+gDiJs+iioMWlBG1DUQQx23FobrQa9NZ/OhcO3/3P+e81+JTQLwMNqSYpeyUsa5zKdMCYaXF0sKMNEcd2peyVBJCFuXlxbFcaa1uS4+qHhlUxmrwCkDw90I47XJyf6FzOkCqiZITFmQqXrQ5hzaf78q4NMNpxBMBd9NyDPcZUXZOlsM5fYygHGUS5AOi0moQ1/1fI9y2LY7vZoeqaAJxe3eb19jnIgO04Qrm5jnqL1RklT5I6krDmy97mulasuSDHdmU1mJKz48P/Q7xiQRr1QPZ3txVk8JG8YkFmJycEkOWVDQFE660rAPRiBui+JdzcN/U+iwJ8jThNyhgEkLlIZQB8AD0FccfK+xkIAAAAAElFTkSuQmCC", "w2": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABb0lEQVR4nJWTP0hCYRTFz3uvQKI+UBEEoVeQ8Jbon4+MQHILIaih0pawqAiCGgvcJKmtJYjIpa0GIxocQoeiIXBrCZUiGqIhElNq0dOSkgX13hkv3N93zuG7EgAosiC+VKkWJZiQpMiCpWwa1WYBABCdHlMQGQDyd7c4iy3g6fwYxftMgyNDAACQCm9Y2d7HxWEEpWzaFASKLHiwtc6w180Bl8pkdIrv+QxNQzZX5xn2uqk7bExEgiw/ZM1Dlifn6FdV+lWViUiwwYkii/+BNciou/0XRHfY+JKKG4f4VZWa3cpEJEhhaWM0MMj4WJ+xWIosGBqfpWa30tUi+JKK82i633wniiwY9rp5tTTMxW6ncUAtcyLgqbvQHTaeTHTRcJk7Ixo1u7W+oNmt1B02bgx11Itt+guyd/OM3Gulfhu5V0GnBZjx9aB0nQTw7Sv/VKValHwfIey2xhrmWm8f1i4LOH0sAwBMnW4t2vdHPgEeDLr4lheSOgAAAABJRU5ErkJggg==", "w3": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABQUlEQVR4nGNkYGD/z4ABfjJiiuEE7P8fvv0Nx6t2X/+P3VDsgAXGeHD/JQMDAwODuZEKCZYzMDDB3cHDzHD90kWGB/dfMty8/4aBWFcwMTD8ZJQX5mH4+eUvAwMDA8PunXsYLt55QrQhUBf8ZLQ3UYYLHli/geH0ubNEGcKEYP5kzEgKgvOO7T3OcPf2bYKGYIku9v9ZWQ1wnpWzJYOpkTGDuqIIAyR6YYZBopoJ04CfjNOmIQzoa5uM4h0jEztcXsBtyPJF2xjUFUUYjEzsGB7cvYzLN9gA+387m4T/DAzs/1VV9P9zc/CRlMjghqiq6P9nYGD/bysj8H+1uSQphqDaLMnD899WRuD/TH0pqCEEDWJHczbEEG4Ovv9GxsH/GRjY/xPIdcg2wHIo+38hQUEGBgYGhnfv32NLB4S9hcwDAIbYhMo35pEEAAAAAElFTkSuQmCC", "w4": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABH0lEQVR4nJWTsUsCYRjGf3eJDgaGcgXSctLkUNhSDnFNbWE2Ho05NLW3t/Yn9BdYDYFb2WTQ0NRmUxhBNXigCOfB01J2hpXfs3y88L4/nud9+SxAjMvCQDZA/+mcKAyIwoAJwP8BidQsvdYeejszhiTiRb99QRqIwoBEMiOmiGMDVmphawxiIvvzteY2L79tJTPGgBGk924zuN5heXEeQIPuvTBcrLo32xre7X4NxgE/698ht4frClq+AA2fTwXo9WpfzVpxakdq+CUB6tQr8lxHzVpR6ZmkUSQB8lxHD0drKmdz5vt4PF4dDTf8kjzXMXMQy6xyNqdmrRiH/AlStZBXtZAfu4LnOurUK1Ofd1KTDlaW9HKyIUBGXzcGHekD9WuOOvVoyjsAAAAASUVORK5CYII=", "a1": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABCklEQVR4nGNkwAJYmPj+YxP/8+8TI4ZabJodFMSx6Wc48IDhP7ohTOiaj08NY7DXEGJ49OYtCrbXEGI4PjUMw3VM6JoZGBgYPHx1GWJtVOGKYm1UGTx8dRkYGBgwDGFC1wwDyIbANMMAsiEoXiAHMCHbbpm9CkXy36+vKPyrV+/C1cBcgRELyMAr2ILBK5iAC5BNR6aJBSykaPr+/j+GJSwMDAwMG3Y/Iaj56dPncDayepY//z4xbrnNgDXp4gJbbr9kYGCAJG0WGIOBAXceQAfIyRlrLFy9epdBQICL4cOHbwwMDAwMAgJcOA3DzF1MfP99VBGZSZSXA86ef+4hRo7EMABmCCGnwwAAvcNy2hmZxOIAAAAASUVORK5CYII=", "a2": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAB8ElEQVR4nI2TsW8SYRjGf7QnA7U4YNsEww16JAZILHVhY7MQRhPTP4NE/ganDu3kYmwc1cFFQ4em0hjrLbUdyKUJMPQOSXrXy1mKpDSGzwH5ej0w8Z2+73ve93mf98n7hbgZwncO/Q/mTxIv1qsAvNx8jmUZflwUkioZLcbv/gUbe02JzfiL92vv+Phhk8te199Vdna9Hht7TSrFrFSkACKlpfmy85pZ5TYNow7AvUhUSvvRHxFu6Q1KiRiu15OYAuC45zjuN/noeG3KeY0nK3F2jy+oN122GyY5dZFPpk0uNHuDIOR4bb9BlPMar3RL3jNaDIDthgmAbtoSG3tAIpEikUgB0Pl5RW8w8HMSjUzmjQlEIany9P4Vnt0CoNuHSjGLEplHicyzXj2UBZ7dwrNblPMagFAAHsbD1Iw+WjTGkdPh4GzIwZnD47sjgYWkymdzOBpn6Q7FlSWq30+vTawZfbIP5nh/OJoxPOhyKxzl2Bny6+8mzAlwgPrpOZdflXHp9aIQiGePVNR4TN7f6A6O1w6mBbdVkonlhbgARKWYFTl1cbxQE42UYPHY4SPLYHkhjuv10E1bOm9ZhvB3ngkQsFpaI5NOj0icDlt6A4BMOs1qaW1CblAB+ztvp80oTpoGJ01jgmCaCdO+7T+/+R8DE79HDVOHygAAAABJRU5ErkJggg==", "a3": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABc0lEQVR4nI2TvUvDQByG34KUDIUMHbxbDBKyZS0SQSrUycHSqZOLUCxO6pSsIgSdHATdRBQcRDfJopChIFLIP9DVpYvUpUiX16FcPq60NHDccdz73HO/3AEzn8FpW3ZeWzQcjTkcjZkFpi2KE/pBOANZKYZ/8PT4grX1dUixWkD3e++4v7uFV9vAZ/+LwF9pZufw4oZ+ENKxXUZxQiksSmHx9a1HKSx6tXra50yysGO7dGw3HUdxwihO6NhuIaxBjMKis/NLOrbLq+sHOrZLPwgphcXNrT1KYREw6NXqNCvVDOAHIZutNgGjYKBgCqJ2NStVOrabAbxaPZ1QIQVR4Z3GbmqgalOog2q6gRQWDw+OKIWV23XunTDSv6BMTo+D1CB37vkXKR9WfbPV1gwWAJSB6jvdIC3g0gaqcEp/u7G/vEGz1S6cXemblapeeQBASQd0uicAgMHgGwAwmfwCAMplEwAQfzwj/w40wBSyQBHaI8I/b8khUW/DCkkAAAAASUVORK5CYII=", "a4": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACEElEQVR4nIWSP0xTURTGf72vTQSaFxpLDE41NiwYHUSpUYmDcWFhMQ0RJ42jJjqK0dS4OElcupAQNKhsCiYSKo2wqPgMUEyskT40VAyRFvpHK9gep/foI0VPcpNzz3e+75x7zoUq05QumtKFHeyfuKZ0Wc5uSNLM10zSlC5mpiiJlBNXFvinvE5JNhnJm/h9LXY16/h9LQR89bxVOe6NvsEScQPMfE4D0GS+ZHbMBcD1RwYAL/oHUZqX6bE7XHvwnkhrmh7D62xNRKRgPJOrg4bs2d0mZqYoIiKJVF76F9MyvJSSjnBUGnbtla7bEzIfGZejZ26IpnRRAKUFg6gnwMDl88Sm4wR89cybBeq62/keOgZAW+cRWjsuMHKzi16XZjegAC4NLzM7+gWAA/u8LGZ/Utfdzv7XH7jYeYKV0CmaPSWb9G0qbvvuciXnGuo9J35fC+u5JQAKaxX8a5v8it4nHnvHRL5I0Ntok4xYHwDlSs7ltpwf2U+O1RUbPRQHoiz83qqstK3hlSs5l70FK6ApXTZXTKCJV0/GeX7oIADBh5OOP2GRHQI2mM+AagKgc3aOZGINgI7FNJPbk60hVtuQu5lgJVkjFSrlwv8FRm/FeLzRQHjVILxq2NUjI1M1RV3bA5rS5fjZu4R6TgKQeToDwNzXjxixPsf7awpYIodPX3HEapF3FLBEqu+1yAB/AYu08O2uvTXkAAAAAElFTkSuQmCC"};
+const img={};for(const k in SPR){img[k]=new Image();img[k].src=SPR[k];}
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const ZONES=[{n:'Meadow',to:25,sky:['#8fd3f4','#d8f3ff'],ground:'#6fb35c',edge:'#4d8f3f',decor:['grass','grass','rock']},
+ {n:'Pine forest',to:50,sky:['#6fb7d9','#c4e6ee'],ground:'#4d8a55',edge:'#356b40',decor:['pine','pine','grass']},
+ {n:'Rock ridge',to:75,sky:['#8aa3c2','#d4dbe6'],ground:'#8a8d98',edge:'#666975',decor:['rock','rock','pine']},
+ {n:'Snowfield',to:100,sky:['#5b78a8','#c8d6ea'],ground:'#e6eef5',edge:'#b4c4d6',decor:['snow','snow','rock']}];
+const TIERS=[
+ {id:'inch',name:'Inchpebble',icon:'coin',when:'every few seconds',what:'A coin on the path. Tiny, constant proof that walking forward pays.'},
+ {id:'yard',name:'Yard',icon:'chest',when:'every stretch of trail',what:'An obstacle cleared and a chest opened. Each is tougher than the last, and the last chest in a zone holds a weapon.'},
+ {id:'mile',name:'Milestone',icon:'tent',when:'every quarter of the climb',what:'A camp reached. Better armor, a new zone, a place to look back from.'},
+ {id:'mount',name:'Mountain',icon:'flag',when:'the whole climb',what:'The summit. The goal every smaller goal borrows its meaning from.'}];
+const OBST=[[6,'pebble','Loose rock',1],[12,'slime','Moss slime',1],[19,'slime','Moss slime',2],[31,'goblin','Goblin',2],[38,'goblin','Goblin',3],[45,'troll','Cave troll',3],
+ [56,'goblin','Goblin scout',4],[63,'troll','Cave troll',4],[70,'troll','Cave troll',5],[81,'yeti','Yeti',5],[88,'yeti','Yeti',6],[95,'dragon','Dragon',8]];
+const CAMPS=[[25,'Meadow camp'],[50,'Pine camp'],[75,'Ridge camp']];
+/* weapons come out of the last chest of each zone and shorten the swing; armor is handed over at each camp */
+const WEAPONS=[['w1','Gnarled club',.46],['w2','Short sword',.38],['w3','Broadsword',.30],['w4',"Hero's sword",.22]];
+const ARMORS=[['a1','Cloth tunic'],['a2','Leather armor'],['a3','Chainmail shirt'],['a4','Plate armor']];
+const L=100;
+let ents=[],on={inch:true,yard:true,mile:true,mount:true},S;
+function build(){
+  ents=[];
+  OBST.forEach((o,i)=>ents.push({t:'yard',pos:o[0],spr:o[1],label:o[2],hp:o[3],max:o[3],state:'alive',reward:i%3===2&&i<9?'weapon':(i%2?'heart':'gem'),flash:0}));
+  CAMPS.forEach(c=>ents.push({t:'mile',pos:c[0],label:c[1],done:false}));
+  ents.push({t:'mount',pos:L,done:false});
+  for(let p=1.6;p<L-1;p+=1.7){ if(!ents.some(e=>e.t!=='inch'&&Math.abs(e.pos-p)<1.3)) ents.push({t:'inch',pos:p,done:false}); }
+  ents.sort((a,b)=>a.pos-b.pos);
+  S={w:0,a:0,gems:0,hearts:0,pos:0,t:0,last:0,longest:0,mode:'walk',timer:0,target:null,lunge:0,pops:[],finished:false};
+}
+const total=id=>ents.filter(e=>e.t===id).length;
+const got=id=>ents.filter(e=>e.t===id&&(e.done||e.state==='open')).length;
+function reward(tier,text,spr){
+  const g=S.t-S.last; if(g>S.longest)S.longest=g; S.last=S.t;
+  const T=TIERS.find(x=>x.id===tier);
+  document.getElementById('latest').innerHTML='<span class="chip '+tier+'">'+T.name+'</span><span>'+text+'</span>';
+  if(spr)S.pops.push({spr,age:0});
+  hud();
+}
+function step(dt){
+  if(S.finished)return;
+  S.t+=dt; S.lunge=Math.max(0,S.lunge-dt*4);
+  ents.forEach(e=>{if(e.flash)e.flash=Math.max(0,e.flash-dt*5)});
+  S.pops.forEach(p=>p.age+=dt); S.pops=S.pops.filter(p=>p.age<1.1);
+  if(S.mode==='fight'){
+    S.timer-=dt;
+    if(S.timer<=0){const e=S.target; e.hp--; e.flash=1; S.lunge=1; S.timer=WEAPONS[S.w][2];
+      if(e.hp<=0){e.state='chest';S.mode='loot';S.timer=.6;}}
+    return;
+  }
+  if(S.mode==='loot'){S.timer-=dt; if(S.timer<=0){const e=S.target;e.state='open';S.mode='walk';
+      const how=e.label+' cleared in '+e.max+(e.max>1?' hits':' hit')+'. ';
+      if(e.reward==='weapon'){S.w++;reward('yard',how+'The chest holds a '+WEAPONS[S.w][1].toLowerCase().replace("hero's","Hero's")+'. Swings are faster now.',WEAPONS[S.w][0]);bump('w');}
+      else{if(e.reward==='gem')S.gems++;else S.hearts++;reward('yard',how+'The chest holds a '+e.reward+'.',e.reward);}} return;}
+  if(S.mode==='camp'){S.timer-=dt; if(S.timer<=0)S.mode='walk'; return;}
+  let np=S.pos+dt*1.05;
+  for(const e of ents){
+    if(!on[e.t]||e.pos<S.pos-.01||e.pos>np+.8)continue;
+    if(e.t==='yard'&&e.state==='alive'&&e.pos-np<=.75){S.pos=e.pos-.75;S.mode='fight';S.target=e;S.timer=.3;return;}
+    if(e.pos>np)continue;
+    if(e.t==='inch'&&!e.done){e.done=true;reward('inch','Coin '+got('inch')+' of '+total('inch')+'.','coin');}
+    if(e.t==='mile'&&!e.done){e.done=true;S.pos=e.pos;S.mode='camp';S.timer=1.6;S.a++;reward('mile',e.label+' reached. You trade up to '+ARMORS[S.a][1].toLowerCase()+'.',ARMORS[S.a][0]);bump('a');return;}
+  }
+  if(np>=L){np=L;S.finished=true;const m=ents.find(e=>e.t==='mount');
+    if(on.mount){m.done=true;reward('mount','Summit reached. Longest wait between rewards: '+S.longest.toFixed(1)+' s.','trophy');}
+    else document.getElementById('latest').innerHTML='<span>The trail ends. Nothing marks the top.</span>';
+    document.getElementById('play').textContent='Climb again';}
+  S.pos=np;
+}
+/* ---------- close-up scene ---------- */
+const cv=document.getElementById('cv'),cx=cv.getContext('2d');cx.imageSmoothingEnabled=false;
+const U=26,HX=64,GY=98,SL=.22;
+/* ground height by trail position: a steady climb to the summit at L, then a steep drop behind it */
+const hgt=p=>p<=L?p*U*SL:L*U*SL-(p-L)*U*.85;
+const gy=sx=>GY-(hgt(S.pos+(sx-HX)/U)-hgt(S.pos));
+const zoneAt=p=>ZONES.find(z=>p<z.to)||ZONES[3];
+function rnd(i){const x=Math.sin(i*127.1)*43758.5453;return x-Math.floor(x);}
+function spr(k,sx,foot,o={}){const im=img[k];if(!im.complete)return;const s=o.s||1,w=16*s;
+  cx.globalAlpha=o.a==null?1:o.a;const X=Math.round(sx-w/2),Y=Math.round(foot-w+(o.dy||0));
+  if(o.flip){cx.save();cx.translate(X+w,Y);cx.scale(-1,1);cx.drawImage(im,0,0,w,w);cx.restore();}else cx.drawImage(im,X,Y,w,w);cx.globalAlpha=1;}
+function draw(){
+  const z=zoneAt(S.pos),W=224,H=140;
+  const g=cx.createLinearGradient(0,0,0,H);g.addColorStop(0,z.sky[0]);g.addColorStop(1,z.sky[1]);cx.fillStyle=g;cx.fillRect(0,0,W,H);
+  for(let i=0;i<4;i++){const x=((i*83-S.pos*3-S.t*1.5)%300+300)%300-40;spr('cloud',x,22+i%2*14,{a:.85});}
+  /* far ridge */
+  cx.fillStyle='rgba(40,60,90,.18)';cx.beginPath();cx.moveTo(0,H);
+  for(let x=0;x<=W;x+=8){const wx=x+S.pos*6;cx.lineTo(x,70-(x-HX)*.1+Math.sin(wx*.05)*9+Math.sin(wx*.13)*4);}cx.lineTo(W,H);cx.fill();
+  /* ground, coloured per zone */
+  for(let sx=0;sx<W;sx++){const wp=S.pos+(sx-HX)/U,zz=zoneAt(Math.max(0,wp)),y=Math.round(gy(sx));
+    cx.fillStyle=zz.ground;cx.fillRect(sx,y,1,H-y);cx.fillStyle=zz.edge;cx.fillRect(sx,y,1,2);
+    cx.fillStyle='rgba(120,90,50,.55)';cx.fillRect(sx,y+2,1,3);}
+  const sxOf=p=>HX+(p-S.pos)*U;
+  /* decor */
+  const a=Math.floor(S.pos-4),b=Math.ceil(S.pos+8);
+  for(let i=a*2;i<b*2;i++){if(i<0||i>L*2)continue;const p=i/2+rnd(i)*.3,zz=zoneAt(p),k=zz.decor[Math.floor(rnd(i+9)*3)],sx=sxOf(p);
+    if(rnd(i+3)<.4)spr(k,sx,gy(sx)+2,{a:.8});}
+  /* entities */
+  for(const e of ents){ if(!on[e.t])continue; const sx=sxOf(e.pos); if(sx<-20||sx>W+20)continue; const f=gy(sx)+1;
+    if(e.t==='inch'&&!e.done)spr('coin',sx,f-7+Math.sin(S.t*5+e.pos)*1.5,{s:.6});
+    if(e.t==='mile'){spr('tent',sx+11,f-1);spr('fire',sx-9,f+3,{s:.75});spr('sign',sx+26,f-4,{s:.75});}
+    if(e.t==='mount'){spr('flag',sx+7,gy(sx+7)+1);if(e.done&&!S.pops.length)spr('trophy',HX-4,f-17);}
+    if(e.t==='yard'){
+      if(e.state==='alive'){const big=e.spr==='dragon'||e.spr==='troll'||e.spr==='yeti'?1.5:1;
+        spr(e.spr,sx+(e.flash?2:0),f,{s:big,a:e.flash>.5?.45:1});
+        for(let h=0;h<e.max;h++){cx.fillStyle=h<e.hp?'#e5484d':'rgba(0,0,0,.35)';cx.fillRect(Math.round(sx-e.max*2.5+h*5),Math.round(f-16*big-6),4,3);}
+      }else spr('chest',sx,f,{a:e.state==='open'?.5:1});
+    }
+  }
+  /* hero */
+  const walking=S.mode==='walk'&&!S.finished;
+  spr('hero',HX-4+S.lunge*5,gy(HX)+1,{dy:walking?-Math.abs(Math.sin(S.t*9))*2:0});
+  if(S.lunge>0)spr(WEAPONS[S.w][0],HX+7+S.lunge*5,gy(HX)-3,{s:.75,flip:true,a:Math.min(1,S.lunge*2)});
+  S.pops.forEach((p,i)=>spr(p.spr,HX-4,gy(HX)-18-p.age*16,{a:Math.max(0,1-p.age)}));
+  /* trail fog of what is ahead: summit glimpse when far */
+}
+/* ---------- mountain progress bar ---------- */
+const NS='http://www.w3.org/2000/svg',mt=document.getElementById('mt');
+const el=(n,a,p)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);(p||mt).appendChild(e);return e;};
+const PEAK=[150,28],BASE=350,HALF=138;
+const halfW=y=>(y-PEAK[1])/(BASE-PEAK[1])*HALF;
+let pathEl,doneEl,plen,marks=[],heroEl;
+function mountain(){
+  mt.innerHTML='';marks=[];
+  const defs=el('defs',{});const cp=el('clipPath',{id:'mc'},defs);
+  const shape='M12 350 L60 262 L74 270 L108 150 L122 160 L150 28 L176 120 L190 112 L228 250 L242 240 L288 350 Z';
+  el('path',{d:shape},cp);
+  const gp=el('g',{'clip-path':'url(#mc)'});
+  const o=el('path',{d:shape,fill:'none','stroke-width':2,'stroke-linejoin':'round'});o.style.stroke='var(--fg)';o.style.opacity=.35;
+  /* switchback trail */
+  const legs=9;let d='';
+  for(let i=0;i<=legs;i++){const y=BASE-8-(BASE-8-PEAK[1]-14)*i/legs,w=halfW(y)*.62,x=i===legs?150:150+(i%2?w:-w);d+=(i?' L':'M')+x.toFixed(1)+' '+y.toFixed(1);}
+  pathEl=el('path',{d,fill:'none','stroke-width':7,'stroke-linecap':'round','stroke-linejoin':'round'});pathEl.style.stroke='var(--trail)';pathEl.style.opacity=.55;
+  doneEl=el('path',{d,fill:'none','stroke-width':7,'stroke-linecap':'round','stroke-linejoin':'round'});doneEl.style.stroke='var(--trail-done)';
+  plen=pathEl.getTotalLength();doneEl.setAttribute('stroke-dasharray',plen);
+  const at=p=>pathEl.getPointAtLength(plen*p/L);
+  const ys=[370,at(25).y,at(50).y,at(75).y,0];
+  ['--meadow','--forest','--ridge','--snow'].forEach((c,i)=>{const r=el('rect',{x:0,y:ys[i+1],width:300,height:ys[i]-ys[i+1]},gp);r.style.fill='var('+c+')';});
+  ZONES.forEach((z,i)=>{const t=el('text',{x:298,y:(ys[i]+ys[i+1])/2+(i==3?40:4),'font-size':11,'font-family':'Inter,sans-serif','font-weight':600});t.textContent=z.n;t.style.fill='var(--muted)';
+    if(i)el('line',{x1:20,x2:292,y1:ys[i],y2:ys[i],'stroke-dasharray':'2 4','stroke-width':1}).style.stroke='var(--muted)';});
+  ents.forEach(e=>{const q=at(e.pos);let m;
+    if(e.t==='inch'){m=el('circle',{cx:q.x,cy:q.y,r:1.5});}
+    else if(e.t==='yard'){m=el('rect',{x:q.x-4,y:q.y-4,width:8,height:8,transform:'rotate(45 '+q.x+' '+q.y+')','stroke-width':1.5});}
+    else if(e.t==='mile'){m=el('image',{href:SPR.tent,x:q.x-11,y:q.y-17,width:22,height:22});}
+    else {m=el('image',{href:SPR.flag,x:q.x-6,y:q.y-26,width:26,height:26});}
+    marks.push([e,m]);});
+  heroEl=el('image',{href:SPR.hero,width:22,height:22});
+}
+function paintMountain(){
+  doneEl.setAttribute('stroke-dashoffset',plen*(1-S.pos/L));
+  const q=pathEl.getPointAtLength(plen*S.pos/L);heroEl.setAttribute('x',q.x-11);const q2=pathEl.getPointAtLength(Math.min(plen,plen*S.pos/L+3));heroEl.setAttribute('href',q2.x<q.x-.01?SPR.heroL:SPR.hero);heroEl.setAttribute('y',q.y-20);
+  marks.forEach(([e,m])=>{const d=e.done||e.state==='open';m.style.display=on[e.t]?'':'none';
+    if(e.t==='inch'){m.style.fill=d?'var(--trail-done)':'var(--panel)';m.style.opacity=d?0:.9;}
+    if(e.t==='yard'){m.style.fill=d?'var(--yard)':'var(--panel)';m.style.stroke='var(--yard)';}
+    if(e.t==='mile'||e.t==='mount')m.style.opacity=d?1:.6;});
+  document.getElementById('pct').textContent=Math.round(S.pos)+'% climbed';
+  document.getElementById('zone').textContent=zoneAt(S.pos).n;
+}
+/* ---------- ledger ---------- */
+const led=document.getElementById('ledger');
+TIERS.forEach(T=>{const d=document.createElement('div');d.className='tier';d.id='t-'+T.id;d.style.setProperty('--c','var(--'+T.id+')');
+  d.innerHTML='<div class="when">'+T.when+'</div><div class="name"><img src="'+SPR[T.icon]+'" alt="">'+T.name+'</div><div class="count" id="c-'+T.id+'"></div><div class="bar"><i id="b-'+T.id+'"></i></div><p class="what">'+T.what+'</p><label><input type="checkbox" id="on-'+T.id+'" checked> On the trail</label>';
+  led.appendChild(d);
+  d.querySelector('input').addEventListener('change',ev=>{on[T.id]=ev.target.checked;d.classList.toggle('off',!on[T.id]);hud();draw();paintMountain();});});
+function bump(k){const s=document.getElementById('slot-'+k);s.classList.remove('up');void s.offsetWidth;s.classList.add('up');}
+function inv(){[['w',WEAPONS,S.w],['a',ARMORS,S.a]].forEach(([k,L,i])=>{document.getElementById('img-'+k).src=SPR[L[i][0]];document.getElementById('name-'+k).textContent=L[i][1];
+    document.getElementById('pips-'+k).innerHTML=L.map((_,j)=>'<i class="'+(j<=i?'f':'')+'"></i>').join('');document.getElementById('slot-'+k).title='Tier '+(i+1)+' of 4';});
+  document.getElementById('bag').innerHTML=[['coin',got('inch'),'coins'],['gem',S.gems,'gems'],['heart',S.hearts,'hearts']].map(b=>'<span title="'+b[2]+'"><img src="'+SPR[b[0]]+'" alt="'+b[2]+'">'+b[1]+'</span>').join('');}
+function hud(){inv();TIERS.forEach(T=>{const g=got(T.id),n=total(T.id);
+  document.getElementById('c-'+T.id).textContent=on[T.id]?g+' / '+n:'removed';
+  document.getElementById('b-'+T.id).style.width=(on[T.id]?g/n*100:0)+'%';});}
+function gaps(){const now=S.finished?0:S.t-S.last;
+  document.getElementById('since').innerHTML=now.toFixed(1)+' <small>s</small>';
+  document.getElementById('longest').innerHTML=Math.max(S.longest,now).toFixed(1)+' <small>s</small>';}
+/* ---------- loop ---------- */
+let playing=!matchMedia('(prefers-reduced-motion: reduce)').matches,speed=1,prev=0;
+const playBtn=document.getElementById('play');
+function reset(){build();mountain();hud();document.querySelectorAll('.slot.up').forEach(s=>s.classList.remove('up'));playBtn.textContent=playing?'Pause':'Play';
+  document.getElementById('latest').innerHTML='<span class="chip mount">Mountain</span><span>The goal is set: reach the summit.</span>';}
+playBtn.addEventListener('click',()=>{if(S.finished){playing=true;reset();return;}playing=!playing;playBtn.textContent=playing?'Pause':'Play';});
+document.getElementById('restart').addEventListener('click',()=>{playing=true;reset();});
+document.querySelectorAll('.spd').forEach(b=>b.addEventListener('click',()=>{speed=+b.dataset.s;document.querySelectorAll('.spd').forEach(x=>x.setAttribute('aria-pressed',x===b));}));
+function frame(ts){const dt=Math.min(.05,(ts-prev)/1000||0);prev=ts;
+  if(playing){let r=dt*speed;while(r>0){const h=Math.min(.02,r);step(h);r-=h;}}
+  draw();paintMountain();gaps();requestAnimationFrame(frame);}
+if(!playing)playBtn.textContent='Play';
+reset();requestAnimationFrame(frame);
+</script>
+</body>
+</html>

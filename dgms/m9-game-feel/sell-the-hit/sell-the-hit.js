@@ -29,7 +29,7 @@
     ['second', 'Secondary motion', 'body', 'A plume on the dummy keeps swinging after the body has stopped.', 'Loose parts lag behind and overshoot, which sells the force that moved the body.'],
     ['vfx', 'Impact VFX', 'fx', 'A burst of sparks marks the exact point and moment of contact.', 'Deck: impacts and explosions “bring weight into actions”.'],
     ['trail', 'Weapon trails', 'fx', 'A ribbon follows the sword tip, tracing an arc the eye would otherwise miss.', 'Deck: trails “simulate the blur”.'],
-    ['smear', 'Motion smears', 'fx', 'For a frame or two the knight and blade are drawn as one stretched shape, the way animators paint fast motion.', 'Seen only in a still frame; in motion it reads as speed.'],
+    ['smear', 'Motion smears', 'fx', 'On the fastest frames the knight’s body is drawn as one solid trapezoid: full height at the front, tapering back to where it was a moment ago.', 'Animators paint this instead of in-between frames. Seen in a still it looks broken; in motion it reads as speed.'],
     ['blur', 'Motion blur', 'fx', 'Fading copies trail the knight, more of them the faster it moves.', 'Dynamic: no copies at rest, the most at peak speed.'],
     ['flash', 'Hit flash', 'fx', 'The dummy turns white for a few frames at contact.', 'Deck: “Yes, you hit the target. It flashes and moves back a tiny bit.”'],
     ['shake', 'Camera shake', 'cam', 'The whole view jolts and settles. The frame corners mark the screen, which holds still.', 'Deck: shake “must simulate the action”: sideways for a sideways blow.'],
@@ -47,7 +47,7 @@
   const K = 1.3, LW = 200, LH = 180, GY = 128, AX = 40, DX = 160, AHIT = DX - 16 * K - 10 * K - 23 * K * Math.cos(.3);
   const P = 2.4, A0 = .42, A1 = .82, HIT = 1.04, R0 = 1.62, R1 = 2.08, STOP = .15;
   // BASIC draws the plain version: a square and a circle, nothing else on screen unless a technique needs it
-  let BASIC = false;
+  let BASIC = false, NOBODY = false;   // NOBODY: draw the knight's blade without its body
   const hitX = () => BASIC ? DX - 31 * K : AHIT;
   const sim = (t, on) => on.stop && t > HIT ? (t < HIT + STOP ? HIT : t - STOP) : t;
   function knightX(s, on) {
@@ -103,16 +103,19 @@
   }
   function knight(g, x, a, sx = 1, sy = 1, lean = 0, alpha = 1) {
     if (BASIC) {
+      if (NOBODY) return;
       g.save(); g.globalAlpha *= alpha; g.translate(x, GY); g.rotate(lean); g.scale(sx * K, sy * K);
       g.fillStyle = '#5562eb'; g.strokeStyle = C.navy; g.lineWidth = 1.8; g.beginPath(); g.rect(-13, -26, 26, 26); g.fill(); g.stroke();
       g.restore(); return;
     }
+    if (!NOBODY) {
     g.save(); g.globalAlpha *= alpha; g.translate(x, GY); g.rotate(lean); g.scale(sx * K, sy * K);
     g.fillStyle = 'rgba(40,30,20,.2)'; g.beginPath(); g.ellipse(0, 1, 14, 3.5, 0, 0, TAU); g.fill();
     g.fillStyle = '#5562eb'; g.strokeStyle = C.navy; g.lineWidth = 2;
     g.beginPath(); g.roundRect(-12, -26, 24, 26, 6); g.fill(); g.stroke();
     g.fillStyle = '#fff'; g.beginPath(); g.roundRect(0, -21, 10, 4, 2); g.fill();
     g.restore();
+    }
     // the sword stays rigid, pivoting at the knight's front
     g.save(); g.globalAlpha *= alpha; g.translate(x + 10 * K * sx, GY - 13 * K * sy); g.rotate(a); g.scale(K, K);
     g.fillStyle = '#9a5a06'; g.fillRect(-3, -2.5, 6, 5);
@@ -246,16 +249,13 @@
       const n = Math.round(clamp(v / 500) * 6);
       for (let i = n; i >= 1; i--) { const ps = s - i * .014; knight(g, knightX(ps, on), swordA(ps, on), sx, sy, lean, .12 + .05 * (n - i) / n); }
     }
-    // motion smear: one stretched shape spanning the last few frames of the lunge
-    if (on.smear && d > -.07 && d < .02 && !frozen) {
-      const xa = knightX(s - .06, on), aa = swordA(s - .06, on);
-      g.save(); g.fillStyle = 'rgba(85,98,235,.55)';
-      g.beginPath(); g.roundRect(xa - 12 * K, GY - 25 * K, kx - xa + 24 * K, 24 * K, 9 * K); g.fill();
-      const [px, py] = [kx + 10 * K, GY - 13 * K];
-      if (!BASIC) {
-      g.fillStyle = 'rgba(238,241,251,.85)'; g.strokeStyle = 'rgba(21,32,68,.4)'; g.lineWidth = 1;
-      g.beginPath(); g.moveTo(px, py); g.arc(px, py, 23 * K, Math.min(aa, ka), Math.max(aa, ka)); g.closePath(); g.fill(); g.stroke();
-      }
+    // motion smear: on the fastest frames the body is replaced by one solid trapezoid, full height at the leading edge
+    // and tapering back to a sliver where the body was a few frames ago (the reference's "trapezoid echo")
+    const smearing = on.smear && !frozen && s > A1 + .05 && s < HIT;
+    if (smearing) {
+      const hw = (BASIC ? 13 : 12) * K, tail = knightX(Math.max(A1, s - .1), on) - hw, front = kx + hw;
+      g.save(); g.fillStyle = '#5562eb'; g.strokeStyle = C.navy; g.lineWidth = 1.8 * K; g.lineJoin = 'round';
+      g.beginPath(); g.moveTo(front, GY - 26 * K); g.lineTo(front, GY); g.lineTo(tail, GY - 11 * K); g.lineTo(tail, GY - 15 * K); g.closePath(); g.fill(); g.stroke();
       g.restore();
     }
     // weapon trail: a ribbon behind the sword tip
@@ -267,7 +267,7 @@
         g.beginPath(); g.moveTo(...pts[i - 1]); g.lineTo(...pts[i]); g.stroke();
       }
     }
-    knight(g, kx, ka, sx, sy, lean);
+    NOBODY = smearing; knight(g, kx, ka, sx, sy, lean); NOBODY = false;   // a smear frame keeps only the blade
     // impact sparks at the blade's point of contact
     if (on.vfx && d >= 0) sparks(g, BASIC ? DX - 18 * K : DX - 16 * K, BASIC ? GY - 18 * K : GY - K * (13 - Math.sin(.3) * 23) - 2, frozen ? 0 : clamp(d / .26));
     // world response: dust and pebbles
@@ -322,7 +322,7 @@
   const HEAD = 28, SC = Math.min(TW / LW, (TH - HEAD - 6) / LH);
   // the same grid twice: `basic` is the plain square-and-circle version, the other the knight with its six layers
   // the plain slide names the shapes instead of the knight and dummy
-  const plain = str => str.replace(/the knight and blade are/gi, 'the square is').replace(/the sword tip/gi, 'the square').replace(/the plume on the dummy|A plume on the dummy/g, 'A stalk on the circle')
+  const plain = str => str.replace(/the knight’s body is/gi, 'the square is').replace(/the sword tip/gi, 'the square').replace(/the plume on the dummy|A plume on the dummy/g, 'A stalk on the circle')
     .replace(/the knight/g, 'the square').replace(/The knight/g, 'The square').replace(/the dummy/g, 'the circle').replace(/The dummy/g, 'The circle').replace(/, winces,/, '');
   const makeGrid = (name, basic) => canvasDemo(name, (s, cv, g) => {
     const st = { tour: true, t: 0, frozen: false, now: 0, ghost: false, pick: 2, group: null, key: '' };

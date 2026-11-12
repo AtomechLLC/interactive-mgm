@@ -78,44 +78,27 @@
     g.fill(); g.restore();
   }
   const PH = { idle: '#ebe4d3', startup: C.gold, active: C.red, recovery: C.blue, stagger: C.purple };
-  // a knight at x facing dir; weapon pose from the phase and how far into it
+  // the two duellists from the shared cast (assets/cast.js): Bram with the greatsword, Wisp with the dagger.
+  // Pose from the phase and how far into it; returns where the body stands (Wisp lunges in to stab).
   function knight(g, i, x, dir, floor, ph, k) {
-    const body = i === 0 ? '#5b6788' : '#9c3b3b', trim = i === 0 ? C.gold : '#f0d7a0';
-    const lean = ph === 'stagger' ? -dir * 14 * (1 - k * 0.6) : 0;
-    const lunge = i === 1 && (ph === 'startup' || ph === 'active') ? dir * (ph === 'active' ? 70 : 70 * k) : i === 1 && ph === 'recovery' ? dir * 70 * (1 - k) : 0;
-    const bx = x + lunge, top = floor - 150;
-    g.save(); g.lineCap = 'round'; g.lineJoin = 'round';
-    // legs
-    g.strokeStyle = '#3b3f52'; g.lineWidth = 14;
-    g.beginPath(); g.moveTo(bx - 8, floor - 62); g.lineTo(bx - dir * 22, floor - 4); g.moveTo(bx + 8, floor - 62); g.lineTo(bx + dir * 24, floor - 4); g.stroke();
-    g.translate(bx, floor - 62); g.rotate(lean * Math.PI / 180); g.translate(-bx, -(floor - 62));
-    // torso, head
-    g.fillStyle = body; g.strokeStyle = C.navy; g.lineWidth = 2.5;
-    g.beginPath(); g.roundRect(bx - 22, top + 40, 44, 52, 10); g.fill(); g.stroke();
-    g.fillStyle = '#a7aec2'; g.beginPath(); g.arc(bx, top + 22, 19, 0, TAU); g.fill(); g.stroke();
-    g.strokeStyle = C.navy; g.lineWidth = 3; g.beginPath(); g.moveTo(bx + dir * 2, top + 20); g.lineTo(bx + dir * 16, top + 20); g.stroke();
-    g.fillStyle = trim; g.fillRect(bx - 22, top + 70, 44, 6);
-    // weapon
-    const hx = bx + dir * 18, hy = top + 62;
+    const S = .86, lunge = i === 1 && (ph === 'startup' || ph === 'active') ? dir * (ph === 'active' ? 70 : 70 * k) : i === 1 && ph === 'recovery' ? dir * 70 * (1 - k) : 0;
+    const bx = x + lunge, id = i === 0 ? 'bram' : 'wisp';
+    let pose;
     if (i === 0) {
       // greatsword: raised behind at rest, wound further back in startup, sweeps down and forward when active
-      let ang = -110;
-      if (ph === 'startup') ang = lerp(-110, -150, k); else if (ph === 'active') ang = lerp(-150, 35, clamp(k * 1.4)); else if (ph === 'recovery') ang = lerp(35, -110, clamp((k - 0.5) * 2));
-      else if (ph === 'stagger') ang = -60;
-      const a = ang * Math.PI / 180, ex = hx + dir * Math.cos(a) * 165, ey = hy + Math.sin(a) * 165;
-      g.strokeStyle = '#d9dde8'; g.lineWidth = 11; g.beginPath(); g.moveTo(hx + dir * Math.cos(a) * 22, hy + Math.sin(a) * 22); g.lineTo(ex, ey); g.stroke();
-      g.strokeStyle = C.navy; g.lineWidth = 1.5; g.stroke();
-      const gx = hx + dir * Math.cos(a) * 24, gy = hy + Math.sin(a) * 24, px = -Math.sin(a) * 14, py = Math.cos(a) * 14;
-      g.strokeStyle = trim; g.lineWidth = 6; g.beginPath(); g.moveTo(gx + dir * px, gy + py); g.lineTo(gx - dir * px, gy - py); g.stroke();
-      if (ph === 'active') { g.strokeStyle = 'rgba(229,50,45,.22)'; g.lineWidth = 14; g.beginPath(); g.arc(hx, hy, 150, dir > 0 ? -150 * Math.PI / 180 : Math.PI + 150 * Math.PI / 180, dir > 0 ? a : Math.PI - a, dir < 0); g.stroke(); }
+      const w = ph === 'startup' ? lerp(165, 240, k) : ph === 'active' ? lerp(240, 55, clamp(k * 1.4)) : ph === 'recovery' ? lerp(55, 165, clamp((k - 0.5) * 2)) : 165;
+      pose = ph === 'stagger' ? CAST.clip('hitLight', k * .6).pose : CAST.hold(w);   // Phalanx's light hit reaction (assets/cast-motion.js)
+      if (ph === 'active') {   // the swing's arc, traced by the blade tip
+        g.save(); g.strokeStyle = 'rgba(229,50,45,.22)'; g.lineWidth = 14; g.lineCap = 'round'; g.beginPath();
+        for (let q = 0; q <= 12; q++) { const t = CAST.tip(id, { x: bx, y: floor, s: S, face: dir, pose: CAST.hold(lerp(240, 55, clamp(k * 1.4) * q / 12)) }); q ? g.lineTo(t.x, t.y) : g.moveTo(t.x, t.y); }
+        g.stroke(); g.restore();
+      }
     } else {
-      // dagger: held at the hip, thrust straight out when active
-      const out = ph === 'active' ? 40 : ph === 'startup' ? -10 * k : 0, y = hy + 4;
-      g.strokeStyle = '#f1cfa8'; g.lineWidth = 9; g.beginPath(); g.moveTo(bx, top + 56); g.lineTo(hx + dir * out, y); g.stroke();
-      g.strokeStyle = '#d9dde8'; g.lineWidth = 6; g.beginPath(); g.moveTo(hx + dir * out, y); g.lineTo(hx + dir * (out + 46), y); g.stroke();
-      if (ph === 'active') { g.fillStyle = 'rgba(229,50,45,.3)'; g.fillRect(Math.min(hx + dir * (out + 10), hx + dir * (out + 56)), y - 12, 46, 24); }
+      // dagger: held low, drawn back in startup, thrust straight out when active
+      pose = ph === 'startup' ? CAST.mix('guard', 'draw', k) : ph === 'active' ? 'thrust' : ph === 'recovery' ? CAST.mix('thrust', 'guard', k) : ph === 'stagger' ? CAST.clip('hitLight', k * .6).pose : 'guard';
     }
-    g.restore();
+    CAST.draw(g, id, { x: bx, y: floor, s: S, face: dir, pose });
+    if (i === 1 && ph === 'active') { const t = CAST.tip(id, { x: bx, y: floor, s: S, face: dir, pose }); g.fillStyle = 'rgba(229,50,45,.3)'; g.fillRect(t.x - 23 - dir * 8, t.y - 12, 46, 24); }
     return bx;
   }
   function bars(g, x, p, f, label, col) {

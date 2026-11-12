@@ -26,20 +26,45 @@
   const SIMG = Object.fromEntries(SLOTS.map(k => [k, img(`img/slot-${k}.svg`)]));
   const CLASSES = 14;   // collar classes on the wiki's abilities page
   const ARTICLE = 203583570981120n;
+  // the reels land on parts that have exported art; KIT_FRAMES (kitten-art.js) maps each name to its sprite frame
+  const ART = window.KIT_FRAMES || {};
+  const PICKABLE = Object.fromEntries(SLOTS.map(k => [k, MEW_PARTS[k].map((_, i) => i).filter(i => ART[k] && ART[k][i] != null)]));
+  const LAND = 2.4545;   // spin offset that centres a reel's pick in the gold window
+  // a fixed pair of cats for the walk-through, so the tour (and its GIF) is the same every run
+  const REEL_TOUR = [0, 1].map(r => Object.fromEntries(SLOTS.map((k, i) => { const a = PICKABLE[k]; return [k, a.length ? a[(i * 17 + 5 + r * 23) % a.length] : 0]; })));
+  const rnd = k => { const a = PICKABLE[k]; return a.length ? a[Math.floor(Math.random() * a.length)] : 0; };
+  const rollDur = i => .8 + i * .09;
+  const fitFont = (g, s, w, weight, size, min) => { for (; size > min; size -= 1) { g.font = `${weight} ${size}px Montserrat`; if (g.measureText(s).width <= w) break; } return size; };
   canvasDemo('reels', (s, cv, g) => {
-    const st = { tour: true, t: 0, held: false, on: new Set(), cls: false, key: '' };
+    // pick[k]: the name index a live reel lands on; roll[k]: when it started spinning; prev[k]: what the cat wore before
+    const st = { tour: true, t: 0, held: false, on: new Set(), cls: false, key: '', pick: {}, roll: {}, prev: {}, catKey: null, catImg: null };
     const tourBtn = $(s, '.re-tour'), free = freeOf(st, tourBtn), list = $(s, '.re-slots');
     list.innerHTML = SLOTS.map(k => `<label class="chk"><input type="checkbox" data-k="${k}"> ${k[0].toUpperCase() + k.slice(1)} <small style="color:var(--muted);font-weight:500">(${MEW_PARTS[k].length})</small></label>`).join('');
     const sync = () => { $$(list, 'input').forEach(i => i.checked = st.on.has(i.dataset.k)); $(s, '.re-cls').checked = st.cls; };
-    $$(list, 'input').forEach(i => i.onchange = () => { free(); i.checked ? st.on.add(i.dataset.k) : st.on.delete(i.dataset.k); });
+    const settled = k => st.on.has(k) && st.pick[k] != null ? (st.t - st.roll[k] >= rollDur(SLOTS.indexOf(k)) ? st.pick[k] : st.prev[k]) : undefined;
+    const roll = (k, delay = 0) => { st.prev[k] = settled(k); st.pick[k] = rnd(k); st.roll[k] = st.t + delay; };
+    $$(list, 'input').forEach(i => i.onchange = () => { free(); const k = i.dataset.k; if (i.checked) { st.on.add(k); roll(k); } else st.on.delete(k); });
     $(s, '.re-cls').onchange = e => { free(); st.cls = e.target.checked; };
-    $(s, '.re-all').onclick = () => { free(); st.on = new Set(SLOTS); sync(); };
+    $(s, '.re-all').onclick = () => { free(); SLOTS.forEach((k, i) => { if (!st.on.has(k)) { st.on.add(k); roll(k, i * .08); } }); sync(); };
+    $(s, '.re-roll').onclick = () => { free(); if (!st.on.size) st.on = new Set(SLOTS); [...st.on].forEach(k => roll(k, SLOTS.indexOf(k) * .08)); sync(); };
     tourBtn.onclick = () => { st.tour = true; st.t = 0; tourBtn.classList.add('on'); };
-    const STEP = 1.7, DUR = STEP * SLOTS.length + 7;
+    const STEP = 1.7, REROLL = STEP * SLOTS.length + 4, DUR = STEP * SLOTS.length + 8;
+    // draw the cat the settled reels describe; unlit slots keep the base kitten's part
+    function catFor(on) {
+      const pick = {}, names = [];
+      SLOTS.forEach(k => { const v = settled(k); if (v != null) { pick[k] = ART[k][v]; names.push(v); } else names.push('-'); });
+      const key = names.join();
+      if (key === st.catKey || !window.KITTEN) return;
+      st.catKey = key;
+      const url = URL.createObjectURL(new Blob([KITTEN.svg(pick)], { type: 'image/svg+xml' })), im = new Image();
+      im.onload = () => { if (st.catKey === key) { if (st.catImg) URL.revokeObjectURL(st.catImg.src); st.catImg = im; } else URL.revokeObjectURL(url); };
+      im.src = url;
+    }
     function render() {
       const t = st.t;
       if (st.tour) {
-        const n = clamp(Math.floor(t / STEP) + 1, 0, SLOTS.length), cls = t > STEP * SLOTS.length + 2.5;
+        const n = clamp(Math.floor(t / STEP) + 1, 0, SLOTS.length), cls = t > STEP * SLOTS.length + 2.5, r2 = t >= REROLL;
+        SLOTS.forEach((k, i) => { st.pick[k] = REEL_TOUR[r2 ? 1 : 0][k]; st.roll[k] = r2 ? REROLL + i * .08 : i * STEP; st.prev[k] = r2 ? REEL_TOUR[0][k] : undefined; });
         if (st.on.size !== n || st.cls !== cls) { st.on = new Set(SLOTS.slice(0, n)); st.cls = cls; sync(); }
       }
       const on = SLOTS.filter(k => st.on.has(k));
@@ -58,10 +83,12 @@
         pic(g, SIMG[k], x + RW / 2, RY + 37, 48, 48);
         txt(g, k.toUpperCase(), x + RW / 2, RY + 84, '800 13px Montserrat', C.ink, 'center');
         txt(g, `${names.length} options`, x + RW / 2, RY + 102, '600 12px Jost', C.muted, 'center');
-        // the reel window: names scroll while the slot spins, then settle
+        // the reel window: a live reel spins, then lands its pick in the gold window
         g.save(); g.beginPath(); g.rect(x + 4, RY + 116, RW - 8, RH - 122); g.clip();
-        const spin = live ? (t * (6 + i * .7)) : i * 3.1, base = Math.floor(spin), frac = spin - base;
-        for (let r = -1; r < 6; r++) {
+        let spin = i * 3.1;
+        if (live && st.pick[k] != null) { const u = clamp((t - st.roll[k]) / rollDur(i), 0, 1); spin = st.pick[k] - LAND - (14 + i * 2) * Math.pow(1 - u, 3); }
+        const base = Math.floor(spin), frac = spin - base;
+        for (let r = -1; r < 7; r++) {
           const nm = names[(base + r + names.length * 9) % names.length], y = RY + 128 + (r - frac) * 22, mid = Math.abs(y - (RY + 182)) < 11;
           txt(g, nm.length > 14 ? nm.slice(0, 13) + '…' : nm, x + RW / 2, y, (mid ? '700 ' : '500 ') + '11.5px Jost', mid && live ? C.ink : C.muted, 'center');
         }
@@ -71,17 +98,20 @@
         if (i < SLOTS.length - 1) txt(g, '×', x + RW + 2, RY + RH / 2, '800 16px Montserrat', live && st.on.has(SLOTS[i + 1]) ? C.goldInk : '#d8ccb2', 'center');
       });
       // the two totals
-      const Y2 = 330;
-      box(g, 30, Y2, 300, 120, 'rgba(46,163,220,.1)', '#2ea3dc', 12, 2);
-      txt(g, 'Parts the team authored', 46, Y2 + 24, '700 15px Jost', C.muted);
-      txt(g, sum.toLocaleString('en-US'), 46, Y2 + 66, '800 44px Montserrat', '#1f6f99');
-      txt(g, 'added up, one at a time', 46, Y2 + 102, '600 14px Jost', C.muted);
-      box(g, 346, Y2, 664, 120, 'rgba(255,185,81,.18)', '#e0a92d', 12, 2);
-      txt(g, 'Different cats a player can meet', 362, Y2 + 24, '700 15px Jost', C.muted);
-      txt(g, on.length ? big(prod) : '0', 362, Y2 + 66, `800 ${prod > 10n ** 14n ? 38 : 44}px Montserrat`, C.goldInk);
-      txt(g, on.length ? `multiplied: ${on.map(k => MEW_PARTS[k].length).join(' × ')}${st.cls ? ' × ' + CLASSES + ' classes' : ''}` : 'turn on a slot', 362, Y2 + 102, '600 14px Jost', C.muted);
+      const Y2 = 322, BW = 200, GX = 242, GW = 512;
+      box(g, 30, Y2, BW, 128, 'rgba(46,163,220,.1)', '#2ea3dc', 12, 2);
+      txt(g, 'Parts the team authored', 44, Y2 + 24, '700 15px Jost', C.muted);
+      txt(g, sum.toLocaleString('en-US'), 44, Y2 + 68, '800 44px Montserrat', '#1f6f99');
+      txt(g, 'added up, one at a time', 44, Y2 + 108, '600 14px Jost', C.muted);
+      box(g, GX, Y2, GW, 128, 'rgba(255,185,81,.18)', '#e0a92d', 12, 2);
+      txt(g, 'Different cats a player can meet', GX + 16, Y2 + 24, '700 15px Jost', C.muted);
+      const big1 = on.length ? big(prod) : '0';
+      txt(g, big1, GX + 16, Y2 + 68, `800 ${fitFont(g, big1, GW - 32, 800, 44, 22)}px Montserrat`, C.goldInk);
+      const mul = on.length ? `multiplied: ${on.map(k => MEW_PARTS[k].length).join(' × ')}${st.cls ? ' × ' + CLASSES + ' classes' : ''}` : 'turn on a slot';
+      g.font = '600 14px Jost'; const mulSize = g.measureText(mul).width > GW - 32 ? 12 : 14;
+      txt(g, mul, GX + 16, Y2 + 108, `600 ${mulSize}px Jost`, C.muted);
       // a log strip: thousand, million, billion, trillion, quadrillion
-      const LX = 30, LW = 980, LY = 488, digits = on.length ? prod.toString().length - 1 + Math.log10(+('0.' + prod.toString().slice(0, 6)) * 10) : 0;
+      const LX = 30, LW = 724, LY = 490, digits = on.length ? prod.toString().length - 1 + Math.log10(+('0.' + prod.toString().slice(0, 6)) * 10) : 0;
       box(g, LX, LY, LW, 16, '#e8dcc0', null, 8);
       const xs = d => LX + LW * d / 17;
       box(g, LX, LY, Math.max(16, xs(Math.log10(Math.max(1, sum))) - LX), 16, '#2ea3dc', null, 8);
@@ -89,7 +119,18 @@
       [[3, 'thousand'], [6, 'million'], [9, 'billion'], [12, 'trillion'], [15, 'quadrillion']].forEach(([d, n]) => {
         g.fillStyle = C.navy; g.fillRect(xs(d) - 1, LY - 6, 2, 50); txt(g, n, xs(d), LY + 56, '600 13px Jost', C.muted, 'center');
       });
-      txt(g, 'log scale', LX + LW, LY + 56, '600 12px Jost', C.muted, 'right');
+      txt(g, 'log scale', LX, LY - 16, '600 12px Jost', C.muted);
+      // the cat those reels describe
+      const CX = 770, CW = 240, CY = Y2, CH = 252;
+      box(g, CX, CY, CW, CH, '#fffaf0', C.navy, 12, 2);
+      txt(g, 'The cat on the gold line', CX + CW / 2, CY + 22, '800 15px Montserrat', C.ink, 'center');
+      catFor(on);
+      if (st.catImg && st.catImg.complete && st.catImg.naturalWidth) {
+        const ih = CH - 64, iw = ih * KITTEN.aspect, w2 = Math.min(iw, CW - 16), h2 = w2 / KITTEN.aspect;
+        g.drawImage(st.catImg, CX + (CW - w2) / 2, CY + 34 + (ih - h2) / 2, w2, h2);
+      }
+      const rolled = SLOTS.filter(k => settled(k) != null).length;
+      txt(g, !rolled ? 'the base kitten: no slot in play' : rolled === SLOTS.length ? 'all nine slots from the reels' : `${rolled} slot${rolled > 1 ? 's' : ''} from the reels, the rest base`, CX + CW / 2, CY + CH - 18, '600 13px Jost', C.muted, 'center');
       const key = on.join() + st.cls; if (key === st.key) return; st.key = key;
       say($(s, '.re-out'), !on.length ? 'Turn on a slot.' : on.length < SLOTS.length
         ? `${on.length} slot${on.length > 1 ? 's' : ''}: ${sum} parts authored, ${big(prod)} combinations. Each new slot multiplies; it never just adds.`
