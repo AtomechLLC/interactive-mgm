@@ -1,6 +1,6 @@
 /* First-person follow view for the battle (battle.js calls FPV.draw). The floor plan is extruded into walls and
    ray-cast one screen column at a time from the followed unit's position and facing; every other unit is a capsule body
-   wearing its token as a face, and every shot and telegraph is a billboard or a floor ellipse placed by the same projection and hidden behind nearer walls.
+   wearing its token as a face (the swarm's bodies are orbs that hang from the ceiling while they cling), and every shot and telegraph is a billboard or a floor ellipse placed by the same projection and hidden behind nearer walls.
    Nothing here changes the battle: it reads the same state the top-down view draws.
    FPV.walls(P, shutDoor) -> wall segments (room edges with the doorways cut out)
    FPV.draw(g, B, u, cam, o) with o = { W, H, walls, plan, drawUnit, tok, TEAM, dt } */
@@ -80,10 +80,33 @@
       if (it.kind === 'zone') {
         const rx = it.r * k, ry = Math.max(2, it.r * k * EYE / f);
         seen(x - rx, x + rx, Math.max(6, f - it.r * .6), () => { g.globalAlpha = it.soft ? .22 : .35 + .4 * it.k; g.fillStyle = TEAM[it.team].soft; g.beginPath(); g.ellipse(x, floor, rx, ry, 0, 0, TAU); g.fill(); g.globalAlpha = it.soft ? .5 : .95; g.strokeStyle = TEAM[it.team].col; g.lineWidth = it.soft ? 2 : 4; g.setLineDash(it.soft ? [] : [10, 7]); g.stroke(); });
+      } else if (it.kind === 'unit' && it.e.def.cling) {
+        // the swarm: an orb in the squad's colour with the token as its face. A clinging body hangs from the ceiling, straight above
+        // where it is on the plan; a leap drops it onto its target, and it climbs back up when it returns to the wall.
+        const e = it.e, sz = e.def.size || 1, rw = 11 * sz, r = rw * k;
+        let want = rw;   // height of the orb's centre above the floor, in world units
+        if (e.onWall) want = WALL - rw - 1;
+        else if (e.dash) { const d0 = Math.hypot(e.dash.x0 - e.dash.tgt.x, e.dash.y0 - e.dash.tgt.y) || 1, p = Math.max(0, Math.min(1, 1 - Math.hypot(e.x - e.dash.tgt.x, e.y - e.dash.tgt.y) / d0)); want = (WALL - rw - 1) * (1 - p * p) + (rw + 6) * p * p; }
+        e.fpH = e.dash ? want : e.fpH == null ? want : e.fpH + (want - e.fpH) * Math.min(1, o.dt * 6);
+        const cy = floor - e.fpH * k, ceil = floor - WALL * k, hang = e.fpH > WALL * .6;
+        let turn = Math.atan2(cam.y - e.y, cam.x - e.x) - e.face; turn = Math.atan2(Math.sin(turn), Math.cos(turn));
+        seen(x - r - 4, x + r + 4, f, () => {
+          g.globalAlpha = near * it.a * .8;
+          g.fillStyle = 'rgba(40,30,20,.2)'; g.beginPath(); g.ellipse(x, floor, r, Math.max(1.5, r * EYE / f), 0, 0, TAU); g.fill();
+          g.globalAlpha = near * it.a;
+          if (hang) { g.strokeStyle = '#4b2e63'; g.lineWidth = Math.max(1, Math.min(3, r * .14)); g.lineCap = 'round'; [-.75, -.25, .25, .75].forEach(q => { g.beginPath(); g.moveTo(x + q * r * .9, cy - r * .6); g.lineTo(x + q * r * 1.5, ceil); g.stroke(); }); }
+          const col = TEAM[e.team].col, sh = g.createRadialGradient(x - r * .35, cy - r * .4, r * .1, x, cy, r); sh.addColorStop(0, 'rgba(255,255,255,.35)'); sh.addColorStop(.5, 'rgba(0,0,0,0)'); sh.addColorStop(1, 'rgba(0,0,0,.42)');
+          g.beginPath(); g.arc(x, cy, r, 0, TAU); g.fillStyle = col; g.fill();
+          if (Math.abs(turn) < 1.75) { const off = Math.sin(turn) * r * .5, wide = Math.max(.25, Math.cos(turn * .8)); g.save(); g.beginPath(); g.arc(x, cy, r, 0, TAU); g.clip(); g.translate(x - off, cy); g.scale(wide, hang ? -1 : 1); o.drawUnit(g, e.def, 0, 0, r * .9, 1, false); g.restore(); }   // upside down while it hangs
+          g.beginPath(); g.arc(x, cy, r, 0, TAU); g.fillStyle = sh; g.fill(); g.strokeStyle = '#1d2433'; g.lineWidth = Math.max(1, Math.min(3, r * .12)); g.stroke();
+          g.globalAlpha = near;
+          const w = Math.max(16, r * 2.2), hp = Math.max(0, e.hp / e.hpMax), by = hang ? cy + r + Math.max(4, 4 * Math.min(k, 2)) : cy - r - Math.max(8, 7 * Math.min(k, 2)); g.fillStyle = '#1d2433'; g.fillRect(x - w / 2 - 1, by - 1, w + 2, 6); g.fillStyle = col; g.fillRect(x - w / 2, by, w * hp, 4);
+          if (e === u.target) { g.strokeStyle = '#ffb951'; g.lineWidth = 2.5; g.beginPath(); g.arc(x, cy, r + 5, 0, TAU); g.stroke(); }
+        });
       } else if (it.kind === 'unit') {
         // a capsule body in the squad's colour, with the token worn as its face. The face slides round the body with the
         // unit's facing and is gone when it has its back to the camera.
-        const e = it.e, sz = e.def.size || 1, bw = 24 * sz * k, bh = (e.def.fly ? 26 : 46) * sz * k, r = bw / 2, base = floor - (e.def.fly ? 22 * k : e.onWall ? 30 * sz * k : e.dash && e.dash.arc ? 16 * k : 0), top = base - bh   /* a clinging unit sits up on the wall */, cy = top + r * 1.05;
+        const e = it.e, sz = e.def.size || 1, bw = 24 * sz * k, bh = (e.def.fly ? 26 : 46) * sz * k, r = bw / 2, base = floor - (e.def.fly ? 22 * k : 0), top = base - bh, cy = top + r * 1.05;
         let turn = Math.atan2(cam.y - e.y, cam.x - e.x) - e.face; turn = Math.atan2(Math.sin(turn), Math.cos(turn));   // 0 = looking straight at the camera
         seen(x - r - 4, x + r + 4, f, () => {
           g.globalAlpha = near * it.a;
