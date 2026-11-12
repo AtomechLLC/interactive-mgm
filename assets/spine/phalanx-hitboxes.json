@@ -1,0 +1,640 @@
+{
+ "fps": 30,
+ "note": "Phalanx hitbox bounding-box attachments: on = time the attachment appears (s), off = time it is cleared. Frames at 30 fps. Read from the Spine 4.3 export.",
+ "attacks": {
+  "Dual Wield Airborne Slash Attack": {
+   "slot": "HitboxDW",
+   "windows": [
+    {
+     "on": 0.133,
+     "off": 0.333,
+     "onFrame": 4,
+     "offFrame": 10,
+     "shape": "HitboxDW_Slash"
+    }
+   ]
+  },
+  "Dual Wield Haymaker": {
+   "slot": "HitboxDW",
+   "windows": [
+    {
+     "on": 0.5,
+     "off": 0.6,
+     "onFrame": 15,
+     "offFrame": 18,
+     "shape": "HitboxDW_Slash"
+    }
+   ]
+  },
+  "Dual Wield Kneel Punch Attack 1": {
+   "slot": "HitboxDW",
+   "windows": [
+    {
+     "on": 0.167,
+     "off": 0.267,
+     "onFrame": 5,
+     "offFrame": 8,
+     "shape": "HitboxDW_Thrust"
+    }
+   ]
+  },
+  "Dual Wield Kneel Punch Attack 1-2": {
+   "slot": "HitboxDW",
+   "windows": [
+    {
+     "on": 0.167,
+     "off": 0.267,
+     "onFrame": 5,
+     "offFrame": 8,
+     "shape": "HitboxDW_Thrust"
+    },
+    {
+     "on": 0.433,
+     "off": 0.533,
+     "onFrame": 13,
+     "offFrame": 16,
+     "shape": "HitboxDW_Thrust"
+    }
+   ]
+  },
+  "Dual Wield Kneel Punch Attack 2": {
+   "slot": "HitboxDW",
+   "windows": [
+    {
+     "on": 0.167,
+     "off": 0.267,
+     "onFrame": 5,
+     "offFrame": 8,
+     "shape": "HitboxDW_Thrust"
+    }
+   ]
+  },
+  "Dual Wield Kneel Slash Attack 1": {
+   "slot": "HitboxDW",
+   "windows": [
+    {
+     "on": 0.1,
+     "off": 0.333,
+     "onFrame": 3,
+     "offFrame": 10,
+     "shape": "HitboxDW_Slash"
+    }
+   ]
+  },
+  "Dual Wield Kneel Slash Attack 1-2": {
+   "slot": "HitboxDW",
+   "windows": [
+    {
+     "on": 0.167,
+     "off": 0.3,
+     "onFrame": 5,
+     "offFrame": 9,
+     "shape": "HitboxDW_Slash"
+    },
+    {
+     "on": 0.5,
+     "off": 0.633,
+     "onFrame": 15,
+     "offFrame": 19,
+     "shape": "HitboxDW_Slash"
+    }
+   ]
+  },
+  "Dual Wield Kneel Slash Attack 2": {
+   "slot": "HitboxDW",
+   "windows": [
+    {
+     "on": 0.2,
+     "off": 0.333,
+     "onFrame": 6,
+     "offFrame": 10,
+     "shape": "HitboxDW_Slash"
+    }
+   ]
+  },
+  "Dual Wield Punch Attack 1": {
+   "slot": "HitboxDW",
+   "windows": [
+    {
+     "on": 0.167,
+     "off": 0.267,
+     "onFrame": 5,
+     "offFrame": 8,
+     "shape": "HitboxDW_Thrust"
+    }
+   ]
+  },
+  "Dual Wield Punch Attack 1-2": {
+   "slot": "HitboxDW",
+   "windows": [
+    {
+     "on": 0.167,
+     "off": 0.267,
+     "onFrame": 5,
+     "offFrame": 8,
+     "shape": "HitboxDW_Thrust"
+    },
+    {
+     "on": 0.433,
+     "off": 0.533,
+     "onFrame": 13,
+     "offFrame": 16,
+     "shape": "HitboxDW_Thrust"
+    }
+   ]
+  },
+  "Dual Wield Punch Attack 2": {
+   "slot": "HitboxDW",
+   "windows": [
+    {
+     "on": 0.167,
+     "off": 0.267,
+     "onFrame": 5,
+     "offFrame": 8,
+     "shape": "HitboxDW_Thrust"
+    }
+   ]
+  },
+  "Dual Wield Punch Attack Diagonal Up 1": {
+   "slot": "HitboxDW",
+   "windows": [
+    {
+     "on": 0.167,
+     "off": 0.267,
+     "onFrame": 5,
+     "offFrame": 8,
+     "shape": "HitboxDW_Thrust"
+    }
+   ]
+  },
+  "Dual Wield Punch Attack Diagonal Up 1-2": {
+   "slot": "HitboxDW",
+   "windows": [
+    {
+     "on": 0.167,
+     "off": 0.267,
+     "onFrame": 5,
+     "offFrame": 8,
+     "shape": "HitboxDW_Thrust"
+    },
+    {
+     "on": 0.433,
+     "off": 0.533,
+     "onFrame": 13,
+     "offFrame": 16,
+     "shape": "HitboxDW_Thrust"
+    }
+   ]
+  },
+  "Dual Wield Punch Attack Diagonal Up 2": {
+   "slot": "HitboxDW",
+   "windows": [
+    {
+     "on": 0.167,
+     "off": 0.267,
+     "onFrame": 5,
+     "offFrame": 8,
+     "shape": "HitboxDW_Thrust"
+    }
+   ]
+  },
+  "Dual Wield Punch Attack Upward 1": {
+   "slot": "HitboxDW",
+   "windows": [
+    {
+     "on": 0.167,
+     "off": 0.267,
+     "onFrame": 5,
+     "offFrame": 8,
+     "shape": "HitboxDW_Thrust"
+    }
+   ]
+  },
+  "Dual Wield Punch Attack Upward 2": {
+   "slot": "HitboxDW",
+   "windows": [
+    {
+     "on": 0.167,
+     "off": 0.267,
+     "onFrame": 5,
+     "offFrame": 8,
+     "shape": "HitboxDW_Thrust"
+    }
+   ]
+  },
+  "Dual Wield Slash Attack 1": {
+   "slot": "HitboxDW",
+   "windows": [
+    {
+     "on": 0.1,
+     "off": 0.333,
+     "onFrame": 3,
+     "offFrame": 10,
+     "shape": "HitboxDW_Slash"
+    }
+   ]
+  },
+  "Dual Wield Slash Attack 1-2": {
+   "slot": "HitboxDW",
+   "windows": [
+    {
+     "on": 0.2,
+     "off": 0.333,
+     "onFrame": 6,
+     "offFrame": 10,
+     "shape": "HitboxDW_Slash"
+    },
+    {
+     "on": 0.533,
+     "off": 0.667,
+     "onFrame": 16,
+     "offFrame": 20,
+     "shape": "HitboxDW_Slash"
+    }
+   ]
+  },
+  "Dual Wield Slash Attack 2": {
+   "slot": "HitboxDW",
+   "windows": [
+    {
+     "on": 0.2,
+     "off": 0.333,
+     "onFrame": 6,
+     "offFrame": 10,
+     "shape": "HitboxDW_Slash"
+    }
+   ]
+  },
+  "Dual Wield Slash Attack Heavy": {
+   "slot": "HitboxDW",
+   "windows": [
+    {
+     "on": 0.3,
+     "off": 0.467,
+     "onFrame": 9,
+     "offFrame": 14,
+     "shape": "HitboxDW_Slash"
+    }
+   ]
+  },
+  "Dual Wield Stab and Rip": {
+   "slot": "HitboxDW",
+   "windows": [
+    {
+     "on": 0.2,
+     "off": 0.3,
+     "onFrame": 6,
+     "offFrame": 9,
+     "shape": "HitboxDW_Thrust"
+    },
+    {
+     "on": 0.567,
+     "off": 0.667,
+     "onFrame": 17,
+     "offFrame": 20,
+     "shape": "HitboxDW_Slash"
+    }
+   ]
+  },
+  "Dual Wield Uppercut": {
+   "slot": "HitboxDW",
+   "windows": [
+    {
+     "on": 0.267,
+     "off": 0.367,
+     "onFrame": 8,
+     "offFrame": 11,
+     "shape": "HitboxDW_Uppercut"
+    }
+   ]
+  },
+  "Greatsword Airborne Slash Attack": {
+   "slot": "HitboxGS",
+   "windows": [
+    {
+     "on": 0.233,
+     "off": 0.433,
+     "onFrame": 7,
+     "offFrame": 13,
+     "shape": "HitboxGS_Slash"
+    }
+   ]
+  },
+  "Greatsword Kneel Punch Attack": {
+   "slot": "HitboxGS",
+   "windows": [
+    {
+     "on": 0.333,
+     "off": 0.467,
+     "onFrame": 10,
+     "offFrame": 14,
+     "shape": "HitboxGS_Thrust"
+    }
+   ]
+  },
+  "Greatsword Kneel Slash Attack": {
+   "slot": "HitboxGS",
+   "windows": [
+    {
+     "on": 0.233,
+     "off": 0.4,
+     "onFrame": 7,
+     "offFrame": 12,
+     "shape": "HitboxGS_Slash"
+    }
+   ]
+  },
+  "Greatsword Punch Attack": {
+   "slot": "HitboxGS",
+   "windows": [
+    {
+     "on": 0.333,
+     "off": 0.467,
+     "onFrame": 10,
+     "offFrame": 14,
+     "shape": "HitboxGS_Thrust"
+    }
+   ]
+  },
+  "Greatsword Punch Attack Diagonal Up": {
+   "slot": "HitboxGS",
+   "windows": [
+    {
+     "on": 0.333,
+     "off": 0.467,
+     "onFrame": 10,
+     "offFrame": 14,
+     "shape": "HitboxGS_Thrust"
+    }
+   ]
+  },
+  "Greatsword Punch Attack Upward": {
+   "slot": "HitboxDW",
+   "windows": [
+    {
+     "on": 0.367,
+     "off": 0.5,
+     "onFrame": 11,
+     "offFrame": 15,
+     "shape": "HitboxDW_Thrust"
+    }
+   ]
+  },
+  "Greatsword Slash Attack": {
+   "slot": "HitboxGS",
+   "windows": [
+    {
+     "on": 0.233,
+     "off": 0.433,
+     "onFrame": 7,
+     "offFrame": 13,
+     "shape": "HitboxGS_Slash"
+    }
+   ]
+  },
+  "Greatsword Slash Attack Heavy": {
+   "slot": "HitboxGS",
+   "windows": [
+    {
+     "on": 0.333,
+     "off": 0.533,
+     "onFrame": 10,
+     "offFrame": 16,
+     "shape": "HitboxGS_SlashHeavy"
+    }
+   ]
+  },
+  "Greatsword Slash Thrust": {
+   "slot": "HitboxGS",
+   "windows": [
+    {
+     "on": 0.233,
+     "off": 0.4,
+     "onFrame": 7,
+     "offFrame": 12,
+     "shape": "HitboxGS_Slash"
+    },
+    {
+     "on": 0.7,
+     "off": 0.833,
+     "onFrame": 21,
+     "offFrame": 25,
+     "shape": "HitboxGS_Thrust"
+    }
+   ]
+  },
+  "Phalanx Airborne Punch Attack": {
+   "slot": "HitboxPH",
+   "windows": [
+    {
+     "on": 0.233,
+     "off": 0.4,
+     "onFrame": 7,
+     "offFrame": 12,
+     "shape": "HitboxPH_Thrust"
+    }
+   ]
+  },
+  "Phalanx Impale and Slam": {
+   "slot": "HitboxPH",
+   "windows": [
+    {
+     "on": 0.233,
+     "off": 0.367,
+     "onFrame": 7,
+     "offFrame": 11,
+     "shape": "HitboxPH_Thrust"
+    },
+    {
+     "on": 0.933,
+     "off": 1.133,
+     "onFrame": 28,
+     "offFrame": 34,
+     "shape": "HitboxPH_Slam"
+    }
+   ]
+  },
+  "Phalanx Kneel Punch Attack": {
+   "slot": "HitboxPH",
+   "windows": [
+    {
+     "on": 0.2,
+     "off": 0.3,
+     "onFrame": 6,
+     "offFrame": 9,
+     "shape": "HitboxPH_Thrust"
+    }
+   ]
+  },
+  "Phalanx Punch Attack": {
+   "slot": "HitboxPH",
+   "windows": [
+    {
+     "on": 0.233,
+     "off": 0.4,
+     "onFrame": 7,
+     "offFrame": 12,
+     "shape": "HitboxPH_Thrust"
+    }
+   ]
+  },
+  "Phalanx Punch Attack Diagonal Up": {
+   "slot": "HitboxPH",
+   "windows": [
+    {
+     "on": 0.233,
+     "off": 0.4,
+     "onFrame": 7,
+     "offFrame": 12,
+     "shape": "HitboxPH_Thrust"
+    }
+   ]
+  },
+  "Phalanx Punch Attack Double": {
+   "slot": "HitboxPH",
+   "windows": [
+    {
+     "on": 0.233,
+     "off": 0.4,
+     "onFrame": 7,
+     "offFrame": 12,
+     "shape": "HitboxPH_Thrust"
+    },
+    {
+     "on": 0.5,
+     "off": 0.667,
+     "onFrame": 15,
+     "offFrame": 20,
+     "shape": "HitboxPH_Thrust"
+    }
+   ]
+  },
+  "Phalanx Punch Attack Upward": {
+   "slot": "HitboxPH",
+   "windows": [
+    {
+     "on": 0.233,
+     "off": 0.4,
+     "onFrame": 7,
+     "offFrame": 12,
+     "shape": "HitboxPH_Thrust"
+    }
+   ]
+  },
+  "Sword and Board Airborne Slash Attack": {
+   "slot": "HitboxSB",
+   "windows": [
+    {
+     "on": 0.233,
+     "off": 0.4,
+     "onFrame": 7,
+     "offFrame": 12,
+     "shape": "HitboxSB_Slash"
+    }
+   ]
+  },
+  "Sword and Board Kneel Punch Attack": {
+   "slot": "HitboxSB",
+   "windows": [
+    {
+     "on": 0.233,
+     "off": 0.333,
+     "onFrame": 7,
+     "offFrame": 10,
+     "shape": "HitboxSB_Thrust"
+    }
+   ]
+  },
+  "Sword and Board Kneel Slash Attack": {
+   "slot": "HitboxSB",
+   "windows": [
+    {
+     "on": 0.233,
+     "off": 0.4,
+     "onFrame": 7,
+     "offFrame": 12,
+     "shape": "HitboxSB_Slash"
+    }
+   ]
+  },
+  "Sword and Board Punch Attack": {
+   "slot": "HitboxSB",
+   "windows": [
+    {
+     "on": 0.233,
+     "off": 0.333,
+     "onFrame": 7,
+     "offFrame": 10,
+     "shape": "HitboxSB_Thrust"
+    }
+   ]
+  },
+  "Sword and Board Punch Attack Diagonal Up": {
+   "slot": "HitboxSB",
+   "windows": [
+    {
+     "on": 0.233,
+     "off": 0.333,
+     "onFrame": 7,
+     "offFrame": 10,
+     "shape": "HitboxSB_Thrust"
+    }
+   ]
+  },
+  "Sword and Board Punch Attack Upward": {
+   "slot": "HitboxSB",
+   "windows": [
+    {
+     "on": 0.233,
+     "off": 0.333,
+     "onFrame": 7,
+     "offFrame": 10,
+     "shape": "HitboxSB_Thrust"
+    }
+   ]
+  },
+  "Sword and Board Slash Attack 1": {
+   "slot": "HitboxSB",
+   "windows": [
+    {
+     "on": 0.233,
+     "off": 0.4,
+     "onFrame": 7,
+     "offFrame": 12,
+     "shape": "HitboxSB_Slash"
+    }
+   ]
+  },
+  "Sword and Board Slash Attack 1-2": {
+   "slot": "HitboxSB",
+   "windows": [
+    {
+     "on": 0.233,
+     "off": 0.4,
+     "onFrame": 7,
+     "offFrame": 12,
+     "shape": "HitboxSB_Slash"
+    },
+    {
+     "on": 0.667,
+     "off": 0.833,
+     "onFrame": 20,
+     "offFrame": 25,
+     "shape": "HitboxSB_ShieldBash"
+    }
+   ]
+  },
+  "Sword and Board Slash Attack Heavy": {
+   "slot": "HitboxSB",
+   "windows": [
+    {
+     "on": 0.3,
+     "off": 0.5,
+     "onFrame": 9,
+     "offFrame": 15,
+     "shape": "HitboxSB_SlashHeavy"
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hit Reactions · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Orbitron:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="hit.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · PvP Interactions · Hit Reactions (spike)', home: '../index.html', audio: null, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<section class="slide" data-title="What a Hit Costs Both Sides" data-demo="hits">
+  <div class="kicker">spike · Phalanx and the claw probe, from the Atomech Spine rigs</div>
+  <h2 class="sm">What a Hit Costs Both Sides</h2>
+  <div class="hr-grid">
+    <div class="hr-left">
+      <div class="hr-stage">
+        <canvas class="hr-gl" width="940" height="430"></canvas>
+        <canvas class="hr-fx" width="940" height="430"></canvas>
+      </div>
+      <canvas class="hr-tl" width="940" height="170" title="Drag to scrub"></canvas>
+    </div>
+    <div class="hr-side">
+      <h4>Who attacks</h4>
+      <div class="row wrap hr-who">
+        <button class="btn" data-who="phalanx">Phalanx thrusts <kbd>1</kbd></button>
+        <button class="btn" data-who="claw">Probe claws <kbd>2</kbd></button>
+      </div>
+      <h4>The defender’s reaction</h4>
+      <div class="row wrap hr-react"></div>
+      <h4>Hitstop <b class="hr-hs-v">6 frames</b></h4>
+      <input type="range" class="hr-hs" min="0" max="20" step="1" value="6">
+      <div class="row wrap hr-opts">
+        <button class="btn hr-box">Hitboxes</button>
+        <button class="btn hr-slow">¼ speed</button>
+        <button class="btn hr-play">❚❚ Pause <kbd>K</kbd></button>
+      </div>
+      <p class="hr-out out"></p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/vendor/spine-player.min.js"></script>
+<script src="../../assets/spine/atomech-data.js"></script>
+<script src="../../assets/atomech-rigs.js"></script>
+<script src="hit.js"></script>
+</body>
+</html>
