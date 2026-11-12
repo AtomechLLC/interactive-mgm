@@ -6,7 +6,7 @@
 <title>The Zig-Zag Dungeon</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@500;700&family=Inter:wght@400;500;600&display=swap">
 <style>
-/* Layout: the run plays in a close-up strip, the stress chart sits beside it, and the eight room cards underneath are the thing you rearrange. */
+/* Layout: the run plays in a close-up strip, the standing chart sits beside it, and the ten room cards underneath are the thing you rearrange. */
 :root{
   --bg:#f3f5f1; --panel:#ffffff; --fg:#1d2a2c; --muted:#5d6b6c; --line:#d5dbd6;
   --inch:#c98a00; --yard:#2f7fb8; --mile:#c2452d; --mount:#6a4bb5; --ok:#2e8b57;
@@ -49,25 +49,31 @@ button[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:va
 
 .stage{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:16px}
 canvas{aspect-ratio:224/120}
-.hud{display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:13px}
-.hearts{display:flex;gap:2px}.hearts img{width:18px;height:18px}
-.hearts img.gone{filter:grayscale(1);opacity:.3}
-.meter{flex:1;min-width:120px;display:flex;gap:8px;align-items:center}
+.hud{display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-size:13px}
+.hud b{font-size:20px;font-variant-numeric:tabular-nums;min-width:2.2em}
+.hud .kit{display:flex;gap:2px}.hud .kit img{width:20px;height:20px}
+.meter{flex:1;min-width:110px;display:flex;gap:8px;align-items:center}
 .meter .bar{flex:1;height:8px;background:var(--line);border-radius:2px;overflow:hidden}
 .meter .bar i{display:block;height:100%;width:0;background:var(--mile)}
 #chart{width:100%;height:auto;display:block}
-.rooms{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px}
-.room{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0;text-align:center;border-top:4px solid var(--mile)}
-.room.rest{border-top-color:var(--ok)}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.rooms{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:8px}
+.room{--c:var(--mile);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:8px 4px;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0;text-align:center;border-top:4px solid var(--c)}
+.room.fight{--c:var(--ok)}.room.reward{--c:var(--inch)}.room.rest{--c:var(--yard)}
 .room.now{outline:2px solid var(--trail-done);outline-offset:1px}
 .room.lost{opacity:.45}
-.room img.px{width:40px;height:40px}
+.room img.px{width:36px;height:36px}
 .room .n{font-family:var(--display);font-size:14px;line-height:1.1}
-.room .s{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
-.room .mv{display:flex;gap:4px}
-.room .mv button{padding:2px 9px;font-size:13px}
+.room .t{font-size:11px;color:var(--c);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.room .s{font-size:12px;color:var(--muted);line-height:1.25}
+.room .s b{color:var(--mile)}
+.room .mv{display:flex;gap:4px;margin-top:auto}
+.room .mv button{padding:2px 8px;font-size:13px}
 .room .num{font-size:11px;color:var(--muted)}
-@media (max-width:760px){.stage{grid-template-columns:1fr}.rooms{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (max-width:1000px){.rooms{grid-template-columns:repeat(5,minmax(0,1fr))}}
+@media (max-width:760px){.stage{grid-template-columns:1fr}}
+@media (max-width:520px){.rooms{grid-template-columns:repeat(3,minmax(0,1fr))}}
 </style>
 <style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
@@ -76,7 +82,7 @@ canvas{aspect-ratio:224/120}
   <header>
     <p class="back"><a href="../">Design scripture demos</a></p>
     <h1>The Zig-Zag Dungeon</h1>
-    <p class="lede">Eight rooms, one hero, and you choose the order. Every fight raises stress and leaves fatigue behind. A campfire lets both drop. Arrange the rooms and watch what shape the run takes.</p>
+    <p class="lede">Ten rooms, one hero, and you choose the order. Hazards knock the hero behind, fights let them catch up, chests put them ahead with a new tool, and campfires give a breather before a bigger fight that needs that tool. Arrange the rooms and watch the line the player lives through.</p>
   </header>
 
   <div class="controls">
@@ -84,22 +90,22 @@ canvas{aspect-ratio:224/120}
     <span class="spacer"></span>
     <span class="note">Start from</span>
     <button class="preset" data-p="zig" type="button">Zig-zag</button>
-    <button class="preset" data-p="ramp" type="button">Steady ramp</button>
-    <button class="preset" data-p="front" type="button">Boss first</button>
+    <button class="preset" data-p="nobreak" type="button">No breathers</button>
+    <button class="preset" data-p="front" type="button">Rewards first</button>
+    <button class="preset" data-p="ramp" type="button">Hazards first</button>
   </div>
 
   <div class="stage">
     <section class="pane">
-      <h2>In the dungeon <span id="where">Room 1 of 8</span></h2>
+      <h2>In the dungeon <span id="where">Room 1 of 10</span></h2>
       <canvas id="cv" width="224" height="120" role="img" aria-label="The hero walking through the rooms in the chosen order"></canvas>
-      <div class="hud">
-        <div class="hearts" id="hearts" aria-label="Hearts"></div>
-        <div class="meter"><span class="k">Fatigue</span><div class="bar"><i id="fat"></i></div></div>
-      </div>
+      <div class="hud"><span class="k">Standing</span><b id="stand">0</b><div class="kit" id="kit" aria-label="Tools carried"></div>
+        <div class="meter"><span class="k">Strain</span><div class="bar"><i id="strain"></i></div></div></div>
     </section>
     <section class="pane">
-      <h2>The shape of the run <span>stress per room, fatigue underneath</span></h2>
-      <svg id="chart" viewBox="0 0 640 250" role="img" aria-label="Stress and fatigue across the eight rooms"></svg>
+      <h2>The shape of the run <span>how far ahead or behind the hero is</span></h2>
+      <svg id="chart" viewBox="0 0 640 270" role="img" aria-label="The hero's standing across the ten rooms"></svg>
+      <div class="legend"><span><i style="background:var(--mile)"></i>Hazard: a setback</span><span><i style="background:var(--ok)"></i>Fight: catch up</span><span><i style="background:var(--inch)"></i>Reward: get ahead</span><span><i style="background:var(--yard)"></i>Rest: a breather</span></div>
     </section>
   </div>
 
@@ -107,116 +113,140 @@ canvas{aspect-ratio:224/120}
 
   <p class="verdict" id="verdict"></p>
   <div class="stats">
-    <div><div class="k">Outcome</div><div class="v" id="s-out"></div></div>
-    <div><div class="k">Releases mid-run</div><div class="v" id="s-rel"></div></div>
-    <div><div class="k">Highest fatigue</div><div class="v" id="s-fat"></div></div>
-    <div><div class="k">Hearts at the end</div><div class="v" id="s-hp"></div></div>
+    <div><div class="k">Ending</div><div class="v" id="s-out"></div></div>
+    <div><div class="k">Changes of direction</div><div class="v" id="s-turn"></div></div>
+    <div><div class="k">Highest strain into a fight</div><div class="v" id="s-strain"></div></div>
+    <div><div class="k">Breathers that landed</div><div class="v" id="s-rest"></div></div>
   </div>
-  <p class="note">Felder's Structure of Fun (Entry 22): a fun experience creates an oscillating, escalating zig-zag of success and stress, until it completes in success or defeat, rather than a constant climb that slowly tires the player. The numbers here are a toy model: a fight costs hearts for its own stress plus the fatigue carried into it, and a campfire restores three hearts and most of the fatigue. Sprites: Pixel Art Atlas (Angais, CC0), AI-generated.</p>
+  <p class="note">Felder's Structure of Fun (Entry 22): a fun experience is an oscillating, escalating zig-zag of success and stress, until it completes in success or defeat, rather than a constant escalation that slowly tires the player. This is a toy model. Hazards and fights add strain and a campfire clears it. A fight is lost when strain is above 6 going in, or when the hero lacks the tool it needs. Sprites: Pixel Art Atlas (Angais, CC0), AI-generated.</p>
 </div>
 <script>
-const SPR={"hero": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABzUlEQVR4nH2SP0gbYRjGfzFnzRmLeolok0uxgTiICBVBxT90qAEVJF0K1a1DBwcpVHBTcHJR0KGjo4MgShZBUUQXEbFgyRTRYquNEUqTEJO22q/D9S6XXOILB8f7Ps/ve96Pz0bJKhfW3h9bYcfS0M3zQRXV/QgcdsjeA/B6+cwCKgmY6qjhJP7X6FTaJQCWT38UTWKKrX2hZy4RUBQRmXkrHBVu8WVuXOTmuSozm1dG/KyM+AGIJATr70M0BnsBqOt+bolvWkHbWa/TWIqPJwk+Tw7ifxWy5HR2vjNANt08vx9jOODk562dvcukId4YD+ZBzGYACWAvqhmuUoKjWJL+mSbKqis4DscZWNykb/WgxJ39B1TaJRpdbjyPMxDTBttrce52rxkOOAlHk3zL3D18B2Ot1QCEo2mkF/WGIDI9DcDomwm2LlKk73/nASSdGo6mhSzLyLJMZvfaENy8/ATA+nnScropgZZC//N426nyPs0Tqi3d7Cx9KAoxAD2qT/SoPlFb4xceb5fxcDzeLhFQFDE71Gp5SLZ8QANHNxmyvxLoq+mzticuen0OABYOL42ZVJijWZE4/m4252r/a9aSu0Ckxyu2pzl6bv4PQfWh+sZcXO0AAAAASUVORK5CYII=", "hero2": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABnElEQVR4nH2TQShDcRzHP7PHPCNiUrbEak5SSlEiB1YcNBeFm4ODgxTlZuVOcXB0dFCiXRSRtouDKNppQmPMlNjMhPk7zHvevPd8611+v9/3876/f/0smKpQ6Gsflr8VXUExL3pduBxFUGyFtywAQ2sXOpApYK6tgtPEl1opsUoArJ0/GibRxM59voYq4amsFOH5MVFsc4irhUnx2/9Vgda8PuJmfcQNQPhZsDXlo97bCUB1R4suvmaF3M6KzuMpVk6fOZvtxz3o0+W0t4+rIItiXgzFGfDYeXq1Eowl1eHtSW8eRGsGkACCkZzhNiU4iifpnW+koNzGcSBB3/IOXRuHJm/2AyixStRXOagty0A819jbTPB5cM+Ax04gkuQm8/n/G0w0lwMQiKSRumvUgbDfD8Do8Ay70RTp7HseQFKogUhayLKMLMtkDu7VgYeeEwC2LpO6v2sSaFUoap2tlDrr8qqupg72V6fNVjCGAJQ663iJRbmNHRkmkIwB4Lbc8Jr9oJM7cMJSzHjOFKAodP32b9/sKNCfs/EBfQP3A5BbaFA2zwAAAABJRU5ErkJggg==", "w3": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABQUlEQVR4nGNkYGD/z4ABfjJiiuEE7P8fvv0Nx6t2X/+P3VDsgAXGeHD/JQMDAwODuZEKCZYzMDDB3cHDzHD90kWGB/dfMty8/4aBWFcwMTD8ZJQX5mH4+eUvAwMDA8PunXsYLt55QrQhUBf8ZLQ3UYYLHli/geH0ubNEGcKEYP5kzEgKgvOO7T3OcPf2bYKGYIku9v9ZWQ1wnpWzJYOpkTGDuqIIAyR6YYZBopoJ04CfjNOmIQzoa5uM4h0jEztcXsBtyPJF2xjUFUUYjEzsGB7cvYzLN9gA+387m4T/DAzs/1VV9P9zc/CRlMjghqiq6P9nYGD/bysj8H+1uSQphqDaLMnD899WRuD/TH0pqCEEDWJHczbEEG4Ovv9GxsH/GRjY/xPIdcg2wHIo+38hQUEGBgYGhnfv32NLB4S9hcwDAIbYhMo35pEEAAAAAElFTkSuQmCC", "slime": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABOklEQVR4nNWSv0tCYRSGH28NEoq2mA0FDS0tQdE/kEO49WNqa4jWtv6BaKugpSmn1pC2NLAlJHMQKgiKpDC5Xh0u99INraDb4PV6f3yWa+90zuGc53C+74V/r4C4HDTF9ZavXwAImlvZDTsLj38DoBuj7M5t+yAeQHt4ZXIBgOZwk1QmjW4oAERCcY5X0y6I1GtYpErmhZn1adeJ0m/D+yeHdpxQkyxPLTFRDbsgkvfmjnZye9btCgk1CcDDbZHC4z31i1cbMugcyqYu+fx4A0C7ahBdixEJxSmd5wF4lp98i2xAIVeCvMbQQBSAck1llhi6oaDJDco1VfguNsBQv6jXVKDbWL1+B7DqYknOZGR+7M/Ym1v/GTQXD5JU7uSem7wqHd0ArYDDSG1IPzrdPKNjJp8T+9vfdeIPb6l0aII3uPAAAAAASUVORK5CYII=", "goblin": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAB7klEQVR4nIWTPWhTURiGnxtSNDEkFdtLcyUm1SDEBNPCrWTSztUliELAJepuB+3gbpaU1lUh6VboYkrF4iQ6FBwypELo0Ep7LWmMMRKlRiSBzyG5MT9XPNM57znP+7185xyFfw+x0JT/CiacysX6hI2XNd5nd4d4+6AScITldsYBQP1XC4BqqUn5wzELqzoAa0sljHzZOsH50wFR4yPEZlzkMp8x8mWS6SjjZ0dYWyoBmLACYBuMfj87QWzGRWG7iZEvc3g5jMdlY2OlOgQD2PnbLAXg2ROj6+bXvfjyReaZ7oXpMF0TKRo1ob/r5lqmbwTk+nxIAJmb1CSVi8nCqt49bwPILC9SNGr0miTTUZLpKFPXPLx6usPDqxdptNoJq6UmnVsSO8DJ9SwZoGjUCPvPCKCsPNrumiUiGuMnHDjtxxj5Mm8Az70JzARK6qDSNlleZKtQ6UuSiGgAvNursrl/hF/3Eu/AZhPpmMjj9SzPfwqzPo23h0cA7H5pcefSKX573Wzut7XXL75hNeTmrbsScjslFw9KIqIJIGOjQZmb1ERXVdFVtdtcM2XvQ5IL56b4+KnArE+j8r3Ozo8GY6PBoUpf63uDbN/VdecWFSXkdvbq9P6FPkddVRnYkwdXAgBsHTSsoYE0QwYW55Q/wmbJ7wP2Xq0AAAAASUVORK5CYII=", "wolf": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABuklEQVR4nH2TPUhbURiGH0Vu9Ca5hIs5WBViEyg4NFswg6AouohU/NsES2ixFJFmKaJ0ca6LDtIiYqHQpUUQXKyCoBDIoi0oOIgupaQQUrCDHfy6eI853Jt+cIbv533P+54fCA65W7V6OuqDJpxIirhK+4YB6Rp6HlQ3h5xISpxISmxLeUrkDixOJGWoa6jF0tnTD0D56pxKqUwyk+X77hbhWAtc31sJJPDAAG7iEW4Czg72fDZDdth3Bp7H/5LalqKzp58HD5MGgcy+WuWiWNCF/EyO/ExO548HRkhmsritHQA0NSvqqglujl/QPnhEyG7k7coKT8eGDXB1XBQLxJRrEtiWIhxrIWQ3Uv5xye+vvXx5sgcfdgBYXlv3kXgEku6632F6KkdbQgWexeL8awAqpTIAdd7OXmx83gbQ8nMv39Ddl9H9w/0inz6+03k9wMTUgg+8GW8CwI06Gni4XwTgT+WnJtAWqlVst0c5ub5hsfKX7MAzw0Jh9z0ADVbUZ09uReR0dFBuRcS2lIxPLulnbFtK+oYWfM/buIXxySWdhKMOm+tzhsq4SvOr9K26Zlwj+H9Zrb6u/wO8apF5NA/fZAAAAABJRU5ErkJggg==", "troll": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAB20lEQVR4nH2TvWsUURTFf5MPhuxOCFEZdtmsOozCRAYTUJFoYZoEvxYsLSyEgIilVv4FVqbeRrCwsLSxEklEC8WIaxh0C8dBN2vWMGEwuxOzfvAssvPcN25ymnnn3nfPnPfuuxoqBP9D6xHrmRRz5VlJfoRtvsctHt95s6tgQsT5G1NoIz+Jo7ZMLpY9pq+7ZEd1AOKozWLZU0QGksWjWZ2xawFraw1+vT9HYfotJ68cpfaiiVPSOXykuO2s1cerB8siEZEOLtw+Jv9cW4gYOmQQVpo4pT0ynjuwF7/yVXHRlyRf36vz8NZ9ns1/wL1YVIprCxEAjc/r8jgJpMCJuQKX717lzM1x/GqkbFp++YmVpVjyiRkHOh1TumC7liT7JoflOqw08b2AiRmHseNZVpZi3j2pAmgDXQL4XgCA7VqElSZptFbbQLb3EQD2F8YxzRy+F2DkdYy8rjgZ6TcxgikmD17i1OmzGHpGKA4GR7f44jUwzRzF+iatrT8Y9X7WV7ffRhhuED5/qjhQBBIMm0NU65sd9puP0Tds18IpZeSezgvVuo+gJXdg5HVEIcPGoCaLfS+Q7Uy+O0HYriVs1xL8G65u3h1XL5FUK9OwXYt0Pj2qO41zOi7r/gKuYapG2VdVyAAAAABJRU5ErkJggg==", "yeti": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACIElEQVR4nH2TT0hUURTGf2+46GKC8ZUy4MQQ2EAG2qIhhJpZxFCbggiCluKihRAILiShP7gIglYq1KJFUNBCGMKklYg6qMXAkA5GNO9NjdLQ5Dh3ZHih8pjbQt+z+VN3dc+553zfd+45R6PJEUJXf9u2LbVmcQAND0LoaksWanwduv+fIJ765BUzi1GyMEoWw8+XAUhv5hBCV/XKGpiTOamE0FWbL6ScBFnZV8mcVMmcVK+Smw0goh7o6tBkjb1a3MN7qPPaGT+zmQ1ioaBqKEkIXT1bNpSs7Newz3+rqO6+QVeF43OU1PxBxtihQ/dz23eC3PkAd0+dxeuxa4iMksW59lZmMxsIoSuPwz4WX6RcqLAlC4x2trDzu8rE989MreUZnbjHh/WfPH447YI07YJcz7Fa3MOaWcKaWcIoWawvfCJ80kfFtnn3esiN3SyWD0s/ZE/GUwDEQkFujLx0A58OX+eLtevaU2t5bvV2ckxvPepC6mOWH3mD1NxBB0buRAE4fdzLfOGA6cHNKF09EWy5y5uFrAuoCaGrrp4I5V95tgsmK2bWZbGqR12eTnxlfCBGV08EADOdwLal5rFtqZnpBNsFEwCrKmhTVR5NvCcWCjL5Yg6A9rYWxuKLmOmEm+x+om1LzXE4CRejvQC8fdLv+gDG4os0PdFL/UoIXXX3DSp/IKwuXLnvDpRj+wNhdXlgvGacm26jc3dU/W+9/wBLkBqKoJ6rWAAAAABJRU5ErkJggg==", "dragon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABuUlEQVR4nI2TTUsbURSGnxkVA23QOKElWEdcZJcOogtBQf0Bmiw6heqyxYUE3ApduSpSCi5MV7pyreAHpZu6cFMotCIqWCjEGtQp1CR+l4jmuNCZZCaT4oUL98D7nvOce89VqL7EEyt+IrWaefTlawAKO6n/1KhuFkAKOynnXE3sxZLtPt0J5qIveD875dXZyRQotSCAWKbBM6Oezq9nAOQXF/AYJTcQdVVU7apPgxGyf4/Z3yz4thUP6UzoLQDcJ5FyAlY76hz1j+6gyx0P3bU1ZgQIJJs5v/7nSuLg2XtYa5HtPl1GwrrcVxfLNOTyc78AcrWSkNxAVACxCZSyzYfBsIsg1VWk4U0T6ck0n1ojXNeeoLaV7sDV69VKAi3ZDsCFCJZpoPVqAMTWMpwqKq+G0zRO/wJQKp7RMg3kcQ253WzFTW7t3TD0+4CRsM7MUQZAqZjEpvFOtGQ7S0dFAOZ3SzP0vLWG8jkBqPUmyH7cAODboUoiDOtnCk8s6I1UAAH+H0TsZ3tngPn9HICOwCPexu7ksbWM4/USSDyks5zP8MVo408efl7k6AlGGAwW2dp7IIE/rL/vFok0mMKlBfQPAAAAAElFTkSuQmCC", "fire": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABNElEQVR4nI2QPUvDUBSGn0i1RqpGrYhGURRFDELFwclBXAR1FAc3l26O/gB/iLg4iZOL4FrRXSIdC1JwsDaxSEADcUhyb9N8eSDkcO97n/e8B1JL9fwvu/qyLs218VxQJiCESNC/AFGhXtUzDXoAqhe6+f/8SozwdTwVO0vbR+4OBg73RN/cWsqaQI799vILxPNbnXZsoakTzJ/PCvflq+3UZSYC9KqOa8uobnklzUcCNkoVjNfPyGW/NgnAz929OOvVKLJVvf25IQ6MEWoNB/PDxXIHAZgufrM4VmR3vSTUpzdNwFEK4ePLIz/j7XMbs6PSsGwqZTjb0bh4gKd6i8f3Asaww+aMTK50uwPB45YQhGDfERa0CYBA4yiRCLJ3BPhkdRSA67odnIc6X9MFSKsksKw/uKlkh0Wq2CoAAAAASUVORK5CYII=", "chest": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACLElEQVR4nJWTQUhUURSGvxdjjvOsR2JhYAnpGGUxBIENSS2CSHBTEIjtgsKFYKEWCbarhRguQhIiEBcRubICJ4RKxIUSbgwdzXGaUlJGn8rMc944z3dazDQ5DaT9lwuXy/n/e86551fIgCp/zobC/0EVc6lXzKVeGblZIUmx7XsXZFts8deXSHxlTCLT7aL7vDLXVi6tF4/sJKimyfZfS/d5Za2vTMYb3BKZbpfxBvc2wRQ5sTEv/voS0X3eNDEReiq6zyu6zyvR52USXxmT8Qa3uPP3yhnNJXcriwRUcQCYk7cI/tzkELD2/nxWgTnXXhL7UEfjq3D6Ls+ZA4ADYHMmjmYr+LtCnHszj52IYK328/H2fQCqXHfo6jaJJhIARLestJADQL3SROnBFwBsmgHsQAurvgCzoSShals2NRUFLBp76PFrgI4CqnjKTxFeNwAIDnk4XDnCRNs+3n5JcPXGSRb6JxiYimFYSooIpVs/GF62kgLm0jOe1LUSCETp6D4BwLd3y9T05Wb1w1r/iuYQaioK6ByNJEuwjVkMS6G2upDm+ql0cJPHRTBkcu/6Udr7vvM6ZHA838miGcvswW98moxTW12Y8WIwZHLgsov9wyraQpRFM8YxzZkpYM4M0vygOPllLoWHLXNZqasOociZx9nSPAA6RyOAoaQMkzmakc8XYGMdgPDgMrlaLj0DqxiWwuMhPRX1T7Nlzv1Cx2l5dKl4N6baSTAbvwAs4iRx7sfvBgAAAABJRU5ErkJggg==", "flag": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAApklEQVR4nGNkgAImJt7/DDjAv3+fGXHJscA0v15iysCrIsYwNeIkg+2/vyiKzB4x/MdlCBPMBtGY0wy5S/UZqp/8wWoTExPvf2SM4gJCoFKAk4GBgYEhkI8Dw1VMxBiADwy8AVjDwOzRezibg0WAoZCHBAN+/PmAEu8//jD8Z2DgJOwUJibe/xoaLv+xJSj0KCQ5GvGlxIGPBRQDONmJCCyauoAcAACZUzm8Ko3JBQAAAABJRU5ErkJggg==", "heart": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAxklEQVR4nGNkQAGc/xHs74zEyDEiK7iqKgPnad9+gqQQtxwTsgLJtSsZJNeuZGBgYGCAaOD8j66ZgYGBoULKHO4iJmTN+AC6PMwQFnSFz4PD4Wxkm5HFkQETXmuJAHAX4LKBECDZBYu/SqMb8J0REi2kae54dpKBgeE7I9QFhA3BphnqAhiAGLL/G6avcGlGMwBiSM7TRyga8GlmYEBJysiA8z8koSAANs1YXIBwCUQDfs0MDEjpABvY+YcXnzQxAJKZ8KkAAIQ3WWcbryjjAAAAAElFTkSuQmCC"};
+const SPR={"hero": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABzUlEQVR4nH2SP0gbYRjGfzFnzRmLeolok0uxgTiICBVBxT90qAEVJF0K1a1DBwcpVHBTcHJR0KGjo4MgShZBUUQXEbFgyRTRYquNEUqTEJO22q/D9S6XXOILB8f7Ps/ve96Pz0bJKhfW3h9bYcfS0M3zQRXV/QgcdsjeA/B6+cwCKgmY6qjhJP7X6FTaJQCWT38UTWKKrX2hZy4RUBQRmXkrHBVu8WVuXOTmuSozm1dG/KyM+AGIJATr70M0BnsBqOt+bolvWkHbWa/TWIqPJwk+Tw7ifxWy5HR2vjNANt08vx9jOODk562dvcukId4YD+ZBzGYACWAvqhmuUoKjWJL+mSbKqis4DscZWNykb/WgxJ39B1TaJRpdbjyPMxDTBttrce52rxkOOAlHk3zL3D18B2Ot1QCEo2mkF/WGIDI9DcDomwm2LlKk73/nASSdGo6mhSzLyLJMZvfaENy8/ATA+nnScropgZZC//N426nyPs0Tqi3d7Cx9KAoxAD2qT/SoPlFb4xceb5fxcDzeLhFQFDE71Gp5SLZ8QANHNxmyvxLoq+mzticuen0OABYOL42ZVJijWZE4/m4252r/a9aSu0Ckxyu2pzl6bv4PQfWh+sZcXO0AAAAASUVORK5CYII=", "hero2": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABnElEQVR4nH2TQShDcRzHP7PHPCNiUrbEak5SSlEiB1YcNBeFm4ODgxTlZuVOcXB0dFCiXRSRtouDKNppQmPMlNjMhPk7zHvevPd8611+v9/3876/f/0smKpQ6Gsflr8VXUExL3pduBxFUGyFtywAQ2sXOpApYK6tgtPEl1opsUoArJ0/GibRxM59voYq4amsFOH5MVFsc4irhUnx2/9Vgda8PuJmfcQNQPhZsDXlo97bCUB1R4suvmaF3M6KzuMpVk6fOZvtxz3o0+W0t4+rIItiXgzFGfDYeXq1Eowl1eHtSW8eRGsGkACCkZzhNiU4iifpnW+koNzGcSBB3/IOXRuHJm/2AyixStRXOagty0A819jbTPB5cM+Ax04gkuQm8/n/G0w0lwMQiKSRumvUgbDfD8Do8Ay70RTp7HseQFKogUhayLKMLMtkDu7VgYeeEwC2LpO6v2sSaFUoap2tlDrr8qqupg72V6fNVjCGAJQ663iJRbmNHRkmkIwB4Lbc8Jr9oJM7cMJSzHjOFKAodP32b9/sKNCfs/EBfQP3A5BbaFA2zwAAAABJRU5ErkJggg==", "w3": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABQUlEQVR4nGNkYGD/z4ABfjJiiuEE7P8fvv0Nx6t2X/+P3VDsgAXGeHD/JQMDAwODuZEKCZYzMDDB3cHDzHD90kWGB/dfMty8/4aBWFcwMTD8ZJQX5mH4+eUvAwMDA8PunXsYLt55QrQhUBf8ZLQ3UYYLHli/geH0ubNEGcKEYP5kzEgKgvOO7T3OcPf2bYKGYIku9v9ZWQ1wnpWzJYOpkTGDuqIIAyR6YYZBopoJ04CfjNOmIQzoa5uM4h0jEztcXsBtyPJF2xjUFUUYjEzsGB7cvYzLN9gA+387m4T/DAzs/1VV9P9zc/CRlMjghqiq6P9nYGD/bysj8H+1uSQphqDaLMnD899WRuD/TH0pqCEEDWJHczbEEG4Ovv9GxsH/GRjY/xPIdcg2wHIo+38hQUEGBgYGhnfv32NLB4S9hcwDAIbYhMo35pEEAAAAAElFTkSuQmCC", "slime": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABOklEQVR4nNWSv0tCYRSGH28NEoq2mA0FDS0tQdE/kEO49WNqa4jWtv6BaKugpSmn1pC2NLAlJHMQKgiKpDC5Xh0u99INraDb4PV6f3yWa+90zuGc53C+74V/r4C4HDTF9ZavXwAImlvZDTsLj38DoBuj7M5t+yAeQHt4ZXIBgOZwk1QmjW4oAERCcY5X0y6I1GtYpErmhZn1adeJ0m/D+yeHdpxQkyxPLTFRDbsgkvfmjnZye9btCgk1CcDDbZHC4z31i1cbMugcyqYu+fx4A0C7ahBdixEJxSmd5wF4lp98i2xAIVeCvMbQQBSAck1llhi6oaDJDco1VfguNsBQv6jXVKDbWL1+B7DqYknOZGR+7M/Ym1v/GTQXD5JU7uSem7wqHd0ArYDDSG1IPzrdPKNjJp8T+9vfdeIPb6l0aII3uPAAAAAASUVORK5CYII=", "goblin": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAB7klEQVR4nIWTPWhTURiGnxtSNDEkFdtLcyUm1SDEBNPCrWTSztUliELAJepuB+3gbpaU1lUh6VboYkrF4iQ6FBwypELo0Ep7LWmMMRKlRiSBzyG5MT9XPNM57znP+7185xyFfw+x0JT/CiacysX6hI2XNd5nd4d4+6AScITldsYBQP1XC4BqqUn5wzELqzoAa0sljHzZOsH50wFR4yPEZlzkMp8x8mWS6SjjZ0dYWyoBmLACYBuMfj87QWzGRWG7iZEvc3g5jMdlY2OlOgQD2PnbLAXg2ROj6+bXvfjyReaZ7oXpMF0TKRo1ob/r5lqmbwTk+nxIAJmb1CSVi8nCqt49bwPILC9SNGr0miTTUZLpKFPXPLx6usPDqxdptNoJq6UmnVsSO8DJ9SwZoGjUCPvPCKCsPNrumiUiGuMnHDjtxxj5Mm8Az70JzARK6qDSNlleZKtQ6UuSiGgAvNursrl/hF/3Eu/AZhPpmMjj9SzPfwqzPo23h0cA7H5pcefSKX573Wzut7XXL75hNeTmrbsScjslFw9KIqIJIGOjQZmb1ERXVdFVtdtcM2XvQ5IL56b4+KnArE+j8r3Ozo8GY6PBoUpf63uDbN/VdecWFSXkdvbq9P6FPkddVRnYkwdXAgBsHTSsoYE0QwYW55Q/wmbJ7wP2Xq0AAAAASUVORK5CYII=", "wolf": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABuklEQVR4nH2TPUhbURiGH0Vu9Ca5hIs5WBViEyg4NFswg6AouohU/NsES2ixFJFmKaJ0ca6LDtIiYqHQpUUQXKyCoBDIoi0oOIgupaQQUrCDHfy6eI853Jt+cIbv533P+54fCA65W7V6OuqDJpxIirhK+4YB6Rp6HlQ3h5xISpxISmxLeUrkDixOJGWoa6jF0tnTD0D56pxKqUwyk+X77hbhWAtc31sJJPDAAG7iEW4Czg72fDZDdth3Bp7H/5LalqKzp58HD5MGgcy+WuWiWNCF/EyO/ExO548HRkhmsritHQA0NSvqqglujl/QPnhEyG7k7coKT8eGDXB1XBQLxJRrEtiWIhxrIWQ3Uv5xye+vvXx5sgcfdgBYXlv3kXgEku6632F6KkdbQgWexeL8awAqpTIAdd7OXmx83gbQ8nMv39Ddl9H9w/0inz6+03k9wMTUgg+8GW8CwI06Gni4XwTgT+WnJtAWqlVst0c5ub5hsfKX7MAzw0Jh9z0ADVbUZ09uReR0dFBuRcS2lIxPLulnbFtK+oYWfM/buIXxySWdhKMOm+tzhsq4SvOr9K26Zlwj+H9Zrb6u/wO8apF5NA/fZAAAAABJRU5ErkJggg==", "troll": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAB20lEQVR4nH2TvWsUURTFf5MPhuxOCFEZdtmsOozCRAYTUJFoYZoEvxYsLSyEgIilVv4FVqbeRrCwsLSxEklEC8WIaxh0C8dBN2vWMGEwuxOzfvAssvPcN25ymnnn3nfPnPfuuxoqBP9D6xHrmRRz5VlJfoRtvsctHt95s6tgQsT5G1NoIz+Jo7ZMLpY9pq+7ZEd1AOKozWLZU0QGksWjWZ2xawFraw1+vT9HYfotJ68cpfaiiVPSOXykuO2s1cerB8siEZEOLtw+Jv9cW4gYOmQQVpo4pT0ynjuwF7/yVXHRlyRf36vz8NZ9ns1/wL1YVIprCxEAjc/r8jgJpMCJuQKX717lzM1x/GqkbFp++YmVpVjyiRkHOh1TumC7liT7JoflOqw08b2AiRmHseNZVpZi3j2pAmgDXQL4XgCA7VqElSZptFbbQLb3EQD2F8YxzRy+F2DkdYy8rjgZ6TcxgikmD17i1OmzGHpGKA4GR7f44jUwzRzF+iatrT8Y9X7WV7ffRhhuED5/qjhQBBIMm0NU65sd9puP0Tds18IpZeSezgvVuo+gJXdg5HVEIcPGoCaLfS+Q7Uy+O0HYriVs1xL8G65u3h1XL5FUK9OwXYt0Pj2qO41zOi7r/gKuYapG2VdVyAAAAABJRU5ErkJggg==", "yeti": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACIElEQVR4nH2TT0hUURTGf2+46GKC8ZUy4MQQ2EAG2qIhhJpZxFCbggiCluKihRAILiShP7gIglYq1KJFUNBCGMKklYg6qMXAkA5GNO9NjdLQ5Dh3ZHih8pjbQt+z+VN3dc+553zfd+45R6PJEUJXf9u2LbVmcQAND0LoaksWanwduv+fIJ765BUzi1GyMEoWw8+XAUhv5hBCV/XKGpiTOamE0FWbL6ScBFnZV8mcVMmcVK+Smw0goh7o6tBkjb1a3MN7qPPaGT+zmQ1ioaBqKEkIXT1bNpSs7Newz3+rqO6+QVeF43OU1PxBxtihQ/dz23eC3PkAd0+dxeuxa4iMksW59lZmMxsIoSuPwz4WX6RcqLAlC4x2trDzu8rE989MreUZnbjHh/WfPH447YI07YJcz7Fa3MOaWcKaWcIoWawvfCJ80kfFtnn3esiN3SyWD0s/ZE/GUwDEQkFujLx0A58OX+eLtevaU2t5bvV2ckxvPepC6mOWH3mD1NxBB0buRAE4fdzLfOGA6cHNKF09EWy5y5uFrAuoCaGrrp4I5V95tgsmK2bWZbGqR12eTnxlfCBGV08EADOdwLal5rFtqZnpBNsFEwCrKmhTVR5NvCcWCjL5Yg6A9rYWxuKLmOmEm+x+om1LzXE4CRejvQC8fdLv+gDG4os0PdFL/UoIXXX3DSp/IKwuXLnvDpRj+wNhdXlgvGacm26jc3dU/W+9/wBLkBqKoJ6rWAAAAABJRU5ErkJggg==", "dragon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABuUlEQVR4nI2TTUsbURSGnxkVA23QOKElWEdcZJcOogtBQf0Bmiw6heqyxYUE3ApduSpSCi5MV7pyreAHpZu6cFMotCIqWCjEGtQp1CR+l4jmuNCZZCaT4oUL98D7nvOce89VqL7EEyt+IrWaefTlawAKO6n/1KhuFkAKOynnXE3sxZLtPt0J5qIveD875dXZyRQotSCAWKbBM6Oezq9nAOQXF/AYJTcQdVVU7apPgxGyf4/Z3yz4thUP6UzoLQDcJ5FyAlY76hz1j+6gyx0P3bU1ZgQIJJs5v/7nSuLg2XtYa5HtPl1GwrrcVxfLNOTyc78AcrWSkNxAVACxCZSyzYfBsIsg1VWk4U0T6ck0n1ojXNeeoLaV7sDV69VKAi3ZDsCFCJZpoPVqAMTWMpwqKq+G0zRO/wJQKp7RMg3kcQ253WzFTW7t3TD0+4CRsM7MUQZAqZjEpvFOtGQ7S0dFAOZ3SzP0vLWG8jkBqPUmyH7cAODboUoiDOtnCk8s6I1UAAH+H0TsZ3tngPn9HICOwCPexu7ksbWM4/USSDyks5zP8MVo408efl7k6AlGGAwW2dp7IIE/rL/vFok0mMKlBfQPAAAAAElFTkSuQmCC", "chest": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACLElEQVR4nJWTQUhUURSGvxdjjvOsR2JhYAnpGGUxBIENSS2CSHBTEIjtgsKFYKEWCbarhRguQhIiEBcRubICJ4RKxIUSbgwdzXGaUlJGn8rMc944z3dazDQ5DaT9lwuXy/n/e86551fIgCp/zobC/0EVc6lXzKVeGblZIUmx7XsXZFts8deXSHxlTCLT7aL7vDLXVi6tF4/sJKimyfZfS/d5Za2vTMYb3BKZbpfxBvc2wRQ5sTEv/voS0X3eNDEReiq6zyu6zyvR52USXxmT8Qa3uPP3yhnNJXcriwRUcQCYk7cI/tzkELD2/nxWgTnXXhL7UEfjq3D6Ls+ZA4ADYHMmjmYr+LtCnHszj52IYK328/H2fQCqXHfo6jaJJhIARLestJADQL3SROnBFwBsmgHsQAurvgCzoSShals2NRUFLBp76PFrgI4CqnjKTxFeNwAIDnk4XDnCRNs+3n5JcPXGSRb6JxiYimFYSooIpVs/GF62kgLm0jOe1LUSCETp6D4BwLd3y9T05Wb1w1r/iuYQaioK6ByNJEuwjVkMS6G2upDm+ql0cJPHRTBkcu/6Udr7vvM6ZHA838miGcvswW98moxTW12Y8WIwZHLgsov9wyraQpRFM8YxzZkpYM4M0vygOPllLoWHLXNZqasOociZx9nSPAA6RyOAoaQMkzmakc8XYGMdgPDgMrlaLj0DqxiWwuMhPRX1T7Nlzv1Cx2l5dKl4N6baSTAbvwAs4iRx7sfvBgAAAABJRU5ErkJggg==", "flag": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAApklEQVR4nGNkgAImJt7/DDjAv3+fGXHJscA0v15iysCrIsYwNeIkg+2/vyiKzB4x/MdlCBPMBtGY0wy5S/UZqp/8wWoTExPvf2SM4gJCoFKAk4GBgYEhkI8Dw1VMxBiADwy8AVjDwOzRezibg0WAoZCHBAN+/PmAEu8//jD8Z2DgJOwUJibe/xoaLv+xJSj0KCQ5GvGlxIGPBRQDONmJCCyauoAcAACZUzm8Ko3JBQAAAABJRU5ErkJggg==", "bomb": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABEElEQVR4nI2TsWoCQRRFzyypYkpBZUGCEPwEq0nl/kP+IGBhkyZFSBEs0lgq2JrGwkZs0/kRYoQgwhoTSBETg6kmhY44s7PrXhh483jnztwdVpBOytqLSJEEV88LRuN59paKVTtY6drRi3VRtes7o9HuNPS8+upf8bkIKdVHnMSczGDQBeD0LBMZ2HysyV5WgBGeDUsZIGUAwOp7ze/Pdvn5ojYXudqQv80KO4KSMuD25gGAx+a94fw6nQAQLuf7KIDwXPBTr+VIFpEA8Fzwy3gaSx1E2bsondn3c4ThuxPUEawY5keMg5Nkv8LR023pV1B+vkjponwUPry+UWiTJNkwmBHEbiA17GwQ/XWTZvkHdp5rZS1BzOkAAAAASUVORK5CYII=", "frost": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABTUlEQVR4nI1Tv0vDQBT+rilIISoIR02XQuxapIuuujkV/4Ms1b/Azm5208lFXBSkBQcXlwoVVARxKVlEMZaGUgIGaSOJQ6CcU2Iuudi+8d19v967A2YoicjspbHJDqurLH5GpgE/L9Zw1vqCPvDwZLowRi4mzP0XxxFolRKTiMwkIifUUx1IRGZavYm3xzYAYC6n4K7TECpn09S77ROYfX2qy4xIvbRSgdnXQWkx7FNFhSgGiYO3di8BAEbnIKHm/DiwrR4XJRsFV7Vj1I42AACtKxXP+zWOwPfGoIoK2+qxgCQTtb28vQ4AGI58WM17YWbfGyNfKIdxEkO8vjHxfvqAweu5kCBeHMHt3k7qRds2hf3EFmYBz+f+dMNpSkRmiwtL3OpEYEqLMD664SZCqglzifMN4XNNA3MOok7yhTJnM6g4WEgQkIj6or/wC7lPhs8hjrxeAAAAAElFTkSuQmCC", "rock": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAB1ElEQVR4nJ2TP2hTURTGf/cZyNC8tpZXGlQoRCwPLXRIaxVdLIiLoEM3dSiIHcTBTXDu4GwHu+hQS3EQJK1CiaYdTG19idLKg5BqSKiDmjSa9B/YP9fBvkvee2mHfnDhcs/9vnO+c8+FPSxd7ZYcFl+6O+XW8m25+eKafGd2KCFN6NJZ+3EFwNrgM7nTPsWv2a+cmkwJh5z98Fhd7Dh/j125KrwCGkBoZEDE35S4rmvUkkulH2TS82TS8wzdilKvEs3Z9L9/K072hdCELmfGHwBgGGHMaC/LuSWS9ve6FgIAN6b6JEDi0SYAW5VV0okYAOWVKq9n8gBEWg1yRWStlQDA2JWE8h1/cpePyTkiZgvllep+vfNbcNBwvFll9uL500FmJx66ehFQSkKXseGbGEaYsxfOkc2mAFjM/Ob+nX7au0zSiRifF4r+HjhkM9qrAmd6LmFb08StMk2hJBe3K0y8sn29UBbWKz9dNmxrmuGxvDqzbHdmn4XRl4su3+OTBQp/Ngg3BgE4fWKXb6kDBKprQj3Xf7iHrqGpDbCZy/8lqB3x39KELiOthgocOxrgU2GdcGOQyz0tAMStMgC5YkmNtStNvVGtFfWS/XXWgVfU+6H+Ad6ovJYckDZ5AAAAAElFTkSuQmCC", "fire": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABNElEQVR4nI2QPUvDUBSGn0i1RqpGrYhGURRFDELFwclBXAR1FAc3l26O/gB/iLg4iZOL4FrRXSIdC1JwsDaxSEADcUhyb9N8eSDkcO97n/e8B1JL9fwvu/qyLs218VxQJiCESNC/AFGhXtUzDXoAqhe6+f/8SozwdTwVO0vbR+4OBg73RN/cWsqaQI799vILxPNbnXZsoakTzJ/PCvflq+3UZSYC9KqOa8uobnklzUcCNkoVjNfPyGW/NgnAz929OOvVKLJVvf25IQ6MEWoNB/PDxXIHAZgufrM4VmR3vSTUpzdNwFEK4ePLIz/j7XMbs6PSsGwqZTjb0bh4gKd6i8f3Asaww+aMTK50uwPB45YQhGDfERa0CYBA4yiRCLJ3BPhkdRSA67odnIc6X9MFSKsksKw/uKlkh0Wq2CoAAAAASUVORK5CYII=", "torch": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAzUlEQVR4nGNkwAmY/yPYfxlxqWLCbQADw6dwWYZP4bJohpFgADGABbsw8/8fc3ThvFdPfzGIHXn5H5tXsBjA/P9zhyIDk6sMXERIW5DhVSkDVkNwuAACmKRWMjAwMDD8mGeCWw1Oif/fGBgYGBh+Hbdm+M/5G6cBOKKH+f+7EkUGVhEGBlYRHoaI9mcMG+6+ZcAXnVgN8ZBX/q8vq/yf7Gg0Umdk+PyLDa81eA3QV+DBq5mgAcQAvAY8ePJugF0w8yw3peYz441CBgYGBgBR+TX4chzZWAAAAABJRU5ErkJggg=="};
 const img={};for(const k in SPR){img[k]=new Image();img[k].src=SPR[k];}
-/* id, name, sprite, stress (0 = rest) */
-const DEF={slime:['Moss slime','slime',2],goblin:['Goblin','goblin',3],wolf:['Dire wolf','wolf',4],troll:['Cave troll','troll',6],yeti:['Yeti','yeti',7],dragon:['Dragon','dragon',10],camp1:['Campfire','fire',0],camp2:['Campfire','fire',0]};
-const PRESET={zig:['slime','goblin','wolf','camp1','troll','yeti','camp2','dragon'],ramp:['camp1','camp2','slime','goblin','wolf','troll','yeti','dragon'],front:['dragon','yeti','troll','camp1','wolf','goblin','slime','camp2']};
-const MAXHP=6;
+/* id: kind, name, sprite, size, tool needed (fights) or tool granted (rewards) */
+const DEF={h1:['hazard','Wolf ambush','wolf',1],h2:['hazard','Trap blast','bomb',3],h3:['hazard','Rockfall','rock',5],
+  f1:['fight','Goblin','goblin',3,'w3'],f2:['fight','Yeti','yeti',6,'torch'],f3:['fight','Dragon','dragon',9,'frost'],
+  r1:['reward','Torch chest','chest',2,'torch'],r2:['reward','Frost chest','chest',2,'frost'],
+  c1:['rest','Campfire','fire',0],c2:['rest','Campfire','fire',0]};
+const TOOL={w3:'sword',torch:'torch',frost:'frost flask'},KIND={hazard:'Hazard',fight:'Fight',reward:'Reward',rest:'Rest'},COL={hazard:'var(--mile)',fight:'var(--ok)',reward:'var(--inch)',rest:'var(--yard)'};
+const PRESET={zig:['h1','f1','r1','c1','h2','f2','r2','c2','h3','f3'],nobreak:['h1','f1','r1','h2','f2','r2','h3','f3','c1','c2'],front:['r1','r2','c1','c2','f1','f2','f3','h1','h2','h3'],ramp:['h1','h2','h3','f1','r1','f2','r2','f3','c1','c2']};
+const N=10,LIMIT=6;
 let order=PRESET.zig.slice(),R;
+const sg=v=>(v>0?'+':'−')+Math.abs(v);
 /* the whole model: one pass over the rooms */
-function sim(o){let hp=MAXHP,f=0,dead=false;const out=[];
-  o.forEach((id,i)=>{const s=DEF[id][2];const r={id,stress:s,fBefore:f,hpBefore:hp,lost:dead};
-    if(!dead){ if(s===0){hp=Math.min(MAXHP,hp+3);f=f*.3;}
-      else{r.cost=Math.round(s/5+f/5);hp=Math.max(0,hp-r.cost);f+=s*.5;if(hp===0){dead=true;r.defeat=true;}}}
-    r.f=f;r.hp=hp;out.push(r);});
-  return out;}
-function summary(){const live=R.filter(r=>!r.lost),dead=R.find(r=>r.defeat);
-  let rel=0,rising=true,peak=0,cur=0,seenFight=false;
-  R.forEach((r,i)=>{if(r.lost)return;if(r.stress){seenFight=true;cur=Math.max(cur,r.stress);}
-    else if(seenFight&&R.slice(i+1).some(x=>x.stress&&!x.lost)){rel++;if(peak&&cur<=peak)rising=false;peak=Math.max(peak,cur);cur=0;}});
-  if(peak&&cur<=peak)rising=false;
-  return {dead,rel,rising,maxF:Math.max(...live.map(r=>r.f)),hp:R[R.length-1].hp,at:dead?R.indexOf(dead)+1:0};}
+function sim(o){let st=0,strain=0,dead=false,wins=0;const tools=['w3'];
+  return o.map(id=>{const [kind,,,size,tool]=DEF[id],r={id,kind,before:st,strainIn:strain,lost:dead,d:0};
+    if(!dead){
+      if(kind==='hazard'){r.d=-size;strain+=size;}
+      else if(kind==='fight'){r.noTool=!tools.includes(tool);r.tired=strain>LIMIT;
+        if(r.noTool||r.tired){r.d=-size;r.defeat=true;dead=true;}else{r.d=size;strain+=size/3;wins++;}}
+      else if(kind==='reward'){r.d=size;tools.push(tool);r.unearned=wins===0;}
+      else{r.idle=strain===0;strain=0;}
+      st+=r.d;}
+    r.st=st;r.strain=strain;r.tools=tools.slice();return r;});}
+function summary(){const live=R.filter(r=>!r.lost),dead=R.find(r=>r.defeat),mv=live.filter(r=>r.d);
+  let turns=0;mv.forEach((r,i)=>{if(i&&(r.d>0)!==(mv[i-1].d>0))turns++;});
+  const fights=live.filter(r=>r.kind==='fight'),rests=live.filter(r=>r.kind==='rest');
+  return {dead,at:dead?R.indexOf(dead)+1:0,turns,maxStrain:fights.length?Math.max(...fights.map(r=>r.strainIn)):0,
+    rests:rests.filter(r=>!r.idle).length,idle:rests.filter(r=>r.idle).length,unearned:live.filter(r=>r.unearned).length,end:mv[mv.length-1],last:live[live.length-1]};}
 /* ---------- chart ---------- */
 const NS='http://www.w3.org/2000/svg',ch=document.getElementById('chart');
 const el=(n,a,t)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);if(t!=null)e.textContent=t;ch.appendChild(e);return e;};
-const X=i=>70+i*72,Y=v=>200-v*16,YF=v=>200-Math.min(v,11.5)*16;
+const X=i=>86+i*58,Y=v=>166-v*5.8;
 function chart(now){ch.innerHTML='';
-  [0,5,10].forEach(v=>{el('line',{x1:40,x2:620,y1:Y(v),y2:Y(v),'stroke-width':1}).style.stroke='var(--line)';el('text',{x:34,y:Y(v)+4,'text-anchor':'end','font-size':11},v).style.fill='var(--muted)';});
-  el('text',{x:40,y:22,'font-size':11,'font-weight':600},'Stress').style.fill='var(--mile)';
-  el('text',{x:90,y:22,'font-size':11,'font-weight':600},'Fatigue carried').style.fill='var(--muted)';
-  const live=R.filter(r=>!r.lost);
-  let a='M'+X(-.5)+' '+Y(0);live.forEach((r,i)=>a+=' L'+X(i)+' '+YF(r.f));a+=' L'+X(live.length-1)+' '+Y(0)+' Z';
-  const ar=el('path',{d:a});ar.style.fill='var(--muted)';ar.style.opacity=.22;
-  let d='M'+X(-.5)+' '+Y(0);live.forEach((r,i)=>d+=' L'+X(i)+' '+Y(r.stress));
-  const ln=el('path',{d,fill:'none','stroke-width':3,'stroke-linejoin':'round','stroke-linecap':'round'});ln.style.stroke='var(--mile)';
+  [-10,0,10,20].forEach(v=>{const l=el('line',{x1:40,x2:626,y1:Y(v),y2:Y(v),'stroke-width':v?1:1.5});l.style.stroke=v?'var(--line)':'var(--muted)';el('text',{x:34,y:Y(v)+4,'text-anchor':'end','font-size':11},v).style.fill='var(--muted)';});
+  el('text',{x:626,y:Y(0)-5,'text-anchor':'end','font-size':10},'ahead').style.fill='var(--muted)';
+  el('text',{x:626,y:Y(0)+13,'text-anchor':'end','font-size':10},'behind').style.fill='var(--muted)';
   R.forEach((r,i)=>{
-    if(i===now)el('rect',{x:X(i)-30,y:30,width:60,height:196,rx:4}).style.cssText='fill:var(--trail-done);opacity:.16';
-    if(!r.lost){const c=el('circle',{cx:X(i),cy:Y(r.stress),r:r.stress?5:6,'stroke-width':2});c.style.fill=r.stress?'var(--mile)':'var(--ok)';c.style.stroke='var(--panel)';
-      if(r.defeat){const t=el('text',{x:X(i),y:Y(r.stress)-12,'text-anchor':'middle','font-size':12,'font-weight':700},'Defeat');t.style.fill='var(--mile)';}}
-    const im=el('image',{href:SPR[DEF[r.id][1]],x:X(i)-12,y:206,width:24,height:24});if(r.lost)im.style.opacity=.3;
-    el('text',{x:X(i),y:244,'text-anchor':'middle','font-size':11},i+1).style.fill='var(--muted)';});
+    if(i===now)el('rect',{x:X(i)-27,y:14,width:54,height:240,rx:4}).style.cssText='fill:var(--trail-done);opacity:.16';
+    if(!r.lost){const col=r.defeat?'var(--mile)':COL[r.kind];
+      const ln=el('line',{x1:X(i-1),y1:Y(r.before),x2:X(i),y2:Y(r.st),'stroke-width':3,'stroke-linecap':'round'});ln.style.stroke=col;if(r.kind==='rest')ln.setAttribute('stroke-dasharray','2 6');
+      const up=r.d>=0,t=el('text',{x:X(i)-(up?6:-6),y:Y(r.st)+(up?-8:16),'text-anchor':up?'end':'start','font-size':11,'font-weight':700},r.defeat?'Defeat':r.kind==='rest'?(r.idle?'':'rest'):sg(r.d));t.style.fill=col;}
+    const D=DEF[r.id],im=el('image',{href:SPR[r.kind==='reward'?D[4]:D[2]],x:X(i)-11,y:228,width:22,height:22});if(r.lost)im.style.opacity=.3;
+    el('text',{x:X(i),y:265,'text-anchor':'middle','font-size':11},i+1).style.fill='var(--muted)';});
+  el('circle',{cx:X(-1),cy:Y(0),r:4}).style.fill='var(--muted)';
+  R.forEach((r,i)=>{if(r.lost)return;const c=el('circle',{cx:X(i),cy:Y(r.st),r:5,'stroke-width':2});c.style.fill=r.defeat?'var(--mile)':COL[r.kind];c.style.stroke='var(--panel)';});
   ch.querySelectorAll('text').forEach(t=>t.setAttribute('font-family','Inter,sans-serif'));}
 /* ---------- room cards ---------- */
 const rooms=document.getElementById('rooms');
+function line(r){const D=DEF[r.id];if(r.lost)return 'never reached';
+  if(r.kind==='hazard')return 'Setback '+sg(r.d);
+  if(r.kind==='fight')return r.noTool?'<b>Lost: needs the '+TOOL[D[4]]+'</b>':r.tired?'<b>Lost: strain '+r.strainIn.toFixed(0)+' of '+LIMIT+'</b>':'Win '+sg(r.d)+(D[4]!=='w3'?', with the '+TOOL[D[4]]:'');
+  if(r.kind==='reward')return 'Ahead '+sg(r.d)+(r.unearned?', nothing won yet':'');
+  return r.idle?'Nothing to rest from':'Strain cleared';}
 function cards(now){rooms.innerHTML='';
-  R.forEach((r,i)=>{const D=DEF[r.id],d=document.createElement('div');d.className='room'+(r.stress?'':' rest')+(i===now?' now':'')+(r.lost?' lost':'');
-    d.innerHTML='<div class="num">Room '+(i+1)+'</div><img class="px" src="'+SPR[D[1]]+'" alt=""><div class="n">'+D[0]+'</div><div class="s">'+(r.stress?'Stress '+r.stress:'Rest')+'</div><div class="s">'+(r.lost?'never reached':r.stress?(r.cost?'−'+r.cost+(r.cost>1?' hearts':' heart'):'no hearts lost'):'+'+(r.hp-r.hpBefore)+' hearts')+'</div>'+
-      '<div class="mv"><button type="button" aria-label="Move '+D[0]+' earlier" data-i="'+i+'" data-d="-1"'+(i===0?' disabled':'')+'>◀</button><button type="button" aria-label="Move '+D[0]+' later" data-i="'+i+'" data-d="1"'+(i===7?' disabled':'')+'>▶</button></div>';
+  R.forEach((r,i)=>{const D=DEF[r.id],d=document.createElement('div');d.className='room '+r.kind+(i===now?' now':'')+(r.lost?' lost':'');
+    d.innerHTML='<div class="num">Room '+(i+1)+'</div><img class="px" src="'+SPR[r.kind==='reward'?D[4]:D[2]]+'" alt=""><div class="t">'+KIND[r.kind]+'</div><div class="n">'+D[1]+'</div><div class="s">'+line(r)+'</div>'+
+      '<div class="mv"><button type="button" aria-label="Move '+D[1]+' earlier" data-i="'+i+'" data-d="-1"'+(i===0?' disabled':'')+'>◀</button><button type="button" aria-label="Move '+D[1]+' later" data-i="'+i+'" data-d="1"'+(i===N-1?' disabled':'')+'>▶</button></div>';
     rooms.appendChild(d);});}
 rooms.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const i=+b.dataset.i,j=i+ +b.dataset.d;[order[i],order[j]]=[order[j],order[i]];apply();
   const nb=rooms.querySelector('button[data-i="'+j+'"][data-d="'+b.dataset.d+'"]');if(nb&&!nb.disabled)nb.focus();});
-function stats(){const s=summary(),v=document.getElementById('verdict');
-  document.getElementById('s-out').textContent=s.dead?'Defeat in room '+s.at:'Dungeon cleared';
-  document.getElementById('s-rel').textContent=s.rel;
-  document.getElementById('s-fat').textContent=s.maxF.toFixed(1);
-  document.getElementById('s-hp').textContent=s.hp+' of '+MAXHP;
-  v.textContent=s.dead?(s.rel?'The release came, but the fights around room '+s.at+' were stacked too tightly. Fatigue was at '+R[s.at-1].fBefore.toFixed(1)+' going in.':'No release before room '+s.at+'. Fatigue was at '+R[s.at-1].fBefore.toFixed(1)+' going in, and that is what ended the run.')
-    :s.rel&&s.rising?'A zig-zag: '+s.rel+(s.rel>1?' releases':' release')+', and each climb peaks higher than the one before it.'
-    :s.rel?'Cleared, with '+s.rel+(s.rel>1?' releases':' release')+', but the peaks do not rise. The hardest fights came early, so the ending is quieter than the middle.'
-    :'Cleared without a single release mid-run. The hero survives, and the line only ever goes one way.';}
+function stats(){const s=summary(),v=document.getElementById('verdict'),d=s.dead,D=d&&DEF[d.id];
+  document.getElementById('s-out').textContent=d?'Defeat in room '+s.at:s.end.kind==='fight'?DEF[s.end.id][1]+' beaten':s.end.kind==='hazard'?'A setback':'A reward';
+  document.getElementById('s-turn').textContent=s.turns;
+  document.getElementById('s-strain').textContent=s.maxStrain.toFixed(0)+' of '+LIMIT;
+  document.getElementById('s-rest').textContent=s.rests+' of 2';
+  const ideal=!d&&s.turns>=5&&s.rests===2&&!s.unearned&&s.end.id==='f3';
+  v.textContent=d?(d.noTool?'The '+D[1]+' needs the '+TOOL[D[4]]+', and that chest is still ahead. A bigger challenge only works when the reward before it handed over the new approach.'
+      :'Strain was at '+d.strainIn.toFixed(0)+' going into the '+D[1]+(s.rests?'':', with no breather before it')+'. Escalation without release tires the hero out before the climax.')
+    :ideal?'A zig-zag: a setback, a comeback, a reward that puts the hero ahead, a breather, then a bigger challenge that needs the new tool. Each swing is larger than the last and the run ends on the dragon.'
+    :s.end.kind==='hazard'?'Cleared, but the wins came in one block and the setbacks in another. The run peaks early and closes on a slide, so the last thing the player feels is the loss.'
+    :s.unearned?'Cleared, but a chest was opened before anything had been won. A reward lands hardest when the hero has just fought their way back to it.'
+    :s.idle?'Cleared, but '+(s.idle>1?'both campfires came':'a campfire came')+' when there was nothing to rest from. A breather needs strain before it and a bigger challenge after it.'
+    :s.end.id!=='f3'?'Cleared, but the dragon was not the last swing. The biggest moment came early, so the ending is quieter than the middle.'
+    :'Cleared, with '+s.turns+' changes of direction. Try to get a setback, a comeback, a reward and a breather in front of each bigger fight.';}
 /* ---------- close-up ---------- */
 const cv=document.getElementById('cv'),cx=cv.getContext('2d');cx.imageSmoothingEnabled=false;
-const U=26,HX=60,GY=92,POS=i=>7+i*7,END=63;
+const U=26,HX=60,GY=92,POS=i=>7+i*7,END=77;
 let A;
 function spr(k,sx,foot,o={}){const im=img[k];if(!im.complete)return;const s=o.s||1,w=16*s,x=Math.round(sx-w/2),y=Math.round(foot-w+(o.dy||0));cx.globalAlpha=o.a==null?1:o.a;
   if(o.flip){cx.save();cx.translate(x+w,y);cx.scale(-1,1);cx.drawImage(im,0,0,w,w);cx.restore();}else cx.drawImage(im,x,y,w,w);cx.globalAlpha=1;}
-function resetRun(){A={pos:0,t:0,idx:-1,mode:'idle',timer:0,hits:0,lunge:0,flash:0,hurt:0,hp:MAXHP,f:0,cleared:[],done:false,dead:false,pops:[]};}
-function step(dt){if(A.mode==='idle'||A.done)return;A.t+=dt;A.lunge=Math.max(0,A.lunge-dt*4);A.flash=Math.max(0,A.flash-dt*5);A.hurt=Math.max(0,A.hurt-dt*2);
-  A.pops.forEach(p=>p.age+=dt);A.pops=A.pops.filter(p=>p.age<1);
-  if(A.mode==='fight'){A.timer-=dt;if(A.timer<=0){A.hits--;A.flash=1;A.lunge=1;A.timer=.2*(1+R[A.idx].fBefore/6);
-      if(A.hits<=0){const r=R[A.idx];A.hp=r.hp;A.f=r.f;if(r.cost){A.hurt=1;A.pops.push({k:'heart',n:'−'+r.cost,age:0});}A.cleared.push(A.idx);
-        if(r.defeat){A.dead=true;A.done=true;finish();}else A.mode='walk';hud();}}return;}
-  if(A.mode==='rest'){A.timer-=dt;if(A.timer<=0)A.mode='walk';return;}
-  let np=A.pos+dt*2.4;const nx=A.idx+1;
-  if(nx<8){const p=POS(nx),r=R[nx];
-    if(r.stress&&p-np<=.8){A.pos=p-.8;A.idx=nx;A.mode='fight';A.hits=r.stress;A.timer=.3;mark();return;}
-    if(!r.stress&&np>=p){A.pos=p;A.idx=nx;A.mode='rest';A.timer=1.3;A.hp=r.hp;A.f=r.f;A.cleared.push(nx);A.pops.push({k:'heart',n:'+'+(r.hp-r.hpBefore),age:0});mark();hud();return;}}
+function resetRun(){A={pos:0,t:0,idx:-1,mode:'idle',timer:0,hits:0,max:1,lunge:0,flash:0,hurt:0,kb:0,st:0,strain:0,tools:['w3'],cleared:[],done:false,dead:false,pops:[]};}
+function land(){const r=R[A.idx];A.st=r.st;A.strain=r.strain;A.tools=r.tools;A.cleared.push(A.idx);
+  A.pops.push({n:r.kind==='rest'?(r.idle?'':'rest'):sg(r.d),c:r.defeat||r.kind==='hazard'?'#ff8a7a':r.kind==='fight'?'#8be28b':r.kind==='reward'?'#ffd166':'#9fd0ff',k:r.kind==='reward'?DEF[r.id][4]:null,age:0});hud();
+  if(r.defeat){A.dead=true;A.done=true;finish();}else A.mode='walk';}
+function step(dt){if(A.mode==='idle'||A.done)return;A.t+=dt;A.lunge=Math.max(0,A.lunge-dt*4);A.flash=Math.max(0,A.flash-dt*5);A.hurt=Math.max(0,A.hurt-dt*1.6);A.kb=Math.max(0,A.kb-dt*2.5);
+  A.pops.forEach(p=>p.age+=dt);A.pops=A.pops.filter(p=>p.age<1.4);
+  if(A.mode==='fight'){A.timer-=dt;if(A.timer<=0){const r=R[A.idx];
+      if(r.defeat){A.hits++;A.hurt=1;A.kb=.6;A.timer=.3;if(A.hits>=3)land();}
+      else{A.hits--;A.flash=1;A.lunge=1;A.timer=.22;if(A.hits<=0)land();}}return;}
+  if(A.mode==='hit'){A.timer-=dt;if(A.timer<=0){A.hurt=1;A.kb=1;land();}return;}
+  if(A.mode==='pause'){A.timer-=dt;if(A.timer<=0)land();return;}
+  let np=A.pos+dt*2.6;const nx=A.idx+1;
+  if(nx<N){const p=POS(nx),r=R[nx];
+    if(p-np<=.8){A.pos=p-.8;A.idx=nx;
+      if(r.kind==='fight'){A.mode='fight';if(r.defeat){A.hits=0;A.max=1;}else A.max=A.hits=2+DEF[r.id][3]/3;A.timer=.3;}
+      else if(r.kind==='hazard'){A.mode='hit';A.timer=.45;}
+      else{A.mode='pause';A.timer=r.kind==='rest'?1.1:.5;}
+      mark();return;}}
   if(np>=END){np=END;A.done=true;finish();}
   A.pos=np;}
 function finish(){document.getElementById('play').textContent='Play it again';mark();}
-function mark(){chart(A.idx);cards(A.idx);document.getElementById('where').textContent=A.done&&!A.dead?'Out the far door':'Room '+(Math.max(0,A.idx)+1)+' of 8';}
-function hud(){const h=document.getElementById('hearts');h.innerHTML='';for(let i=0;i<MAXHP;i++){const m=document.createElement('img');m.className='px'+(i<A.hp?'':' gone');m.src=SPR.heart;m.alt='';h.appendChild(m);}
-  h.setAttribute('aria-label',A.hp+' of '+MAXHP+' hearts');document.getElementById('fat').style.width=Math.min(100,A.f/11.5*100)+'%';}
+function mark(){chart(A.idx);cards(A.idx);document.getElementById('where').textContent=A.done&&!A.dead?'Out the far door':'Room '+(Math.max(0,A.idx)+1)+' of '+N;}
+function hud(){document.getElementById('stand').textContent=A.st?sg(A.st):'0';document.getElementById('strain').style.width=Math.min(100,A.strain/(LIMIT+3)*100)+'%';
+  const k=document.getElementById('kit');k.innerHTML='';A.tools.forEach(t=>{const m=document.createElement('img');m.className='px';m.src=SPR[t];m.alt=TOOL[t];m.title=TOOL[t];k.appendChild(m);});}
 function draw(){const W=224,H=120;const g=cx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#3b3550');g.addColorStop(1,'#6a5a6e');cx.fillStyle=g;cx.fillRect(0,0,W,H);
   const sxOf=p=>HX+(p-A.pos)*U;
-  /* back wall with pillars and torches */
-  for(let i=-2;i<24;i++){const sx=sxOf(i*3.5+1.75);if(sx<-20||sx>W+20)continue;cx.fillStyle='#2a2438';cx.fillRect(Math.round(sx-5),18,10,GY-18);cx.fillStyle='#463c5a';cx.fillRect(Math.round(sx-7),18,14,4);cx.fillRect(Math.round(sx-7),GY-5,14,5);
+  for(let i=-2;i<28;i++){const sx=sxOf(i*3.5+1.75);if(sx<-20||sx>W+20)continue;cx.fillStyle='#2a2438';cx.fillRect(Math.round(sx-5),18,10,GY-18);cx.fillStyle='#463c5a';cx.fillRect(Math.round(sx-7),18,14,4);cx.fillRect(Math.round(sx-7),GY-5,14,5);
     cx.fillStyle='#ffb347';cx.globalAlpha=.75+.25*Math.sin(A.t*9+i);cx.fillRect(Math.round(sx-1),40,3,4);cx.globalAlpha=1;}
   cx.fillStyle='#544a63';cx.fillRect(0,GY,W,H-GY);cx.fillStyle='#766a86';cx.fillRect(0,GY,W,2);
   for(let sx=((-A.pos*U)%16+16)%16-16;sx<W;sx+=16){cx.fillStyle='#463c5a';cx.fillRect(Math.round(sx),GY+2,1,H);}
-  R.forEach((r,i)=>{const sx=sxOf(POS(i));if(sx<-24||sx>W+24)return;const D=DEF[r.id],done=A.cleared.includes(i);
-    if(!r.stress){spr('fire',sx+12,GY+1);return;}
-    if(done){if(!r.defeat)spr('chest',sx+4,GY+1,{a:.5});else spr(D[1],sx+4,GY+1,{s:1.5});return;}
-    const big=r.stress>=6?1.5:1,fl=i===A.idx&&A.flash>.5;spr(D[1],sx+4+(fl?2:0),GY+1,{s:big,a:fl?.45:1});
-    if(i===A.idx){const bw=10+r.stress*3,bx=Math.round(sx+4-bw/2),by=Math.round(GY-16*big-8);cx.fillStyle='#14161c';cx.fillRect(bx-1,by-1,bw+2,5);cx.fillStyle='#e5484d';cx.fillRect(bx,by,Math.ceil(bw*A.hits/r.stress),3);}});
+  R.forEach((r,i)=>{const sx=sxOf(POS(i));if(sx<-24||sx>W+24)return;const D=DEF[r.id],done=A.cleared.includes(i),big=r.kind!=='rest'&&r.kind!=='reward'&&D[3]>=5?1.5:1;
+    if(r.kind==='rest'){spr('fire',sx+10,GY+1);return;}
+    if(r.kind==='reward'){spr('chest',sx+6,GY+1,{a:done?.45:1});return;}
+    if(r.kind==='hazard'){const act=i===A.idx&&A.mode==='hit';spr(D[2],sx+4+(act?Math.sin(A.t*40)*1.5:0),GY+1,{s:big,a:done?.4:1});return;}
+    if(done&&!r.defeat)return;
+    const fl=i===A.idx&&A.flash>.5;spr(D[2],sx+4+(fl?2:0)-(r.defeat&&i===A.idx?A.kb*4:0),GY+1,{s:big,a:fl?.45:1});
+    if(i===A.idx&&A.mode==='fight'&&!r.defeat){const bw=10+A.max*4,bx=Math.round(sx+4-bw/2),by=Math.round(GY-16*big-8);cx.fillStyle='#14161c';cx.fillRect(bx-1,by-1,bw+2,5);cx.fillStyle='#e5484d';cx.fillRect(bx,by,Math.ceil(bw*A.hits/A.max),3);}});
   spr('flag',sxOf(END)+10,GY+1);
-  const walking=A.mode==='walk'&&!A.done,pass=walking&&Math.floor(A.t*6)%2===1;
-  if(A.dead){cx.save();cx.translate(HX-4,GY+1);cx.rotate(-Math.PI/2);cx.globalAlpha=.8;cx.drawImage(img.hero,-16,-8,16,16);cx.restore();cx.globalAlpha=1;}
-  else{if(A.hurt>.5){cx.globalAlpha=.5;}spr(pass?'hero2':'hero',HX-4+A.lunge*5,GY+1,{dy:pass?-1:0,a:A.hurt>.5?.5:1});
-    if(A.lunge>0)spr('w3',HX+7+A.lunge*5,GY-3,{s:.75,flip:true,a:Math.min(1,A.lunge*2)});}
-  cx.font='bold 8px monospace';cx.textAlign='center';
-  A.pops.forEach(p=>{const y=GY-22-p.age*14;cx.globalAlpha=Math.max(0,1-p.age);spr(p.k,HX-10,y+4,{s:.6,a:Math.max(0,1-p.age)});cx.fillStyle='#14161c';cx.fillText(p.n,HX+3,y);cx.fillStyle='#fff';cx.fillText(p.n,HX+2,y-1);cx.globalAlpha=1;});}
+  const walking=A.mode==='walk'&&!A.done,pass=walking&&Math.floor(A.t*6)%2===1,hx=HX-4-A.kb*10;
+  if(A.dead){cx.save();cx.translate(hx,GY+1);cx.rotate(-Math.PI/2);cx.globalAlpha=.8;cx.drawImage(img.hero,-16,-8,16,16);cx.restore();cx.globalAlpha=1;}
+  else{const blink=A.hurt>0&&Math.floor(A.t*14)%2===0;spr(pass?'hero2':'hero',hx+A.lunge*5,GY+1,{dy:pass?-1:0,a:blink?.35:1});
+    if(A.lunge>0){const r=R[A.idx],tk=r&&r.kind==='fight'?DEF[r.id][4]:'w3';spr(tk,HX+7+A.lunge*5,GY-3,{s:.75,flip:tk==='w3',a:Math.min(1,A.lunge*2)});}}
+  cx.font='bold 10px monospace';cx.textAlign='center';
+  A.pops.forEach(p=>{const y=GY-24-p.age*12,al=Math.max(0,1-p.age/1.4);if(p.k)spr(p.k,HX-18,y+5,{s:.75,a:al});cx.globalAlpha=al;cx.fillStyle='#14161c';cx.fillText(p.n,HX-1,y+1);cx.fillStyle=p.c;cx.fillText(p.n,HX-2,y);cx.globalAlpha=1;});}
 /* ---------- wiring ---------- */
-function apply(){R=sim(order);resetRun();chart(-1);cards(-1);stats();hud();document.getElementById('play').textContent='Play the run';document.getElementById('where').textContent='Room 1 of 8';
+function apply(){R=sim(order);resetRun();chart(-1);cards(-1);stats();hud();document.getElementById('play').textContent='Play the run';document.getElementById('where').textContent='Room 1 of '+N;
   document.querySelectorAll('.preset').forEach(b=>b.setAttribute('aria-pressed',PRESET[b.dataset.p].join()===order.join()));}
 document.querySelectorAll('.preset').forEach(b=>b.addEventListener('click',()=>{order=PRESET[b.dataset.p].slice();apply();}));
 document.getElementById('play').addEventListener('click',()=>{resetRun();hud();A.mode='walk';document.getElementById('play').textContent='Restart the run';mark();});
