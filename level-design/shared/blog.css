@@ -43,8 +43,13 @@
 .mt-stats b { min-width: 104px; }
 
 /* rule-check list beside the manor generator: one compact line per rule */
+.gn-recipe { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; margin: 2px 0 8px; }
+.gn-recipe label { display: flex; align-items: center; justify-content: space-between; gap: 6px; font-size: 14px; font-weight: 600; color: var(--ink); }
+.gn-recipe select { font: 500 13px Jost, sans-serif; padding: 2px 4px; border: 2px solid #cdbf9f; border-radius: 6px; background: #fffaf0; color: var(--ink); max-width: 118px; }
 .gn-checks { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 2px; }
-.gn-checks li { display: grid; grid-template-columns: 18px 1fr; gap: 6px; font-size: 13.5px; line-height: 1.3; color: var(--ink); }
+.gn-checks li { display: grid; grid-template-columns: 18px 1fr; gap: 6px; font-size: 13px; line-height: 1.25; color: var(--ink); }
+.gn-checks li span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.gn-checks li.r span { white-space: normal; }
 .gn-checks li b { font-weight: 700; color: #2fae63; }
 .gn-checks li.r b { color: #e5322d; }
 .gn-checks li.r span { font-weight: 600; }
