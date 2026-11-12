@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Design Scripture Demos</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@500;700&family=Inter:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#f3f5f1; --panel:#ffffff; --fg:#1d2a2c; --muted:#5d6b6c; --line:#d5dbd6;
+  --inch:#c98a00; --yard:#2f7fb8; --mile:#c2452d; --mount:#6a4bb5; --ok:#2e8b57;
+  --meadow:#7fbf6a; --forest:#3f7d52; --ridge:#8d8f99; --snow:#dfeaf2; --trail:#3a3f4a; --trail-done:#f2b632;
+  --display:"Pixelify Sans","Trebuchet MS",sans-serif; --body:Inter,system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#141a1d; --panel:#1c2428; --fg:#e8eeea; --muted:#9aa8a6; --line:#2e3a3d;
+  --inch:#f2b632; --yard:#63b3ea; --mile:#f0795f; --mount:#a98cf0; --ok:#5fc48d;
+  --meadow:#5f9c50; --forest:#2f6243; --ridge:#6d707b; --snow:#c9d8e3; --trail:#11151a; --trail-done:#f2b632; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#141a1d; --panel:#1c2428; --fg:#e8eeea; --muted:#9aa8a6; --line:#2e3a3d;
+  --inch:#f2b632; --yard:#63b3ea; --mile:#f0795f; --mount:#a98cf0; --ok:#5fc48d;
+  --meadow:#5f9c50; --forest:#2f6243; --ridge:#6d707b; --snow:#c9d8e3; --trail:#11151a; --trail-done:#f2b632; color-scheme:dark }
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.5;font-variant-ligatures:none}
+.wrap{max-width:1080px;margin:0 auto;padding-block:20px 32px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+h1{font-family:var(--display);font-weight:700;font-size:30px;line-height:1.1;margin:0;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:68ch}
+.pane{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.pane h2{font-family:var(--display);font-weight:500;font-size:16px;margin:0;display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.pane h2 span{font-family:var(--body);font-size:12px;color:var(--muted);font-weight:500}
+canvas{width:100%;image-rendering:pixelated;border-radius:3px;display:block}
+img.px,svg image{image-rendering:pixelated}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button{font:600 14px var(--body);color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:6px 12px;cursor:pointer}
+button:hover{border-color:var(--muted)}
+button:focus-visible,input:focus-visible{outline:2px solid var(--yard);outline-offset:2px}
+button[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.spacer{flex:1}
+.k{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.v{font-variant-numeric:tabular-nums;font-weight:600;font-size:22px}
+.v small{font-size:13px;font-weight:500;color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.stats>div{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0}
+.note{font-size:13px;color:var(--muted);margin:0;max-width:75ch}
+.note a,.back a{color:var(--yard)}
+.back{font-size:13px;margin:0}
+.verdict{font-family:var(--display);font-size:18px;line-height:1.25;margin:0;text-wrap:balance}
+@media (max-width:760px){h1{font-size:24px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+body{margin:0}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px;display:flex;flex-direction:column;gap:6px;color:var(--fg);text-decoration:none}
+.card:hover,.card:focus-visible{border-color:var(--muted)}
+.card strong{font-family:var(--display);font-size:20px;font-weight:700;line-height:1.15}
+.card span:last-child{color:var(--muted);font-size:14px}
+@media (max-width:640px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="back"><a href="../">Mastering Game Mechanics</a></p>
+  <h1>Design Scripture Demos</h1>
+  <p class="lede">Small playable pages, each built around one entry from the Game Design Scriptures.</p>
+  <div class="grid">
+<a class="card" href="inchpebbles-to-mountain/"><span class="k">Ashuras, Entry 1</span><strong>Inchpebbles to Mountain</strong><span>A hero climbs a trail of coins, obstacles and camps to a summit. Switch off a goal size and feel the climb go flat.</span></a>
+<a class="card" href="zig-zag-dungeon/"><span class="k">Felder's Structure of Fun, Entry 22</span><strong>The Zig-Zag Dungeon</strong><span>Reorder eight rooms and watch the stress curve decide whether the hero clears the dungeon.</span></a>
+<a class="card" href="three-paths/"><span class="k">Ashuras, Entry 1</span><strong>Golden, Silver and Dirt Paths</strong><span>Three climbers of different skill share one mountain. Close a path and see who stops moving.</span></a>
+<a class="card" href="thirty-two-slimes/"><span class="k">Celia's depth, Entry 15</span><strong>Thirty-Two Slimes</strong><span>Stamp rules onto 32 lookalike slimes and compare possibility space, differentiated depth and relevant depth.</span></a>
+  </div>
+  <p class="note">Sprites: Pixel Art Atlas (Angais, CC0), AI-generated.</p>
+</div>
+</body>
+</html>
