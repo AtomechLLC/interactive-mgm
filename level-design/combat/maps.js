@@ -258,5 +258,62 @@
       script: ['lanes', 'edge', 'feat', 'haz'],
     };
   }
-  root.FPSMAPS = [{ key: 'terraces', name: 'Kiln Terraces', build: terraces }, { key: 'arcade', name: 'Glass Arcade', build: arcade }, { key: 'reactor', name: 'Sluice Reactor', build: reactor }, { key: 'tannery', name: 'Tannery Wings', build: tannery }, { key: 'cistern', name: 'Cistern Fork', build: cistern }];
+  /* Dressing: one setting per map, and each room dressed as what it is (theme.js builds the props from this; nothing here
+     changes a battle). Crates stay reserved for cover, and drums for the fuel hazard, so neither is used as decoration. */
+  const CLAY = '#c98a5c', DYE = ['#7a4fa0', '#3f7fb5', '#b5484a', '#d8a531'];
+  const DRESS = {
+    // 1. a hillside pottery: clay comes in at the ramp, is thrown and dried in the middle, and fired along the kiln row
+    terraces: { name: 'a hillside pottery', seed: 3, rooms: {
+      A: { mat: 'clay', put: ['pot', 'pot', 'rack'] }, B: { mat: 'plank', put: ['sacks', 'sacks', 'pot'] },
+      An: { mat: 'cobble', sky: true, lab: 'Potters’ Steps', put: ['pot', 'pot', 'planter'] }, As: { mat: 'brick', lab: 'Wood Store', put: ['coal', 'coal', 'sacks'] },
+      Bn: { mat: 'cobble', sky: true, lab: 'Cart Gate', put: ['sacks', { type: 'heap', col: CLAY }] }, Bs: { mat: 'brick', lab: 'Ash Pit', put: ['coal', { type: 'heap', col: '#9a948c' }] },
+      Ter: { mat: 'clay', sky: true, put: ['pot', 'pot', 'pot', 'planter', 'planter', 'bench'] }, Duct: { mat: 'metal' },
+      Wm: { mat: 'slab', lab: 'Drying Room', put: ['rack', 'rack', 'rack', 'pot'] }, Em: { mat: 'slab', lab: 'Glaze Room', put: ['rack', { type: 'vat', col: '#7fb8a0' }, { type: 'vat', col: '#d8a531' }] },
+      Yard: { mat: 'dirt', sky: true, put: [{ type: 'heap', col: CLAY }, { type: 'heap', col: CLAY }, 'pot', 'pot', 'pot'] },
+      Ramp: { mat: 'plank', sky: true, put: ['sacks', 'sacks', { type: 'heap', col: CLAY }, 'tub'] }, Bw: { mat: 'cobble', sky: true, lab: 'Clay Shed', put: [{ type: 'heap', col: CLAY }, 'sacks', 'tub'] },
+      K1: { mat: 'brick', put: ['coal'] }, K2: { mat: 'brick', put: ['pot', 'pot'] }, K3: { mat: 'brick', put: ['coal'] }, K4: { mat: 'brick', put: ['pot', 'coal'] }, cS: { mat: 'brick' } },
+      props: [[235, 519], [425, 519], [615, 519], [805, 519]].map(([x, y]) => ({ type: 'kiln', x, y, r: 14 })).concat([{ type: 'kiln', x: 668, y: 372, r: 16 }]),
+      decals: [[235, 500], [425, 500], [615, 500], [805, 500], [668, 352]].map(([x, y]) => ({ type: 'glow', at: [x, y, 34] })) },
+    // 2. a covered market: shop fronts along the gallery, a mosaic under the glass roof, deliveries and storage behind
+    arcade: { name: 'a covered market', seed: 5, rooms: {
+      A: { mat: 'tile', put: ['bench', 'planter'] }, B: { mat: 'tile', put: ['bench', 'planter'] },
+      An: { mat: 'tile', lab: 'West Entrance', put: ['planter', 'planter', 'bench'] }, Bn: { mat: 'tile', lab: 'East Entrance', put: ['planter', 'planter', 'bench'] },
+      As: { mat: 'slab', lab: 'Delivery Bay', put: ['sacks', 'sacks', 'tub'] }, Bs: { mat: 'slab', lab: 'Loading Dock', put: ['sacks', 'tub', 'rack'] },
+      Gal: { mat: 'tile', put: ['bench', 'bench', 'planter', 'planter'] }, Atr: { mat: 'tile', sky: true, put: ['planter', 'planter', 'planter', 'planter', 'bench', 'bench'] },
+      Wm: { mat: 'tile', lab: 'Tea Room', put: ['bench', 'bench', 'planter'] }, Em: { mat: 'tile', lab: 'Florist', put: ['planter', 'planter', 'planter', { type: 'planter', col: '#d86a8a' }, { type: 'planter', col: '#e0b040' }] },
+      Stair: { mat: 'slab', put: ['planter'] }, Stock: { mat: 'slab', put: ['rack', 'rack', 'rack', 'sacks', 'sacks'] },
+      S2: { mat: 'slab', put: ['rack', 'tub', 'sacks'] }, S3: { mat: 'slab', lab: 'Cold Store', put: ['rack', 'rack', 'tank'] } },
+      decals: [{ type: 'rosette', at: [520, 287, 54] }, ...[[170, '#d8574a'], [290, '#3f7fb5'], [410, '#5c9a5a'], [600, '#d8a531'], [720, '#7a4fa0'], [830, '#d8574a']].map(([x, col]) => ({ type: 'awning', at: [x, 62, 56, 11], col, keep: [x + 28, 72, 34] }))] },
+    // 3. a coolant plant: tanks and pipework on the run, control desks either side of the hub, a fuel store under it
+    reactor: { name: 'a coolant plant', seed: 7, rooms: {
+      A: { mat: 'metal', put: ['console', 'tank'] }, B: { mat: 'metal', put: ['console', 'tank'] },
+      An: { mat: 'metal', lab: 'Intake', put: ['tank', 'tank', 'valve'] }, Bn: { mat: 'metal', lab: 'Outfall', put: ['tank', 'tank', 'valve'] },
+      As: { mat: 'slab', lab: 'Workshop', put: ['rack', 'console', 'tub'] }, Bs: { mat: 'slab', lab: 'Locker Room', put: ['rack', 'rack', 'bench'] },
+      Run: { mat: 'metal', put: ['valve', 'valve', 'valve', 'tank', 'tank'] }, Hub: { mat: 'metal', put: ['console', 'console', 'valve', 'valve'] },
+      Wm: { mat: 'slab', lab: 'West Control', put: ['console', 'console', 'rack'] }, Em: { mat: 'slab', lab: 'East Control', put: ['console', 'console'] },
+      cN: { mat: 'metal' }, cS: { mat: 'metal' }, F1: { mat: 'soot', put: ['rack', 'pump'] }, F2: { mat: 'soot', put: ['rack', 'rack'] }, F3: { mat: 'soot', put: ['pump', 'rack'] } },
+      decals: [{ type: 'pipe', at: [[148, 66], [300, 66], [300, 72], [740, 72], [740, 66], [892, 66]] }, { type: 'stripe', at: [338, 262, 20, 66] }, { type: 'stripe', at: [682, 262, 20, 66] }, { type: 'stripe', at: [486, 162, 68, 8] }, { type: 'pool', at: [520, 295, 26], col: 'rgba(110,200,170,.35)' }] },
+    // 4. a tannery: hides dry in the yard, soak in the pits and are dyed in the hall; the gallery is the clean way round
+    tannery: { name: 'a tannery', seed: 9, rooms: {
+      Tower: { mat: 'slab', put: ['rack', 'bench', 'sacks'] }, East: { mat: 'plank', put: ['sacks', 'sacks', 'rack'] },
+      Aisle: { mat: 'plank', put: ['rack', 'rack', 'bench'] }, Hall: { mat: 'slab', put: DYE.map(col => ({ type: 'vat', col })).concat(DYE.slice(0, 2).map(col => ({ type: 'vat', col, r: 9 }))) },
+      Wy: { mat: 'dirt', sky: true, put: ['rack', 'rack', 'rack', 'rack', 'rack'] }, Ce: { mat: 'wet', put: [{ type: 'vat', col: '#8a7a5a' }, { type: 'vat', col: '#8a7a5a' }, { type: 'vat', col: '#6f6a4a' }, 'tub'] },
+      Gal: { mat: 'plank', put: ['bench', 'bench', 'rack', 'planter'] }, Ne: { mat: 'plank', lab: 'Leather Loft', put: ['sacks', 'sacks', 'rack', 'rack'] }, Ns: { mat: 'plank', put: ['sacks'] },
+      Seam: { mat: 'slab' }, W1: { mat: 'plank', put: ['rack', 'rack', { type: 'vat', col: DYE[2] }] }, W2: { mat: 'brick', lab: 'Lime Store', put: ['sacks', { type: 'heap', col: '#f1eee4' }, 'tub'] },
+      Sl: { mat: 'wet', put: ['valve', 'tub'] }, Su: { mat: 'brick', put: ['coal', 'sacks', 'rack'] }, Dr: { mat: 'brick' } },
+      decals: [{ type: 'pool', at: [120, 300, 20], col: 'rgba(150,110,70,.3)' }, { type: 'pipe', at: [[338, 438], [612, 438]] }] },
+    // 5. a waterworks: filter beds and a reed court on the clean side, pumps by the cistern, silt and the drain on the foul side
+    cistern: { name: 'a waterworks', seed: 13, rooms: {
+      Tower: { mat: 'slab', put: ['valve', 'console', 'bench'] }, West: { mat: 'plank', put: ['bench', 'rack'] },
+      Cis: { mat: 'wet', put: ['valve', 'valve', 'valve', 'valve'] }, E1: { mat: 'metal', put: ['pump', 'pump', 'tank', 'console'] },
+      S1: { mat: 'brick' }, S2: { mat: 'brick', put: ['valve'] }, N1: { mat: 'slab', put: ['tank', 'tank', 'valve'] },
+      N2: { mat: 'slab', lab: 'Aqueduct Walk', put: ['bench', 'planter', 'valve'] }, N3: { mat: 'slab', put: ['planter', 'bench'] }, cN: { mat: 'slab' }, Seam: { mat: 'slab' },
+      Wg1: { mat: 'plank', put: ['rack', 'console', 'bench'] }, Wg2: { mat: 'plank', lab: 'Keeper’s Office', put: ['rack', 'bench', 'planter'] },
+      Nw: { mat: 'grass', sky: true, put: ['reeds', 'reeds', 'reeds', 'reeds', 'reeds', 'bench'] },
+      Sw: { mat: 'dirt', sky: true, put: [{ type: 'heap', col: '#8a7458' }, { type: 'heap', col: '#8a7458' }, { type: 'heap', col: '#a08a68' }, 'tub', 'tub'] } },
+      decals: [{ type: 'pan', at: [716, 136, 70, 44], col: '#a9d6e2' }, { type: 'pan', at: [796, 136, 70, 44], col: '#bfe0ea' }, { type: 'pan', at: [876, 136, 70, 44], col: '#a9d6e2' }, { type: 'pan', at: [796, 196, 150, 48], col: '#cfe8ee' },
+        { type: 'pool', at: [190, 150, 24], col: 'rgba(110,170,195,.4)' }, { type: 'pipe', at: [[708, 268], [892, 268]] }, { type: 'grate', at: [650, 500, 22, 20] }, { type: 'grate', at: [800, 500, 22, 20] }] },
+  };
+  const dressed = (key, name, build) => ({ key, name, build: () => ({ ...build(), dressSpec: DRESS[key] }) });
+  root.FPSMAPS = [dressed('terraces', 'Kiln Terraces', terraces), dressed('arcade', 'Glass Arcade', arcade), dressed('reactor', 'Sluice Reactor', reactor), dressed('tannery', 'Tannery Wings', tannery), dressed('cistern', 'Cistern Fork', cistern)];
 })(typeof window !== 'undefined' ? window : globalThis);

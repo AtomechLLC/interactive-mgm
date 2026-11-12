@@ -47,7 +47,7 @@
     Object.entries(names).forEach(([id, n]) => P.rooms[id].lab = n);
     P.rooms.Long.sky = P.rooms.An.sky = P.rooms.Bn.sky = P.rooms.MidW.sky = P.rooms.MidE.sky = true;   // open to the sky in first person
     P.rooms.MidE.labAt = [640, 300]; P.rooms.M1.labAt = [240, 322]; P.rooms.rM1.labAt = [800, 262];
-    const theme = {
+    const dress = {
       name: 'a tidal salt works', planProps,
       decals: [
         { type: 'beam', at: [[520, 44], [520, 146]] },                                         // gantry crane over the dock: the long lane's landmark
@@ -85,7 +85,7 @@
       tun: ['A', 'As', 'T1', 'T2', 'Tmid', 'rT2', 'rT1', 'Bs', 'B'],
     };
     const laneOf = { A: 'spawn', B: 'spawn', Long: 'long', An: 'long', Bn: 'long', M1: 'mid', rM1: 'mid', MidW: 'mid', MidE: 'mid', As: 'tun', Bs: 'tun', T1: 'tun', rT1: 'tun', T2: 'tun', rT2: 'tun', Tmid: 'tun', cN: 'link', rcN: 'link', cS: 'link', rcS: 'link' };
-    return { P, lanes, laneOf, bases: ['A', 'B'], W, H, theme };
+    return { P, lanes, laneOf, bases: ['A', 'B'], W, H, dress };
   }
   root.FPSMAP = { build, W, H };
 })(typeof window !== 'undefined' ? window : globalThis);
