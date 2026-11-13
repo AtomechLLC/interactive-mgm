@@ -2,7 +2,8 @@
    PRACTICE.schedule(el)          the day-by-day table on practice/index.html
    PRACTICE.track(el, bar, which) the day cards on workshop.html ('workshop') or self-study.html ('study')
    A second course reuses this file by setting PROGRAM.config (see dgms/practice/program.js):
-   root (path to the site root), key (the localStorage key), fallback (course icon in assets/img/home). */
+   root (path to the site root), key (the localStorage key), fallback (course icon in assets/img/home),
+   after (the capstone's label in the progress bar) and pageLabel (the heading over a part's `page` line). */
 (function () {
   const { DAYS, KINDS } = window.PROGRAM;
   const CFG = Object.assign({ root: '../', key: 'mgm-practice-done', fallback: 'mgm.svg' }, window.PROGRAM.config);
@@ -100,10 +101,13 @@
   <label class="done"><input type="checkbox" data-day="${d.day}"${done.has(d.day) ? ' checked' : ''}> Done</label></div>
   <div class="db"><div>
     ${s.goal ? `<h4>Goal</h4><p class="goal">${s.goal}</p>` : ''}
+    ${s.after ? `<h4>After the workshop</h4><p class="goal">${s.after}</p>` : ''}
     ${framework(s.framework)}
     <h4>Exercise</h4>
     ${s.choose ? `<p>Choose the version that fits your game.</p><div class="variants">${s.variants.map(v => `<div><b>${esc(v.title)}</b>${steps(v.steps)}</div>`).join('')}</div><p>Get feedback in your Discord thread.</p>` : steps(s.steps)}
     ${s.quote ? `<blockquote>${esc(s.quote)}</blockquote>` : ''}
+    ${s.page ? `<h4>${esc(CFG.pageLabel || 'Hand in')}</h4><p>${s.page}</p>` : ''}
+    ${extras(s.res)}
     ${res ? `<div class="res">${res}</div>` : ''}
     ${s.example ? `<details class="ex"${d.day === 1 ? ' open' : ''}><summary>Worked example: ${esc(s.example.title)}</summary><div class="exb">${s.example.html}</div></details>` : ''}
   </div><div>
@@ -122,7 +126,7 @@
     if (which === 'study') {
       const counted = days.filter(d => !d.study.none);
       bar.innerHTML = `<span class="lbl">Your progress</span><span class="meter"><i></i></span><span class="count"></span>` +
-        counted.map(d => `<a class="jump" href="#${anchor(d)}" data-day="${d.day}" title="${esc(d.study.title)}">${d.label ? '17+' : d.day}</a>`).join('');
+        counted.map(d => `<a class="jump" href="#${anchor(d)}" data-day="${d.day}" title="${esc(d.study.title)}">${d.label ? (CFG.after || '17+') : d.day}</a>`).join('');
       const refresh = () => {
         const n = counted.filter(d => done.has(d.day)).length;
         bar.querySelector('.meter i').style.width = (100 * n / counted.length) + '%';
