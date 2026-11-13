@@ -267,3 +267,6 @@ Genre breakdowns (Blog Posts):
 | `level-design--gates.svg`, `--scripting.svg`, `--lighting.svg`, `--playtest.svg`, `--floors.svg`, `--massing.svg`, `--balance.svg`, `--envart.svg` | drawn for this site | own work |
 | `coop-interactions--conversion.svg` | [trade](https://game-icons.net/1x1/lorc/trade.html) | Lorc |
 | `coop-interactions--economy.svg` | [price-tag](https://game-icons.net/1x1/delapouite/price-tag.html) | Delapouite |
+| `practice.svg` | [scroll-unfurled](https://game-icons.net/1x1/lorc/scroll-unfurled.html) | Lorc |
+| `practice--self-study.svg` | [quill-ink](https://game-icons.net/1x1/lorc/quill-ink.html) | Lorc |
+| `practice--workshop.svg` | [round-table](https://game-icons.net/1x1/delapouite/round-table.html) | Delapouite |
