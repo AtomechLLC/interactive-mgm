@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Live Workshops · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="practice.css">
+</head>
+<body>
+<div class="band"><header>
+  <a class="up" href="index.html">← Practice portal</a>
+  <div class="kicker">MGM C4 · Live workshop path<span class="gds">GDS Member</span></div>
+  <h1>Live <span>Workshops</span></h1>
+  <p>Seventeen in-class drills, one per course day. Each lists its goal, the instructor’s example, the framework to fill in on Miro, the task with its group size, time and zoom level, and the interactives to open on the shared screen.</p>
+</header></div>
+<nav class="toolbar" id="bar"></nav>
+<main>
+  <div class="two">
+    <div class="box"><h3>Running a workshop</h3><ol><li>Show the goal and the instructor’s example.</li><li>Walk through the framework and open the matching Miro board.</li><li>Set the timer and let groups work the task.</li><li>Each group picks a presenter; the class gives feedback.</li></ol></div>
+    <div class="box"><h3>Zoom levels</h3><p>Each drill works at one zoom: a single <b>action</b>, a <b>feature</b>, an <b>encounter</b>, the whole <b>game project</b>, the team <b>system</b>, or open <b>creative</b> work. Filter the drills by zoom with the bar above.</p></div>
+  </div>
+  <div id="track"></div>
+</main>
+<footer>From the <i>Mastering Game Mechanics</i> cohort 4 Live Workshop Exercises and Self-Study Exercises decks and the Self Study Project Templates (Echidna Z worked example). Icons from <a href="https://game-icons.net">game-icons.net</a> under <a href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>; credits in <code>assets/img/home/CREDITS.md</code>.</footer>
+<script src="program.js"></script>
+<script src="practice.js"></script>
+<script>PRACTICE.track(document.getElementById('track'), document.getElementById('bar'), 'workshop');</script>
+</body>
+</html>

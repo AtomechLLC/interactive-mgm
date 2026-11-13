@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Practice Portal · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="practice.css">
+</head>
+<body>
+<div class="band"><header>
+  <a class="up" href="../mgm.html">← All modules</a>
+  <div class="kicker">MGM C4 · Practice<span class="gds">GDS Member</span></div>
+  <h1>Self-Study &amp; <span>Workshops</span></h1>
+  <p>The hands-on half of the course. Live workshops drill one design skill in class; the self-study project applies the same skill to your own game afterward. Both follow the same days, and every day links the interactives that teach it.</p>
+</header></div>
+<main>
+  <div class="paths">
+    <a class="path" href="workshop.html" style="--c:#8a3b52"><img src="../assets/img/home/practice--workshop.svg" alt=""><span><b>Live workshops</b><small>In class, in groups, on Miro. 17 drills.</small>
+      <ul><li>Goal, instructor’s example and framework</li><li>Task with group size, time and zoom level</li><li>Filter drills by zoom level</li></ul><span class="go">Open the workshops →</span></span></a>
+    <a class="path" href="self-study.html" style="--c:#2f6f5e"><img src="../assets/img/home/practice--self-study.svg" alt=""><span><b>Self-study project</b><small>After class, with your team, on your own game. 17 parts.</small>
+      <ul><li>Exercise steps and optional blank templates</li><li>A worked example for every part (Echidna Z)</li><li>Progress you can tick off as you post</li></ul><span class="go">Start the project →</span></span></a>
+  </div>
+
+  <h2>The course, day by day</h2>
+  <p class="lede">Each row pairs a day’s workshop with its self-study part. The round icons open the interactive pages for that day’s topic.</p>
+  <div class="sched" id="sched"></div>
+
+  <h2>How the two paths fit</h2>
+  <div class="two">
+    <div class="box"><h3>One skill, twice</h3><p>The workshop practices a skill on a shared example (Breath of the Wild without gliding, nine animals, a DOOM room). The self-study applies it to your team’s game. Day 5 drills A → B logic in class; Part 5 uses it to grow new abilities for your game.</p></div>
+    <div class="box"><h3>One game, start to finish</h3><p>The self-study parts stack: Part 1 picks three concepts, Part 3 commits to one, and every later part adds a section to your design document. Part 17 folds them into a master GDD and a vertical slice.</p></div>
+    <div class="box"><h3>Exercise kinds</h3><div class="chips"><span class="chip k">Analytical</span><span class="chip k">Conceptual</span><span class="chip k">Discussion</span><span class="chip k">Group Activity</span><span class="chip k">Individual Activity</span><span class="chip k">Playtest</span><span class="chip k">Production</span></div><p>Workshops are tagged by what they ask of you: taking a game apart, inventing something new, or talking it through.</p></div>
+  </div>
+</main>
+<footer>From the <i>Mastering Game Mechanics</i> cohort 4 Live Workshop Exercises and Self-Study Exercises decks and the Self Study Project Templates (Echidna Z worked example). Icons from <a href="https://game-icons.net">game-icons.net</a> under <a href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>; credits in <code>assets/img/home/CREDITS.md</code>.</footer>
+<script src="program.js"></script>
+<script src="practice.js"></script>
+<script>PRACTICE.schedule(document.getElementById('sched'));</script>
+</body>
+</html>
