@@ -1,16 +1,10 @@
 /* The DGMS practice program: one entry per course day, each with its live workshop and its self-study part.
-   Sources: "DGSM - RGF 26Q3 C2 - Live Workshop Exercises" (cohort 2), "DGMS: C2 - Self-Study Exercises" and
-   "DGMS Self Study Project Templates". Rendered by dgms/practice/*.html through ../../practice/practice.js.
-   Links are relative to dgms/practice/. Strings may hold simple inline HTML.
-
-   THE SELF-STUDY HALF IS SWAPPABLE. In the cohort 2 decks only Part 1 is written for DGMS; Parts 2 to 17 are the
-   Mastering Game Mechanics project (same steps, same optional templates, same Echidna Z worked example). So this
-   file writes Part 1 itself and borrows the rest from ../../practice/program.js, which each page loads first.
-   To replace the project with a DGMS-specific one, fill STUDY below with one entry per day (the same shape as a
-   `study` object in ../../practice/program.js) and the borrowed part for that day is no longer used. */
+   Workshops come from "DGSM - RGF 26Q3 C2 - Live Workshop Exercises" (cohort 2). The self-study project,
+   "Direct one game, one moment", is written for this course: each part picks up what that day's workshop left
+   undone and adds one page to a Director's Brief, with Echidna Z as the worked example (STUDY below).
+   Rendered by dgms/practice/*.html through ../../practice/practice.js. Links are relative to dgms/practice/.
+   Strings may hold simple inline HTML. */
 (function () {
-  const MGM = (window.PROGRAM && window.PROGRAM.DAYS) || [];
-  const TEMPLATES = 'https://docs.google.com/document/d/10A9IpM4m3_15f02T7tOZjMjFsm0Qo_NkvNHo5q1dLz4/edit';
   const L = (label, href, note, icon) => ({ label, href, note, icon });
   const D = (page, label, note) => L(label, `../../dgms/${page}/index.html`, note); /* a DGMS interactive */
   const M = key => `../../dgms/${key}/index.html`;
@@ -20,12 +14,37 @@
     discussion: 'Discussion Exercise', conceptual: 'Conceptual Exercise', playtest: 'Playtest Exercise', production: 'Production Exercise'
   };
 
-  /* DGMS-specific self-study parts, by day. Days missing here fall back to the MGM part for that day. */
+  /* The self-study project, by day: "Direct one game, one moment". Each part follows that day's workshop and adds
+     one page to a Director's Brief. From Part 6 on the brief narrows to one signature action. Fields: after (what
+     the workshop left undone), steps, page (what to add to the brief), example (the Echidna Z worked page) and
+     links (the interactives for the part). */
+  const T = (head, rows) => `<table><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr>${rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</table>`;
   const STUDY = {
-    0: { none: true, title: 'No exercise', note: 'Nothing to hand in. Use the cohort board from the workshop to find people who play what you play: teams form around shared pillars on Day 2.' },
+    0: {
+      title: 'Before You Know Anything', part: 'Part 0',
+      after: `You posted your favorite games and found people who share them. Nobody has looked closely at one yet.`,
+      steps: [
+        `Pick one moment, ten seconds or less, from a game on the cohort board.`,
+        `Watch or play it five times.`,
+        `List everything that makes it land. Use your own words: there is no framework yet.`,
+        `Keep the list. Part 18 asks you to write it again.`
+      ],
+      page: `<b>Before list.</b> Game and moment, what happens, and everything you noticed.`,
+      example: {
+        title: 'Echidna Z, the reference moment',
+        html: `<p>The team picks the nail strike on a Husk in Hollow Knight, the game closest to the feel they want.</p>
+<p>Noticed on Day 0: a white slash arc, a crunch sound, the enemy slides back, the knight slides back a little too. Four items.</p>
+<p>The same clip gets fourteen items in Part 18.</p>`
+      },
+      links: [
+        D('m0-power-of-polish/polish-layers', 'Same Strike, Polish Layered On', 'one strike, nine layers switched on one at a time'),
+        D('m0-power-of-polish/it-depends', 'It Depends', 'the same feature in three games'),
+        D('m0-power-of-polish/course-map', 'The Course Map', 'the blocks your brief will cover')
+      ]
+    },
     1: {
       title: 'Craft Your Own Pillars', part: 'Part 1',
-      goal: 'Come up with a game concept, then support it with pillars.',
+      after: `You boiled games your team has played down to three pillars. You analyzed pillars; you have not written any.`,
       framework: {
         name: 'Pillars / Values / Features',
         items: [
@@ -36,27 +55,575 @@
         note: 'Order matters: pillars first, values second, features last.'
       },
       steps: [
-        'On your own, come up with a very brief game concept.',
-        'Create pillars and values for your game.',
-        'Create a brief presentation (slides, a doc, anything) that explains your concept.',
-        'Rehearse the pitch: you present it in the next class, and teams form around it.'
+        `On your own, write a game concept in two or three sentences.`,
+        `Write three pillars: short descriptions of the core experience.`,
+        `Under each pillar, write two or three values that support it. Do not list features yet.`,
+        `Test each pillar against the four rules: short, not a feature, not generic, load bearing.`,
+        `Put it on one or two slides and rehearse. You present it in the next class, and teams form around it.`
+      ],
+      page: `<b>Pillars.</b> Concept, three pillars, the values under each, and the rule each pillar came closest to failing.`,
+      example: {
+        title: 'Echidna Z, Keba’s pitch',
+        html: `<p><i>A down-on-his-luck short-beaked echidna claws, burrows and deflects his way to the throne of the Australian animal kingdom.</i></p>` +
+          T(['Pillar', 'Values'], [
+            ['Underdog with claws', 'Small hero, large world · every win is earned'],
+            ['The ground is yours', 'Dig anywhere · the enemy never knows where you surface'],
+            ['Playful, never mean', 'Creatures have charm · failure is funny before it is frustrating']
+          ]) +
+          `<p>“Burrow ability” was the first draft of pillar two. It failed the rule “not a feature” and became “The ground is yours”.</p>`
+      },
+      links: [
+        D('m1-pillars/pillar-linter', 'Pillar Linter', 'run the four rules on each pillar'),
+        D('m1-pillars/pillar-or-value', 'Pillar or Value?', 'sort statements into pillars and values')
       ]
     },
-    17: { none: true, title: 'No new part', note: 'The self-study deck has no part for this day. Keep folding the earlier parts into your game design document: Part 17+ pulls them together after class.' },
-    18: { none: true, title: 'No new part', note: 'The self-study deck has no part for this day. The workshop’s homework applies here: write the instructions you would give artists and programmers to bring the older game’s feel up to the newer one’s.' }
+    2: {
+      title: 'One Team, Three Pillars', part: 'Part 2',
+      after: `You presented, found people whose values match yours, and started brainstorming. The workshop ends with “continue the brainstorm outside of class”: your team has several sets of pillars and no agreed game.`,
+      steps: [
+        `Lay every member’s pillars side by side. Merge them into three team pillars and note what was dropped.`,
+        `Write the team concept in one paragraph.`,
+        `List ten features someone on the team wants.`,
+        `For each feature, mark which pillars it supports.`,
+        `Sort them: supports two or more is kept, supports one is parked, supports none is cut.`,
+        `Remove one pillar in your head. Which kept features fall? If none do, that pillar is not load bearing: rewrite it.`
+      ],
+      page: `<b>Concept and triage.</b> Team pillars, the concept paragraph, and the feature table with pillars supported and a verdict.`,
+      example: {
+        title: 'Echidna Z, two pitches become one',
+        html: `<p>Keba wanted a game that makes people love echidnas. Alex wanted gritty, heavily animated combat. Team pillars: <b>The ground is yours</b> (Keba), <b>Gritty hands</b> (Alex), <b>Playful, never mean</b> (Keba). Alex’s “Read, then punish” became a value under Gritty hands.</p>` +
+          T(['Feature', 'Pillars supported', 'Verdict'], [
+            ['Burrow and surface behind the target', 'Ground, Gritty', 'Kept'],
+            ['Spike deflect', 'Gritty, Playful', 'Kept'],
+            ['Co-op partner Snapdragonella', 'Gritty, Playful', 'Kept'],
+            ['Conservation codex', 'Playful', 'Parked'],
+            ['Idle mode', 'none', 'Cut'],
+            ['Random loot tables', 'none', 'Cut']
+          ])
+      },
+      links: [
+        D('m1-pillars/triage-board', 'Feature Triage Board', 'mark pillars per feature and the backlog sorts itself'),
+        D('m1-pillars/pull-a-pillar', 'Pull a Pillar', 'see which features fall when a pillar goes')
+      ]
+    },
+    3: {
+      title: 'Know Your Player’s First Hour', part: 'Part 3',
+      after: `You scored a competitor on the Quantic Foundry model, pushed one weaker motivation and named a skill curve. Only the competitor was scored, and nobody planned how a new player gets onto that curve.`,
+      steps: [
+        `Score your own game on the six Quantic Foundry groups, 0 to 10. Each member scores alone, then average.`,
+        `Overlay the competitor’s scores from class. Circle the largest gap: that gap is your pitch to their audience.`,
+        `Describe your primary player in three lines: what they play now, what they want more of, what makes them quit.`,
+        `List the first five things your game checks in its first hour.`,
+        `Mark each check hard (the player cannot continue without it) or soft (there is another way through).`,
+        `For each hard check, say where the player learned it before being tested.`
+      ],
+      page: `<b>Audience.</b> Both score sets, the primary player, the skill curve with its floor and ceiling, and the first-hour check table.`,
+      example: {
+        title: 'Echidna Z against Hollow Knight',
+        html: T(['Group', 'Hollow Knight', 'Echidna Z'], [
+          ['Action', '7', '8'], ['Social', '1', '5'], ['Mastery', '9', '8'], ['Achievement', '7', '5'], ['Immersion', '8', '7'], ['Creativity', '3', '4']
+        ]) +
+          `<p>The gap is Social: the partner character is the pitch. Primary player: finished Hades, bounced off Elden Ring, wants weight without the dread. Skill curve: a lower floor than Hollow Knight, the same ceiling.</p>` +
+          T(['First-hour check', 'Type', 'Learned where'], [
+            ['Slash a slow Walker', 'Soft', 'Burrowing past also works'],
+            ['Burrow under a spike row', 'Hard', 'A dirt patch with a paw print, no enemies nearby'],
+            ['Deflect one Shooter', 'Soft', 'Burrow closes the gap instead'],
+            ['Burrow behind an armored enemy', 'Hard', 'The armor only has a front plate, visible from far away'],
+            ['Deflect the first boss’s slam', 'Hard', 'Three Shooters in the room before it']
+          ])
+      },
+      links: [
+        D('m2-audience/quantic-radar', 'The Skyrim Radar', 'score a game by averaging votes'),
+        D('m2-audience/skill-curves', 'Five Skill Curves', 'floor and ceiling on one chart'),
+        D('m2-audience/hard-check', 'Hard Check vs Soft Check', 'one answer, or several'),
+        D('m2-audience/affordance-grid', 'The Affordance Grid', 'what a level shows before it tests')
+      ]
+    },
+    4: {
+      title: 'Choose Your Skill Tests', part: 'Part 4',
+      after: `You invented a test for every physical execution and decision making skill, including ones that do not fit your game. Nothing was chosen and nothing has a number.`,
+      steps: [
+        `From your class list, keep the two or three tests your pillars need. Cross out the rest and write one reason for each.`,
+        `For each kept test, answer the Skill Testing Framework questions: which skill, how difficult, how it complements the other tests, how it enables player choice.`,
+        `Give each test one number: a window in frames, a reaction time in milliseconds, presses per second.`,
+        `Try that number yourself. Change it if you fail more than half your attempts.`
+      ],
+      page: `<b>Skill tests.</b> One card per kept test (skill, test, number, the choice it enables) and the cut list.`,
+      example: {
+        title: 'Echidna Z, three tests kept',
+        html: T(['Skill', 'Test', 'Number', 'Choice it enables'], [
+          ['Timing', 'Deflect on the hit frame', '10 frame window at 60 fps', 'Deflect for a charge, or burrow away for safety'],
+          ['Ability to predict', 'Pick where to surface before diving', 'Decided before 0.5 s underground ends', 'Behind the target, or beside the next one'],
+          ['Buffered reaction', 'Enemy tells', '0.6 s shortest wind-up', 'Which of three answers to prepare']
+        ]) +
+          `<p>Cut: mashing (it fights the value “read, then punish”), aim (a melee game), dexterity inputs (they raise the floor Part 3 lowered).</p>`
+      },
+      links: [
+        D('m3-skills/reaction-lab', 'Frame Window and Reaction Lab', 'find a window you can hit'),
+        D('m3-skills/mash-meter', 'Mash Meter', 'presses per second, measured'),
+        D('m3-skills/best-answer', 'Is There a Clear Best Answer?', 'when a decision is a real one')
+      ]
+    },
+    5: {
+      title: 'Draw Your Skill Fingerprint', part: 'Part 5',
+      after: `You invented processing, knowledge and freeform tests. The five skill groups have never been put side by side for your game.`,
+      steps: [
+        `Keep one or two tests from today’s class list, the same way you did in Part 4.`,
+        `Score your game 0 to 10 on each group: physical, decisions, processing, knowledge, freeform.`,
+        `Score your Part 3 competitor on the same five. Where do you differ on purpose?`,
+        `For your hardest moment, say which tests are joined by AND (all must pass) and which by OR (any one passes). Every AND shrinks the audience.`,
+        `Set three difficulty dials for that moment: how hard the input is, what a failure costs, how far back a retry starts.`
+      ],
+      page: `<b>Skill profile.</b> Five scores for both games, the AND and OR statement, and the three dial settings.`,
+      example: {
+        title: 'Echidna Z, decisions over physical',
+        html: T(['', 'Physical', 'Decisions', 'Processing', 'Knowledge', 'Freeform'], [
+          ['Echidna Z', '7', '8', '4', '6', '2'], ['Hollow Knight', '8', '6', '4', '7', '2']
+        ]) +
+          `<p>Knowledge test kept: each enemy archetype has one tell. Processing test kept: a stamina budget across a fight.</p>
+<p>Hardest moment, the first boss: deflect timing OR burrow prediction gets you through a slam, so two kinds of player pass. Dials: a 10 frame window, a failed deflect costs one of five health, a retry starts at the boss door.</p>`
+      },
+      links: [
+        D('m3-skills/skill-fingerprints', 'Five-Skill Fingerprints', 'draw the radar for your game'),
+        D('m3-skills/and-or', 'AND vs OR', 'how the joiner changes who passes'),
+        D('m3-skills/three-dials', 'Three Difficulty Dials', 'input, punishment and retry cost'),
+        D('m3-skills/async-cycles', 'Asynchronous Cycles', 'processing load from loops that drift')
+      ]
+    },
+    6: {
+      title: 'Separate Your Fantasy From Your Gameplay', part: 'Part 6',
+      after: `You swapped the fantasy and gameplay of two known games and mixed their supporting elements. Your own character still has no fantasy statement.`,
+      steps: [
+        `Write your character’s log line: who they are and what the player does as them, in one sentence.`,
+        `Make two columns. Fantasy: what the player imagines being. Gameplay: what the hands do.`,
+        `List five gameplay elements that support the fantasy. Then list any that contradict it.`,
+        `Run the swap test from class on yourself: keep the gameplay and write two other fantasies that could wear it. What would have to change?`,
+        `Name the source of power: where does the character’s strength come from on screen?`,
+        `Choose your <b>signature action</b>, the one action that carries the fantasy. The rest of the brief directs this action.`
+      ],
+      page: `<b>Character.</b> Log line, the fantasy and gameplay columns, contradictions, source of power, and the signature action with your reason.`,
+      example: {
+        title: 'Echidna Z, Burrow is chosen',
+        html: `<p><i>A small, spiky underdog who owns the ground beneath every enemy’s feet.</i></p>` +
+          T(['Fantasy', 'Gameplay that supports it'], [
+            ['Small and overlooked', 'Low health; enemies are two to four times his height'],
+            ['Owns the ground', 'Burrow passes under enemies and hazards'],
+            ['Spikes are armor', 'Deflect uses the back, so he turns away from danger to block'],
+            ['Scrappy, never elegant', 'Slash is short range with a wide arc'],
+            ['Strikes from where you are not looking', 'Surfacing behind a target is a backstab']
+          ]) +
+          `<p>Contradiction: the three-hit Spin Sequence reads as a trained swordsman, so it is reanimated as a scrabbling flurry. Swap test: the same kit could be a mole miner or a sand-swimming ghost; the mole keeps everything, the ghost loses Deflect. Source of power: claws and quills, his own body, with no weapon.</p>
+<p><b>Signature action: Burrow.</b></p>`
+      },
+      links: [
+        D('m4-character/log-line', 'Log Line', 'one input under nine log lines'),
+        D('m4-character/same-kit-new-fantasy', 'Same Kit, New Fantasy', 'the swap test, played out'),
+        D('m4-character/source-of-power', 'Source of Power', 'where the strength sits on screen'),
+        D('m4-character/silhouette-test', 'Silhouette Test', 'does the shape carry the fantasy?')
+      ]
+    },
+    7: {
+      title: 'Write Your Metrics Sheet', part: 'Part 7',
+      after: `You recorded a game and measured its walk, run and sprint. That covered locomotion only, in someone else’s game.`,
+      steps: [
+        `Pick the published game whose signature action is closest to yours.`,
+        `Record that action and count frames: how long it takes and how far it goes, measured in character lengths.`,
+        `Set your unit: one character length or height.`,
+        `Write targets for your own walk, run and signature action in units and seconds.`,
+        `Give each number a reason from the world: a gap, a door, an enemy’s reach.`,
+        `Derive two world rules from your numbers, such as the widest hazard a player can cross.`
+      ],
+      page: `<b>Metrics.</b> The reference measurements, your unit, the target table with reasons, and the world rules.`,
+      example: {
+        title: 'Echidna Z, measured in echidna lengths',
+        html: `<p>Reference: the dash in Hades, roughly 0.3 s and 4 character lengths by the team’s frame count. Unit: one echidna length (EL).</p>` +
+          T(['Metric', 'Target', 'Reason'], [
+            ['Walk', '3 EL per second', 'Slow enough to read tells'],
+            ['Run', '6 EL per second', 'Twice walk, so the change is felt'],
+            ['Burrow dive', '0.25 s', 'Faster than the shortest enemy wind-up in Part 4'],
+            ['Burrow travel', '5 EL in 0.5 s', 'The fastest thing the hero does'],
+            ['Burrow emerge', '0.2 s', 'Short enough to hit a turning enemy'],
+            ['Slash reach', '1.5 EL', 'Shorter than every enemy’s reach, so he must burrow in']
+          ]) +
+          `<p>World rules: no hazard row is wider than 4 EL, and arenas are at least 12 EL across so that two burrows never cross the room.</p>`
+      },
+      links: [
+        D('m4-character/jump-tuner', 'Jump Metrics Tuner', 'seven real jumps, measured'),
+        D('m4-character/world-speeds-up', 'The World Speeds Up', 'speed is relative to the world')
+      ]
+    },
+    8: {
+      title: 'Checkpoint: Brief Version 1', part: 'Part 8',
+      after: `There is no workshop today. You have seven pages, and nobody outside your team has read them.`,
+      steps: [
+        `Put Parts 1 to 7 in one document with a title page: game, team, signature action.`,
+        `Read it top to bottom. Mark any page that contradicts an earlier one.`,
+        `Post it to your thread.`,
+        `Read two other teams’ briefs. For each, answer three questions: which pillar is clearest in the pages, which page ignores the pillars, and what you would cut.`,
+        `Revise one page of your own from the feedback you receive.`
+      ],
+      page: `<b>Revision note.</b> Contradictions found, feedback received, and what changed and why.`,
+      example: {
+        title: 'Echidna Z, two pages revised',
+        html: `<p><b>Contradiction found.</b> Part 3 lowered the skill floor, but Part 4 set the deflect window at 10 frames.</p>
+<p><b>Feedback from another team.</b> “Playful, never mean” does not appear on any page after Part 2.</p>
+<p><b>Changes.</b> The deflect window widens to 14 frames for the first three areas. A failed burrow into a wall now pops him out dizzy instead of dealing damage.</p>`
+      },
+      links: [
+        D('m1-pillars/pull-a-pillar', 'Pull a Pillar', 'check the pillars still carry the pages'),
+        D('m0-power-of-polish/audience-dials', 'Target Audience Dials', 'audience to insight to fantasy, in one line')
+      ]
+    },
+    9: {
+      title: 'List How Your Character Touches the World', part: 'Part 9',
+      after: `You listed every pawn and world interaction in a published game, sorted mechanical from aesthetic, and flipped one each way. Your game has no interaction list.`,
+      steps: [
+        `List fifteen ways your character and the world touch each other. Start from your signature action.`,
+        `Tag each one mechanical (it changes what the player can do) or aesthetic (it changes only what they see and hear).`,
+        `Choose three aesthetic interactions that earn their cost because they sell the Part 6 fantasy.`,
+        `Flip one aesthetic interaction to mechanical so that it supports a pillar. Say what must change to make it work.`,
+        `Flip one mechanical interaction to aesthetic. What does the game lose?`,
+        `Find one input that should do different things in different places, and write it as interaction + context = outcome.`
+      ],
+      page: `<b>Interactions.</b> The tagged list, three aesthetic keepers, the two flips, and one context rule.`,
+      example: {
+        title: 'Echidna Z, the dust trail flips',
+        html: T(['Interaction (six of the fifteen)', 'Tag'], [
+          ['Burrowing through soft dirt', 'Mechanical'],
+          ['Bouncing off stone when trying to burrow', 'Mechanical'],
+          ['Dust trail above the tunnel', 'Aesthetic'],
+          ['Grass parting as he walks', 'Aesthetic'],
+          ['Quills rattling against low ceilings', 'Aesthetic'],
+          ['Ants scattering where he surfaces', 'Aesthetic']
+        ]) +
+          `<p>Keepers: dust trail, ants, quill rattle.</p>
+<p>Flip to mechanical: Patroller enemies now track the dust trail, so a long straight burrow gets punished and a curved one does not. This needs steering underground, which Part 10 must map.</p>
+<p>Context rule: Burrow + soft dirt = travel. Burrow + stone = a dizzy bounce. Burrow + water’s edge = a splash that douses fire.</p>`
+      },
+      links: [
+        D('m5-controller/axe-context', 'Interaction + Context = Outcome', 'one key, read against the surroundings'),
+        D('m4-character/same-button', 'Same Button, Five Meanings', 'one input across five states'),
+        D('m4-character/core-actions-by-genre', 'Core Actions by Genre', 'what a core verb touches in each genre')
+      ]
+    },
+    10: {
+      title: 'Map Your Control Scheme', part: 'Part 10',
+      after: `You explained every input in a published game’s control scheme. Your own scheme has not been examined.`,
+      steps: [
+        `List every action from Parts 4, 6 and 9, with how often it is used and what it must combine with.`,
+        `Map each action to a gamepad button. Write one reason per button, the way you did in class.`,
+        `Name the metaphor behind the layout: left and right hand, body parts, offense and defense, or your own.`,
+        `Find every pair of actions the player needs at the same moment. If both sit under one thumb, move one.`,
+        `Map the same actions to mouse and keyboard.`,
+        `State what happens to the signature action while each other button is held.`
+      ],
+      page: `<b>Controls.</b> The action table, the metaphor, conflicts found and resolved, and the second device.`,
+      example: {
+        title: 'Echidna Z, Burrow moves to the trigger',
+        html: `<p>Metaphor: face buttons are claws and feet, shoulders are the back.</p>` +
+          T(['Action', 'First draft', 'Final', 'Reason'], [
+            ['Slash', 'X', 'X', 'Most used; resting thumb position'],
+            ['Jump', 'A', 'A', 'Genre convention'],
+            ['Burrow', 'Y', 'RT', 'Must combine with Slash on surfacing; Y takes the right thumb off it'],
+            ['Deflect', 'LB', 'LB', 'The back: a shoulder button, held'],
+            ['Steer underground', 'none', 'Left stick', 'Added by the Part 9 flip'],
+            ['Partner command', 'none', 'Y', 'Freed by moving Burrow; used rarely']
+          ]) +
+          `<p>Conflict resolved: Burrow then Slash on surfacing needed the right thumb twice within 0.2 s. With Burrow on the trigger, Slash can be held during travel and fires on emerge.</p>
+<p>Mouse and keyboard: Slash on left click, Burrow on Space, Deflect on right click, Jump on Shift.</p>`
+      },
+      links: [
+        D('m5-controller/one-thumb', 'One Thumb, Too Many Buttons', 'find the pairs that share a thumb'),
+        D('m5-controller/control-metaphors', 'Controls as Metaphor', 'five ways to organize a pad'),
+        D('m5-controller/puppet-tracer', 'Puppet Signal Tracer', 'follow a press from input to action')
+      ]
+    },
+    11: {
+      title: 'Write Your Camera Brief', part: 'Part 11',
+      after: `You swapped camera types between two games, discussed what the controller would need, and tried rigs in the game samples. No camera has been chosen for your game.`,
+      steps: [
+        `List what the player must see to pass each Part 4 and Part 5 skill test: how far, in which direction, how early.`,
+        `Choose a rig that shows all of it. Name one rig you rejected and why.`,
+        `Set distance, pitch and lens or field of view.`,
+        `Describe the camera in three situations: traversal, combat, a tight space.`,
+        `Describe the camera during the signature action, from first frame to last.`,
+        `List what this camera forces the controller to change, as you did in class.`
+      ],
+      page: `<b>Camera.</b> The must-see list, the rig and the rejected rig, settings, three situations, the signature action, and controller consequences.`,
+      example: {
+        title: 'Echidna Z, a camera that stays above ground',
+        html: `<p>Must see: enemy wind-ups 8 EL away in every direction, and the ground behind a target before diving. Rig: a fixed-angle three-quarter view from above, as in Hades. Rejected: over-the-shoulder, because the backstab target is behind an enemy and out of view. Settings: pitch 55 degrees, a 35 mm lens, 14 EL of ground visible across.</p>` +
+          T(['Situation', 'Camera behavior'], [
+            ['Traversal', 'Leads 2 EL ahead of movement'],
+            ['Combat', 'Centers between hero and nearest threat; pulls out up to 20% for groups'],
+            ['Tight space', 'Walls nearest the camera fade; no pull-in'],
+            ['Burrow', 'Stays above ground and follows the dust trail; pushes in 10% on emerge, then eases back over 0.4 s']
+          ]) +
+          `<p>Controller consequence: with a fixed angle, the right stick is free. It becomes the surfacing aim, so the player points at where to come up.</p>`
+      },
+      links: [
+        D('m6-camera/rig-switcher', 'Camera Rig Switcher', 'one level through eleven rigs'),
+        D('m6-camera/follow-tuner', 'Follow Camera Tuner', 'the five follow variables'),
+        D('m6-camera/lens-ladder', 'Lens Ladder', 'millimeters to field of view'),
+        D('m6-camera/lower-horizon', 'Lower the Horizon', 'height and pitch against a boss')
+      ]
+    },
+    12: {
+      title: 'Tune Responsiveness and Time Your Action', part: 'Part 12',
+      after: `You tuned acceleration, deceleration and rotation in the game samples to feel like ice, as fast as possible, and in between. Those targets belonged to the exercise, not to a game.`,
+      steps: [
+        `Write the feel your pillars ask for in three words.`,
+        `Tune a game sample, or the ADR Curves interactive, until it matches. Record the three values and the time to top speed.`,
+        `Record a ten-second clip and post it with the values.`,
+        `Write the signature action’s timeline in frames at 60 fps: startup, active, recovery.`,
+        `Mark when the player’s next input is accepted, and which actions can cancel which window.`,
+        `Check the timeline against your Part 4 numbers. The action must fit inside the windows your enemies give.`
+      ],
+      page: `<b>Timing.</b> Feel words, the three values and time to top speed, the clip, the frame timeline, and the cancel rules.`,
+      example: {
+        title: 'Echidna Z, Burrow frame by frame',
+        html: `<p>Feel words: planted, snappy, heavy. Time to top speed 0.1 s, stop in 0.07 s, turn rate 720 degrees per second. He starts and stops almost at once, because the weight comes from the attacks.</p>` +
+          T(['Burrow window', 'Frames', 'Input rule'], [
+            ['Dive (startup)', '1 to 15', 'Jump cancels until frame 6; no damage immunity'],
+            ['Underground (active)', '16 to 45', 'Immune to ground attacks; steer with the left stick; Slash can be held'],
+            ['Emerge', '46 to 57', 'Held Slash fires on frame 50 as a backstab'],
+            ['Recovery', '58 to 69', 'Deflect cancels from frame 62']
+          ]) +
+          `<p>Check: the dive is 0.25 s and the shortest wind-up is 0.6 s, so a player who reacts within 0.35 s gets underground in time.</p>`
+      },
+      links: [
+        D('m5-controller/adr-curves', 'ADR Curves', 'tune acceleration, deceleration and rotation'),
+        D('m5-controller/attack-windows', 'Attack Window Editor', 'drag the windows of a strike'),
+        D('m5-controller/cancel-playground', 'Cancel Playground', 'which cancels let you out'),
+        D('m5-controller/hitbox-lab', 'Hitbox Lab', 'where and when the hit lands')
+      ]
+    },
+    13: {
+      title: 'Tell Ten Seconds in Sound', part: 'Part 13',
+      after: `You set up Soundly, loaded a free library and picked five to ten sounds that tell a complete story. The story was your choice and had nothing to do with your game.`,
+      steps: [
+        `Write ten seconds of your game as a script, built around the signature action.`,
+        `List every sound in it. For anything that lasts, split it into start, loop and stop.`,
+        `Mark each sound static (plays once) or continuous (plays until something ends it).`,
+        `Find a candidate for each in a free library. Rename the files in script order.`,
+        `Play the files in order with your eyes closed. If the story is unclear, a sound is missing.`,
+        `Post the list and the folder, or a clip.`
+      ],
+      page: `<b>Sound list.</b> The script, the sound table (event, sound, static or continuous), and a link to the files.`,
+      example: {
+        title: 'Echidna Z, the burrow in seven sounds',
+        html: `<p>Script: he sees a Shooter wind up, dives, travels under the shot, surfaces behind it and slashes.</p>` +
+          T(['Event', 'Sound', 'Type'], [
+            ['Shooter wind-up', 'Rising creak', 'Continuous, ends on the shot'],
+            ['Dive', 'Claw scrape, then earth crunch', 'Static'],
+            ['Travel', 'Low rumble with loose pebbles', 'Continuous: start, loop, stop'],
+            ['Shot passes overhead', 'Muffled whoosh, heard from underground', 'Static'],
+            ['Emerge', 'Dirt burst and quill ring', 'Static'],
+            ['Backstab', 'Crunch with a short squeak from the enemy', 'Static'],
+            ['After', 'Pebbles settling', 'Static']
+          ]) +
+          `<p>Missing on the first listen: nothing said he was underground. The muffled whoosh was added, and all above-ground sounds are low-passed during travel.</p>`
+      },
+      links: [
+        D('m7-sound/faucet', 'The Faucet', 'static and continuous sounds on a timeline'),
+        D('m7-sound/audio-breaks', 'Two Ways Audio Breaks', 're-sound a clip layer by layer')
+      ]
+    },
+    14: {
+      title: 'Sort, Rank and Score', part: 'Part 14',
+      after: `You sorted played sounds into classes and discussed what a piece of music does for a scene. Your own list is unsorted and has no priorities.`,
+      steps: [
+        `Sort your Part 13 list into the four classes: character, environment, UI/UX, music.`,
+        `If a class is empty, add one sound to it or say why it stays empty.`,
+        `Rank the sounds: when everything plays at once, which three must stay audible? What gets quieter to make room?`,
+        `Answer the three music questions from class for your game: what tone does it set, what gameplay purpose does it serve, how does it change with play?`,
+        `Choose one moment where sound warns the player before the picture does.`
+      ],
+      page: `<b>Mix.</b> Sounds by class, the top three and what ducks for them, the music brief, and one audio warning.`,
+      example: {
+        title: 'Echidna Z, two empty classes filled',
+        html: T(['Class', 'Sounds'], [
+          ['Character', 'Claw scrape, earth crunch, rumble, dirt burst, quill ring'],
+          ['Environment', 'Pebbles, the muffled world while underground'],
+          ['UI/UX', 'Was empty. Added: a soft tick when stamina is too low to burrow again'],
+          ['Music', 'Was empty. See the brief below']
+        ]) +
+          `<p>Must stay audible: enemy wind-up, emerge burst, deflect ring. Music and ambience drop by half while he is underground, which is also how the player knows the burrow is active.</p>
+<p>Music brief: light percussion over a didgeridoo drone, playful in tone. It drops to the drone alone while underground, and the percussion returns on the emerge hit.</p>
+<p>Audio warning: the Shooter’s creak rises in pitch and ends exactly at the shot, so a player facing away can still time the dive.</p>`
+      },
+      links: [
+        D('m7-sound/four-classes', 'Four Classes Sorter', 'sort twelve sounds into the classes'),
+        D('m7-sound/four-rules', 'Same Scene, Four Rules', 'one scene mixed four ways'),
+        D('m7-sound/reactive-music', 'Music That Reacts', 'stems that follow play'),
+        D('m7-sound/boss-telegraph', 'Hear the Boss Coming', 'a tone that ends on the hit')
+      ]
+    },
+    15: {
+      title: 'Place Your Game in the Six Layers', part: 'Part 15',
+      after: `You filled in the six balance layers for three published games and proposed alternatives. Your game has not been placed in the layers.`,
+      steps: [
+        `Fill the six layers for your game: player, character, loadout, verbs, weapons, tactics. Write “no choice” where the game offers none.`,
+        `For each layer, say when the choice can change: mid-fight, between fights, between sessions, never.`,
+        `Pick the layer where your signature action lives. Write two alternative designs for that layer and choose one.`,
+        `Build a hits-to-kill table: your signature action and your basic attack against three enemies of different toughness.`,
+        `Read the table. If one action wins every column, change one number.`
+      ],
+      page: `<b>Balance.</b> The six-layer table, alternatives considered, and the hits-to-kill table.`,
+      example: {
+        title: 'Echidna Z, Slash and Burrow each win a column',
+        html: T(['Layer', 'Echidna Z', 'Can change'], [
+          ['Player', 'Solo, or two players unequal in skill', 'Never'],
+          ['Character', 'EchidnaZ or Snapdragonella', 'Between sessions'],
+          ['Loadout', 'Three quill charms', 'At rest points'],
+          ['Verbs', 'Slash, Burrow, Deflect, Jump', 'Mid-fight'],
+          ['Weapons', 'No choice: claws only', 'Never'],
+          ['Tactics', 'Ambush, stand and deflect, hit and run', 'Mid-fight']
+        ]) +
+          `<p>Alternatives for the verb layer: Burrow free and unlimited, or Burrow on a stamina cost. Chosen: stamina, 30 of 100 per burrow.</p>` +
+          T(['Enemy', 'Health', 'Slash (10 damage)', 'Burrow backstab (25 damage)'], [
+            ['Walker', '30', '3 hits, 1.2 s', '2 hits, 2.3 s'],
+            ['Fighter', '60', '6 hits, 2.4 s', '3 hits, 3.5 s'],
+            ['Armored Roller', '100, front plate blocks Slash', 'cannot', '4 hits, 4.6 s']
+          ]) +
+          `<p>Slash is faster against soft enemies; Burrow is the only answer to armor. Neither wins every column.</p>`
+      },
+      links: [
+        D('m8-balance/hits-to-kill', 'Hits-to-Kill Bench', 'same DPS, different hits to kill'),
+        D('m8-balance/toughness', 'Three Ways to Grow Toughness', 'reduction, effective health, resistance'),
+        D('m8-balance/dice-variance', 'Stable Part vs Variance', 'how much of a hit is fixed')
+      ]
+    },
+    16: {
+      title: 'Map Your Counters', part: 'Part 16',
+      after: `You built Cats vs Mechs with the instructors: keywords for each side, a map of what counters what, and a resource. You practiced the method on their game.`,
+      steps: [
+        `If your group did not finish Cats vs Mechs, finish it and post it first.`,
+        `List the keywords on your player’s actions and on your enemies.`,
+        `Draw the counter map: which player keyword answers which enemy keyword, and the reverse.`,
+        `Check each player action. It needs one situation where it dominates and one where it is weak.`,
+        `Name the resource that limits your signature action, and what refills it.`,
+        `Multiply one number by ten. Describe what breaks, then decide what cap prevents it.`
+      ],
+      page: `<b>Counters.</b> Keyword lists, the counter map, a dominant and a weak situation per action, the resource rule, and the times-ten test.`,
+      example: {
+        title: 'Echidna Z, defense pays for mobility',
+        html: `<p>Player keywords: Tunnel, Backstab, Reflect, Arc. Enemy keywords: Armored, Ranged, Airborne, Tremor, Swarm.</p>` +
+          T(['Player action', 'Dominates against', 'Weak against'], [
+            ['Burrow (Tunnel, Backstab)', 'Armored, Ranged', 'Airborne (cannot reach), Tremor (stomps force him up)'],
+            ['Deflect (Reflect)', 'Ranged, single heavy hits', 'Swarm (too many angles)'],
+            ['Slash (Arc)', 'Swarm', 'Armored'],
+            ['Jump', 'Tremor', 'Ranged']
+          ]) +
+          `<p>Resource: stamina. Burrow costs 30; a successful deflect refunds 20, so defense pays for mobility.</p>
+<p>Times-ten test: at a 250% backstab bonus every fight is one burrow and Slash is never used. Cap: the bonus applies once per enemy until that enemy attacks again.</p>`
+      },
+      links: [
+        D('m8-balance/unfair-fairness', 'Unfair Fairness', 'every option dominant somewhere'),
+        D('m8-balance/hammer-time', 'Hammer Time', 'change one variable at a time'),
+        D('m8-balance/comebacks', 'Comeback Tug-of-War', 'five comeback rules on one match'),
+        D('m8-balance/murder-bears', 'The Murder Bears', 'what a times-thousand typo does')
+      ]
+    },
+    17: {
+      title: 'Break Down the Feel', part: 'Part 17',
+      after: `You listed the feel elements of one verb in each of three games, then stepped the game samples from least to most polished. Your signature action has no feel breakdown.`,
+      steps: [
+        `Record five seconds of the closest reference action from a published game.`,
+        `Step through it frame by frame. List every element and the frame it starts on.`,
+        `Sort the elements into the eight feedback channels: VFX and light, haptics, UI, SFX, animation, 3D materials and decals, camera, time.`,
+        `Write the same list for your signature action, using your Part 12 timeline for the frames.`,
+        `Order your list as layers: what goes in first on a gray box, what goes in last.`,
+        `Check that each layer starts on a frame that matches a window in Part 12.`
+      ],
+      page: `<b>Feel.</b> The reference breakdown, and your layers by channel, frame and build order.`,
+      example: {
+        title: 'Echidna Z, nine layers on the emerge hit',
+        html: T(['Order', 'Layer', 'Channel', 'Frame'], [
+          ['1', 'Emerge pose with quills flared', 'Animation', '46'],
+          ['2', 'Dirt burst sound and quill ring', 'SFX', '46'],
+          ['3', 'Enemy flinch and a 0.5 EL knock forward', 'Animation', '50'],
+          ['4', 'Hit stop, 4 frames', 'Time', '50'],
+          ['5', 'Dirt burst particles and a white flash on the enemy', 'VFX and light', '46, 50'],
+          ['6', 'Camera push in 10%, small vertical shake', 'Camera', '46'],
+          ['7', 'Controller pulse, short and strong', 'Haptics', '50'],
+          ['8', 'Hole decal that fades over 5 s', '3D materials and decals', '46'],
+          ['9', 'Backstab number in a larger size', 'UI', '50']
+        ]) +
+          `<p>The travel rumble from Part 13 becomes a rising haptic pulse from frame 16 to 45, so the hands feel the burrow before the eyes see the exit.</p>`
+      },
+      links: [
+        D('m9-game-feel/sell-the-hit', 'Sell the Hit', 'one strike, eighteen techniques'),
+        D('m9-game-feel/feedback-mixer', 'Feedback Mixer', 'eight channels on a mixing desk'),
+        D('m9-game-feel/feel-shapes', 'Feel Shapes', 'feel as intensity over time'),
+        D('m9-game-feel/polish-ladder', 'Polish Ladder', 'layers added in order')
+      ]
+    },
+    18: {
+      title: 'Rank the Polish and Brief the Team', part: 'Part 18',
+      after: `You compared two games made 20 years apart in the Feedback Tool and ranked what the older one should add first. The class homework asks for the instructions you would give artists and programmers.`,
+      steps: [
+        `Fill in the Feedback Tool for your signature action as it stands on a gray box, beside the Part 17 reference.`,
+        `Rank the five additions that change the feel most for the least work.`,
+        `For each, write one instruction for the discipline that builds it. Include a number and a reference clip, so no one has to guess.`,
+        `Score your action on the seven principles, 0 to 10. Circle the lowest and say which ranked item raises it.`,
+        `Return to your Part 0 moment and write the list again. Put the two lists side by side.`
+      ],
+      page: `<b>Polish priorities.</b> The Feedback Tool comparison, the top five with instructions, the seven-principle scores, and the before and after lists.`,
+      example: {
+        title: 'Echidna Z, the top five',
+        html: T(['Rank', 'Addition', 'Instruction', 'For'], [
+          ['1', 'Hit stop', 'Freeze hero and target for 4 frames on frame 50; particles keep moving', 'Programmer'],
+          ['2', 'Emerge pose', 'Reach full quill flare within 3 frames of surfacing; hold 6 frames', 'Animator'],
+          ['3', 'Dirt burst and ring', 'One layered sound, under 0.4 s, the loudest event in the fight', 'Sound'],
+          ['4', 'Enemy flinch', 'Every enemy needs a from-behind flinch, 12 frames, no blend-in', 'Animator'],
+          ['5', 'Camera push', '10% in over 3 frames, ease out over 24; no shake on the horizontal axis', 'Programmer']
+        ]) +
+          `<p>Lowest principle: appealing reaction, 4 of 10, because enemies have no from-behind flinch yet. Rank 4 raises it.</p>
+<p>The Part 0 list for the Hollow Knight nail strike had four items. The same clip now gives fourteen, across six channels.</p>`
+      },
+      res: [{ label: 'The Feedback Tool (Google Sheet)', href: 'https://docs.google.com/spreadsheets/d/1uILP9wwKBwZNaHVlWbfHlv7HrQbSaU23rxkk2A7BgUo/edit?gid=0#gid=0' }],
+      links: [
+        D('m9-game-feel/feedback-mixer', 'Feedback Mixer', 'the tool’s channels as a mixing desk'),
+        D('m9-game-feel/seven-principles', 'Seven Principles Score Sheet', 'score your action and save the chart'),
+        D('m0-power-of-polish/polish-layers', 'Same Strike, Polish Layered On', 'the Part 0 strike, layer by layer'),
+        D('m9-game-feel/pendulum', 'Pendulum and Ball', 'the animation principles behind the poses')
+      ]
+    },
+    19: {
+      title: 'Assemble the Director’s Brief', part: 'Part 18+',
+      after: `Class is over. You have a page from every part and no single document.`,
+      steps: [
+        `Put all pages in one document in the order shown in the example. Cut each to one page.`,
+        `Write a half-page summary on top: the game, the player, the signature action, and the three decisions you would defend hardest.`,
+        `Add one line under each page: which pillar it serves.`,
+        `Optional: tune the signature action in a game sample and attach a clip.`,
+        `Present it in five minutes, recorded or live. This is a portfolio piece: rehearse it as an interview answer.`
+      ],
+      page: `<b>The finished Director’s Brief.</b> Share it with the class.`,
+      example: {
+        title: '“Echidna Z, directed”',
+        html: T(['Section', 'Pages from'], [
+          ['Summary', 'New'],
+          ['Vision: pillars, concept, kept and cut features', 'Parts 1, 2'],
+          ['Player: audience, first hour, skill profile', 'Parts 3, 4, 5'],
+          ['Character: fantasy, signature action, metrics, interactions', 'Parts 6, 7, 9'],
+          ['Controller: control map, timing sheet', 'Parts 10, 12'],
+          ['Camera', 'Part 11'],
+          ['Sound: list, mix, music', 'Parts 13, 14'],
+          ['Balance: layers, hits to kill, counters', 'Parts 15, 16'],
+          ['Feel: layers, polish priorities, instructions', 'Parts 17, 18'],
+          ['Appendix: before list, revision note', 'Parts 0, 8']
+        ]) +
+          `<p>The three decisions defended in the summary: Burrow on the trigger (Part 10), the fixed three-quarter camera that frees the right stick for surfacing aim (Part 11), and the stamina refund on deflect (Part 16).</p>`
+      },
+      links: [
+        D('m0-power-of-polish/course-map', 'The Course Map', 'check the brief against every block of the course'),
+        D('interview/practice', 'Interview Practice Card', 'rehearse the five-minute walk-through'),
+        D('interview/rubric', 'Interview Rubric', 'what an interviewer listens for')
+      ]
+    }
   };
-
-  /* a part borrowed from the MGM program: fix its paths for this folder and label where it comes from */
-  const up = href => href.replace(/^\.\.\//, '../../');
-  function borrowed(mgmDay) {
-    const m = MGM.find(d => d.day === mgmDay);
-    if (!m) return { none: true, title: 'Not available', note: 'This part could not be loaded.' };
-    const s = Object.assign({}, m.study, { links: m.links.map(l => Object.assign({}, l, { href: up(l.href) })) });
-    if (s.tab) s.tab = TEMPLATES;
-    if (m.moduleHref) { s.module = 'MGM ' + m.module; s.moduleHref = up(m.moduleHref); }
-    return s;
-  }
-  const study = (day, mgmDay) => STUDY[day] || borrowed(mgmDay === undefined ? day : mgmDay);
 
   const DAYS = [
     {
@@ -561,7 +1128,7 @@
       ]
     },
     {
-      day: 19, label: 'After class', theme: 'Put it all together', module: 'Capstone',
+      day: 19, label: 'After class', theme: 'The Director’s Brief', module: 'Capstone',
       workshop: null,
       links: [
         D('m0-power-of-polish/course-map', 'The Course Map', 'check your slice against every block of the course'),
@@ -570,8 +1137,8 @@
       ]
     }
   ];
-  /* attach the self-study half: Parts 1 to 16 land on Days 1 to 16, Part 17+ after class (MGM's day 17) */
-  DAYS.forEach(d => { d.study = study(d.day, d.day === 19 ? 17 : d.day); });
+  /* attach the self-study half: Parts 0 to 18 land on Days 0 to 18, the capstone after class */
+  DAYS.forEach(d => { d.study = STUDY[d.day]; });
 
-  window.PROGRAM = { DAYS, KINDS, config: { root: '../../', key: 'dgms-practice-done', fallback: 'dgms.svg' } };
+  window.PROGRAM = { DAYS, KINDS, config: { root: '../../', key: 'dgms-practice-done', fallback: 'dgms.svg', after: '18+', pageLabel: 'Add to your Director’s Brief' } };
 })();
