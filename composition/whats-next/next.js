@@ -1,142 +1,165 @@
-/* What's next (MGM C4 M7, deck slides 261-275).
-   'challenge-loop' (266): "Start by creating the challenges first for your game. Next create the tools for overcoming those
-   challenges. Then expand the breadth or depth of those tools… Then cut things out that aren't strong contenders, refine and
-   improve what you have, then repeat." Played out on a Super Mario Bros. stretch of ground.
-   'course-map' (268-270): FPF, then Mastering Game Mechanics, then implementation, with level and narrative design beside
-   it. Mastering Game Mechanics opens into every module and page of this site; click one to go there.
-   'framework-kit' (256, 271-273): the module's frameworks as blank cards, for planning your own game or a mod. The printable
-   version is kit.html. */
+/* What's next (MGM C4 M7, deck slides 264-266): make the problem first.
+   Slide 266: "Start by creating the challenges first for your game. Next create the tools for overcoming those challenges.
+   Then expand the breadth or depth of those tools… Then cut things out that aren't strong contenders, refine and improve
+   what you have, then repeat."
+   PF.loop(name, cfg) draws every slide on this page the same way: the game on the left, a ledger above it that pairs each
+   challenge with the tools that answer it, and the four-step loop on the right. Each step lasts PH seconds; step 4 ends with
+   "then again": a new challenge that starts the next loop.
+   cfg: { bg, steps: [4 captions], next: caption for the new challenge, challenges: [[name, step, at, {next}]],
+          tools: [[name, step, at, {spec, cut: [step, at], back: [step, at]}]], game(g, i, a, t, on) }
+   Steps are 0-based; at is seconds into that step. on([step, at]) is true once that moment is reached.
+   'challenge-loop' is the deck's own example, played on Super Mario Bros. ground. genres.js adds five more. */
 (function () {
-  const { $, $$ } = FPF.kit;
-  const { pic, icon, text, wrap, card, chip, TONE, panel, scene, pointer, inBox, clamp, ease, lerp, arrow } = CK;
-  const T = TD, C = TD.C, TAU = Math.PI * 2;
+  const { pic, text, wrap, card, chip, TONE, panel, scene, clamp, ease, lerp, arrow } = CK;
+  const C = TD.C;
+  const PH = 4, TEASE = 2.2, STEP = ['Create the challenges', 'Shape your toolkit', 'Expand breadth & depth', 'Prune, refine, repeat'];
   const ph = (t, a, b) => clamp((t - a) / (b - a));
+  const when = ([s, at]) => s * PH + at;
+  // a label on a cream pill, readable on any game background; note() is the same for a few lines of text
+  function tag(g, s, x, y, o = {}) {
+    const size = o.size || 15; g.save(); g.font = `800 ${size}px Jost, sans-serif`; const w = g.measureText(s).width + 24; g.restore();
+    card(g, x, y, w, size * 1.9, { fill: 'rgba(255,250,240,.96)', edge: C.navy, lw: 2, shadow: false, r: size, a: o.a });
+    text(g, s, x, y + 1, { size, w: 800, col: C.navy, a: o.a });
+  }
+  function note(g, s, x, y, w, o = {}) {
+    const size = o.size || 15, lh = size * 1.3, lines = wrap(g, s, x, y, w - 28, { size, w: 700, draw: false });
+    card(g, x, y, w, lines.length * lh + 20, { fill: 'rgba(255,250,240,.96)', edge: C.navy, lw: 2, shadow: false, r: 12, a: o.a });
+    wrap(g, s, x, y, w - 28, { size, w: 700, lh, valign: 'middle', align: 'center', col: C.navy, a: o.a });
+  }
 
-  // ---------- challenge-first loop ----------
-  const STEPS = [['Create the challenges', 'A gap in the ground'], ['Shape your toolkit', 'Give Mario a jump'], ['Expand breadth & depth', 'Run for a longer jump; land on a Goomba'], ['Prune, refine, repeat', 'Cut the tool nobody needs']];
-  const PH = 3.4, GY = 470;
+  function ledger(g, cfg, t) {
+    card(g, 334, 70, 616, 100, { fill: 'rgba(255,250,240,.95)', edge: C.navy, lw: 2.5, shadow: false });
+    text(g, 'Challenges', 38, 46, { align: 'left', size: 13, w: 800, col: C.muted });
+    text(g, 'Tools', 38, 94, { align: 'left', size: 13, w: 800, col: C.muted });
+    g.strokeStyle = '#e4dac2'; g.lineWidth = 1.5; g.beginPath(); g.moveTo(32, 70); g.lineTo(636, 70); g.stroke();
+    let x = 124;
+    cfg.challenges.forEach(([n, s, at, o = {}]) => {
+      const t0 = when([s, at]); if (t < t0) return;
+      const w = chip(g, o.next ? `Next: ${n}` : n, x, 46, { ...(o.next ? TONE.purple : TONE.orange), size: 13, align: 'left', a: ph(t, t0, t0 + .35) });
+      x += w + 8;
+    });
+    x = 124;
+    cfg.tools.forEach(([n, s, at, o = {}]) => {
+      const t0 = when([s, at]); if (t < t0) return;
+      const cut = o.cut && t >= when(o.cut), back = o.back && t >= when(o.back);
+      const tone = back ? TONE.gold : cut ? TONE.red : o.spec ? TONE.grey : TONE.green;
+      const label = back ? `${n}: now it has a job` : cut ? n : o.spec ? `${n}?` : n;
+      const w = chip(g, label, x, 94, { ...tone, size: 13, align: 'left', a: ph(t, t0, t0 + .35) });
+      if (cut && !back) { g.strokeStyle = C.redDk || '#8a1c15'; g.lineWidth = 2.5; g.beginPath(); g.moveTo(x + 6, 95); g.lineTo(x + w - 6, 95); g.stroke(); }
+      x += w + 8;
+    });
+  }
+
+  function loopPanel(g, cfg, t) {
+    const i = Math.min(3, Math.floor(t / PH)), a = t - i * PH, tease = i === 3 && a >= TEASE;
+    panel(g, 666, 14, 360, 558, { title: 'The loop (slide 266)' });
+    const cx = 846, cy = 222, R = 108;
+    STEP.forEach((n, j) => {
+      const an = -Math.PI / 2 + j * Math.PI / 2, x = cx + Math.cos(an) * R, y = cy + Math.sin(an) * R;
+      const an2 = an + Math.PI / 2, x2 = cx + Math.cos(an2) * R, y2 = cy + Math.sin(an2) * R;
+      const lit = (j + 1 === i) || (j === 3 && tease);
+      arrow(g, [x, y], [x2, y2], lit ? C.navy : '#b9b09a', lit ? 4 : 3, { pad0: 50, pad1: 50, bend: -34 });
+    });
+    STEP.forEach((n, j) => {
+      const an = -Math.PI / 2 + j * Math.PI / 2, x = cx + Math.cos(an) * R, y = cy + Math.sin(an) * R;
+      const on = j === i && !tease, next = j === 0 && tease;
+      card(g, x, y, 132, 70, { fill: on ? '#fff3c4' : next ? '#efe6fb' : '#fffaf0', edge: on ? C.gold : next ? '#a77fe0' : '#cdbf9f', lw: on || next ? 4 : 2, shadow: false });
+      text(g, String(j + 1), x - 55, y - 23, { size: 13, w: 800, col: C.muted });
+      wrap(g, n, x, y, 112, { valign: 'middle', size: 14, w: 800, align: 'center', lh: 17 });
+    });
+    text(g, tease ? 'Again' : `Step ${i + 1}`, cx, cy, { size: 20, w: 800, display: true, col: tease ? '#4b2286' : C.navy });
+    card(g, cx, 432, 336, 132, { fill: tease ? '#efe6fb' : '#fff3c4', edge: tease ? '#a77fe0' : C.gold, lw: 2, shadow: false });
+    text(g, tease ? 'Then again: a new challenge' : STEP[i], cx, 380, { size: 12.5, w: 800, col: C.muted });
+    wrap(g, tease ? cfg.next : cfg.steps[i], cx, 442, 312, { valign: 'middle', size: 14, w: 700, lh: 17.5, align: 'center', col: C.navy });
+    const k = 528;
+    text(g, 'A challenge with no tool is a gap.', cx, k, { size: 13, col: C.muted, it: true });
+    text(g, 'A tool with no challenge waits to be cut.', cx, k + 20, { size: 13, col: C.muted, it: true });
+  }
+
+  // one slide of this page: game + ledger + loop
+  function loop(name, cfg) {
+    scene(name, {
+      dur: PH * 4 + .6,
+      draw(g, t) {
+        t = Math.min(t, PH * 4 - .01);
+        const i = Math.min(3, Math.floor(t / PH)), a = t - i * PH;
+        g.save(); g.beginPath(); g.roundRect(14, 14, 640, 558, 12); g.clip();
+        g.fillStyle = cfg.bg || '#5c94fc'; g.fillRect(14, 14, 640, 558);
+        cfg.game(g, i, a, t, at => t >= when(at));
+        ledger(g, cfg, t);
+        g.restore();
+        loopPanel(g, cfg, t);
+      },
+      side(t) {
+        t = Math.min(t, PH * 4 - .01);
+        const i = Math.min(3, Math.floor(t / PH)), a = t - i * PH;
+        return { out: i === 3 && a >= TEASE ? `<b>Then again.</b> ${cfg.next}` : `<b>${i + 1}. ${STEP[i]}.</b> ${cfg.steps[i]}` };
+      },
+    });
+  }
+  window.PF = { loop, tag, note, PH, TEASE, ph };
+
+  // ---------- Super Mario Bros.: the deck's own example ----------
+  const GY = 480;
   function ground(g, gapL, gapR) {
-    g.fillStyle = '#5c94fc'; g.fillRect(14, 14, 640, 558);
     for (let x = 14; x < 654; x += 32) for (let r = 0; r < 3; r++) {
       if (x + 32 > gapL && x < gapR) continue;
       const y = GY + r * 32; g.fillStyle = '#c84c0c'; g.fillRect(x, y, 32, 32); g.fillStyle = '#fcbcb0'; g.fillRect(x, y, 32, 3); g.fillRect(x, y, 3, 32); g.fillStyle = '#000'; g.fillRect(x + 29, y, 3, 32); g.fillRect(x, y + 29, 32, 3);
     }
   }
-  const frame = t => `smb-mario-walk${1 + Math.floor(t * 10) % 3}.png`;
-  scene('challenge-loop', {
-    dur: PH * 4,
-    draw(g, t) {
-      const i = Math.floor(t / PH), a = t - i * PH;
-      g.save(); g.beginPath(); g.roundRect(14, 14, 640, 558, 12); g.clip();
-      let gapL = 302, gapR = i === 0 ? lerp(302, 398, ease(ph(a, .3, 1))) : i >= 2 ? 462 : 398;
-      if (i >= 2) gapL = 302;
+  const walk = t => `smb-mario-walk${1 + Math.floor(t * 10) % 3}.png`;
+  const say = (g, s, x, y, o = {}) => tag(g, s, x, y, o);
+  const huh = (g, x, y) => text(g, '?', x, y, { size: 34, w: 800, col: '#fff', stroke: 5, strokeCol: C.navy });
+  loop('challenge-loop', {
+    bg: '#5c94fc',
+    steps: [
+      'A gap in the ground. Mario can only walk, so the gap stops him: the challenge comes before any tool.',
+      'Give Mario a jump. The gap now has an answer, and the jump has a reason to exist.',
+      'Depth: a running jump clears a wider gap. Breadth: the same jump stomps a Goomba. A fireball goes in too, just in case.',
+      'Every challenge here is answered by jumping. Nothing asks for the fireball, so it is cut.',
+    ],
+    next: 'A Spiny arrives. Stomping it hurts Mario, so the fireball comes back with a job. Start the loop again from step 1.',
+    challenges: [['A gap', 0, .3], ['A wider gap', 2, .2], ['A Goomba', 2, .2], ['A Spiny', 3, TEASE, { next: true }]],
+    tools: [['Jump', 1, .5], ['Running jump', 2, .4], ['Stomp', 2, 1.6], ['Fireball', 2, 2.8, { spec: true, cut: [3, .6], back: [3, TEASE + 1] }]],
+    game(g, i, a, t, on) {
+      const wide = i >= 2, gapL = wide ? 270 : 302, gapR = wide ? 430 : i === 0 ? lerp(302, 398, ease(ph(a, .2, .9))) : 398;
       ground(g, gapL, gapR);
       let mx = 120, my = GY, moving = false, jump = false;
-      if (i === 0) { mx = lerp(80, 270, ph(a, 1, 2.4)); moving = a > 1 && a < 2.4; if (a > 2.5) text(g, '?', mx, GY - 70, { size: 34, w: 800, col: '#fff', stroke: 5, strokeCol: C.navy }); }
-      if (i === 1) { const k = ph(a, .8, 2.2); mx = lerp(200, 470, k); moving = a > .8 && a < 2.4; my = GY - Math.sin(ph(a, 1.2, 1.9) * Math.PI) * 120; jump = a > 1.2 && a < 1.9; }
-      if (i === 2) { const k = ph(a, .2, 2.4); mx = lerp(60, 560, k); moving = a > .2 && a < 2.4; my = GY - Math.sin(ph(a, .95, 1.75) * Math.PI) * 150; jump = a > .95 && a < 1.75; }
-      if (i === 3) { mx = 180; }
-      // a goomba to land on, from step 3
-      if (i === 2) { const squash = a > 1.75; pic(g, squash ? 'smb-goomba-flat.png' : 'smb-goomba.png', 530, GY, 44, { px: true, bottom: true }); if (squash && a < 2.6) text(g, 'stomp!', 530, GY - 60, { size: 18, w: 800, col: '#fff', stroke: 5, strokeCol: C.navy }); }
-      pic(g, jump ? 'smb-mario-jump.png' : moving ? frame(t) : 'smb-mario.png', mx, my, jump || moving ? 54 : 41, { px: true, bottom: true });
-      g.restore();
-      // the toolkit
-      const tools = [['Jump', i >= 1, false], ['Running jump', i >= 2, false], ['Stomp', i >= 2, false], ['Fireball', i >= 2, i === 3 && a > .8]];
-      card(g, 334, 74, 580, 70, { fill: 'rgba(255,250,240,.92)', edge: C.navy, shadow: false });
-      text(g, 'Toolkit', 64, 74, { align: 'left', size: 14, w: 800, col: C.muted });
-      let tx = 140; tools.forEach(([n, have, cut]) => { if (!have) return; const w = chip(g, n, tx, 74, { ...(cut ? TONE.red : TONE.green), size: 14, align: 'left' }); if (cut) { g.strokeStyle = C.redDk; g.lineWidth = 3; g.beginPath(); g.moveTo(tx - 4, 74); g.lineTo(tx + w + 4, 74); g.stroke(); } tx += w + 10; });
-      if (i === 3 && a > 1.2) wrap(g, 'Nothing in this stretch needs a fireball, so it waits for a challenge that does.', 334, 132, 540, { size: 15, w: 700, lh: 19, align: 'center', col: '#fff' });
-      // the loop
-      panel(g, 666, 14, 360, 558, { title: 'Final bits of advice' });
-      const cx = 846, cy = 240, R = 112;
-      STEPS.forEach(([n, l], j) => {
-        const an = -Math.PI / 2 + j * Math.PI / 2, x = cx + Math.cos(an) * R, y = cy + Math.sin(an) * R, on = j === i;
-        const an2 = an + Math.PI / 2, x2 = cx + Math.cos(an2) * R, y2 = cy + Math.sin(an2) * R;
-        arrow(g, [x, y], [x2, y2], on ? C.navy : '#b9b09a', 3, { pad0: 50, pad1: 50, bend: -34 });
-        card(g, x, y, 130, 70, { fill: on ? '#fff3c4' : '#fffaf0', edge: on ? C.gold : '#cdbf9f', lw: on ? 4 : 2, shadow: false });
-        text(g, String(j + 1), x - 54, y - 22, { size: 13, w: 800, col: C.muted });
-        wrap(g, n, x, y, 112, { valign: 'middle', size: 14, w: 800, align: 'center', lh: 17 });
-      });
-      text(g, `Step ${i + 1}`, cx, cy, { size: 20, w: 800, display: true, col: C.navy });
-      card(g, cx, 446, 320, 70, { fill: '#fff3c4', edge: C.gold, lw: 2, shadow: false });
-      wrap(g, STEPS[i][1], cx, 446, 290, { valign: 'middle', size: 15, w: 700, lh: 19, align: 'center', col: C.navy });
-      text(g, 'then again', cx, 548, { size: 13, col: C.muted, it: true });
-    },
-    side(t) { const i = Math.floor(t / PH); return { out: `<b>${i + 1}. ${STEPS[i][0]}.</b> ${STEPS[i][1]}.` }; },
-  });
-
-  // ---------- course map ----------
-  const M = window.COURSE || [];
-  const MGM = i => [120 + (i % 4) * 238, 330 + Math.floor(i / 4) * 92];
-  function mview(t, st, tour) { if (!tour) return { open: st.open, hover: st.hover }; return { open: t < 3 ? -1 : Math.min(M.length - 1, Math.floor((t - 3) / 2.2)), hover: -1 }; }
-  scene('course-map', {
-    dur: 3 + M.length * 2.2 + 1,
-    state: () => ({ open: M.length - 1, hover: -1 }),
-    init(s, st, api) {
-      pointer(api.cv, (x, y, type) => {
-        if (type === 'down') {
-          M.forEach((m, i) => { const [mx, my] = MGM(i); if (inBox(x, y, mx, my, 226, 80)) { api.manual(); st.open = i; } });
-          const m = M[st.open]; if (m && !st.tour) m.pages.forEach((p, j) => { const [bx, by] = pagePos(j, m.pages.length); if (inBox(x, y, bx, by, 236, 26)) window.location.href = '../../' + p[0]; });
-        }
-      });
-    },
-    draw(g, t, st, tour) {
-      const v = mview(t, st, tour), k = ease(ph(t, .2, 1.4));
-      // the three stages
-      const S = [[150, 'Stage 1', 'FPF', 'Diagnose the problem'], [520, 'Stage 2', 'Mastering Game Mechanics', 'Create solutions'], [890, 'Stage 3', 'Future course', 'Implementation']];
-      S.forEach(([x, s, n, l], j) => {
-        card(g, x, 92, 280, 96, { edge: j === 1 ? C.gold : '#cdbf9f', lw: j === 1 ? 4 : 2, fill: j === 1 ? '#fff3c4' : '#fffaf0' });
-        text(g, s, x, 62, { size: 12, w: 800, col: C.muted }); text(g, n, x, 90, { size: j === 1 ? 16.5 : 20, w: 800, display: true }); text(g, l, x, 118, { size: 13, col: C.ink });
-        if (j < 2) arrow(g, [x + 140, 92], [x + 230, 92], C.navy, 4, { a: k });
-      });
-      chip(g, 'Stage 2 · Level Design', 340, 168, { ...TONE.grey, size: 12.5 }); chip(g, 'Stage 2 · Narrative Design', 700, 168, { ...TONE.grey, size: 12.5 });
-      text(g, 'beside it: Udemy / YouTube / Coursera', 520, 196, { size: 12, col: C.muted, it: true });
-      // Mastering Game Mechanics, opened
-      g.strokeStyle = C.gold; g.lineWidth = 3; g.setLineDash([6, 6]); g.beginPath(); g.moveTo(520, 140); g.lineTo(520, 236); g.stroke(); g.setLineDash([]);
-      text(g, `This site: ${M.length} modules, ${M.reduce((s, m) => s + m.pages.length, 0)} pages`, 520, 254, { size: 15, w: 800, col: C.navy });
-      M.forEach((m, i) => {
-        const [x, y] = MGM(i), on = v.open === i, kk = ease(ph(t, .8 + i * .12, 1.2 + i * .12));
-        card(g, x, y, 226, 80, { fill: on ? '#fff3c4' : '#fffaf0', edge: on ? C.gold : '#cdbf9f', lw: on ? 4 : 2, a: tour ? kk : 1, shadow: false });
-        g.save(); g.globalAlpha = tour ? kk : 1;
-        pic(g, '../../' + m.img, x - 84, y, 40);
-        text(g, m.code, x - 56, y - 18, { align: 'left', size: 11, w: 800, col: C.muted });
-        wrap(g, m.name, x - 56, y + (m.name.length > 20 ? -2 : 4), 160, { size: 14.5, w: 800, lh: 16 });
-        text(g, `${m.pages.length} pages`, x + 104, y + 28, { align: 'right', size: 11, col: C.muted });
-        g.restore();
-      });
-      const m = M[v.open];
-      if (m) {
-        const n = m.pages.length;
-        card(g, 520, 520 + 0, 1000, 100, { fill: 'rgba(255,252,244,.96)', edge: C.navy, lw: 2, shadow: false, r: 10 });
-        m.pages.forEach((p, j) => { const [x, y] = pagePos(j, n); chip(g, p[1], x, y, { ...TONE.blue, size: 12, width: 236 }); });
+      if (i === 0) {
+        mx = lerp(80, 284, ph(a, 1, 2.2)); moving = a > 1 && a < 2.2;
+        if (a > .5) say(g, 'Challenge: a gap', 350, 300, { a: ph(a, .5, .8) });
+        if (a > 2.4) huh(g, mx, GY - 74);
       }
+      if (i === 1) {
+        mx = lerp(150, 540, ph(a, .7, 3)); moving = a > .7 && a < 3;
+        if (mx > 282 && mx < 432) { jump = true; my = GY - Math.sin((mx - 282) / 150 * Math.PI) * 120; }
+        if (a > .4) say(g, 'Tool: Jump', 350, 220, { a: ph(a, .4, .7) });
+      }
+      if (i === 2) {
+        // a running jump over the wider gap that lands on the Goomba, then a bounce off it
+        mx = lerp(40, 620, ph(a, .3, 3)); moving = a > .3 && a < 3;
+        const J0 = 244, J1 = 530, B1 = 600, gx = 530;
+        if (mx > J0 && mx < J1) { const u = (mx - J0) / (J1 - J0); jump = true; my = lerp(GY, GY - 30, u) - Math.sin(u * Math.PI) * 150; }
+        else if (mx >= J1 && mx < B1) { const u = (mx - J1) / (B1 - J1); jump = true; my = lerp(GY - 30, GY, u) - Math.sin(u * Math.PI) * 60; }
+        const squash = mx >= J1;
+        pic(g, squash ? 'smb-goomba-flat.png' : 'smb-goomba.png', gx, GY, 40, { px: true, bottom: true });
+        if (squash && mx < 620) say(g, 'stomp!', gx, GY - 70);
+        if (mx < J0 && a > .3) for (let k = 0; k < 3; k++) { g.strokeStyle = 'rgba(255,255,255,.8)'; g.lineWidth = 3; g.beginPath(); g.moveTo(mx - 30 - k * 4, GY - 14 - k * 10); g.lineTo(mx - 52 - k * 4, GY - 14 - k * 10); g.stroke(); }
+        if (a > 2.8) { pic(g, 'smb-fireball.png', 120, 250, 24, { px: true }); say(g, 'Fireball, just in case', 120, 286, { size: 14 }); }
+      }
+      if (i === 3) {
+        mx = 470;
+        if (a < TEASE) {
+          pic(g, 'smb-fireball.png', 120, 250, 24, { px: true, a: 1 - ph(a, .4, 1) });
+          if (a > .8) note(g, 'Jump, Running jump and Stomp answer every challenge on this stretch. The fireball answers nothing, so it waits.', 334, 240, 460, { a: ph(a, .8, 1.1) });
+        } else {
+          const sx = lerp(660, 590, ph(a, TEASE, TEASE + 1));
+          pic(g, Math.floor(t * 6) % 2 ? 'smb-spiny-step.png' : 'smb-spiny.png', sx, GY, 40, { px: true, bottom: true });
+          if (a > TEASE + .5) say(g, 'Spiny: a stomp hurts Mario', 520, 400, { size: 15, a: ph(a, TEASE + .5, TEASE + .8) });
+          const fx = 500 + (a - TEASE - 1) * 110; if (a > TEASE + 1 && fx < sx - 14) pic(g, 'smb-fireball.png', fx, GY - 22, 20, { px: true, rot: a * 12 });
+        }
+      }
+      pic(g, jump ? 'smb-mario-jump.png' : moving ? walk(t) : 'smb-mario.png', mx, my, jump || moving ? 54 : 41, { px: true, bottom: true, flip: false });
     },
-    side(t, st, tour) { const v = mview(t, st, tour), m = M[v.open]; return { out: m ? `<b>${m.name}</b> (${m.code}): ${m.pages.map(p => p[1]).join(', ')}.${tour ? '' : ' Click a page on the canvas to open it.'}` : 'FPF diagnoses the problem; Mastering Game Mechanics creates solutions; the next course implements them.' }; },
-  });
-  function pagePos(j, n) { const cols = 4, r = Math.floor(j / cols), c = j % cols, rows = Math.ceil(n / cols); return [146 + c * 248, 520 - (rows - 1) * 15 + r * 30]; }
-
-  // ---------- framework kit ----------
-  const KIT = [
-    ['Ability card', 'Purpose · Payload · Packaging', (g, x, y) => { ['Purpose', 'Payload', 'Packaging'].forEach((n, j) => { chip(g, n, x - 70, y - 40 + j * 40, { ...[TONE.blue, TONE.gold, TONE.purple][j], size: 11, align: 'left' }); g.strokeStyle = '#cdbf9f'; g.beginPath(); g.moveTo(x - 70, y - 26 + j * 40); g.lineTo(x + 70, y - 26 + j * 40); g.stroke(); }); }],
-    ['Creature card', 'Three archetypes, one body', (g, x, y) => { [-50, 0, 50].forEach(dx => { g.strokeStyle = '#cdbf9f'; g.setLineDash([4, 4]); g.lineWidth = 2; g.strokeRect(x + dx - 20, y - 40, 40, 50); g.setLineDash([]); }); text(g, '+  +  =', x, y + 30, { size: 14, w: 800, col: C.muted }); }],
-    ['Nine fundamentals', 'Audit a moveset', (g, x, y) => { for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) { g.strokeStyle = ['#d8463a', '#2f7fd6', '#8a4fd6'][r]; g.lineWidth = 2; g.strokeRect(x - 60 + c * 42, y - 52 + r * 36, 36, 30); } }],
-    ['Counter circle', 'Offense · Defense · Prediction', (g, x, y) => { [[0, -40], [42, 30], [-42, 30]].forEach(([dx, dy], j) => { g.strokeStyle = ['#d8463a', '#8a4fd6', '#2f7fd6'][j]; g.lineWidth = 3; g.beginPath(); g.arc(x + dx, y + dy - 6, 18, 0, TAU); g.stroke(); }); }],
-    ['Elemental diamond', 'Name four corners, two axes', (g, x, y) => { g.strokeStyle = C.navy; g.lineWidth = 2; g.beginPath(); g.moveTo(x, y - 54); g.lineTo(x + 54, y); g.lineTo(x, y + 54); g.lineTo(x - 54, y); g.closePath(); g.stroke(); }],
-    ['Design skeleton', 'Slots before content', (g, x, y) => { for (let r = 0; r < 5; r++) { g.strokeStyle = '#cdbf9f'; g.lineWidth = 2; g.strokeRect(x - 66, y - 50 + r * 20, 40, 16); g.strokeRect(x - 22, y - 50 + r * 20, 88, 16); } }],
-  ];
-  scene('framework-kit', {
-    dur: 9,
-    draw(g, t) {
-      KIT.forEach(([n, l, d], i) => {
-        const tx = 190 + (i % 3) * 330, ty = 170 + Math.floor(i / 3) * 250, k = ease(ph(t, .3 + i * .35, .9 + i * .35));
-        const x = lerp(520, tx, k), y = lerp(640, ty, k), rot = (1 - k) * (i % 2 ? .3 : -.3);
-        g.save(); g.translate(x, y); g.rotate(rot);
-        card(g, 0, 0, 290, 220, { edge: C.navy, lw: 3 });
-        text(g, n, 0, -84, { size: 18, w: 800, display: true }); d(g, 0, 8); text(g, l, 0, 92, { size: 12.5, col: C.muted });
-        g.restore();
-      });
-      if (t > 3) text(g, 'Blank and printable: plan your own game, or skills to mod into one.', 520, 560, { size: 16, w: 800, col: C.navy, a: ph(t, 3, 3.5) });
-    },
-    side() { return { out: 'Six blank frameworks from this module. Open the printable kit to print or save them as a PDF.' }; },
   });
 })();

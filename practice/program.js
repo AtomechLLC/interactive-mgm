@@ -769,7 +769,7 @@
         }
       },
       links: [
-        L('What’s Next', '../composition/whats-next/index.html', 'where to take the course from here'),
+        L('Make the Problem First', '../composition/whats-next/index.html', 'challenges first, then the tools, in six genres'),
         L('Audit Gallery', '../composition/audits/index.html', 'whole games audited with the course frameworks')
       ]
     }
