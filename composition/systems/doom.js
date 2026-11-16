@@ -2,21 +2,21 @@
    Boss) and behaviours (Ranged, Rushdown, Support, Keep Away, Close In). Slide 212: swap any enemy for another from its same
    map archetype and you have a new encounter. Slide 213: two nested frameworks, structure at the map level and composition
    at the enemy level. Reroll changes the roster and keeps the slots; the structure buttons change the slots themselves.
-   Enemy names are Doom Eternal's (id Software); the silhouettes are game-icons.net stand-ins. Role tags follow the deck's
+   Enemy names and faces are Doom Eternal's (id Software): crops of the in-game codex portraits (composition/shared/img/doom-*.jpg). Role tags follow the deck's
    slides where it shows the enemy, and the game's own heavy / super-heavy tiers otherwise. */
 (function () {
   const { $, $$ } = FPF.kit;
-  const { text, wrap, chip, TONE, panel, scene, clamp, ease } = CK;
+  const { pic, text, wrap, chip, TONE, panel, scene, clamp, ease } = CK;
   const T = TD, C = TD.C;
   const TIER = { Fodder: ['#9a9480', 17], Threat: ['#e0892d', 24], 'Mini Boss': ['#c2412c', 32] };
   const BEH = { Ranged: TONE.teal, Rushdown: TONE.red, Support: TONE.green, 'Keep Away': TONE.purple, 'Close In': TONE.orange };
   const ROSTER = [
-    ['Imp', 'imp-laugh', 'Fodder', []], ['Zombie', 'shambling-zombie', 'Fodder', []], ['Soldier', 'cyborg-face', 'Fodder', []], ['Gargoyle', 'bat-wing', 'Fodder', []],
-    ['Arachnotron', 'spider-bot', 'Threat', ['Ranged']], ['Revenant', 'skull-crossed-bones', 'Threat', ['Ranged']], ['Cacodemon', 'cyclops', 'Threat', ['Ranged']],
-    ['Pinky', 'charging-bull', 'Threat', ['Rushdown']], ['Hell Knight', 'brute', 'Threat', ['Rushdown']],
-    ['Mancubus', 'ogre', 'Threat', ['Keep Away']], ['Cyber Mancubus', 'robot-golem', 'Threat', ['Close In']], ['Carcass', 'skull-shield', 'Threat', ['Support']],
-    ['Marauder', 'heavy-helm', 'Mini Boss', ['Close In']], ['Archvile', 'fire-silhouette', 'Mini Boss', ['Support']], ['Doom Hunter', 'minigun', 'Mini Boss', ['Ranged']], ['Tyrant', 'rock-golem', 'Mini Boss', ['Ranged']],
-  ].map(([name, gi, tier, beh]) => ({ name, gi, tier, beh }));
+    ['Imp', 'imp', 'Fodder', []], ['Zombie', 'zombie', 'Fodder', []], ['Soldier', 'soldier', 'Fodder', []], ['Gargoyle', 'gargoyle', 'Fodder', []],
+    ['Arachnotron', 'arachnotron', 'Threat', ['Ranged']], ['Revenant', 'revenant', 'Threat', ['Ranged']], ['Cacodemon', 'cacodemon', 'Threat', ['Ranged']],
+    ['Pinky', 'pinky', 'Threat', ['Rushdown']], ['Hell Knight', 'hell-knight', 'Threat', ['Rushdown']],
+    ['Mancubus', 'mancubus', 'Threat', ['Keep Away']], ['Cyber Mancubus', 'cyber-mancubus', 'Threat', ['Close In']], ['Carcass', 'carcass', 'Threat', ['Support']],
+    ['Marauder', 'marauder', 'Mini Boss', ['Close In']], ['Archvile', 'archvile', 'Mini Boss', ['Support']], ['Doom Hunter', 'hunter', 'Mini Boss', ['Ranged']], ['Tyrant', 'tyrant', 'Mini Boss', ['Ranged']],
+  ].map(([name, face, tier, beh]) => ({ name, face: `doom-${face}.jpg`, tier, beh }));
   // structures: slots are [tier or null, behaviour or null, x, y] in the map's 600 x 520 box
   const STRUCT = {
     arena: { name: 'Arena', slots: [
@@ -64,8 +64,12 @@
   }
   function disc(g, e, x, y, R) {
     const col = TIER[e.tier][0];
-    g.fillStyle = col; g.strokeStyle = C.navy; g.lineWidth = 2.5; g.beginPath(); g.arc(x, y, R, 0, Math.PI * 2); g.fill(); g.stroke();
-    GI.draw(g, e.gi, x, y, R * 1.35, '#fff');
+    // the enemy's face from its Doom Eternal codex portrait, ringed in its tier colour
+    g.fillStyle = C.navy; g.beginPath(); g.arc(x, y, R, 0, Math.PI * 2); g.fill();
+    pic(g, e.face, x, y, R * 2, { round: R });
+    const lw = Math.max(2.5, R * .16);
+    g.strokeStyle = col; g.lineWidth = lw; g.beginPath(); g.arc(x, y, R, 0, Math.PI * 2); g.stroke();
+    g.strokeStyle = C.navy; g.lineWidth = 1.5; g.beginPath(); g.arc(x, y, R + lw / 2, 0, Math.PI * 2); g.stroke();
   }
 
   scene('doom-swap', {
