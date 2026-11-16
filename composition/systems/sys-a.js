@@ -4,7 +4,8 @@
    from an object's tags and one rule per tag, never written by hand, so a new object fills its whole row for free.
    'loot-roll' (197): "The weapon is given a power value, a type, then has a variety of different ways those can be combined
    and expressed, granting different keywords at different magnitudes." Affixes here are this page's.
-   'bespoke-procedural' (198-199): Diablo III's runes are authored skill by skill; Path of Exile's support gems combine.
+   'bespoke-procedural' (198-199): one request (more projectiles, fire, cold) answered by each game: a Diablo III rune is
+   written for one skill; a Path of Exile support gem fits every skill whose tags match, so its pieces multiply.
    'systems-reel' (193-201): the deck's nine examples, each reduced to parts and the whole they make. */
 (function () {
   const { $, $$ } = FPF.kit;
@@ -137,34 +138,150 @@
   });
 
   // ---------- bespoke vs procedural ----------
-  const D3 = ['Magic Missile', 'Arcane Orb', 'Ray of Frost', 'Meteor', 'Blizzard', 'Hydra'];
-  const POE = ['Fireball', 'Cleave', 'Lightning Arrow', 'Frostbolt', 'Molten Strike', 'Raise Zombie'];
-  const SUP = ['Added Fire', 'Multistrike', 'Multiple Projectiles', 'Chain', 'Fork', 'Pierce', 'Faster Attacks', 'Increased Area', 'Life Leech', 'Melee Physical'];
-  const C3 = n => n * (n - 1) * (n - 2) / 6;
+  // The same request ("make my skill fire more projectiles", "add fire", "add cold") answered by each game.
+  // Diablo III: a rune belongs to one skill, so each variant is one designed piece. Path of Exile: a support gem plugs into
+  // every skill whose tags it fits, so each piece multiplies. Tags are simplified from the games' own gem tags.
+  const D3S = [['Magic Missile', 'magicmissile'], ['Arcane Orb', 'arcaneorb'], ['Ray of Frost', 'rayoffrost'], ['Meteor', 'meteor'], ['Blizzard', 'blizzard'], ['Hydra', 'hydra']];
+  const MM_RUNES = ['Charged Blast', 'Split', 'Seeker', 'Conflagrate', 'Glacial Spike'];
+  const POS = [
+    ['Fireball', 'fireball', ['Spell', 'Projectile', 'Area']], ['Frostbolt', 'frostbolt', ['Spell', 'Projectile']],
+    ['Lightning Arrow', 'lightning-arrow', ['Attack', 'Projectile', 'Area']], ['Cleave', 'cleave', ['Attack', 'Melee', 'Area']],
+    ['Molten Strike', 'molten-strike', ['Attack', 'Melee', 'Projectile', 'Area']], ['Ice Nova', 'ice-nova', ['Spell', 'Area']],
+  ];
+  // support: [name, image, tags it needs (any one)]
+  const SUPS = {
+    gmp: ['Greater Multiple Projectiles', 'gmp', ['Projectile']], chain: ['Chain', 'chain', ['Projectile']], fork: ['Fork', 'fork', ['Projectile']],
+    pierce: ['Pierce', 'pierce', ['Projectile']], fire: ['Added Fire Damage', 'added-fire', ['Attack', 'Spell']], cold: ['Added Cold Damage', 'added-cold', ['Attack', 'Spell']],
+    aoe: ['Increased Area of Effect', 'inc-aoe', ['Area']], fatk: ['Faster Attacks', 'faster-attacks', ['Attack']], echo: ['Spell Echo', 'spell-echo', ['Spell']],
+    fcast: ['Faster Casting', 'faster-casting', ['Spell']],
+  };
+  const EXTRA_SUP = ['Elemental Damage with Attacks', 'ele-attacks', ['Attack']];
+  const ASKS = {
+    proj: { label: 'More projectiles', rune: 1, effect: 'fires 3 missiles', sup: 'gmp', links: ['gmp', 'pierce', 'aoe'], poe: 'fires 4 more projectiles', tag: 'Projectile' },
+    fire: { label: 'Fire damage', rune: 3, effect: 'turns to fire, burns', sup: 'fire', links: ['fire', 'gmp', 'echo'], poe: 'adds fire damage', tag: 'Attack or Spell' },
+    cold: { label: 'Cold damage', rune: 4, effect: 'turns to cold, freezes', sup: 'cold', links: ['cold', 'fork', 'fcast'], poe: 'adds cold damage', tag: 'Attack or Spell' },
+  };
+  const fits = (sk, sp) => sp[2].some(tg => sk[2].includes(tg));
+  const choose3 = n => n < 3 ? 0 : n * (n - 1) * (n - 2) / 6;
+  const poeCount = plus => { const pool = [...Object.values(SUPS), ...(plus ? [EXTRA_SUP] : [])]; return POS.reduce((a, sk) => a + choose3(pool.filter(sp => fits(sk, sp)).length), 0); };
+  const BP = { d3: [30, 30], d3p: [31, 31], poe: [16, poeCount(false)], poep: [17, poeCount(true)] };
+  const BP_MAX = BP.poep[1];
+  const D3COL = '#b5541b', POECOL = '#1f7a8c';
+  function tick(g, x, y, ok, a = 1) {
+    g.save(); g.globalAlpha *= a; g.lineWidth = 3.5; g.lineCap = 'round'; g.lineJoin = 'round'; g.strokeStyle = ok ? C.good : '#a39a86'; g.beginPath();
+    if (ok) { g.moveTo(x - 7, y); g.lineTo(x - 2, y + 6); g.lineTo(x + 8, y - 6); } else { g.moveTo(x - 6, y); g.lineTo(x + 6, y); }
+    g.stroke(); g.restore();
+  }
+  function socket(g, x, y, s, im, o = {}) {
+    g.save(); g.globalAlpha *= o.a ?? 1;
+    g.fillStyle = '#23201c'; g.strokeStyle = o.hi ? '#e0a92d' : '#6b5a3c'; g.lineWidth = o.hi ? 4 : 2.5;
+    g.beginPath(); g.arc(x, y, s / 2, 0, TAU); g.fill(); g.stroke(); g.restore();
+    if (im) CK.pic(g, 'poe-' + im + '.png', x, y, s * .86, { a: (o.a ?? 1) * (o.dim ? .35 : 1) });
+  }
+  const BPT = [[0, 'proj'], [6, 'fire'], [10, 'cold'], [14, 'plus']];
   scene('bespoke-procedural', {
-    dur: 15,
-    draw(g, t) {
-      // Diablo III: each rune authored, one cell at a time
-      panel(g, 14, 14, 500, 558, { title: 'Diablo III: bespoke runes' });
-      const filled = Math.min(30, Math.floor(clamp((t - .5) / 8) * 30 + .0001));
-      D3.forEach((n, r) => {
-        const y = 92 + r * 66; text(g, n, 30, y, { align: 'left', size: 14, w: 800 });
-        for (let c = 0; c < 5; c++) { const i = r * 5 + c, x = 184 + c * 62, on = i < filled, fresh = i === filled - 1; card(g, x, y, 54, 50, { fill: on ? '#f3e2c4' : 'rgba(255,250,240,.4)', edge: on ? '#c9782a' : '#cdbf9f', lw: fresh ? 3 : 2, shadow: false, r: 6, dash: on ? [] : [4, 4] }); if (on) GI.draw(g, 'pencil', x, y, 22, '#8a4a10'); }
-      });
-      text(g, `${filled} authored pieces → ${filled} combinations`, 264, 520, { size: 17, w: 800, display: true, col: C.goldInk });
-      text(g, 'every rune is its own designed thing', 264, 546, { size: 13, col: C.muted });
-      // Path of Exile: skills x supports, choose three
-      panel(g, 526, 14, 500, 558, { title: 'Path of Exile: support gems combine' });
-      const pick = Math.floor(t * 1.4), ss = [0, 1, 2].map(j => (pick * 7 + j * 3 + (pick % 3)) % 10), sk = pick % 6;
-      POE.forEach((n, r) => { const y = 92 + r * 40, on = r === sk; chip(g, n, 546, y, { ...(on ? TONE.navy : TONE.grey), size: 13, align: 'left' }); });
-      SUP.forEach((n, j) => { const x = 790 + (j % 2) * 116, y = 92 + Math.floor(j / 2) * 46, on = ss.includes(j); chip(g, n, x, y, { ...(on ? TONE.green : TONE.grey), size: 11.5, width: 108 }); });
-      if (t > 1) { const y0 = 92 + sk * 40; ss.forEach(j => { const x = 790 + (j % 2) * 116 - 54, y = 92 + Math.floor(j / 2) * 46; g.strokeStyle = 'rgba(47,174,99,.6)'; g.lineWidth = 2; g.beginPath(); g.moveTo(690, y0); g.lineTo(x, y); g.stroke(); }); }
-      const total = 6 * C3(10), shown = Math.floor(total * ease(clamp((t - .5) / 6)));
-      text(g, `${6 + 10} authored pieces → ${shown.toLocaleString()} combinations`, 776, 520, { size: 17, w: 800, display: true, col: C.good });
-      text(g, 'six skills × any three of ten supports', 776, 546, { size: 13, col: C.muted });
-      if (t > 10) { TD.use(g); TD.stamp('Both are composition', 520, 478, C.navy, clamp((t - 10) / .4), 26); }
+    dur: 20,
+    state: () => ({ ask: 'proj', plus: false, full: true }),
+    init(s, st, api) {
+      const sync = () => { $$(s, '.bp-ask .btn').forEach(b => b.classList.toggle('on', b.dataset.a === st.ask)); $(s, '.bp-plus').classList.toggle('on', st.plus); };
+      $$(s, '.bp-ask .btn').forEach(b => b.onclick = () => { api.manual(); st.ask = b.dataset.a; st.full = true; st.t = 0; sync(); });
+      $(s, '.bp-plus').onclick = () => { api.manual(); st.plus = !st.plus; st.full = false; st.t = 0; sync(); };
+      st.sync = sync; sync();
     },
-    side() { return { out: '“Both bespoke and procedural content can be examples of compositional game design.” Bespoke gives precise pieces; procedural gives many combinations from few pieces.' }; },
+    draw(g, t, st, tour) {
+      let ask = st.ask, plus = st.plus, t0 = 0;
+      if (tour) { const step = [...BPT].reverse().find(p => t >= p[0]); plus = step[1] === 'plus'; ask = plus ? 'cold' : step[1]; t0 = step[0]; if (st.sync && (st.ask !== ask || st.plus !== plus)) { st.ask = ask; st.plus = plus; st.sync(); } }
+      const s = t - t0, first = tour ? t < 6 : st.full, A = ASKS[ask], sp = SUPS[A.sup];
+      const k1 = first ? ease(ph(s, .1, .6)) : 1, k2 = first ? ease(ph(s, 1.4, 1.9)) : .3 + .7 * ease(ph(s, 0, .4)), k3 = first ? ease(ph(s, 2.8, 3.3)) : 1;
+      // the request both panels answer
+      card(g, 520, 36, 1012, 40, { fill: '#152044', edge: '#152044', shadow: false, r: 10 });
+      text(g, 'The player wants:', 360, 37, { size: 16, w: 700, col: '#c9cdf0', align: 'right' });
+      text(g, A.label.toLowerCase() + ' on a skill', 372, 37, { size: 19, w: 800, display: true, col: '#ffb951', align: 'left' });
+      text(g, 'How does each game deliver it?', 1010, 37, { size: 14, w: 600, col: '#c9cdf0', align: 'right' });
+      [[14, D3COL, 'Diablo III: a designer writes each rune'], [526, POECOL, 'Path of Exile: support gems plug into skills']].forEach(([x, col, title]) => {
+        panel(g, x, 64, 500, 508, {});
+        g.fillStyle = col; g.beginPath(); g.roundRect(x, 64, 500, 30, [14, 14, 0, 0]); g.fill();
+        text(g, title, x + 250, 80, { size: 16, w: 800, display: true, col: '#fff' });
+      });
+      const rowLabel = (n, s1, x, y, a) => { text(g, n, x, y, { align: 'left', size: 13, w: 800, col: C.muted, a }); text(g, s1, x + 18, y, { align: 'left', size: 13, w: 700, col: C.muted, a }); };
+      // ---- row 1: how you get it ----
+      ['', ''].forEach((_, side) => rowLabel('1', 'How you get it', 30 + side * 512, 112, k1));
+      g.save(); g.globalAlpha = k1;
+      icon(g, 'd3-wizard_magicmissile.png', 72, 182, 56, { edge: '#3a2a18' });
+      text(g, 'Magic Missile', 72, 226, { size: 13, w: 800 });
+      MM_RUNES.forEach((r, i) => { const on = i === A.rune; chip(g, r, 128, 136 + i * 23, { ...(on ? TONE.orange : TONE.grey), size: 12, align: 'left', width: 116, lw: on ? 2.5 : 1.5 }); });
+      text(g, 'its 5 runes', 186, 254, { size: 12, w: 600, col: C.muted });
+      CK.arrow(g, [108, 182], [124, 182], C.muted, 2);
+      CK.arrow(g, [250, A.rune * 23 + 136], [314, 182], D3COL, 2.5);
+      card(g, 410, 182, 180, 92, { fill: '#fbeee0', edge: D3COL, lw: 2.5, shadow: false, r: 10 });
+      icon(g, 'd3-wizard_magicmissile.png', 344, 182, 34, { edge: '#3a2a18', lw: 2 });
+      text(g, MM_RUNES[A.rune], 368, 166, { size: 15, w: 800, align: 'left', col: '#7a3a06' });
+      wrap(g, A.effect, 368, 188, 130, { size: 13, w: 600, lh: 16 });
+      text(g, 'Written for Magic Missile only', 410, 244, { size: 12, w: 700, col: D3COL });
+      // PoE: four linked sockets
+      const gx = [582, 646, 710, 774];
+      g.fillStyle = '#8a7350'; gx.slice(1).forEach(x => g.fillRect(x - 46, 177, 28, 10));
+      socket(g, gx[0], 182, 52, POS[0][1]);
+      A.links.forEach((id, i) => socket(g, gx[i + 1], 182, 48, SUPS[id][1], { hi: i === 0 }));
+      text(g, 'Fireball', gx[0], 222, { size: 12, w: 800 });
+      text(g, '+ 3 linked supports', 710, 222, { size: 12, w: 700, col: C.muted });
+      text(g, 'skill gem', gx[0], 140, { size: 12, w: 600, col: C.muted }); text(g, 'support gems', 710, 140, { size: 12, w: 600, col: C.muted });
+      CK.arrow(g, [804, 182], [838, 182], POECOL, 2.5);
+      card(g, 922, 182, 160, 92, { fill: '#e2f2f4', edge: POECOL, lw: 2.5, shadow: false, r: 10 });
+      wrap(g, sp[0], 922, 162, 148, { size: 13, w: 800, align: 'center', lh: 15, col: '#0f4c58', valign: 'middle' });
+      wrap(g, 'Fireball ' + A.poe, 922, 200, 148, { size: 12.5, w: 600, align: 'center', lh: 15, valign: 'middle' });
+      text(g, 'One gem, reused on many skills', 922, 244, { size: 12, w: 700, col: POECOL });
+      g.restore();
+      // ---- row 2: where that piece works ----
+      ['', ''].forEach((_, side) => rowLabel('2', 'Where that piece works', 30 + side * 512, 284, k2));
+      g.save(); g.globalAlpha = k2;
+      D3S.forEach(([n, f], i) => {
+        const x = 62 + i * 78, own = i === 0;
+        icon(g, 'd3-wizard_' + f + '.png', x, 330, 44, { edge: own ? D3COL : '#3a2a18', lw: own ? 4 : 2, grey: !own });
+        wrap(g, n, x, 362, 74, { size: 11.5, w: 700, align: 'center', lh: 13, col: own ? C.ink : C.muted });
+        tick(g, x, 396, own);
+      });
+      text(g, MM_RUNES[A.rune] + ' works on 1 of 6 skills.', 264, 426, { size: 15, w: 800, display: true, col: D3COL });
+      text(g, 'Each other skill needs its own rune for this, written separately.', 264, 446, { size: 12, w: 600, col: C.muted });
+      let fitN = 0;
+      POS.forEach((sk, i) => {
+        const x = 574 + i * 78, ok = fits(sk, sp); if (ok) fitN++;
+        socket(g, x, 330, 46, sk[1], { hi: ok, dim: !ok });
+        wrap(g, sk[0], x, 362, 74, { size: 11.5, w: 700, align: 'center', lh: 13, col: ok ? C.ink : C.muted });
+        tick(g, x, 396, ok);
+      });
+      text(g, `${sp[0]} works on ${fitN} of 6 skills.`, 776, 426, { size: 15, w: 800, display: true, col: POECOL });
+      text(g, `Any skill gem tagged ${A.tag} takes it.`, 776, 446, { size: 12, w: 600, col: C.muted });
+      g.restore();
+      // ---- row 3: pieces in, variants out (one scale for both panels) ----
+      ['', ''].forEach((_, side) => rowLabel('3', 'Pieces vs. variants', 30 + side * 512, 474, k3));
+      const kb = first ? ease(ph(s, 3, 4.6)) : 1, kp = plus ? ease(ph(s, .2, 1.2)) : 0;
+      const bars = (x0, base, more, col, pieceWord) => {
+        const W = 280, sc = W / BP_MAX, pc = lerp(base[0], more[0], kp), vc = lerp(base[1], more[1], kp);
+        [[`${pieceWord} made`, pc, base[0]], ['variants', vc, base[1]]].forEach(([lab, v, v0], j) => {
+          const y = 504 + j * 34, w = Math.max(3, v * sc * kb);
+          text(g, lab, x0 + 120, y, { size: 12.5, w: 700, align: 'right', col: C.muted, a: k3 });
+          g.save(); g.globalAlpha = k3; g.fillStyle = 'rgba(150,140,115,.12)'; g.fillRect(x0 + 128, y - 10, W, 20);
+          g.fillStyle = j ? col : col + '88'; g.fillRect(x0 + 128, y - 10, w, 20); g.restore();
+          const num = Math.round(v * kb), d = Math.round(v) - v0;
+          text(g, num.toLocaleString() + (d > 0 && kp > .5 ? `  (+${d})` : ''), x0 + 136 + w, y, { size: 14, w: 800, align: 'left', col: col, a: k3 });
+        });
+      };
+      bars(18, BP.d3, BP.d3p, D3COL, 'runes');
+      bars(530, BP.poe, BP.poep, POECOL, 'gems');
+      if (kp > 0) {
+        chip(g, '+1 rune for Magic Missile', 430, 474, { ...TONE.orange, size: 11.5, a: kp, width: 156 });
+        chip(g, '+1 support: ' + EXTRA_SUP[0], 880, 474, { ...TONE.teal, size: 11.5, a: kp, width: 270 });
+      }
+    },
+    side(t, st, tour) {
+      let ask = st.ask, plus = st.plus;
+      if (tour) { const step = [...BPT].reverse().find(p => t >= p[0]); plus = step[1] === 'plus'; ask = plus ? 'cold' : step[1]; }
+      const A = ASKS[ask], d3 = plus ? BP.d3p : BP.d3, poe = plus ? BP.poep : BP.poe;
+      const stats = `<div class="y"><b>${d3[1]}</b><span>Diablo III variants from ${d3[0]} runes</span></div><div class="g"><b>${poe[1]}</b><span>Path of Exile variants from ${poe[0]} gems</span></div>`;
+      if (plus) return { stats, out: `One more rune adds one variant. One more support gem fits every Attack skill, so it adds ${BP.poep[1] - BP.poe[1]}. Bespoke pieces are exact; combining pieces multiply. “Both bespoke and procedural content can be examples of compositional game design.”` };
+      return { stats, out: `<b>${A.label}.</b> Diablo III answers with ${MM_RUNES[A.rune]}, a rune written for one skill. Path of Exile answers with ${SUPS[A.sup][0]}, one gem that fits every skill with the right tag.` };
+    },
   });
 
   // ---------- systems tour reel ----------
