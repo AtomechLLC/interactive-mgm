@@ -1,7 +1,8 @@
 /* Spell idea generator (MGM C4 M7, deck slide 74). The spell creation framework from slide 74 with all nine columns: shape,
    proxy, payload, valid targets, cast position type, special conditions, problem it solves (purpose), presentation /
-   packaging, and keywords. Roll fills every unlocked column; click a column header to lock it, click a note to reroll only
-   that column. A column can hold more than one note, as in the deck's worked examples (Fireball, Spiritual Weapon).
+   packaging, and keywords. Roll fills every unlocked column; click a column header to lock it. Click a column's notes to open
+   its tray: every piece that column can hold, ready to set by hand (a ? marks a piece that would add a clash), plus a
+   reroll for that column alone. A piece set by hand locks its column and refreshes the unlocked columns that follow from it. A column can hold more than one note, as in the deck's worked examples (Fireball, Spiritual Weapon).
    Coherent mode only draws values that agree with each other (a heal goes to an ally, a cone starts at the caster); Wild mode
    draws anything and names the clashes as design prompts. Options after the slide's "..." (dashed notes), the statuses,
    resources, purposes and keyword mapping are this page's additions.
@@ -173,24 +174,28 @@
     const k = d.pay.filter(p => p !== 'Apply Status').map(kind);
     return wpick(k.includes('harm') || k.includes('move') ? HARMFUL : k.includes('help') ? HELPFUL : DRAWN, statusW(e));
   }
-  function packOf(d) {
-    const N = NOUNS[d.proxy], nouns = has(d, 'Charge') ? ['dash', 'leap', 'trail'] : has(d, 'Teleport') ? ['flash', 'step', 'portal'] : N.any || N[d.shape] || N['Single Target'] || ['orb'];
+  const packNouns = d => { const N = NOUNS[d.proxy]; return has(d, 'Charge') ? ['dash', 'leap', 'trail'] : has(d, 'Teleport') ? ['flash', 'step', 'portal'] : N.any || N[d.shape] || N['Single Target'] || ['orb']; };
+  function packWith(d, noun) {
     const { a, b } = d.el, adj = custom(a) ? NAMES[a] : ELS[a].adj, hue = b ? (custom(b) ? NAMES[b].toLowerCase() : ELS[b].hue) : custom(a) ? '' : ELS[a].hue;
-    return (d.proxy === 'Pet' && !b ? `${adj} ${pick(nouns)}` : `${adj} ${hue} ${pick(nouns)}`).replace(/  +/g, ' ');
+    return (d.proxy === 'Pet' && !b ? `${adj} ${noun}` : `${adj} ${hue} ${noun}`).replace(/  +/g, ' ');
   }
+  const packOf = d => packWith(d, pick(packNouns(d)));
   function nameOf(d) {
     const p = d.pay.find(x => x !== 'Apply Status'), help = STATUS[d.status] && !STATUS[d.status][0];
     const noun = d.proxy === 'Pet' ? pick(['Familiar', 'Guardian', 'Sentinel']) : d.proxy === 'Trap / Device' && !p ? pick(['Snare', 'Rune', 'Totem']) : pick(NAME_NOUN[p || (help ? 'ApplyHelp' : 'Apply')]);
     return `${custom(d.el.a) ? NAMES[d.el.a] : pick(ELS[d.el.a].words)} ${noun}`;
   }
-  function purposeOf(d) {
-    let ps = [];
+  // every problem the pieces could solve: payload and status first, then shape and targets; the proxy's own list apart
+  function purposePool(d) {
+    const ps = [];
     d.pay.forEach(p => { if (p === 'Apply Status') ps.push(...(STATUS[d.status]?.[2] || [])); else ps.push(...PURPOSE[p]); });
     if (payKinds(d).includes('harm')) ps.push(...(PURPOSE_SHAPE[d.shape] || []));
     if (d.targets.includes('Environment')) ps.push('Barricade blocks the path');
+    return [...new Set(ps)];
+  }
+  function purposeOf(d) {
     const extra = PURPOSE_PROXY[d.proxy] ? [pick(PURPOSE_PROXY[d.proxy])] : [];
-    ps = [...new Set(ps)];
-    return [...some(ps, R() < .5 ? 1 : 2), ...extra].slice(0, 3);
+    return [...some(purposePool(d), R() < .5 ? 1 : 2), ...extra].slice(0, 3);
   }
   function keysOf(d) {
     const k = [];
@@ -275,6 +280,82 @@
     return `${verb} ${a} ${d.pack.toLowerCase()}${where}${cast}${self && tg.length ? ' (you included)' : ''} to ${eff.join(' and ')}.`;
   }
 
+  // ---------- setting pieces by hand: click a column and its tray lists every piece ----------
+  const KEYS = ['Burst Damage', 'Sustained Damage', 'CC', 'Snare', 'Interrupt', 'Disruption', 'Debuff', 'AoE', 'Healing', 'Protection', 'Buff', 'Mobility', 'Summon', 'Zone Control', 'Stealth'];
+  const STRUCT = ['shape', 'proxy', 'pay', 'targets', 'cast', 'cond'];
+  const clone = d => JSON.parse(JSON.stringify(d));
+  const byOrder = list => (a, b) => list.indexOf(a) - list.indexOf(b);
+  // toggle v in a list with min 1 and max n entries (a full list swaps its last entry)
+  function toggle(list, v, n, order) {
+    let l = list.slice();
+    if (l.includes(v)) { if (l.length < 2) return null; l = l.filter(q => q !== v); }
+    else { if (l.length >= n) l[l.length - 1] = v; else l.push(v); }
+    return order ? l.sort(byOrder(order)) : l;
+  }
+  const one = (key, v) => x => { x[key] = v; };
+  const many = (key, v, n, order) => x => { const l = toggle(x[key], v, n, order); if (!l) return false; x[key] = l; };
+  function payTo(x, v) {
+    const p = toggle(x.pay, v, 2);
+    if (!p) return false;
+    p.sort((a, b) => (a === 'Apply Status') - (b === 'Apply Status'));
+    x.pay = p;
+    if (!has(x, 'Apply Status')) x.status = null;
+    else if (!x.status) { const k = p.filter(q => q !== 'Apply Status').map(kind); x.status = k.includes('help') ? 'Regenerating' : k.includes('harm') || k.includes('move') ? 'Weakened' : 'Burning'; }
+  }
+  const TRAY_HEAD = { shape: 'pick one', proxy: 'pick one', pay: 'pick 1 or 2', targets: 'pick one or more', cast: 'pick 1 or 2', cond: 'pick one', purpose: 'pick up to 3', pack: 'pick one (or type your own below)', keys: 'pick up to 4' };
+  // the tray for column c: sections of items { v, sel, apply(x), clash, hint }
+  function trayOf(c, d) {
+    const S = (label, items) => ({ label, items });
+    const it = (v, sel, apply, hint) => ({ v, sel, apply, hint });
+    let secs;
+    if (c === 'shape') secs = [S('', SHAPES.map(v => it(v, d.shape === v, one('shape', v))))];
+    if (c === 'proxy') secs = [S('', PROXIES.map(v => it(v, d.proxy === v, one('proxy', v))))];
+    if (c === 'pay') {
+      secs = [S('Payload', PAYLOADS.map(v => it(v, has(d, v), x => payTo(x, v))))];
+      if (has(d, 'Apply Status')) {
+        const st = v => it(v, d.status === v, one('status', v));
+        secs.push(S('Harms', Object.keys(STATUS).filter(k => STATUS[k][0]).map(st)), S('Helps', Object.keys(STATUS).filter(k => !STATUS[k][0]).map(st)));
+      }
+    }
+    if (c === 'targets') secs = [S('', TARGETS.map(v => it(v, d.targets.includes(v), many('targets', v, 4, TARGETS))))];
+    if (c === 'cast') secs = [S('', CASTS.map(v => it(v, d.cast.includes(v), many('cast', v, 2, CASTS))))];
+    if (c === 'cond') {
+      const cd = (k, v) => it(v, d.cond.v === v, x => { x.cond = { k, v }; });
+      secs = [S('Cost', [cd('none', 'None'), ...RESOURCES.map(v => cd('res', v))]), S('Needs', [...NEEDS_HARM, ...NEEDS_HELP].map(v => cd('stat', v)))];
+    }
+    if (c === 'purpose') {
+      const pool = [...new Set([...purposePool(d), ...(PURPOSE_PROXY[d.proxy] || []), ...d.purpose])];
+      secs = [S('', pool.map(v => it(v, d.purpose.includes(v), many('purpose', v, 3))))];
+    }
+    if (c === 'pack') {
+      const pool = [...new Set([d.pack, ...packNouns(d).map(n => packWith(d, n))])];
+      secs = [S('', pool.map(v => it(v, d.pack === v, x => { x.pack = v; delete x.pitch; })))];
+    }
+    if (c === 'keys') {
+      const fit = keysOf(d);
+      secs = [S('', [...new Set([...KEYS, ...d.keys])].map(v => it(v, d.keys.includes(v), many('keys', v, 4), fit.includes(v))))];
+    }
+    // ? marks a piece that would add a clash to the pieces already set
+    const now = clashes(d).length;
+    if (STRUCT.includes(c)) secs.forEach(s => s.items.forEach(i => { if (i.sel) return; const x = clone(d); if (i.apply(x) === false) return; i.clash = clashes(x).length > now; }));
+    return { c, secs };
+  }
+  // after a piece changes, refresh the columns that follow from it (unless locked)
+  function refit(d, c, lock, e) {
+    if (!d.el) d.el = { a: e.a, b: e.b };
+    if (d.show) delete d.show[c];
+    if (c !== 'pack' && c !== 'purpose' && c !== 'keys') delete d.pitch;
+    if (STRUCT.includes(c)) {
+      if (!lock.keys) { d.keys = keysOf(d); if (d.show) delete d.show.keys; }
+      if (!lock.purpose) { const pool = [...purposePool(d), ...(PURPOSE_PROXY[d.proxy] || [])]; if (!d.purpose.every(p => pool.includes(p))) d.purpose = purposeOf(d); }
+      if (!lock.pack && ['proxy', 'shape', 'pay'].includes(c)) d.pack = packOf(d);
+      if (!lock.name && ['proxy', 'pay'].includes(c)) { d.name = nameOf(d); ['icon', 'pic'].forEach(k => delete d[k]); d.gi = ELS[d.el.a].gi; d.gcol = ELS[d.el.a].col; d.game = 'Your game'; }
+      if (!d.elName) d.elName = [d.el.a, d.el.b].filter(Boolean).map(k => NAMES[k]).join(' + ');
+    }
+    d.clash = clashes(d);
+    return d;
+  }
+
   // ---------- the walk-through: the deck's two examples, three rolls, a locked payload, then wild ----------
   R = mulberry(74);
   const PT = [[0, -.9], [0, .9], [.9, 0], [-.5, .45]];
@@ -290,15 +371,18 @@
     [18, T2, LK, '🔒 Lock Payload and Valid Targets, drag the point to <b>Earth</b>: same job, in a heavy, defensive delivery.', PT[1]],
     [22, T3, LK, 'Drag to <b>Plague</b>: the same payload a third way. One payload, a family of spells across your elements.', PT[2]],
     [26, T4, {}, 'Wild mode, between Chemical and Earth: any combination. The clashes become prompts to answer.', PT[3]],
+    [31, T3, LK, '✋ Or set pieces by hand: click a column to open its tray. A <b>?</b> marks a piece that clashes with the rest.', PT[2], 'pay'],
   ];
-  const DUR = 31;
+  const TOUR_TRAY = trayOf('pay', T3);
+  const DUR = 37;
 
   const MX = 864, MY = 452, MR = 76;
   const NOTE = '#7fd7c6', HEAD = '#c9ec9b', ORANGE = '#f6a96b', CX = j => 189 + j * 99, NY = i => 120 + i * 54;
   function view(t, st, tour) {
-    if (!tour) return { d: st.d, prev: st.prev, at: st.at, lock: st.lock, i: -1, pt: st.pt };
+    if (!tour) return { d: st.d, prev: st.prev, at: st.at, lock: st.lock, i: -1, pt: st.pt, tray: st.tray };
     let i = 0; while (i + 1 < TOUR.length && t >= TOUR[i + 1][0]) i++;
-    return { d: TOUR[i][1], prev: i ? TOUR[i - 1][1] : null, at: TOUR[i][0] + (i < 2 ? .2 : 0), lock: TOUR[i][2], i, slow: i < 2, pt: TOUR[i][4] };
+    const tray = TOUR[i][5] ? TOUR_TRAY : null;
+    return { d: TOUR[i][1], prev: tray ? TOUR[i][1] : i ? TOUR[i - 1][1] : null, at: TOUR[i][0] + (i < 2 ? .2 : 0), lock: TOUR[i][2], i, slow: i < 2, pt: TOUR[i][4], tray };
   }
   function lockIcon(g, x, y, on) {
     g.save(); g.strokeStyle = on ? C.goldInk : 'rgba(93,97,140,.45)'; g.fillStyle = on ? C.gold : 'rgba(255,250,240,.9)'; g.lineWidth = 2;
@@ -316,21 +400,70 @@
     g.restore();
   }
 
+  // the tray: every piece of one column as a pill; returns hit boxes [x, y, w, h, act]
+  function pill(g, s, x, y, o) {
+    g.save(); g.font = `${o.sel ? 700 : 600} ${o.size}px Jost, sans-serif`;
+    const q = o.clash ? 16 : 0, w = g.measureText(s).width + 18 + q, h = o.size * 1.8;
+    if (o.draw !== false) {
+      g.fillStyle = o.sel ? NOTE : o.hint ? '#d4eff1' : '#fffaf0'; g.strokeStyle = o.sel ? C.navy : o.clash ? '#e0a92d' : '#cdbf9f'; g.lineWidth = o.sel ? 2.5 : 2;
+      if (o.clash) g.setLineDash([4, 3]);
+      g.beginPath(); g.roundRect(x, y - h / 2, w, h, 7); g.fill(); g.stroke(); g.setLineDash([]);
+      if (o.clash) text(g, '?', x + 12, y + 1, { size: o.size, w: 800, col: C.goldInk });
+      g.fillStyle = o.clash ? C.goldInk : C.navy; g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillText(s, x + 9 + q, y + 1);
+    }
+    g.restore();
+    return [w, h];
+  }
+  function drawTray(g, tray, d, k) {
+    const hits = [], head = COLS.find(([c]) => c === tray.c)[1];
+    panel(g, 8, 314, 676, 263, { title: '' });
+    g.save(); g.globalAlpha *= k;
+    text(g, `Set ${head}`, 26, 336, { size: 16, w: 800, display: true, align: 'left', col: C.navy });
+    g.save(); g.font = '800 16px Montserrat, Jost, sans-serif'; const hw = g.measureText(`Set ${head}`).width; g.restore();
+    text(g, TRAY_HEAD[tray.c], 26 + hw + 10, 337, { size: 12.5, w: 600, align: 'left', col: C.muted });
+    [['Reroll column', 'reroll', 548], ['Close', 'close', 636]].forEach(([s, act, x]) => { const w = chip(g, s, x, 336, { ...TONE.grey, size: 12.5 }); hits.push([x - w / 2, 336 - 12, w, 24, act]); });
+    // lay out: fall back to smaller pills when the pieces do not fit
+    for (const size of [16, 15, 14, 13, 12, 11]) {
+      const rows = [], lab = tray.secs.some(s => s.label) ? 78 : 26, x1 = 668, rh = size * 1.8 + 6;
+      let y = 376;
+      tray.secs.forEach(sec => {
+        let x = lab; if (sec.label) rows.push(['label', sec.label, 26, y]);
+        sec.items.forEach(i => { const [w] = pill(g, i.v, 0, 0, { size, sel: i.sel, clash: i.clash, draw: false }); if (x + w > x1 && x > lab) { x = lab; y += rh; } rows.push(['pill', i, x, y, w]); x += w + 6; });
+        y += rh + 4;
+      });
+      if (y > 548 && size > 11) continue;
+      rows.forEach(r => {
+        if (r[0] === 'label') { text(g, r[1], 26, r[3], { size: 11.5, w: 700, align: 'left', col: C.muted }); return; }
+        const [, i, x, yy] = r, [w, h] = pill(g, i.v, x, yy, { size, sel: i.sel, clash: i.clash, hint: i.hint });
+        hits.push([x, yy - h / 2, w, h, i]);
+      });
+      break;
+    }
+    const cl = clashes(d), any = tray.secs.some(s => s.items.some(i => i.clash)), fit = tray.secs.some(s => s.items.some(i => i.hint));
+    const foot = cl.length ? `Clash now: ${cl[0]}` : any ? '? marks a piece that clashes with the rest. Pick it anyway and the pitch names the clash.' : fit ? 'Shaded: keywords that follow from the pieces. Your pick locks this column.' : 'Your pick locks this column, so a roll fills in the others around it.';
+    wrap(g, foot, 26, 560, 640, { size: 12.5, w: 600, col: cl.length ? C.goldInk : C.muted });
+    g.restore();
+    return hits;
+  }
+
   scene('spell-ideas', {
     dur: DUR,
-    state: () => { const x = Math.random() * 1.6 - .8, y = (Math.random() * 2 - 1) * (1 - Math.abs(x)); return { d: null, prev: null, at: -9, lock: {}, two: true, wild: false, pt: [x, y], drag: false }; },
+    state: () => { const x = Math.random() * 1.6 - .8, y = (Math.random() * 2 - 1) * (1 - Math.abs(x)); return { d: null, prev: null, at: -9, lock: {}, two: true, wild: false, pt: [x, y], drag: false, tray: null, hits: [] }; },
     init(s, st, api) {
       loadNames();
       st.d = roll(null, {}, { two: true, pt: st.pt });
       const opt = () => ({ two: st.two, wild: st.wild, pt: st.pt });
-      const set = (d, keepPrev) => { api.manual(); st.prev = keepPrev === false ? null : st.d; st.d = d; st.at = st.t; fill(); };
+      const set = (d, keepPrev) => { api.manual(); st.prev = keepPrev === false ? null : st.d; st.d = d; st.at = st.t; if (st.tray) st.tray = trayOf(st.tray.c, d); fill(); };
+      // set one piece by hand: it locks that column and refreshes the columns that follow from it
+      const setPiece = (c, apply) => { const x = clone(st.d); if (apply(x) === false) return; st.lock = { ...st.lock, [c]: true }; set(refit(x, c, st.lock, elOf(st.pt))); };
+      const openTray = c => { api.manual(); st.tray = st.tray?.c === c ? null : trayOf(c, st.d); };
       const doRoll = lock => set(roll(st.d, lock || st.lock, opt()));
       $(s, '.si-roll').onclick = () => doRoll();
       $(s, '.si-unlock').onclick = () => { api.manual(); st.lock = {}; };
       $(s, '.si-wild').onchange = e => { st.wild = e.target.checked; doRoll(); };
       $(s, '.si-two').onchange = e => { st.two = e.target.checked; };
       const exBox = $(s, '.si-ex');
-      EX.forEach(e => { const b = document.createElement('button'); b.className = 'btn'; b.textContent = e.name; b.title = e.game; b.onclick = () => { st.lock = {}; set(JSON.parse(JSON.stringify(e)), false); }; exBox.appendChild(b); });
+      EX.forEach(e => { const b = document.createElement('button'); b.className = 'btn'; b.textContent = e.name; b.title = e.game; b.onclick = () => { st.lock = {}; const e2 = elOf(st.pt); set({ ...clone(e), el: { a: e2.a, b: e2.b } }, false); }; exBox.appendChild(b); });
       // write your own: typing locks that column so the next roll keeps it
       const fill = () => $$(s, '.si-in').forEach(inp => { if (document.activeElement === inp) return; const d = st.d; inp.value = { game: d.game, name: d.name, purpose: d.purpose.join(', '), pack: d.pack }[inp.dataset.k]; });
       $$(s, '.si-in').forEach(inp => inp.oninput = () => {
@@ -357,15 +490,25 @@
         if (st.drag) { let px = nx, py = ny; const m = Math.abs(px) + Math.abs(py); if (m > 1) { px /= m; py /= m; } st.pt = [px, py]; return; }
         if (type !== 'down') return;
         if (st.tour) { api.manual(); st.at = -9; }
+        if (st.tray) {
+          const h = st.hits.find(([hx, hy, hw, hh]) => x >= hx && x <= hx + hw && y >= hy && y <= hy + hh);
+          if (h) {
+            const c = st.tray.c, a = h[4];
+            if (a === 'close') st.tray = null;
+            else if (a === 'reroll') { const l = { name: st.lock.name }; COLS.forEach(([k]) => { if (k !== c) l[k] = true; }); doRoll(l); }
+            else if (!a.sel || ['pay', 'targets', 'cast', 'purpose', 'keys'].includes(c)) setPiece(c, a.apply);
+            return;
+          }
+        }
         if (inBox(x, y, 66, 166, 116, 220)) { const l = {}; COLS.forEach(([c]) => l[c] = true); doRoll(l); return; }
         COLS.forEach(([c], j) => {
           if (inBox(x, y, CX(j), 52, 94, 54)) { st.lock = { ...st.lock, [c]: !st.lock[c] }; }
-          else if (inBox(x, y, CX(j), 200, 94, 196)) { const l = { name: st.lock.name }; COLS.forEach(([k]) => { if (k !== c) l[k] = true; }); doRoll(l); }
+          else if (inBox(x, y, CX(j), 200, 94, 196)) openTray(c);
         });
       });
     },
     draw(g, t, st, tour) {
-      const { d, prev, at, lock, i: ti, slow, pt } = view(t, st, tour), since = t - at;
+      const { d, prev, at, lock, i: ti, slow, pt, tray } = view(t, st, tour), since = t - at;
       const N = notes(d), P = prev ? notes(prev) : null;
       panel(g, 8, 8, 1024, 296, { title: '' });
       // name column
@@ -382,6 +525,7 @@
       // the nine columns
       COLS.forEach(([c, h], j) => {
         const x = CX(j), on = !!lock[c];
+        if (tray?.c === c) { g.save(); g.fillStyle = 'rgba(21,32,68,.08)'; g.strokeStyle = C.navy; g.lineWidth = 2.5; g.beginPath(); g.roundRect(x - 50, 92, 100, 206, 8); g.fill(); g.stroke(); g.restore(); }
         g.fillStyle = HEAD; g.fillRect(x - 46, 25, 92, 54);
         if (on) { g.strokeStyle = C.gold; g.lineWidth = 4; g.strokeRect(x - 48, 23, 96, 58); }
         const hl = wrap(g, h, 0, 0, 80, { size: 12, w: 700, draw: false });
@@ -395,8 +539,9 @@
         });
       });
       // the pitch
-      const kP = ease(clamp((since - (slow ? 5.4 : .8)) / .4));
-      panel(g, 8, 314, 676, 263, { title: d.clash.length ? 'The pitch, and the clashes to answer' : 'The pitch' });
+      if (tray) { const h = drawTray(g, tray, d, tour ? ease(clamp((t - TOUR[ti][0]) / .4)) : 1); if (!tour) st.hits = h; }
+      const kP = tray ? 0 : ease(clamp((since - (slow ? 5.4 : .8)) / .4));
+      if (!tray) panel(g, 8, 314, 676, 263, { title: d.clash.length ? 'The pitch, and the clashes to answer' : 'The pitch' });
       g.save(); g.globalAlpha = kP;
       text(g, d.name, 30, 360, { size: 26, w: 800, display: true, align: 'left', col: C.navy });
       text(g, d.elName ? `${d.game} · ${d.elName}` : d.game, 30, 388, { size: 13, w: 600, align: 'left', col: C.muted });
@@ -421,7 +566,7 @@
         else { const ly = k === 'top' ? y - 6 : y + 2; text(g, NAMES[k], x + 26, ly, { size: 13.5, w: 800, display: true, col: E.col, align: 'left' }); text(g, E.ax, x + 26, ly + 15, { size: 9.5, col: C.muted, align: 'left' }); }
       });
       if (pt) { g.save(); g.fillStyle = C.gold; g.strokeStyle = C.navy; g.lineWidth = 2.5; g.beginPath(); g.arc(MX + pt[0] * MR, MY + pt[1] * MR, 9, 0, Math.PI * 2); g.fill(); g.stroke(); g.restore(); }
-      if (tour && ti >= 0) text(g, ti < 2 ? 'Worked example' : ti < 5 ? 'Coherent roll' : 'Wild roll', 1018, 330, { size: 12, w: 700, align: 'right', col: C.muted });
+      if (tour && ti >= 0) text(g, ti < 2 ? 'Worked example' : ti < 5 ? 'Coherent roll' : ti < 6 ? 'Wild roll' : 'Set by hand', 1018, 330, { size: 12, w: 700, align: 'right', col: C.muted });
     },
     side(t, st, tour) {
       if (tour) { let i = 0; while (i + 1 < TOUR.length && t >= TOUR[i + 1][0]) i++; return { out: TOUR[i][3] }; }
