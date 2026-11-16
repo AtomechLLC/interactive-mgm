@@ -8,7 +8,7 @@
    The theme comes from the Elemental Diamond (slide 257): drag the point between Lightning, Earth, Chemical and Plague. The
    nearest corner (and a close second) names and colours the spell; the axes tilt the draw: up is offensive (damage, charge,
    teleport, missiles, beams), down is defensive (shield, heal, stun, knockback, pets, traps), left prefers physical statuses,
-   right prefers mental ones. Corner names are shared with the Elemental Diamond slide through localStorage, so a learner's
+   right prefers mental ones. Corner names are shared between the two copies of this slide through localStorage, so a learner's
    renamed diamond themes their spells; the tilt follows the corner's position, not its name. */
 (function () {
   const { $, $$ } = FPF.kit;
@@ -341,7 +341,7 @@
         if (k === 'game') { d.game = v || 'Your game'; st.lock.name = true; }
       });
       fill();
-      // the diamond's corner names, shared with the Elemental Diamond slide
+      // the diamond's corner names, shared between both copies of this slide
       $$(s, '.si-el').forEach(inp => { inp.value = NAMES[inp.dataset.k]; inp.oninput = () => { api.manual(); NAMES[inp.dataset.k] = inp.value.trim() || ELS[inp.dataset.k].def; saveNames(); }; });
       $(s, '.si-el-reset').onclick = () => { SLOTS.forEach(k => NAMES[k] = ELS[k].def); saveNames(); $$(s, '.si-el').forEach(inp => inp.value = NAMES[inp.dataset.k]); doRoll(); };
       $(s, '.si-copy').onclick = () => {

@@ -5,8 +5,7 @@
    'two-make-nine' (242-244): the Counter Circle times the Teamplay Timing framework (Proactive before, Coactive during,
    Reactive after the event) gives the nine fundamentals.
    'duel-timeline' (244, 246-254): one enemy attack at a time, and a player action before, during or after it; the cell it
-   belongs to lights. Examples are the notes' own.
-   'elemental-diamond' (257): four elements on two axes. Drag the point; or rename everything and save your own. */
+   belongs to lights. Examples are the notes' own. */
 (function () {
   const { $, $$ } = FPF.kit;
   const { pic, icon, text, wrap, card, chip, TONE, panel, scene, pointer, inBox, clamp, ease, lerp, arrow } = CK;
@@ -155,68 +154,4 @@
     side(t) { const i = Math.floor(t / BL) % BEATS.length; return { out: `<b>${BEATS[i][2]}</b>: ${BEATS[i][3]}.` }; },
   });
 
-  // ---------- elemental diamond ----------
-  const DX = 340, DY = 300, DR = 196;
-  const DEF = { top: 'Lightning', bottom: 'Earth', left: 'Chemical', right: 'Plague', topAx: 'Light · Ethereal · Offensive', bottomAx: 'Heavy · Hard · Defensive', leftAx: 'Inorganic · Corrosion · Physical effects', rightAx: 'Organic · Infection · Mental effects' };
-  const ICON = { top: ['lightning-arc', '#d6aa28'], bottom: ['earth-crack', '#8a5a2a'], left: ['acid', '#4c9a52'], right: ['biohazard', '#8a4fd6'] };
-  const DTOUR = [[0, 0], [0, -.9], [.85, -.1], [0, .9], [-.85, .05], [.4, -.45], [-.3, .5], [0, 0]];
-  function dview(t, st, tour) { if (!tour) return st.p; const i = Math.floor(t / 1.6) % (DTOUR.length - 1), k = ease(ph(t - i * 1.6, 0, 1)); return [lerp(DTOUR[i][0], DTOUR[i + 1][0], k), lerp(DTOUR[i][1], DTOUR[i + 1][1], k)]; }
-  function lean(p, L) {
-    const [x, y] = p, w = { top: Math.max(0, -y), bottom: Math.max(0, y), left: Math.max(0, -x), right: Math.max(0, x) };
-    const near = Object.entries(w).sort((a, b) => b[1] - a[1]);
-    const v = y < -.15 ? L.topAx.split(' · ').pop().toLowerCase() : y > .15 ? L.bottomAx.split(' · ').pop().toLowerCase() : 'balanced';
-    const h = x < -.15 ? L.leftAx.split(' · ')[0].toLowerCase() : x > .15 ? L.rightAx.split(' · ')[0].toLowerCase() : 'between';
-    return { near: near[0][1] < .2 ? null : near[0][0], v, h, w };
-  }
-  // the learner's diamond is kept in this browser, so the spell idea generator on the next slide themes its spells with it
-  const LS = 'mgm-elemental-diamond';
-  const loadL = () => { try { const o = JSON.parse(localStorage.getItem(LS)) || {}; const L = { ...DEF }; Object.keys(DEF).forEach(k => { if (typeof o[k] === 'string' && o[k].trim()) L[k] = o[k]; }); return L; } catch (e) { return { ...DEF }; } };
-  const saveL = L => { try { localStorage.setItem(LS, JSON.stringify(L)); } catch (e) { /* private window */ } };
-  scene('elemental-diamond', {
-    dur: 11.2,
-    state: () => ({ p: [.4, -.4], L: loadL(), drag: false }),
-    init(s, st, api) {
-      pointer(api.cv, (x, y, type) => {
-        const nx = (x - DX) / DR, ny = (y - DY) / DR;
-        if (type === 'down' && Math.abs(nx) + Math.abs(ny) <= 1.15) { api.manual(); st.drag = true; }
-        if (type === 'up') st.drag = false;
-        if (st.drag && (type === 'down' || type === 'move')) { let px = nx, py = ny; const d = Math.abs(px) + Math.abs(py); if (d > 1) { px /= d; py /= d; } st.p = [px, py]; }
-      });
-      $$(s, '.ed-in').forEach(inp => { inp.value = st.L[inp.dataset.k]; inp.oninput = () => { api.manual(); st.L[inp.dataset.k] = inp.value || '…'; saveL(st.L); }; });
-      $(s, '.ed-reset').onclick = () => { st.L = { ...DEF }; saveL(st.L); $$(s, '.ed-in').forEach(inp => inp.value = st.L[inp.dataset.k]); };
-      $(s, '.ed-save').onclick = () => { const a = document.createElement('a'); a.href = api.cv.toDataURL('image/png'); a.download = 'my-elemental-diamond.png'; a.click(); };
-    },
-    draw(g, t, st, tour) {
-      const L = tour ? DEF : st.L, p = dview(t, st, tour), ln = lean(p, L);
-      // axes
-      g.strokeStyle = 'rgba(93,97,140,.35)'; g.lineWidth = 2; g.setLineDash([6, 6]); g.beginPath(); g.moveTo(DX, DY - DR - 30); g.lineTo(DX, DY + DR + 30); g.moveTo(DX - DR - 30, DY); g.lineTo(DX + DR + 30, DY); g.stroke(); g.setLineDash([]);
-      g.fillStyle = 'rgba(255,250,240,.7)'; g.strokeStyle = C.navy; g.lineWidth = 3; g.beginPath(); g.moveTo(DX, DY - DR); g.lineTo(DX + DR, DY); g.lineTo(DX, DY + DR); g.lineTo(DX - DR, DY); g.closePath(); g.fill(); g.stroke();
-      // corners
-      [['top', DX, DY - DR], ['right', DX + DR, DY], ['bottom', DX, DY + DR], ['left', DX - DR, DY]].forEach(([k, x, y]) => {
-        const on = ln.near === k, [gi, col] = ICON[k];
-        g.fillStyle = on ? col : '#fffaf0'; g.strokeStyle = col; g.lineWidth = 4; g.beginPath(); g.arc(x, y, 40, 0, TAU); g.fill(); g.stroke();
-        GI.draw(g, gi, x, y, 46, on ? '#fff' : col);
-        const side = k === 'left' || k === 'right', lx = side ? x : x + 50, ly = side ? y + 60 : y;
-        text(g, L[k], lx, ly, { size: 20, w: 800, display: true, col, align: side ? 'center' : 'left' });
-      });
-      // axis ends
-      text(g, L.topAx, DX, 34, { size: 13, w: 700, col: C.muted });
-      text(g, L.bottomAx, DX, 568, { size: 13, w: 700, col: C.muted });
-      g.save(); g.translate(28, DY); g.rotate(-Math.PI / 2); text(g, L.leftAx, 0, 0, { size: 13, w: 700, col: C.muted }); g.restore();
-      g.save(); g.translate(652, DY); g.rotate(Math.PI / 2); text(g, L.rightAx, 0, 0, { size: 13, w: 700, col: C.muted }); g.restore();
-      // the point
-      const px = DX + p[0] * DR, py = DY + p[1] * DR;
-      g.fillStyle = C.gold; g.strokeStyle = C.navy; g.lineWidth = 3; g.beginPath(); g.arc(px, py, 14, 0, TAU); g.fill(); g.stroke();
-      // readout
-      panel(g, 690, 14, 336, 558, { title: 'Where this point sits' });
-      text(g, ln.near ? L[ln.near] : 'In between', 858, 84, { size: 28, w: 800, display: true, col: ln.near ? ICON[ln.near][1] : C.navy });
-      text(g, `Leans ${ln.v}, ${ln.h}`, 858, 118, { size: 15, w: 700, col: C.ink });
-      ['top', 'right', 'bottom', 'left'].forEach((k, j) => {
-        const y = 176 + j * 52, v = clamp(ln.w[k]); text(g, L[k], 712, y, { align: 'left', size: 14, w: 800, col: ICON[k][1] });
-        g.fillStyle = 'rgba(21,32,68,.12)'; g.fillRect(820, y - 8, 180, 16); g.fillStyle = ICON[k][1]; g.fillRect(820, y - 8, 180 * v, 16);
-      });
-      wrap(g, '“You need to sit down and develop your frameworks, tools, and keywords yourself.” Rename the corners and axes for your own game, then save it.', 712, 410, 296, { size: 14, lh: 18, col: C.navy, w: 700 });
-    },
-    side(t, st, tour) { const ln = lean(dview(t, st, tour), tour ? DEF : st.L), L = tour ? DEF : st.L; return { out: `${ln.near ? `<b>${L[ln.near]}</b>` : 'Between elements'}: leans ${ln.v}, ${ln.h}.` }; },
-  });
 })();
