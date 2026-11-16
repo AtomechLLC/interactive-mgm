@@ -54,9 +54,11 @@ rec 'counter-circle/index.html#4' two-make-nine two-frameworks-make-nine
 rec 'counter-circle/index.html#5' duel-timeline duel-timeline
 rec 'counter-circle/index.html#6' elemental-diamond elemental-diamond
 rec 'whats-next/index.html#1' challenge-loop challenges-first-then-tools
-rec 'whats-next/index.html#2' course-map where-to-go-next
-rec 'whats-next/index.html#3' framework-kit framework-kit
-rec 'whats-next/index.html#4' boss-fight build-the-boss-audit-the-kit
+rec 'whats-next/index.html#2' pf-moba problem-first-moba
+rec 'whats-next/index.html#3' pf-battler problem-first-creature-battler
+rec 'whats-next/index.html#4' pf-raid problem-first-mmo-raid
+rec 'whats-next/index.html#5' pf-towers problem-first-tower-defense
+rec 'whats-next/index.html#6' pf-cards problem-first-deckbuilder
 rec 'audits/index.html#1' audit-subnautica audit-subnautica
 rec 'audits/index.html#2' audit-god-of-war audit-god-of-war
 rec 'audits/index.html#3' audit-cyberpunk audit-cyberpunk
