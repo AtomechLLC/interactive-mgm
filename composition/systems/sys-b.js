@@ -1,6 +1,4 @@
 /* Design skeletons (MGM C4 M7, deck slides 215-222).
-   'owl' (217): the slide's joke, "1. Draw some circles. 2. Draw the rest of the owl", then the same owl with a skeleton:
-   the parts named first and filled one by one. "A design skeleton is like a sketch before you fill in details."
    'sf2-skeleton' (220): "Street Fighter has 6 attack buttons, meaning that each character has 6 standing moves, 6 crouching
    moves, and 6 jumping moves. On top of this, each character has 3 special moves, and a super." Specials and supers are
    from Super Street Fighter II Turbo; where a character has fewer than three specials, the slot stays open.
@@ -11,48 +9,6 @@
   const { icon, text, wrap, card, chip, TONE, panel, scene, pointer, inBox, clamp, ease, lerp } = CK;
   const T = TD, C = TD.C, TAU = Math.PI * 2;
   const ph = (t, a, b) => clamp((t - a) / (b - a));
-
-  // ---------- draw the rest of the owl ----------
-  // parts in skeleton order: [name, draw(g, k)]
-  const BR = '#7a5a3a', LT = '#c9a77a', DK = '#4a3420';
-  const PARTS = [
-    ['Body', (g, x, y) => { g.fillStyle = LT; g.beginPath(); g.ellipse(x, y + 50, 72, 100, 0, 0, TAU); g.fill(); }],
-    ['Head', (g, x, y) => { g.fillStyle = BR; g.beginPath(); g.ellipse(x, y - 70, 66, 56, 0, 0, TAU); g.fill(); g.beginPath(); g.moveTo(x - 58, y - 100); g.lineTo(x - 46, y - 150); g.lineTo(x - 26, y - 112); g.fill(); g.beginPath(); g.moveTo(x + 58, y - 100); g.lineTo(x + 46, y - 150); g.lineTo(x + 26, y - 112); g.fill(); }],
-    ['Eyes', (g, x, y) => { [-26, 26].forEach(dx => { g.fillStyle = '#f2d36b'; g.beginPath(); g.arc(x + dx, y - 74, 19, 0, TAU); g.fill(); g.fillStyle = '#111'; g.beginPath(); g.arc(x + dx, y - 74, 9, 0, TAU); g.fill(); }); g.fillStyle = '#e3a33a'; g.beginPath(); g.moveTo(x - 8, y - 54); g.lineTo(x + 8, y - 54); g.lineTo(x, y - 36); g.fill(); }],
-    ['Wings', (g, x, y) => { g.fillStyle = DK; [-1, 1].forEach(s => { g.beginPath(); g.ellipse(x + s * 62, y + 40, 30, 86, s * .15, 0, TAU); g.fill(); }); }],
-    ['Feathers', (g, x, y) => { g.strokeStyle = BR; g.lineWidth = 2; for (let r = 0; r < 5; r++) for (let c = -2; c <= 2; c++) { const fx = x + c * 22 + (r % 2) * 11, fy = y + 10 + r * 28; g.beginPath(); g.arc(fx, fy, 9, .2, Math.PI - .2); g.stroke(); } }],
-    ['Feet and branch', (g, x, y) => { g.fillStyle = '#6b4a2a'; g.fillRect(x - 160, y + 150, 320, 18); g.fillStyle = '#e3a33a'; [-24, 24].forEach(dx => { for (let k = -1; k <= 1; k++) { g.beginPath(); g.ellipse(x + dx + k * 8, y + 150, 4, 9, 0, 0, TAU); g.fill(); } }); }],
-  ];
-  function circles(g, x, y, k) {
-    g.strokeStyle = 'rgba(90,90,100,.75)'; g.lineWidth = 2.5;
-    [[x, y - 70, 64, 56], [x, y + 50, 76, 102]].forEach(([cx, cy, rx, ry], i) => { const kk = clamp(k * 2 - i); if (kk <= 0) return; for (let p = 0; p < 2; p++) { g.beginPath(); g.ellipse(cx + p * 4, cy - p * 3, rx - p * 3, ry + p * 4, p * .05, 0, TAU * kk); g.stroke(); } });
-  }
-  scene('owl', {
-    dur: 16,
-    draw(g, t) {
-      // left: the joke
-      panel(g, 14, 14, 500, 558, { title: 'How to draw an owl' });
-      const L = 264, Y = 270;
-      text(g, '1. Draw some circles', 140, 520, { size: 16, w: 700 });
-      text(g, '2. Draw the rest of the owl', 380, 520, { size: 16, w: 700, a: t > 2.4 ? 1 : .3 });
-      if (t < 2.4) circles(g, L, Y, ph(t, .3, 1.8));
-      else { g.save(); g.translate(L, Y); g.scale(.95, .95); PARTS.forEach(([, d]) => d(g, 0, 0)); g.restore(); if (t < 4.5) text(g, '…wait, how?', L, 70, { size: 20, w: 800, col: C.redDk, a: ph(t, 2.6, 2.9) }); }
-      // right: with a skeleton
-      panel(g, 526, 14, 500, 558, { title: 'With a design skeleton' });
-      const R = 668, k0 = ph(t, 4.5, 5.2);
-      g.save(); g.globalAlpha = k0;
-      circles(g, R, Y, 1);
-      PARTS.forEach(([n, d], i) => {
-        const at = 5.6 + i * 1.3, on = t >= at, k = ease(ph(t, at, at + .5)), y = 70 + i * 66;
-        card(g, 930, y, 170, 50, { fill: on ? '#d8f0df' : 'rgba(255,250,240,.6)', edge: on ? '#5fb47c' : '#cdbf9f', shadow: false, r: 8, lw: 2 });
-        text(g, n, 930, y, { size: 15, w: 800, col: on ? C.good : C.muted });
-        if (k > 0) { g.save(); g.globalAlpha *= k; g.translate(R, Y); g.scale(.95, .95); d(g, 0, 0); g.restore(); }
-      });
-      g.restore();
-      if (t > 13.6) text(g, 'Name the parts first, then fill each one in.', 776, 520, { size: 16, w: 800, col: C.navy, a: ph(t, 13.6, 14) });
-    },
-    side(t) { return { out: t < 4.5 ? 'The joke on slide 217: the hard part is everything between the circles and the owl.' : 'A design skeleton lists the parts before any detail, so the work in between has a plan.' }; },
-  });
 
   // ---------- Street Fighter II skeleton ----------
   const BTN = ['Jab', 'Strong', 'Fierce', 'Short', 'Forward', 'Roundhouse'];
