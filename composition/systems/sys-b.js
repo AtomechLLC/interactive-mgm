@@ -11,56 +11,140 @@
   const ph = (t, a, b) => clamp((t - a) / (b - a));
 
   // ---------- Street Fighter II skeleton ----------
-  const BTN = ['Jab', 'Strong', 'Fierce', 'Short', 'Forward', 'Roundhouse'];
-  const POS = ['Standing', 'Crouching', 'Jumping'];
-  // [name, game-icons stand-in, colour, specials, super, reach 0-1, speed 0-1]
-  const CHARS = [
-    ['Ryu', 'fist', '#e8e2d0', ['Hadoken', 'Shoryuken', 'Tatsumaki Senpukyaku'], 'Shinku Hadoken', .5, .55],
-    ['Ken', 'fist', '#e05a3a', ['Hadoken', 'Shoryuken', 'Tatsumaki Senpukyaku'], 'Shoryureppa', .5, .6],
-    ['Chun-Li', 'high-kick', '#3d6ee8', ['Kikoken', 'Hyakuretsukyaku', 'Spinning Bird Kick'], 'Senretsukyaku', .55, .8],
-    ['Guile', 'boot-kick', '#4c9a52', ['Sonic Boom', 'Flash Kick', null], 'Double Flash', .6, .5],
-    ['Zangief', 'punch-blast', '#c2412c', ['Spinning Piledriver', 'Double Lariat', 'Banishing Flat'], 'Final Atomic Buster', .3, .3],
-    ['Blanka', 'lightning-arc', '#5aa84a', ['Electric Thunder', 'Rolling Attack', 'Vertical Rolling'], 'Ground Shave Rolling', .4, .7],
-    ['E. Honda', 'fist', '#3d4a9a', ['Hundred Hand Slap', 'Sumo Headbutt', 'Sumo Smash'], 'Oni-Musou', .4, .45],
-    ['Dhalsim', 'fire-ray', '#d0a020', ['Yoga Fire', 'Yoga Flame', 'Yoga Teleport'], 'Yoga Inferno', .95, .3],
+  // Every fighter gets the same 22 slots. What tells them apart is which jobs their three specials take on, so the
+  // slide lays the eight fighters side by side against those jobs; a job only one fighter fills is that fighter's identity.
+  // [key, label, game-icons glyph, tone]
+  const JOBS = [
+    ['proj', 'Projectile', 'fire-ray', TONE.orange],
+    ['aa', 'Anti-air', 'high-kick', TONE.blue],
+    ['rush', 'Rush in', 'sprint', TONE.red],
+    ['burst', 'Close burst', 'spiky-explosion', TONE.pink],
+    ['grab', 'Command throw', 'grab', TONE.green],
+    ['tele', 'Teleport', 'teleport', TONE.teal],
   ];
-  const rnd = s => { const x = Math.sin(s * 12.9898 + 78.233) * 43758.5453; return x - Math.floor(x); };
+  const JI = Object.fromEntries(JOBS.map((j, i) => [j[0], i]));
+  // specials are [name, short name, job, input]; null is an open slot. reach and walk speed are 1-5 tiers, read off play.
+  const CHARS = [
+    { n: 'Ryu', gi: 'fist', col: '#8a8270', arch: 'all-rounder', reach: 3, speed: 3,
+      sp: [['Hadoken', 'Hadoken', 'proj', '↓↘→ P'], ['Shoryuken', 'Shoryuken', 'aa', '→↓↘ P'], ['Tatsumaki Senpukyaku', 'Tatsumaki', 'rush', '↓↙← K']],
+      su: ['Shinku Hadoken', '↓↘→↓↘→ P'], only: 'The reference build: one special each for the three most common jobs. Ryu leans on the Hadoken to hold the opponent out.' },
+    { n: 'Ken', gi: 'punch-blast', col: '#e05a3a', arch: 'all-rounder, closer in', reach: 3, speed: 3,
+      sp: [['Hadoken', 'Hadoken', 'proj', '↓↘→ P'], ['Shoryuken', 'Shoryuken', 'aa', '→↓↘ P'], ['Tatsumaki Senpukyaku', 'Tatsumaki', 'rush', '↓↙← K']],
+      su: ['Shoryureppa', '↓↘→↓↘→ P'], only: 'Same row as Ryu. The difference sits inside the slots: his Shoryuken hits more times and his Tatsumaki travels further, so he plays closer.' },
+    { n: 'Chun-Li', gi: 'high-kick', col: '#3d6ee8', arch: 'speed and pokes', reach: 4, speed: 5,
+      sp: [['Kikoken', 'Kikoken', 'proj', '←↙↓↘→ P'], ['Hyakuretsukyaku', 'Hyakuretsukyaku', 'burst', 'mash K'], ['Spinning Bird Kick', 'Spinning Bird', 'rush', 'charge ↓↑ K']],
+      su: ['Senretsukyaku', 'charge ←→←→ K'], only: 'The fastest walker, with no anti-air special: she answers jumps with her long normals instead of a move.' },
+    { n: 'Guile', gi: 'sound-waves', col: '#4c9a52', arch: 'fortress', reach: 4, speed: 3,
+      sp: [['Sonic Boom', 'Sonic Boom', 'proj', 'charge ←→ P'], ['Flash Kick', 'Flash Kick', 'aa', 'charge ↓↑ K'], null],
+      su: ['Double Flash', 'charge ↙↘↙↗ K'], only: 'Two specials, so one slot stays open. Both are charge moves: he holds down-back and waits for the opponent to come to him.' },
+    { n: 'Zangief', gi: 'grapple', col: '#c2412c', arch: 'grappler', reach: 2, speed: 1,
+      sp: [['Spinning Piledriver', 'Piledriver', 'grab', '360 P'], ['Double Lariat', 'Double Lariat', 'aa', 'P P P'], ['Banishing Flat', 'Banishing Flat', 'rush', '→↘↓ P']],
+      su: ['Final Atomic Buster', '720 P'], only: 'The only command throw, and no projectile: he walks in slowly, and one correct read up close does heavy damage.' },
+    { n: 'Blanka', gi: 'lightning-arc', col: '#5aa84a', arch: 'wild card', reach: 3, speed: 4,
+      sp: [['Electric Thunder', 'Electric Thunder', 'burst', 'mash P'], ['Rolling Attack', 'Rolling Attack', 'rush', 'charge ←→ P'], ['Vertical Rolling', 'Vertical Rolling', 'aa', 'charge ↓↑ K']],
+      su: ['Ground Shave Rolling', 'charge ←→←→ P'], only: 'No projectile, but the most varied kit: a body rush across the screen, a roll upward and an electric burst up close.' },
+    { n: 'E. Honda', gi: 'heavy-fall', col: '#3d4a9a', arch: 'heavy rush', reach: 3, speed: 2,
+      sp: [['Hundred Hand Slap', 'Hundred Hand Slap', 'burst', 'mash P'], ['Sumo Headbutt', 'Headbutt', 'rush', 'charge ←→ P'], ['Sumo Smash', 'Sumo Smash', 'rush', 'charge ↓↑ K']],
+      su: ['Oni-Musou', 'charge ←→←→ P'], only: 'Two of three specials rush in, so he crosses the screen in one move, then stays there with the Hundred Hand Slap.' },
+    { n: 'Dhalsim', gi: 'flame', col: '#d0a020', arch: 'long-range zoner', reach: 5, speed: 1,
+      sp: [['Yoga Fire', 'Yoga Fire', 'proj', '↓↘→ P'], ['Yoga Flame', 'Yoga Flame', 'aa', '←↙↓↘→ P'], ['Yoga Teleport', 'Teleport', 'tele', '→↓↘ PPP']],
+      su: ['Yoga Inferno', '←↙↓↘→ ×2 P'], only: 'The only teleport and the longest limbs: his normals reach about half the screen, while he walks slowest.' },
+  ];
+  const has = (c, j) => c.sp.filter(m => m && m[2] === JOBS[j][0]);
+  const COUNT = JOBS.map((_, j) => CHARS.filter(c => has(c, j).length).length);
+  // matrix geometry
+  const MX0 = 206, MW = 104, RY0 = 126, RH = 35, RX = MX0 + MW * 6, SX = RX + 92;
+  const colX = j => MX0 + MW * j + MW / 2, rowY = i => RY0 + i * RH;
+  // the walk-through: each fighter in turn, then the two jobs only one fighter fills
+  function sview(t, st, tour) {
+    if (!tour) return st;
+    if (t < 12) { const c = Math.floor(t / 1.5); return { c, job: -1, at: c * 1.5 }; }
+    return t < 15 ? { c: 4, job: JI.grab, at: 12 } : { c: 7, job: JI.tele, at: 15 };
+  }
+  function fit(g, s, w, size, weight = 700) { g.save(); let k = size; g.font = `${weight} ${k}px Jost, sans-serif`; while (k > 8.5 && g.measureText(s).width > w) { k -= .5; g.font = `${weight} ${k}px Jost, sans-serif`; } g.restore(); return k; }
+  function pips(g, x, y, n, col) { for (let q = 0; q < 5; q++) { g.fillStyle = q < n ? col : 'rgba(150,140,115,.22)'; g.beginPath(); g.roundRect(x + q * 13, y - 5, 10, 10, 2); g.fill(); } }
 
   scene('sf2-skeleton', {
-    dur: 16,
-    state: () => ({ c: 0, at: 0 }),
-    init(s, st, api) { pointer(api.cv, (x, y, type) => { if (type !== 'down') return; CHARS.forEach((_, i) => { if (inBox(x, y, 70 + (i % 2) * 112, 96 + Math.floor(i / 2) * 116, 104, 108)) { api.manual(); st.c = i; st.at = st.t; } }); }); },
-    draw(g, t, st, tour) {
-      const ci = tour ? Math.floor(t / 2) % CHARS.length : st.c, at = tour ? Math.floor(t / 2) * 2 : st.at, s = t - at, [n, gi, col, sp, su, reach, speed] = CHARS[ci];
-      panel(g, 14, 14, 236, 558, { title: 'Character select' });
-      CHARS.forEach(([cn, cg, cc], i) => {
-        const x = 70 + (i % 2) * 112, y = 96 + Math.floor(i / 2) * 116, on = i === ci;
-        card(g, x, y, 104, 108, { fill: on ? '#fffaf0' : '#f3eee2', edge: on ? C.gold : '#cdbf9f', lw: on ? 5 : 2, shadow: false, r: 8 });
-        GI.draw(g, cg, x, y - 12, 50, cc === '#e8e2d0' ? '#8a8270' : cc);
-        text(g, cn, x, y + 36, { size: 13.5, w: 800 });
+    dur: 18,
+    state: () => ({ c: 0, job: -1, at: 0 }),
+    init(s, st, api) {
+      pointer(api.cv, (x, y, type) => {
+        if (type !== 'down') return;
+        JOBS.forEach((_, j) => { if (inBox(x, y, colX(j), 70, MW - 4, 56)) { api.manual(); st.job = st.job === j ? -1 : j; } });
+        CHARS.forEach((_, i) => { if (y > rowY(i) - RH / 2 && y < rowY(i) + RH / 2 && x > 22 && x < 1018) { api.manual(); if (st.c !== i) st.at = st.t; st.c = i; } });
       });
-      // the template: 18 normals, 3 specials, 1 super
-      panel(g, 262, 14, 764, 558, { title: `${n}: the same 22 slots as everyone` });
-      BTN.forEach((b, j) => text(g, b, 404 + j * 104, 58, { size: 13, w: 800, col: j < 3 ? '#8a1c15' : '#23306e' }));
-      POS.forEach((p, r) => {
-        const y = 100 + r * 66; text(g, p, 286, y, { align: 'left', size: 13, w: 800 });
-        BTN.forEach((b, j) => {
-          const x = 404 + j * 104, k = ease(ph(s, .1 + (r * 6 + j) * .03, .35 + (r * 6 + j) * .03)), rr = clamp(reach * .7 + rnd(ci * 31 + r * 7 + j) * .45), sp2 = clamp(speed * .6 + rnd(ci * 17 + r * 5 + j * 3) * .5) * (j % 3 === 0 ? 1.1 : j % 3 === 1 ? .8 : .55);
-          card(g, x, y, 96, 54, { edge: '#cdbf9f', shadow: false, r: 8, lw: 2 });
-          g.save(); g.globalAlpha = k;
-          text(g, 'reach', x - 40, y - 10, { align: 'left', size: 9.5, col: C.muted }); g.fillStyle = col === '#e8e2d0' ? '#8a8270' : col; g.fillRect(x - 6, y - 14, 46 * rr, 7);
-          text(g, 'speed', x - 40, y + 10, { align: 'left', size: 9.5, col: C.muted }); g.fillStyle = '#5d618c'; g.fillRect(x - 6, y + 6, 46 * clamp(sp2), 7);
-          g.restore();
-        });
-      });
-      text(g, 'Special moves', 286, 318, { align: 'left', size: 13, w: 800 });
-      sp.forEach((m, j) => { const x = 470 + j * 186, k = ease(ph(s, .7 + j * .12, 1 + j * .12)); card(g, x, 318, 176, 50, { fill: m ? '#fde9b8' : 'rgba(255,250,240,.5)', edge: m ? '#e0a92d' : '#cdbf9f', shadow: false, r: 8, dash: m ? [] : [5, 5] }); g.save(); g.globalAlpha = k; wrap(g, m || 'open slot', x, 318, 164, { valign: 'middle', size: 13.5, w: 800, align: 'center', lh: 16, col: m ? '#7a4a00' : C.muted }); g.restore(); });
-      text(g, 'Super', 286, 390, { align: 'left', size: 13, w: 800 });
-      card(g, 470, 390, 176, 50, { fill: '#eadcfb', edge: '#a77fe0', shadow: false, r: 8 }); text(g, su, 470, 390, { size: 13.5, w: 800, col: '#4b2286', a: ease(ph(s, 1.1, 1.4)) });
-      wrap(g, 'The template stays: 6 standing, 6 crouching, 6 jumping, 3 specials, 1 super. Only the contents change, so each character is easy to plan and easy to contrast.', 290, 446, 700, { size: 15, w: 700, lh: 20, col: C.navy });
-      text(g, 'Reach and speed bars are illustrative; special and super names are Super Street Fighter II Turbo’s.', 290, 540, { align: 'left', size: 11.5, col: C.muted });
     },
-    side(t, st, tour) { const ci = tour ? Math.floor(t / 2) % CHARS.length : st.c, c = CHARS[ci]; return { out: `<b>${c[0]}</b>: ${c[3].filter(Boolean).join(', ')}; super ${c[4]}.${c[3].includes(null) ? ' Only two specials, so one slot stays open.' : ''}` }; },
+    draw(g, t, st, tour) {
+      const v = sview(t, st, tour), c = CHARS[v.c], s = t - v.at;
+      // ---- the comparison: eight fighters against the jobs a special can do ----
+      panel(g, 14, 14, 1012, 398, { title: 'Eight fighters, the same three special slots: which jobs does each fill?' });
+      text(g, 'Fighter', 30, 70, { align: 'left', size: 12, w: 800, col: C.muted });
+      JOBS.forEach(([, label, gi, tone], j) => {
+        const x = colX(j), on = v.job === j, solo = COUNT[j] === 1;
+        card(g, x, 72, MW - 6, 58, { fill: on ? tone.fill : 'rgba(255,250,240,.7)', edge: on ? tone.edge : 'rgba(205,191,159,.7)', lw: on ? 3 : 1.5, shadow: false, r: 8 });
+        GI.draw(g, gi, x, 56, 20, tone.edge);
+        text(g, label, x, 77, { size: 12, w: 800, col: tone.col });
+        if (solo) chip(g, 'only one fighter', x, 93, { fill: '#fff3c4', edge: C.gold, col: '#7a4a00', size: 9.5, h: 15, pad: 10 });
+        else text(g, `${COUNT[j]} of 8`, x, 93, { size: 10.5, w: 700, col: C.muted });
+      });
+      text(g, 'Reach', RX + 44, 66, { size: 12, w: 800, col: C.muted }); text(g, 'normals', RX + 44, 82, { size: 10, col: C.muted });
+      text(g, 'Walk speed', SX + 34, 66, { size: 12, w: 800, col: C.muted }); text(g, 'tier, 1 to 5', SX + 34, 82, { size: 10, col: C.muted });
+      CHARS.forEach((ch, i) => {
+        const y = rowY(i), sel = i === v.c, dim = v.job >= 0 && !has(ch, v.job).length;
+        if (sel) { g.fillStyle = 'rgba(232,180,60,.16)'; g.strokeStyle = C.gold; g.lineWidth = 2.5; g.beginPath(); g.roundRect(22, y - RH / 2 + 1, 996, RH - 2, 8); g.fill(); g.stroke(); }
+        g.save(); g.globalAlpha = dim ? .3 : 1;
+        GI.draw(g, ch.gi, 42, y, 24, ch.col);
+        text(g, ch.n, 62, y - 7, { align: 'left', size: 14, w: 800 });
+        text(g, ch.arch, 62, y + 9, { align: 'left', size: 10.5, col: C.muted, it: true });
+        JOBS.forEach(([, , , tone], j) => {
+          const ms = has(ch, j), x = colX(j);
+          if (!ms.length) { g.fillStyle = 'rgba(150,140,115,.35)'; g.fillRect(x - 8, y - 1, 16, 2); return; }
+          const solo = COUNT[j] === 1;
+          card(g, x, y, MW - 8, RH - 6, { fill: tone.fill, edge: solo ? C.gold : tone.edge, lw: solo ? 3 : 1.5, shadow: false, r: 6 });
+          if (ms.length > 1) ms.forEach((m, q) => text(g, m[1], x, y - 6 + q * 12, { size: fit(g, m[1], MW - 16, 10.5), w: 700, col: tone.col }));
+          else { text(g, ms[0][1], x, y - 5, { size: fit(g, ms[0][1], MW - 16, 11.5), w: 700, col: tone.col }); text(g, ms[0][3], x, y + 8, { size: 9, w: 600, col: tone.col, a: .8 }); }
+        });
+        pips(g, RX + 12, y, ch.reach, '#8a6a3a');
+        pips(g, SX + 2, y, ch.speed, '#5d618c');
+        g.restore();
+      });
+      // ---- the skeleton: the chosen fighter's 22 slots ----
+      panel(g, 14, 422, 1012, 150, { title: `${c.n}: the same 22 slots as everyone, filled ${c.n === 'Ken' ? 'almost like Ryu' : 'their own way'}` });
+      const k0 = ease(ph(s, 0, .35));
+      text(g, '18 normals', 30, 462, { align: 'left', size: 12, w: 800 });
+      for (let r = 0; r < 3; r++) for (let q = 0; q < 6; q++) { g.fillStyle = q < 3 ? '#e0b4ae' : '#b9c3e8'; g.beginPath(); g.roundRect(30 + q * 15, 474 + r * 15, 12, 12, 2); g.fill(); }
+      text(g, 'the same for all 8', 30, 528, { align: 'left', size: 10, col: C.muted, it: true });
+      c.sp.forEach((m, j) => {
+        const x = 230 + j * 170, y = 488, kk = ease(ph(s, .1 + j * .12, .45 + j * .12));
+        if (!m) { card(g, x, y, 160, 54, { fill: 'rgba(255,250,240,.5)', edge: '#cdbf9f', dash: [5, 5], shadow: false, r: 8 }); text(g, 'open slot', x, y, { size: 13, w: 700, col: C.muted, a: kk }); return; }
+        const tone = JOBS[JI[m[2]]][3];
+        card(g, x, y, 160, 54, { fill: tone.fill, edge: COUNT[JI[m[2]]] === 1 ? C.gold : tone.edge, lw: COUNT[JI[m[2]]] === 1 ? 3.5 : 2, shadow: false, r: 8 });
+        g.save(); g.globalAlpha = kk;
+        text(g, JOBS[JI[m[2]]][1].toUpperCase(), x, y - 16, { size: 9.5, w: 800, col: tone.col });
+        text(g, m[0], x, y + 1, { size: fit(g, m[0], 148, 13.5, 800), w: 800, col: tone.col });
+        text(g, m[3], x, y + 17, { size: 10.5, w: 600, col: tone.col });
+        g.restore();
+      });
+      text(g, 'specials', 400, 524, { size: 10, col: C.muted, it: true });
+      card(g, 750, 488, 160, 54, { fill: TONE.purple.fill, edge: TONE.purple.edge, shadow: false, r: 8 });
+      g.save(); g.globalAlpha = ease(ph(s, .5, .85));
+      text(g, 'SUPER', 750, 472, { size: 9.5, w: 800, col: TONE.purple.col });
+      text(g, c.su[0], 750, 489, { size: fit(g, c.su[0], 148, 13.5, 800), w: 800, col: TONE.purple.col });
+      text(g, c.su[1], 750, 505, { size: 10.5, w: 600, col: TONE.purple.col });
+      g.restore();
+      text(g, 'Reach', 862, 474, { align: 'left', size: 11, w: 700 }); pips(g, 930, 474, c.reach, '#8a6a3a');
+      text(g, 'Walk', 862, 498, { align: 'left', size: 11, w: 700 }); pips(g, 930, 498, c.speed, '#5d618c');
+      wrap(g, c.only, 30, 548, 980, { size: 13.5, w: 700, lh: 17, col: C.navy, a: ease(ph(s, .6, 1)) });
+    },
+    side(t, st, tour) {
+      const v = sview(t, st, tour), c = CHARS[v.c];
+      if (v.job >= 0) {
+        const who = CHARS.filter(ch => has(ch, v.job).length).map(ch => ch.n), [, label] = JOBS[v.job];
+        return { out: who.length === 1 ? `<b>${label}</b>: only ${who[0]} has one. A job that one fighter fills alone is that fighter’s identity.` : `<b>${label}</b>: ${who.length} of 8 (${who.join(', ')}). Shared jobs make fighters comparable; the moves inside them still differ.` };
+      }
+      const open = c.sp.includes(null) ? ' One slot stays open.' : '';
+      return { out: `<b>${c.n}</b>, ${c.arch}: ${c.sp.filter(Boolean).map(m => `${m[0]} (${JOBS[JI[m[2]]][1].toLowerCase()})`).join(', ')}; super ${c.su[0]}.${open}` };
+    },
   });
 
   // ---------- Magic: The Gathering set skeleton ----------
