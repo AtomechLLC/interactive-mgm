@@ -270,3 +270,4 @@ Genre breakdowns (Blog Posts):
 | `practice.svg` | [scroll-unfurled](https://game-icons.net/1x1/lorc/scroll-unfurled.html) | Lorc |
 | `practice--self-study.svg` | [quill-ink](https://game-icons.net/1x1/lorc/quill-ink.html) | Lorc |
 | `practice--workshop.svg` | [round-table](https://game-icons.net/1x1/delapouite/round-table.html) | Delapouite |
+| `games.svg` | [gamepad](https://game-icons.net/1x1/delapouite/gamepad.html) | Delapouite |
