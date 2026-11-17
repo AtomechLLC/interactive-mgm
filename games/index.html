@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Games Referenced · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* same theme as ../mgm.html: navy band with an angled edge over parchment, gold accents */
+  :root { --navy: #152044; --ink: #262c6a; --muted: #5d618c; --gold: #ffb951; --gold-ink: #9a5a06; --line: #cdbf9f; --card: rgba(255, 252, 244, .82); }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; background: #ede7e7 url("../assets/img/theme/paper.jpg") center / cover fixed; color: var(--ink); font-family: Jost, system-ui, sans-serif; border: 4px solid var(--gold); }
+  .band { background: var(--navy); color: #fff; clip-path: polygon(0 0, 100% 0, 100% 78%, 0 100%); padding: 0 0 70px; }
+  header { position: relative; padding: 60px 24px 0; max-width: 1180px; margin: 0 auto; }
+  .kicker { color: var(--gold); font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; }
+  .kicker a { color: inherit; text-decoration: none; }
+  h1 { font-family: Montserrat, sans-serif; font-weight: 800; font-size: clamp(34px, 6vw, 68px); margin: 8px 0 10px; }
+  h1 span { color: var(--gold); }
+  header p { color: #d6dbef; font-size: 19px; max-width: 760px; margin-bottom: 0; }
+  main { max-width: 1180px; margin: 0 auto; padding: 24px 24px 80px; }
+
+  /* filters */
+  .bar { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: grid; gap: 12px; box-shadow: 0 2px 0 rgba(120, 96, 50, .12); }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .row > label { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--gold-ink); min-width: 70px; }
+  input[type=search], select { font: inherit; font-size: 16px; color: var(--ink); background: #fffdf7; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+  input[type=search] { flex: 1 1 260px; min-width: 0; }
+  select { max-width: 100%; }
+  .chip { font: inherit; font-size: 15px; font-weight: 500; color: var(--ink); background: #fffdf7; border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; cursor: pointer; }
+  .chip:hover { border-color: var(--navy); }
+  .chip[aria-pressed=true] { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .status { color: var(--muted); font-size: 15px; margin: 16px 2px 10px; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: baseline; }
+  .status b { color: var(--ink); }
+  .status a { color: var(--gold-ink); }
+
+  /* game cards */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px; align-items: start; }
+  details.g { background: var(--card); border: 1px solid var(--line); border-radius: 10px; transition: border-color .2s; }
+  details.g:hover, details.g[open] { border-color: var(--navy); }
+  details.g[open] { grid-column: 1 / -1; }
+  summary { list-style: none; cursor: pointer; padding: 10px 12px; display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; align-items: center; }
+  summary::-webkit-details-marker { display: none; }
+  summary .nm { font-family: Montserrat, sans-serif; font-weight: 700; font-size: 16px; }
+  summary .ct { font-size: 13px; color: var(--muted); white-space: nowrap; }
+  summary .ct b { color: var(--ink); font-size: 15px; }
+  .tags { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 4px; }
+  .tag { font-size: 12px; font-weight: 600; letter-spacing: .04em; padding: 1px 7px; border-radius: 999px; background: #e8e1d0; color: var(--ink); white-space: nowrap; }
+  .tag.mgm { background: #152044; color: #ffb951; }
+  .tag.dgms { background: #2d5a8a; color: #fff; }
+  .tag.blog { background: #9a5a06; color: #fff; }
+  .tag.kind { background: transparent; border: 1px solid var(--line); color: var(--muted); font-weight: 500; }
+  .det { padding: 0 14px 14px; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+  .mod h3 { font-family: Montserrat, sans-serif; font-size: 14px; margin: 6px 0 4px; }
+  .mod h3 a { color: inherit; }
+  .mod h3 small { font-family: Jost, sans-serif; font-weight: 500; color: var(--muted); }
+  .mod ul { margin: 0; padding-left: 18px; font-size: 15px; }
+  .mod li { margin: 2px 0; }
+  .mod a { color: var(--gold-ink); }
+  .empty { color: var(--muted); padding: 30px 0; text-align: center; }
+  .note { margin-top: 30px; color: var(--muted); font-size: 14px; max-width: 900px; }
+  footer { max-width: 1180px; margin: 0 auto; padding: 0 24px 40px; color: var(--muted); font-size: 13px; }
+  @media (max-width: 560px) { header { padding-top: 44px; } header p { font-size: 17px; } main { padding: 18px 16px 60px; } .grid { grid-template-columns: 1fr; } .row > label { min-width: 100%; } }
+</style>
+</head>
+<body>
+<div class="band"><header>
+  <div class="kicker"><a href="../index.html">← Mastering Game Mechanics</a> · Reference</div>
+  <h1>Games <span>Referenced</span></h1>
+  <p>Every game the MGM and DGMS pages, GIFs and deck notes point to, plus the blog posts. Search for a game, or pick a course or module to see what it draws on. Open a game to see where it comes up.</p>
+</header></div>
+<main>
+  <div class="bar">
+    <div class="row"><input type="search" id="q" placeholder="Search games, e.g. Zelda, Street Fighter, chess" aria-label="Search games"></div>
+    <div class="row" id="courses"><label>Course</label></div>
+    <div class="row"><label for="mod">Module</label><select id="mod"></select></div>
+    <div class="row" id="kinds"><label>Type</label></div>
+    <div class="row"><label for="sort">Sort</label><select id="sort"><option value="n">Most mentioned first</option><option value="a">A to Z</option><option value="w">In the most modules first</option></select></div>
+  </div>
+  <div class="status" id="status"></div>
+  <div class="grid" id="grid"></div>
+  <p class="note">Mentions count each time a game, a common short name (WoW, BotW, SF6) or one of its signature characters, bosses or items (Pikachu, a Goomba, a Karazhan boss, a League champion) appears in a page, a GIF caption, the deck notes or the module proposals. They show how much a module leans on a game, not how many slides it fills. A game shown only in a picture, with no caption or notes, is not counted. Phalanx and Forsaken are Atomech’s own projects. “Mario (series)” gathers Mario characters and enemies named without a game; named games such as Super Mario World have their own entries.</p>
+</main>
+<footer>Built from the page catalog, the pages themselves, the module proposals and the decks’ speaker notes.</footer>
+<script src="data.js"></script>
+<script>
+(function () {
+  // module keys used in data.js, in course order, with the page each one opens
+  const MODS = [
+    ['mgm-practice', 'MGM', 'Self-Study & Workshops', '../practice/index.html'],
+    ['mgm-m1', 'MGM', 'M1 · The Goal: Depth', '../depth/index.html'],
+    ['mgm-m2', 'MGM', 'M2 · Understand Mechanics', '../understand-mechanics/index.html'],
+    ['mgm-m3', 'MGM', 'M3 · Mechanics Design Tools', '../mechanics-tools/index.html'],
+    ['mgm-m4', 'MGM', 'M4 · PvP Interactions', '../pvp/index.html'],
+    ['mgm-m5', 'MGM', 'M5 · PvE Interactions', '../pve-interactions/index.html'],
+    ['mgm-m6', 'MGM', 'M6 · Co-op Interactions', '../coop-interactions/index.html'],
+    ['mgm-m7', 'MGM', 'M7 · Composition', '../composition/index.html'],
+    ['mgm-all', 'MGM', 'Course-wide notes', '../mgm.html'],
+    ['dgms-practice', 'DGMS', 'Self-Study & Workshops', '../dgms/practice/index.html'],
+    ['dgms-m0', 'DGMS', 'M0 · The Power of Polish', '../dgms/m0-power-of-polish/index.html'],
+    ['dgms-m1', 'DGMS', 'M1 · Design Pillars', '../dgms/m1-pillars/index.html'],
+    ['dgms-m2', 'DGMS', 'M2 · Audience', '../dgms/m2-audience/index.html'],
+    ['dgms-m3', 'DGMS', 'M3 · Player Skills', '../dgms/m3-skills/index.html'],
+    ['dgms-m4', 'DGMS', 'M4 · Character', '../dgms/m4-character/index.html'],
+    ['dgms-m5', 'DGMS', 'M5 · Controller', '../dgms/m5-controller/index.html'],
+    ['dgms-m6', 'DGMS', 'M6 · Camera', '../dgms/m6-camera/index.html'],
+    ['dgms-m7', 'DGMS', 'M7 · Sound Design', '../dgms/m7-sound/index.html'],
+    ['dgms-m8', 'DGMS', 'M8 · Balance', '../dgms/m8-balance/index.html'],
+    ['dgms-m9', 'DGMS', 'M9 · Game Feel', '../dgms/m9-game-feel/index.html'],
+    ['dgms-bonus', 'DGMS', 'Bonus · Getting Hired', '../dgms/interview/index.html'],
+    ['dgms-all', 'DGMS', 'Course-wide pages', '../dgms/index.html'],
+    ['blog', 'Blog', 'Blog posts', '../blog.html'],
+  ];
+  const M = {}; MODS.forEach(([k, c, n, h], i) => M[k] = { c, n, h, i });
+  const COURSES = [['all', 'All'], ['MGM', 'MGM'], ['DGMS', 'DGMS'], ['Blog', 'Blog posts']];
+  const KINDS = [['all', 'All'], ['v', 'Video games'], ['t', 'Tabletop'], ['s', 'Sports']];
+  const KIND_NAME = { v: 'video game', t: 'tabletop', s: 'sport' };
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const fold = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+
+  const st = { q: '', c: 'all', m: 'all', k: 'all', s: 'n' };
+  const p = new URLSearchParams(location.search);
+  if (p.get('q')) st.q = p.get('q');
+  if (p.get('m') && M[p.get('m')]) { st.m = p.get('m'); st.c = M[st.m].c; }
+  else if (p.get('c') && COURSES.some(c => c[0] === p.get('c'))) st.c = p.get('c');
+  if (p.get('k') && KIND_NAME[p.get('k')]) st.k = p.get('k');
+  if (['n', 'a', 'w'].includes(p.get('sort'))) st.s = p.get('sort');
+
+  function chips(el, list, key) {
+    list.forEach(([v, label]) => {
+      const b = document.createElement('button'); b.className = 'chip'; b.type = 'button'; b.textContent = label; b.dataset.v = v;
+      b.onclick = () => { st[key] = v; if (key === 'c') st.m = 'all'; sync(); };
+      el.appendChild(b);
+    });
+  }
+  chips($('courses'), COURSES, 'c');
+  chips($('kinds'), KINDS, 'k');
+  $('q').value = st.q;
+  $('q').oninput = e => { st.q = e.target.value; sync(true); };
+  $('mod').onchange = e => { st.m = e.target.value; if (st.m !== 'all') st.c = M[st.m].c; sync(); };
+  $('sort').onchange = e => { st.s = e.target.value; sync(); };
+
+  const inScope = k => (st.m === 'all' ? (st.c === 'all' || M[k].c === st.c) : k === st.m);
+
+  function fillModules() {
+    const opts = [['all', st.c === 'all' ? 'All modules' : 'All ' + (st.c === 'Blog' ? 'blog posts' : st.c + ' modules')]];
+    MODS.forEach(([k, c, n]) => { if (st.c === 'all' || c === st.c) opts.push([k, (st.c === 'all' && c !== 'Blog' ? c + ' ' : '') + n]); });
+    $('mod').innerHTML = opts.map(([v, l]) => `<option value="${v}"${v === st.m ? ' selected' : ''}>${esc(l)}</option>`).join('');
+  }
+
+  function card(g, n) {
+    const keys = Object.keys(g.m).sort((a, b) => M[a].i - M[b].i);
+    const tags = keys.map(k => `<span class="tag ${M[k].c.toLowerCase()}" title="${esc(M[k].c + ' ' + M[k].n)}: ${g.m[k][0]} mentions">${esc(M[k].c === 'Blog' ? 'Blog' : M[k].c + ' ' + M[k].n.split(' · ')[0].replace('Self-Study & Workshops', 'Practice').replace('Course-wide notes', 'notes').replace('Course-wide pages', 'pages'))}</span>`).join('');
+    const det = keys.filter(inScope).map(k => {
+      const [cnt, ws] = g.m[k];
+      const li = ws.map(([label, href]) => `<li>${href ? `<a href="../${esc(href)}">${esc(label)}</a>` : esc(label)}</li>`).join('');
+      return `<div class="mod"><h3><a href="${M[k].h}">${esc((M[k].c === 'Blog' ? '' : M[k].c + ' ') + M[k].n)}</a> <small>· ${cnt} mention${cnt === 1 ? '' : 's'}</small></h3><ul>${li}</ul></div>`;
+    }).join('');
+    return `<details class="g"><summary><span class="nm">${esc(g.n)}</span><span class="ct"><b>${n}</b> mention${n === 1 ? '' : 's'}</span><span class="tags">${g.t !== 'v' ? `<span class="tag kind">${KIND_NAME[g.t]}</span>` : ''}${tags}</span></summary><div class="det">${det}</div></details>`;
+  }
+
+  function render() {
+    const q = fold(st.q.trim());
+    let rows = window.GAMES.map(g => {
+      const ks = Object.keys(g.m).filter(inScope);
+      return { g, n: ks.reduce((t, k) => t + g.m[k][0], 0), w: ks.length };
+    }).filter(r => r.w > 0 && (st.k === 'all' || r.g.t === st.k) && (!q || fold(r.g.n).includes(q)));
+    const by = { n: (a, b) => b.n - a.n || a.g.n.localeCompare(b.g.n), a: (a, b) => a.g.n.localeCompare(b.g.n), w: (a, b) => b.w - a.w || b.n - a.n || a.g.n.localeCompare(b.g.n) }[st.s];
+    rows.sort(by);
+    const scope = st.m !== 'all' ? `<a href="${M[st.m].h}">${esc((M[st.m].c === 'Blog' ? '' : M[st.m].c + ' ') + M[st.m].n)}</a>` : st.c === 'all' ? 'all courses and the blog posts' : st.c === 'Blog' ? 'the blog posts' : 'all ' + st.c + ' modules';
+    $('status').innerHTML = `<span><b>${rows.length}</b> game${rows.length === 1 ? '' : 's'} in ${scope}</span>`;
+    $('grid').innerHTML = rows.length ? rows.map(r => card(r.g, r.n)).join('') : '<p class="empty">No game matches. Clear the search or widen the course.</p>';
+  }
+
+  function sync(soft) {
+    document.querySelectorAll('#courses .chip').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === st.c));
+    document.querySelectorAll('#kinds .chip').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === st.k));
+    $('sort').value = st.s;
+    if (!soft) fillModules();
+    render();
+    const u = new URLSearchParams();
+    if (st.q) u.set('q', st.q);
+    if (st.m !== 'all') u.set('m', st.m); else if (st.c !== 'all') u.set('c', st.c);
+    if (st.k !== 'all') u.set('k', st.k);
+    if (st.s !== 'n') u.set('sort', st.s);
+    history.replaceState(null, '', u.toString() ? '?' + u : location.pathname);
+  }
+  sync();
+})();
+</script>
+</body>
+</html>
