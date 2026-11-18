@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weakness Chain · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="../shared/mech.css">
+<style>.mt-side .tip { font-size: 16px; margin: 0 0 8px; color: var(--muted); } .mt-side .src { font-size: 13px; color: var(--muted); margin-top: 8px; line-height: 1.35; }</style>
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · Mechanics Design Tools · Weakness Chain (mock-up)', home: '../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<section class="slide" data-title="Weakness chain" data-demo="chain">
+  <div class="kicker">reverse sequencing · Mega Man 2</div>
+  <h2 class="sm">Start at the boss you fear, <span class="accent">walk the chain back</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Plan the order</h4>
+      <div class="seg wc-plan"><button class="btn" data-v="fwd">Forward: as the grid reads</button><button class="btn" data-v="back">Backward from Quick Man</button></div>
+      <p class="tip">Or click the bosses yourself, in the order you would fight them.</p>
+      <label class="chk"><input type="checkbox" class="wc-arrows" checked> Show who beats whom</label>
+      <div class="row wrap"><button class="btn wc-tour on">▶ Walk-through</button><button class="btn wc-clear">Clear route</button></div>
+      <div class="mt-stats wc-stats"></div>
+      <p class="mt-out wc-out"></p>
+      <p class="src">After Mega Man 2 (Capcom, 1988): each Robot Master drops a weapon that another is weak to. The arrows use one well-known weakness per boss (several bosses have more than one). Shots to win are illustrative: 14 with the Mega Buster, 4 with the weakness.</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="../shared/topdown.js"></script>
+<script src="weakness-chain.js"></script>
+</body>
+</html>

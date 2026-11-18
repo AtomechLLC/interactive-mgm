@@ -1,0 +1,4 @@
+// Speaker notes. Mock-up for an overlooked example: Mega Man 2's weakness chain for reverse sequencing (MGM C4 M3, beside slides 115 to 119).
+window.NOTES = [
+  { script: 'Mega Man 2 lets you pick any of eight Robot Masters first, and every one you beat hands you a weapon another is weak to. Plan it forward, picking whatever looks easiest in the order the menu reads, and three of your eight fights are long slogs with the Mega Buster, because you keep reaching bosses before you hold their weakness. Plan it backward instead. Start from the boss you fear most, Quick Man, and ask what beats him: the Crash Bomber. What beats Crash Man? The Air Shooter. Keep asking and the chain walks back through Air Man, Wood Man, Heat Man and Bubble Man to Metal Man, the one boss you fight with the buster. One hard fight instead of three. The game even tests the chain again at the end: the Boobeam Trap in Wily\'s castle can only be broken with the Crash Bomber.' },
+];

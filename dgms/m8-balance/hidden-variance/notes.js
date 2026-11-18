@@ -1,0 +1,5 @@
+// Speaker notes. Mock-up for overlooked examples: Fire Emblem's two-roll hit and XCOM's hidden aim assist, beside "Stable part vs variance" (DGMS M8).
+window.NOTES = [
+  { script: 'The Game Boy Advance Fire Emblem games show a hit chance, then roll two numbers and average them. Averaging two dice pulls results toward the middle, so the curve bends: a displayed 80 lands about 92 times in a hundred, and a displayed 20 lands about 8. High chances feel reliable, low chances rarely surprise you. The player never sees the second die. It is the stable part versus variance lesson, applied to the probability itself rather than the damage.' },
+  { script: 'XCOM went the other way. Its screen shows the true chance, but on the lower difficulties every miss quietly adds a bonus to the next shot until one lands. The average barely moves; what shrinks is the long losing streak that makes players feel cheated, the famous 95 percent miss. Same lesson: decide how much of the experience should be stable, and which tail of the variance you are willing to let players live through.' },
+];

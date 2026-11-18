@@ -1,0 +1,4 @@
+// Speaker notes. Mock-up for an overlooked example: Slay the Spire's enemy intents, beside Into the Breach on Readable Enemies (MGM C4 M5).
+window.NOTES = [
+  { script: 'Into the Breach is not the only game that shows you the enemy\'s next move. Slay the Spire puts an intent over every monster\'s head: a sword with the exact damage it will deal, a shield, a buff. Here is the very first fight a lot of players see: a Jaw Worm about to Chomp for 11, a Red Louse about to Bite for 6, and a Cultist who will spend its first turn chanting. With the intents shown, the turn is a puzzle with an answer: two Strikes kill the Louse, a Defend soaks part of the Chomp, and you lose 6. Hide the intents and the same hand gets spent on the scariest-looking monster, the Cultist, who was never going to hit you, and you lose 17. The enemies did not get harder. The player just could not read them.' },
+];

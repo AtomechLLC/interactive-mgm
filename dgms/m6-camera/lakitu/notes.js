@@ -1,0 +1,4 @@
+// Speaker notes. Mock-up for an overlooked example beside the camera rigs (DGMS M6): Super Mario 64's Lakitu camera.
+window.NOTES = [
+  { script: 'Super Mario 64 was one of the first games to hand players a free 3D camera, and it explained that camera with a character. The opening shows Lakitu, the cloud-riding turtle, with a film camera: he is the one filming Mario. That framing does a lot of work. The C buttons are requests to the cameraman to circle around. When a wall is in the way, he has to move in, because he is a body in the world. R swaps his wide, trailing shot for a tighter Mario cam. Even the camera icon in the corner shows who is holding the camera. On the left you see Lakitu from above; on the right, what he is filming. The rig is the same kind of follow camera we built earlier; the difference is that the player knows who is behind it, and forgives it.' },
+];

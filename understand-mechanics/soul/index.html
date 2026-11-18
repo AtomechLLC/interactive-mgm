@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SOUL: Heal or Strike · Mastering Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/deck.css">
+<link rel="stylesheet" href="../../assets/kit.css">
+<link rel="stylesheet" href="../shared/um.css">
+<script>
+  window.DECK = { title: 'Mastering Game Mechanics · Understand Mechanics · SOUL: Heal or Strike (mock-up)', home: '../index.html', audio: false, cues: null };
+</script>
+<style>.mt-side .src { font-size: 13px; color: var(--muted); margin-top: 8px; line-height: 1.35; }</style>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<section class="slide" data-title="SOUL: heal or strike" data-demo="soul">
+  <div class="kicker">generators, spenders and time · Hollow Knight</div>
+  <h2 class="sm">One pool, two spenders: <span class="accent">heal or strike?</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>How the Knight spends SOUL</h4>
+      <div class="seg so-pol"><button class="btn" data-v="spell">Strike: every spell</button><button class="btn" data-v="asap">Heal the moment it can</button><button class="btn" data-v="safe">Heal only in openings</button></div>
+      <label class="rng">Focus takes <b class="so-fv">1.0 s</b><input type="range" class="so-f" min="0.5" max="1.6" step="0.1" value="1.0"></label>
+      <label class="chk"><input type="checkbox" class="so-dmg" checked> Boss hits take 2 masks</label>
+      <div class="row wrap"><button class="btn so-tour on">▶ Walk-through</button><button class="btn so-replay">↻ Replay</button></div>
+      <div class="mt-stats so-stats"></div>
+      <p class="mt-out so-out"></p>
+      <p class="src">After Hollow Knight (Team Cherry, 2017): nail hits fill SOUL, and 33 SOUL buys either a Focus (one mask back, standing still) or a Vengeful Spirit. Numbers are illustrative: a 300 HP boss, nail 5, spell 15, 11 SOUL per hit, a 2.4 s opening, then a 0.8 s telegraphed attack. The Knight dodges every attack except every third, and a Focus still charging when an attack lands is broken.</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../assets/deck.js"></script>
+<script src="../../assets/kit.js"></script>
+<script src="../shared/topdown.js"></script>
+<script src="soul.js"></script>
+</body>
+</html>
