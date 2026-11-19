@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cancels With a Price · Directing Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/deck.css">
+<link rel="stylesheet" href="../../../assets/kit.css">
+<link rel="stylesheet" href="../../shared/dgms.css">
+<script>
+  window.DECK = { title: 'Directing Game Mechanics · Module 5 · Cancels With a Price (mock-up)', home: '../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<section class="slide" data-title="A cancel with a price" data-demo="rc">
+  <div class="kicker">3Cs: controller · cancel philosophies · Guilty Gear</div>
+  <h2 class="sm">Cancel almost anything, <span class="accent">for half the bar</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <label class="rng">Price of a cancel, in Tension <b class="rc-pv">50%</b><input type="range" class="rc-p" min="0" max="100" step="5" value="50"></label>
+      <div class="row wrap"><button class="btn rc-tour on">▶ Walk-through</button></div>
+      <div class="mt-stats rc-stats"></div>
+      <p class="mt-out rc-out"></p>
+      <p class="src">After Guilty Gear (Arc System Works, from Guilty Gear X, 2000): a Roman Cancel ends almost any move at once and costs 50% of the Tension bar, which fills as you attack. Here each attack string is four hits and a slow finisher; the defender gets a turn whenever a finisher is not cancelled. Tension gain and timings are illustrative.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="A rule against the loop" data-demo="ko">
+  <div class="kicker">3Cs: controller · cancel anti-patterns · Go</div>
+  <h2 class="sm">The ko rule <span class="accent">puts a price on the loop</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <div class="row wrap"><button class="btn ko-tour on">▶ Walk-through</button><button class="btn ko-step">Next move ▸</button></div>
+      <div class="mt-stats ko-stats"></div>
+      <p class="mt-out ko-out"></p>
+      <p class="src">Go: a capture that would return the board to the position before the opponent's last move is not allowed at once. The player must play elsewhere first, usually a threat the opponent has to answer. The ko shape here is standard; the threats are placed for illustration.</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../../assets/deck.js"></script>
+<script src="../../../assets/kit.js"></script>
+<script src="../../shared/topdown.js"></script>
+<script src="priced-cancels.js"></script>
+</body>
+</html>

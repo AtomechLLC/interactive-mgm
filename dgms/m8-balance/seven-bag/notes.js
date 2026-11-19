@@ -1,0 +1,4 @@
+// Speaker notes. Mock-up for an overlooked example: Tetris's 7-bag randomiser for "Stable part vs variance" (DGMS M8, Part 4).
+window.NOTES = [
+  { script: 'Here is the same idea as stable part versus variance, applied to a sequence instead of a damage roll. All three columns deal the same seven Tetris pieces, and every piece comes up one time in seven on average. What changes is the spread. Pure random can leave you waiting thirty or forty pieces for the long I piece you built a well for. NES Tetris rerolls once if it would repeat the last piece, which trims doubles but barely touches droughts. Modern Tetris puts all seven pieces in a bag, shuffles it and deals the bag out before refilling. The longest you can ever wait for an I is twelve pieces. The average stays the same; the worst case gets a floor. That is a design choice about how much of the sequence should be stable and how much should surprise you.' },
+];

@@ -1,0 +1,4 @@
+// Speaker notes. Mock-up for an overlooked example: Hitman's disguises as signals and receivers, beside The Guarded Door (MGM C4 M2).
+window.NOTES = [
+  { script: 'Hitman turns the guarded door into the whole game. Agent 47 changes clothes, and the outfit he wears is a signal every person in the level reads. Each guard is a receiver with a rule: the kitchen porter accepts waiters and security, the security office accepts only security, and the bodyguard in the lounge accepts waiters serving drinks and security. The suit gets you nowhere. The waiter outfit is a lockpick: it opens two doors cleanly. The security uniform is the hammer: it opens all three, but the bodyguard is an enforcer, the white dot, who knows every guard on the detail and sees through it. That is the key, lockpick and hammer lesson with real consequences: the broadest tool has a receiver built to catch it, so the player still has to plan.' },
+];

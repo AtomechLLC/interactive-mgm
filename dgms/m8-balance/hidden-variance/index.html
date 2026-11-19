@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hidden Variance · Directing Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/deck.css">
+<link rel="stylesheet" href="../../../assets/kit.css">
+<link rel="stylesheet" href="../../shared/dgms.css">
+<script>
+  window.DECK = { title: 'Directing Game Mechanics · Module 8 · Hidden Variance (mock-up)', home: '../index.html', audio: false, cues: null };
+</script>
+<script src="notes.js"></script>
+</head>
+<body>
+<div class="viewport"><div class="stage">
+
+<section class="slide" data-title="Two dice, one number" data-demo="fe">
+  <div class="kicker">building blocks: noise · Fire Emblem</div>
+  <h2 class="sm">The screen says 80%. <span class="accent">The game rolls 92%.</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <label class="rng">Displayed hit <b class="fe-hv">80%</b><input type="range" class="fe-h" min="0" max="100" step="1" value="80"></label>
+      <div class="row wrap"><button class="btn fe-tour on">▶ Walk-through</button><button class="btn fe-roll">↻ Roll 100 more</button></div>
+      <div class="mt-stats fe-stats"></div>
+      <p class="mt-out fe-out"></p>
+      <p class="src">After the Game Boy Advance Fire Emblem games (Intelligent Systems, 2002 to 2004): a hit lands when the average of two rolls from 0 to 99 is below the displayed hit. The curve is computed exactly from all 10,000 pairs; the 100 attacks come from a seeded generator.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Misses that help the next shot" data-demo="xcom">
+  <div class="kicker">building blocks: noise · XCOM</div>
+  <h2 class="sm">Same 65% shot, <span class="accent">shorter losing streaks</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <label class="rng">Bonus to the next shot per miss in a row <b class="xc-bv">+10%</b><input type="range" class="xc-b" min="0" max="25" step="1" value="10"></label>
+      <div class="row wrap"><button class="btn xc-tour on">▶ Walk-through</button><button class="btn xc-roll">↻ New seed</button></div>
+      <div class="mt-stats xc-stats"></div>
+      <p class="mt-out xc-out"></p>
+      <p class="src">After XCOM: Enemy Unknown (Firaxis, 2012), whose lower difficulties quietly raise the player's hit chance after misses. The size of the bonus here is illustrative. Twenty squads each take twelve 65% shots from one seed, with and without the bonus.</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="../../../assets/deck.js"></script>
+<script src="../../../assets/kit.js"></script>
+<script src="../../shared/topdown.js"></script>
+<script src="hidden-variance.js"></script>
+</body>
+</html>
