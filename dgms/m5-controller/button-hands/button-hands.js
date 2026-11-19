@@ -1,329 +1,222 @@
-/* The button is the hand (mock-up for DGMS M5, beside Controls as metaphor).
-   1. Shadow of the Colossus: hold R1 to grip; a gauge drains while hanging; shakes throw you off unless you grip.
-   2. Death Stranding: L2 and R2 pull the load toward their side; both steady it at a slower walk. Three policies race.
-   3. Katamari Damacy: two sticks push a ball tank style; it rolls up anything smaller than itself.
-   Each walk-through re-simulates from t = 0 with a fixed step, so every frame is a pure function of t. */
+/* Controls as metaphor: three games where the pad stands for the body (DGMS M5, beside Controls as Metaphor).
+   grip      Shadow of the Colossus: R1 is the hand. Hold to cling, let go to drop; the grip gauge is a tiring arm.
+   straps    Death Stranding: L2 and R2 are the left and right hands on the pack straps.
+   katamari  Katamari Damacy: each stick is one hand on the ball, driven like a tank.
+   Pip plays the hero in all three. Drain rates, shake times, terrain and item sizes are illustrative. */
 (function () {
-  const { $, canvasDemo, say } = FPF.kit;
-  const T = TD, C = TD.C, { clamp } = TD, TAU = Math.PI * 2;
-  const W = 1040, H = 585, DT = 0.02;
-  const txt = (g, s, x, y, o = {}) => { g.font = o.font || '600 15px Jost, sans-serif'; g.fillStyle = o.col || C.ink; g.textAlign = o.align || 'left'; g.textBaseline = o.base || 'middle'; g.fillText(s, x, y); };
-  const bg = g => { T.use(g); g.clearRect(0, 0, W, H); g.fillStyle = 'rgba(255,252,244,.9)'; g.beginPath(); g.roundRect(0, 0, W, H, 14); g.fill(); };
-  const rr = (g, x, y, w, h, r, col) => { g.fillStyle = col; g.beginPath(); g.roundRect(x, y, w, h, r); g.fill(); };
-  function mulberry(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
-  const inside = (list, t) => list.some(([a, b]) => t >= a && t < b);
-  // a hold button plus keyboard keys, live only while this slide is showing
-  function holdInput(s, btn, keys, onUse) {
-    const st = { down: false, ptr: false, key: false }, set = () => { st.down = st.ptr || st.key; btn.classList.toggle('down', st.down); };
-    btn.addEventListener('pointerdown', e => { e.preventDefault(); st.ptr = true; onUse(); set(); btn.setPointerCapture?.(e.pointerId); });
-    ['pointerup', 'pointercancel'].forEach(n => btn.addEventListener(n, () => { st.ptr = false; set(); }));
-    addEventListener('keydown', e => { if (!s.classList.contains('active') || !keys.includes(e.key.toLowerCase()) || e.repeat) return; st.key = true; onUse(); set(); });
-    addEventListener('keyup', e => { if (keys.includes(e.key.toLowerCase())) { st.key = false; set(); } });
-    return st;
-  }
-  function lanesAxis(g, x0, x1, y, span) { [0, 10, 20, 30].filter(v => v <= span).forEach(v => txt(g, v + ' s', x0 + (x1 - x0) * v / span, y, { font: '600 11px Jost', col: C.muted, align: 'center' })); }
-  function flag(g, x, y, lab, col) { g.font = '800 12px Montserrat'; const w = g.measureText(lab).width + 12; rr(g, x - w / 2, y - 10, w, 20, 5, col); txt(g, lab, x, y + 1, { font: '800 12px Montserrat', col: '#fff', align: 'center' }); }
+  const { txt, box, bar, pill, key, clamp, lerp, C, dot, ring, arrow, bubble } = SCN, TAU = SCN.TAU;
+  const W = 1040, H = 585;
+  const CLIMB = { lean: 10, bl: [40, -30], fl: [70, -10], ba: [150, 175], fa: [165, 190], w: 180 };
+  const DANGLE = { lean: -6, bl: [-10, 6], fl: [14, -6], ba: [170, 180], fa: [178, 184], w: 180 };
 
-  /* ---------- 1. Shadow of the Colossus ---------- */
-  const GSPAN = 37, LEDGES = [0, 35, 70, 100], SHAKES = [[5, 7], [13, 15.5], [21, 23], [29, 31]], PINK = '#e0569b';
-  const GRIP_TOUR = [[0.5, 4.9], [5, 7], [10, 17], [20, 26.4], [29, 31], [32, 37]];
-  function gripInit() { return { t: 0, h: 0, grip: 100, lock: false, done: null, pts: [], ev: [] }; }
-  function gripStep(st, hold) {
-    const t = st.t, shaking = inside(SHAKES, t);
-    if (st.done === null) {
-      if (!hold) st.lock = false;
-      if (hold && !st.lock) {
-        if (shaking) st.grip -= 25 * DT; else { st.h += 8 * DT; st.grip -= 10 * DT; }
-        if (st.h >= 100) { st.h = 100; st.done = t; st.ev.push([t, 'top']); }
-        else if (st.grip <= 0) { st.grip = 0; st.lock = true; const l = Math.max(...LEDGES.filter(v => v <= st.h)); st.ev.push([t, 'slip']); st.h = l; }
-      } else {
-        const l = Math.max(...LEDGES.filter(v => v <= st.h + 1e-6));
-        if (st.h - l > 3) st.ev.push([t, 'fall']);
-        st.h = l;
-        if (shaking && st.h > 0) { st.ev.push([t, 'thrown']); st.h = 0; }
-        st.grip = Math.min(100, st.grip + 35 * DT);
-      }
-    }
-    st.pts.push({ t, h: st.h, grip: st.grip, hold: hold && !st.lock, shake: shaking });
-    st.t += DT;
-  }
-  const gripTour = (() => { const st = gripInit(); while (st.t <= GSPAN) gripStep(st, inside(GRIP_TOUR, st.t)); return st; })();
-  const EVN = { slip: ['grip gave out', PINK], fall: ['let go mid-climb', C.muted], thrown: ['shaken off', C.red], top: ['weak point', C.good] };
-  function drawGrip(g, run, t) {
-    bg(g);
-    const i = clamp(Math.round(t / DT), 0, run.pts.length - 1), p = run.pts[i] || { h: 0, grip: 100, hold: false, shake: false };
-    const dx = p.shake ? 5 * Math.sin(t * 47) : 0, yOf = h => 525 - 4.5 * h;
-    // the colossus
-    g.save(); g.translate(dx, 0);
-    rr(g, 190, 50, 250, 490, 40, '#6b5a48');
-    const R = mulberry(7); g.strokeStyle = '#4e4033'; g.lineWidth = 3; g.lineCap = 'round';
-    for (let k = 0; k < 170; k++) { const x = 200 + R() * 230, y = 70 + R() * 450; g.beginPath(); g.moveTo(x, y); g.lineTo(x + 4 - R() * 8, y + 10 + R() * 8); g.stroke(); }
-    [35, 70].forEach(l => { rr(g, 430, yOf(l) - 2, 80, 18, 6, '#9a9488'); g.fillStyle = '#7d776c'; g.fillRect(434, yOf(l) + 10, 72, 6); txt(g, 'ledge', 470, yOf(l) + 28, { font: '700 11px Jost', col: C.muted, align: 'center' }); });
-    const glow = g.createRadialGradient(315, yOf(100), 2, 315, yOf(100), 30); glow.addColorStop(0, 'rgba(140,210,255,.95)'); glow.addColorStop(1, 'rgba(140,210,255,0)');
-    g.fillStyle = glow; g.beginPath(); g.arc(315, yOf(100), 30, 0, TAU); g.fill(); txt(g, 'weak point', 315, yOf(100) - 30, { font: '700 12px Jost', col: '#2a6fa8', align: 'center' });
-    // Wander
-    const onLedge = !p.hold && LEDGES.includes(Math.round(p.h * 1000) / 1000) && p.h > 0, wy = yOf(p.h), wx = p.hold ? 448 : p.h > 0 ? 470 : 470;
-    g.lineWidth = 4; g.strokeStyle = '#2b2b44'; g.fillStyle = '#e9e4d6';
-    if (p.hold) {
-      g.beginPath(); g.moveTo(wx, wy - 26); g.lineTo(436, wy - 52); g.stroke();               // arm up into the fur
-      g.beginPath(); g.ellipse(wx + 2, wy - 12, 9, 16, 0, 0, TAU); g.fill(); g.stroke();       // body
-      g.beginPath(); g.moveTo(wx, wy + 2); g.lineTo(wx - 4, wy + 22); g.moveTo(wx + 5, wy + 2); g.lineTo(wx + 10, wy + 20); g.stroke();
-      g.fillStyle = '#3b2f2a'; g.beginPath(); g.arc(wx + 3, wy - 36, 8, 0, TAU); g.fill();
-    } else {
-      const fy = p.h > 0 ? yOf(p.h) - 4 : yOf(0) + 2;
-      g.beginPath(); g.moveTo(wx - 4, fy); g.lineTo(wx, fy - 20); g.lineTo(wx + 4, fy); g.stroke();
-      g.beginPath(); g.ellipse(wx, fy - 32, 9, 15, 0, 0, TAU); g.fill(); g.stroke();
-      g.beginPath(); g.moveTo(wx - 7, fy - 36); g.lineTo(wx - 14, fy - 20); g.moveTo(wx + 7, fy - 36); g.lineTo(wx + 14, fy - 20); g.stroke();
-      g.fillStyle = '#3b2f2a'; g.beginPath(); g.arc(wx, fy - 54, 8, 0, TAU); g.fill();
-    }
-    g.restore();
-    g.fillStyle = '#c9bc9c'; g.fillRect(20, yOf(0) + 2, 580, 30); txt(g, 'ground', 40, yOf(0) + 17, { font: '700 11px Jost', col: C.muted });
-    // grip gauge
-    const gx = 545, gy = Math.max(70, wy - 40);
-    g.lineWidth = 8; g.strokeStyle = 'rgba(38,44,106,.15)'; g.beginPath(); g.arc(gx, gy, 22, 0, TAU); g.stroke();
-    g.strokeStyle = p.grip < 25 ? C.red : PINK; g.beginPath(); g.arc(gx, gy, 22, -Math.PI / 2, -Math.PI / 2 + TAU * p.grip / 100); g.stroke();
-    txt(g, 'grip', gx, gy + 1, { font: '800 11px Montserrat', col: C.navy, align: 'center' });
-    if (p.shake) flag(g, 315, 30, 'the colossus shakes', C.red);
-    // R1 button
-    const bx = 830, by = 54, down = p.hold;
-    rr(g, bx - 70, by - 22 + (down ? 3 : 0), 140, 44, 12, down ? PINK : '#e6e8f4'); g.strokeStyle = C.navy; g.lineWidth = 2.5; g.beginPath(); g.roundRect(bx - 70, by - 22 + (down ? 3 : 0), 140, 44, 12); g.stroke();
-    txt(g, 'R1', bx, by + 1 + (down ? 3 : 0), { font: '800 20px Montserrat', col: down ? '#fff' : C.navy, align: 'center' });
-    txt(g, down ? 'held: the hand is closed' : 'released: the hand is open', bx, by + 40, { font: '700 13px Jost', col: down ? PINK : C.muted, align: 'center' });
-    // timeline
-    const X0 = 640, X1 = 1015, px = v => X0 + (X1 - X0) * v / GSPAN, vis = run.pts.slice(0, i + 1);
-    const L1 = 130, L2 = 168, CY = 210, CH = 250, py = v => CY + CH - CH * v / 100;
-    txt(g, 'R1 held', X0, L1 - 14, { font: '700 11px Jost', col: C.muted }); txt(g, 'colossus shakes', X0, L2 - 14, { font: '700 11px Jost', col: C.muted });
-    rr(g, X0, L1 - 4, X1 - X0, 10, 4, 'rgba(38,44,106,.08)'); rr(g, X0, L2 - 4, X1 - X0, 10, 4, 'rgba(38,44,106,.08)');
-    SHAKES.forEach(([a, b]) => { g.fillStyle = 'rgba(229,50,45,.25)'; g.fillRect(px(a), L2 - 4, px(b) - px(a), 10); g.fillStyle = 'rgba(229,50,45,.07)'; g.fillRect(px(a), CY, px(b) - px(a), CH); });
-    g.fillStyle = PINK; vis.forEach(q => { if (q.hold) g.fillRect(px(q.t), L1 - 4, (X1 - X0) * DT / GSPAN + 0.6, 10); });
-    g.fillStyle = 'rgba(239,230,210,.55)'; g.fillRect(X0, CY, X1 - X0, CH);
-    [35, 70].forEach(l => { g.setLineDash([4, 4]); g.strokeStyle = 'rgba(38,44,106,.3)'; g.lineWidth = 1; g.beginPath(); g.moveTo(X0, py(l)); g.lineTo(X1, py(l)); g.stroke(); g.setLineDash([]); });
-    [['h', C.navy], ['grip', PINK]].forEach(([f, col]) => { g.strokeStyle = col; g.lineWidth = 3; g.beginPath(); vis.forEach((q, k) => k ? g.lineTo(px(q.t), py(q[f])) : g.moveTo(px(q.t), py(q[f]))); g.stroke(); });
-    g.strokeStyle = C.navy; g.lineWidth = 1.5; g.strokeRect(X0, CY, X1 - X0, CH);
-    run.ev.filter(([e]) => e <= t).forEach(([e, k], n) => { const [lab, col] = EVN[k]; g.strokeStyle = col; g.lineWidth = 2; g.beginPath(); g.moveTo(px(e), CY); g.lineTo(px(e), CY + CH); g.stroke(); flag(g, clamp(px(e), X0 + 50, X1 - 50), CY + CH + 22 + (n % 2) * 22, lab, col); });
-    lanesAxis(g, X0, X1, CY - 10, GSPAN);
-    g.fillStyle = C.navy; g.fillRect(X0, H - 14, 16, 3); txt(g, 'height', X0 + 22, H - 13, { font: '600 12px Jost', col: C.muted });
-    g.fillStyle = PINK; g.fillRect(X0 + 90, H - 14, 16, 3); txt(g, 'grip', X0 + 112, H - 13, { font: '600 12px Jost', col: C.muted });
-  }
-  canvasDemo('grip', (s, cv, g) => {
-    const st = { tour: true, held: false, t: 0, key: '', run: gripInit() }, tourBtn = $(s, '.sg-tour');
-    const manual = () => { if (st.tour) { st.tour = false; tourBtn.classList.remove('on'); st.run = gripInit(); } };
-    const r1 = holdInput(s, $(s, '.sg-r1'), ['r'], manual);
-    tourBtn.onclick = () => { st.tour = true; st.t = 0; tourBtn.classList.add('on'); };
-    $(s, '.sg-reset').onclick = () => { manual(); st.run = gripInit(); };
-    function info(run, t, cap) {
-      const n = k => run.ev.filter(([e, x]) => x === k && e <= t).length, top = run.done !== null && run.done <= t;
-      const k = cap + n('slip') + n('thrown') + n('fall') + top; if (k === st.key) return; st.key = k;
-      say($(s, '.sg-stats'), `<div class="${top ? 'g' : 'y'}"><b>${top ? run.done.toFixed(1) + ' s' : '…'}</b><span>${top ? 'reached the weak point' : 'still climbing'}</span></div><div class="r"><b>${n('slip') + n('thrown') + n('fall')}</b><span>falls: ${n('slip')} grip gave out, ${n('thrown')} shaken off, ${n('fall')} let go mid-climb</span></div>`);
-      say($(s, '.sg-out'), cap);
-    }
-    const cap = t => t < 5 ? 'Holding R1 is holding on: Wander climbs while you hold, and the pink gauge drains like a tiring arm.'
-      : t < 10 ? 'On the ledge he lets go and the gauge refills. When the colossus shakes, he grips again, even on a ledge, or he is thrown off.'
-      : t < 19 ? 'The second climb holds through a shake with too little grip left. The hand gives out, and he drops back to the ledge.'
-      : t < 29 ? 'Rested, he climbs again, holding through the next shake with a full gauge, and reaches the upper ledge.' : 'One more shake on the ledge, one more rest, and he reaches the weak point. The button taught the rhythm: grip, rest, grip.';
-    s._seek = t => { drawGrip(g, gripTour, Math.min(GSPAN, t)); info(gripTour, t, cap(t)); };
-    window.__seek = t => { st.held = true; s._seek(t); };
-    window.__dur = () => GSPAN + 2;
-    return dt => {
-      if (st.held) return; dt = Math.max(0, dt);
-      if (st.tour) { st.t += dt; if (st.t >= GSPAN + 2) st.t = 0; s._seek(st.t); return; }
-      const run = st.run, end = run.t + dt; while (run.t < Math.min(end, GSPAN)) gripStep(run, r1.down);
-      drawGrip(g, run, Math.min(run.t, GSPAN));
-      info(run, run.t, run.done !== null ? 'You reached the weak point. Try it with fewer rests.' : run.t >= GSPAN ? 'Time is up. Start over and rest on the ledges before the shakes.' : 'Hold R1 or the R key to grip and climb. Let go on a ledge to rest; grip again when the colossus shakes.');
+  /* ---------- Shadow of the Colossus: the button is the hand ---------- */
+  SCN.run('grip', s => {
+    const GX = 640, FLOOR = 548, GS = 3.3, RATE = .075, DRAIN = .075, LEDGE = [.38, .72], NAMES = ['its hip', 'its shoulder'];
+    let z;
+    const shakeAt = t => { const c = (t + 1) % 7; return t < 4 ? 0 : c < 1 ? 1 : c < 2.6 ? 2 : 0; };   // 1 = rumble (warning), 2 = shaking
+    const api = {
+      dur: 34,
+      reset() { z = { t: 0, p: 0, grip: 1, hold: false, fall: 0, falls: 0, won: 0, rest: -1, msg: '', why: '' }; },
+      step(h) {
+        z.t += h; if (z.won) { z.won += h; return; }
+        if (z.fall > 0) { z.fall -= h; if (z.fall <= 0) { z.p = 0; z.grip = 1; } return; }
+        const sh = shakeAt(z.t);
+        const drop = why => { z.fall = 1.3; z.falls++; z.fy = z.p; z.rest = -1; z.why = why; z.msg = why; SCN.noise({ dur: .3, vol: .2 }); };
+        if (z.hold) {
+          z.rest = -1; z.grip -= h * DRAIN * (sh === 2 ? 2 : 1);
+          if (sh !== 2) z.p = Math.min(1, z.p + h * RATE);
+          if (z.grip <= 0) { z.grip = 0; return drop('The grip gauge ran dry: Pip\'s arm gave out.'); }
+          if (z.p >= 1) { z.won = 1e-6; z.msg = 'At the weak point. Every metre of that climb was your finger on R1.'; SCN.tone({ f: 330, f2: 990, dur: .5, vol: .12 }); }
+        } else if (z.p > 0) {
+          if (z.rest < 0) { const i = LEDGE.findIndex(l => Math.abs(z.p - l) < .05); if (i >= 0) { z.rest = i; z.p = LEDGE[i]; z.msg = `Standing on ${NAMES[i]}: hand open, grip coming back.`; } else return drop('R1 released on the fur: the hand opened, so Pip dropped.'); }
+          if (sh === 2) return drop('It shook while the hand was open.');
+          z.grip = Math.min(1, z.grip + h * .5);
+        }
+      },
+      script: [[.8, 1], [2.3, 0], [4, 1], [10.75, 0], [12.6, 1], [21.7, 0], [24.5, 1]].map(([t, v]) => [t, () => { z.hold = !!v; }]),
+      caption: t => t < 2.3 ? 'Hold R1 and Pip\'s hand closes on the fur. He climbs for as long as the button is down.'
+        : t < 4 ? 'Let go of the button and the hand lets go too. There is no "climb mode" to stay in: the finger is the grip.'
+        : t < 10.7 ? 'The pink gauge is a tiring arm. It drains while you hold, and twice as fast when the colossus shakes.'
+        : t < 12.6 ? 'On a ledge the hand can open. The gauge refills, and your own finger gets a rest with it.'
+        : t < 21.7 ? 'Grip again before the next shake, and hang on through it.'
+        : t < 24.5 ? 'Nearly empty. Rest on the shoulder before the last stretch.'
+        : t < 29.8 ? 'The player\'s hand and the hero\'s hand do the same thing at the same moment. That is the metaphor.'
+        : 'The climb is felt in the finger. One held button carries tension, fatigue and relief.',
+      status: () => z.won ? z.msg : z.fall > 0 ? z.why : z.msg || 'Hold R1 (the button, or the R key) to grip and climb. Rest on a ledge by letting go there. Hold on when it shakes.',
+      stats: () => `<div><b>${Math.round(z.p * 100)}%</b><span>of the way to the weak point</span></div><div class="${z.grip < .25 ? 'r' : 'y'}"><b>${Math.round(z.grip * 100)}%</b><span>grip left</span></div><div class="r"><b>${z.falls}</b><span>falls</span></div>`,
+      acts: { grip(v) { z.hold = !!v; } }, holds: { r: 'grip' },
+      draw(g) {
+        g.clearRect(0, 0, W, H); g.save(); SCN.clipStage(g, W, H);
+        const sky = g.createLinearGradient(0, 0, 0, H); sky.addColorStop(0, '#b9c6c9'); sky.addColorStop(1, '#e6e2d0'); g.fillStyle = sky; g.fillRect(0, 0, W, H);
+        g.fillStyle = 'rgba(120,135,130,.35)'; g.beginPath(); g.moveTo(0, 420); g.lineTo(140, 300); g.lineTo(300, 430); g.lineTo(430, 340); g.lineTo(560, 450); g.lineTo(W, 380); g.lineTo(W, H); g.lineTo(0, H); g.fill();
+        g.fillStyle = '#8f9a72'; g.fillRect(0, FLOOR, W, H - FLOOR); g.fillStyle = '#7c875f'; g.fillRect(0, FLOOR, W, 6);
+        const sh = z.won ? 0 : shakeAt(z.t), wob = sh === 2 ? Math.sin(z.t * 26) : sh === 1 ? Math.sin(z.t * 40) * .15 : 0;
+        const pose = z.won > .6 ? CAST.mix('idle', 'crumple', clamp((z.won - .6) / 1.5)) : { base: 'idle', lean: 4 + wob * 9, head: wob * 12, ba: [-4 + wob * 30, 14 + wob * 20], fa: [16 - wob * 30, 26] };
+        const o = { x: GX + wob * 10, y: FLOOR + 6, s: GS, face: -1, pose };
+        CAST.draw(g, 'grub', o);
+        const P = CAST.points('grub', o), off = (a, dx, dy) => ({ x: a.x + dx, y: a.y + dy });
+        const path = [off(P.footF, 34, -20), off(P.kneeF, 34, 0), off(P.hip, 62, 0), off(P.hip, 76, -70), off(P.sh, 74, 10), off(P.sh, 30, -40), off(P.head, 18, -P.head.r - 4)];
+        const at = p => { const f = clamp(p) * (path.length - 1), i = Math.min(path.length - 2, Math.floor(f)), k = f - i; return { x: lerp(path[i].x, path[i + 1].x, k), y: lerp(path[i].y, path[i + 1].y, k) }; };
+        // fur along the climb, ledges, weak point
+        g.strokeStyle = 'rgba(44,53,18,.55)'; g.lineWidth = 3; for (let i = 0; i <= 40; i++) { const q = at(i / 40); g.beginPath(); g.moveTo(q.x - 8, q.y - 4); g.lineTo(q.x + 4, q.y + 9); g.stroke(); }
+        LEDGE.forEach((l, i) => { const q = at(l); box(g, q.x - 6, q.y + 20, 62, 10, { r: 4, fill: '#cfc7a8', stroke: '#6b6648' }); txt(g, 'ledge', q.x + 64, q.y + 26, { size: 13, w: 700, col: '#3d4426' }); });
+        const top = at(1); const pulse = .6 + .4 * Math.sin(z.t * 5); dot(g, top.x, top.y + 6, 16 + pulse * 5, `rgba(120,220,255,${.35 * pulse})`); dot(g, top.x, top.y + 6, 9, '#bff2ff'); txt(g, 'weak point', top.x + 60, top.y - 6, { size: 13, w: 800, col: '#1b4a5c', align: 'center' });
+        if (sh) pill(g, sh === 1 ? 'it is about to shake' : 'SHAKING: grip drains twice as fast', GX - 60, 40, { size: 16, w: 800, fill: sh === 1 ? C.amber : C.red });
+        // Pip
+        let q = at(z.p), py = q.y + 84, px = q.x + 20, pp = z.hold ? (sh === 2 ? { base: DANGLE, bl: [-10 + wob * 30, 6 + wob * 30], fl: [14 + wob * 30, -6 + wob * 30] } : CAST.mix(CLIMB, DANGLE, .5 + .5 * Math.sin(z.t * 9))) : 'idle';
+        if (z.p <= 0 && z.fall <= 0) { px = at(0).x + 70; py = FLOOR + 6; pp = z.hold ? CLIMB : 'idle'; }
+        else if (z.fall > 0) { const k = 1 - z.fall / 1.3, a = at(z.fy); px = a.x + 30 + k * 60; py = Math.min(FLOOR + 6, a.y + 84 + k * k * 700); pp = py >= FLOOR ? 'down' : 'fall'; }
+        else if (z.rest >= 0) { py = q.y + 20; px = q.x + 26; }
+        if (z.won) { px = top.x + 6; py = top.y + 8; pp = z.won < .5 ? 'windup' : 'crouch'; }
+        CAST.draw(g, 'pip', { x: px, y: py, s: .62, face: -1, pose: pp, shadow: z.p <= 0 || z.fall > 0 });
+        if (!z.won && z.fall <= 0) { const gx = px + 52, gy = py - 66; dot(g, gx, gy, 19, 'rgba(255,255,255,.75)'); g.strokeStyle = z.grip < .25 ? C.red : C.pink; g.lineWidth = 7; g.beginPath(); g.arc(gx, gy, 14, -Math.PI / 2, -Math.PI / 2 + TAU * z.grip); g.stroke(); txt(g, 'grip', gx, gy + 31, { size: 12, w: 800, col: C.ink, align: 'center' }); }
+        // the pad and the hand, side by side
+        box(g, 20, 20, 300, 214, { r: 14, fill: 'rgba(255,252,244,.94)', stroke: C.navy, lw: 3 });
+        txt(g, 'YOUR FINGER', 90, 44, { size: 13, w: 800, col: C.muted, align: 'center' }); txt(g, 'PIP\'S HAND', 242, 44, { size: 13, w: 800, col: C.muted, align: 'center' });
+        key(g, 'R1', 90, 100, { w: 96, h: 62, size: 28, down: z.hold, col: C.pink });
+        txt(g, '=', 166, 100, { size: 34, w: 800, align: 'center', col: C.ink, display: true });
+        // hand: open fingers or a fist round a tuft of fur
+        const hx = 242, hy = 104; g.strokeStyle = '#2c3512'; g.lineWidth = 5; [-12, 0, 12].forEach(dx => { g.beginPath(); g.moveTo(hx + dx, hy - 44); g.lineTo(hx + dx + 3, hy + 44); g.stroke(); });
+        g.fillStyle = '#f2c79a'; g.strokeStyle = C.navy; g.lineWidth = 3;
+        if (z.hold) { g.beginPath(); g.roundRect(hx - 30, hy - 22, 60, 44, 16); g.fill(); g.stroke(); [-18, -6, 6, 18].forEach(dx => { g.beginPath(); g.moveTo(hx + dx - 6, hy - 22); g.lineTo(hx + dx - 6, hy - 2); g.stroke(); }); }
+        else { g.beginPath(); g.roundRect(hx + 22, hy - 16, 36, 40, 12); g.fill(); g.stroke(); [-14, -5, 4, 13].forEach((dy, i) => { g.beginPath(); g.roundRect(hx + 46, hy + dy - 3, 26 + (i === 1 ? 6 : 0), 8, 4); g.fill(); g.stroke(); }); }
+        txt(g, z.hold ? 'held: fingers closed' : 'released: hand open', 170, 160, { size: 16, w: 800, align: 'center', col: z.hold ? C.pink : C.ink });
+        bar(g, 40, 184, 260, 16, z.grip, { col: z.grip < .25 ? C.red : C.pink }); txt(g, 'grip gauge', 40, 216, { size: 13, w: 700, col: C.muted }); txt(g, z.hold ? (sh === 2 ? 'draining fast' : 'draining') : z.rest >= 0 ? 'recovering' : '', 300, 216, { size: 13, w: 800, col: z.hold ? C.red : C.green, align: 'right' });
+        if (z.fall > 0 && z.fall < 1.1) bubble(g, 'Let go, and you fall.', px, Math.min(py - 60, FLOOR - 70), { size: 16, W });
+        if (z.won > .5) pill(g, 'weak point struck', top.x - 20, top.y - 60, { size: 20, w: 800, fill: '#1b6f8c' });
+        g.restore();
+      },
     };
+    return api;
   });
 
-  /* ---------- 2. Death Stranding ---------- */
-  const DSPAN = 30, BUMPS = [[1.5, 7], [3.5, -9], [6, -6], [8, 10], [10.5, -8], [12, 8], [14.5, -10], [17, 6], [19, -7], [21.5, 9], [24, -8], [26, 7], [28.5, -9]];
-  const DSL = '#2ea3dc', DSR = '#e0a92d', POL = [
-    { key: 'none', name: 'No hands', rule: 'never touch the triggers' },
-    { key: 'one', name: 'One hand at a time', rule: 'pull the strap opposite the lean' },
-    { key: 'both', name: 'Both hands', rule: 'hold L2 and R2 the whole way' },
-  ];
-  function dsInit() { return { t: 0, th: 0, d: 0, down: 0, falls: 0, bi: 0, pts: [], ev: [], hand: 0 }; }
-  function dsStep(st, L, R) {
-    const t = st.t;
-    while (st.bi < BUMPS.length && BUMPS[st.bi][0] <= t) { if (st.down <= 0) st.th += BUMPS[st.bi][1]; st.bi++; }
-    if (st.down > 0) { st.down -= DT; L = R = false; }
-    else {
-      if (L && R) st.th += -3 * st.th * DT; else st.th += (0.8 * st.th + (R ? 45 : 0) - (L ? 45 : 0)) * DT;
-      st.d += (L && R ? 0.9 : 1.5) * DT;
-      if (Math.abs(st.th) >= 30) { st.ev.push([t, st.th]); st.falls++; st.down = 3; st.th = 0; }
-    }
-    st.pts.push({ t, th: st.th, L, R, d: st.d, down: st.down > 0 });
-    st.t += DT;
-  }
-  function dsPolicy(key) {
-    const st = dsInit();
-    while (st.t <= DSPAN) {
-      let L = false, R = false;
-      if (key === 'both') L = R = true;
-      if (key === 'one') { if (st.hand === 0 && st.th < -4) st.hand = 1; if (st.hand === 0 && st.th > 4) st.hand = -1; if (st.hand === 1 && st.th >= 0) st.hand = 0; if (st.hand === -1 && st.th <= 0) st.hand = 0; R = st.hand === 1; L = st.hand === -1; }
-      dsStep(st, L, R);
-    }
-    return st;
-  }
-  const DSRUNS = POL.map(p => dsPolicy(p.key));
-  function drawSam(g, p, t, rocksAt) {
-    const gx = 40, gw = 960, gy = 205, sx = 470;
-    g.fillStyle = '#d9cdb0'; g.fillRect(gx, gy, gw, 26); g.strokeStyle = '#b5a77f'; g.lineWidth = 2; g.beginPath(); g.moveTo(gx, gy); g.lineTo(gx + gw, gy); g.stroke();
-    rocksAt.forEach(([bt]) => { const x = sx + (bt - t) * 110; if (x < gx + 10 || x > gx + gw - 10) return; g.fillStyle = '#8b8fa8'; g.beginPath(); g.ellipse(x, gy - 2, 14, 8, 0, Math.PI, TAU); g.fill(); });
-    const th = p.th * Math.PI / 180, walk = p.d * 7, down = p.down;
-    g.lineCap = 'round'; g.strokeStyle = '#2b2b44'; g.lineWidth = 5;
-    if (down) { g.fillStyle = '#c96b2d'; [0, 1, 2].forEach(k => { g.fillRect(sx + 30 + k * 34, gy - 22, 30, 22); }); g.lineWidth = 5; g.beginPath(); g.moveTo(sx - 40, gy - 6); g.lineTo(sx + 10, gy - 10); g.stroke(); g.fillStyle = '#3b2f2a'; g.beginPath(); g.arc(sx - 48, gy - 8, 9, 0, TAU); g.fill(); flag(g, sx, gy - 70, 'cargo down', C.red); return; }
-    // legs
-    [0, Math.PI].forEach(o => { const a = Math.sin(walk + o) * 0.45; g.beginPath(); g.moveTo(sx, gy - 52); g.lineTo(sx + Math.sin(a) * 52, gy - 52 + Math.cos(a) * 52); g.stroke(); });
-    // torso leans with the load
-    g.save(); g.translate(sx, gy - 52); g.rotate(th * 0.5);
-    g.lineWidth = 8; g.beginPath(); g.moveTo(0, 0); g.lineTo(0, -56); g.stroke();
-    g.fillStyle = '#3b2f2a'; g.beginPath(); g.arc(4, -70, 11, 0, TAU); g.fill();
-    // the load, behind him
-    g.save(); g.translate(-14, -50); g.rotate(th * 0.6);
-    ['#c96b2d', '#d8833f', '#e09b55', '#c96b2d'].forEach((c, k) => { rr(g, -42, -k * 26, 38, 24, 3, c); g.strokeStyle = '#7a3e14'; g.lineWidth = 1.5; g.strokeRect(-42, -k * 26, 38, 24); });
-    g.restore();
-    // arms: up to the straps when a trigger is held
-    g.strokeStyle = '#2b2b44'; g.lineWidth = 5;
-    [[p.L, DSL, -6], [p.R, DSR, 6]].forEach(([on, col, o]) => { g.strokeStyle = on ? col : '#2b2b44'; g.beginPath(); g.moveTo(0, -48); if (on) { g.lineTo(10 + o, -36); g.lineTo(-6 + o, -50); } else { g.lineTo(10 + o, -24); g.lineTo(12 + o, -4); } g.stroke(); });
-    g.restore();
-    // lean gauge
-    const cx = 690, cy = 120;
-    g.lineWidth = 10; g.strokeStyle = 'rgba(38,44,106,.12)'; g.beginPath(); g.arc(cx, cy, 70, Math.PI * 1.25, Math.PI * 1.75); g.stroke();
-    g.strokeStyle = 'rgba(229,50,45,.5)'; [[1.25, 1.3333], [1.6667, 1.75]].forEach(([a, b]) => { g.beginPath(); g.arc(cx, cy, 70, Math.PI * a, Math.PI * b); g.stroke(); });
-    const na = -Math.PI / 2 + th; g.strokeStyle = C.navy; g.lineWidth = 4; g.beginPath(); g.moveTo(cx, cy); g.lineTo(cx + Math.cos(na) * 64, cy + Math.sin(na) * 64); g.stroke();
-    txt(g, `lean ${p.th < -1 ? 'left' : p.th > 1 ? 'right' : 'centred'} ${Math.abs(p.th).toFixed(0)}°`, cx, cy + 20, { font: '800 14px Montserrat', col: C.navy, align: 'center' });
-    txt(g, 'falls past 30°', cx, cy + 40, { font: '600 11px Jost', col: C.muted, align: 'center' });
-    // triggers
-    [['L2', p.L, DSL, 840], ['R2', p.R, DSR, 950]].forEach(([n, on, col, x]) => {
-      rr(g, x - 40, 70 + (on ? 4 : 0), 80, 46, 14, on ? col : '#e6e8f4'); g.strokeStyle = C.navy; g.lineWidth = 2.5; g.beginPath(); g.roundRect(x - 40, 70 + (on ? 4 : 0), 80, 46, 14); g.stroke();
-      txt(g, n, x, 94 + (on ? 4 : 0), { font: '800 20px Montserrat', col: on ? '#fff' : C.navy, align: 'center' });
-      txt(g, n === 'L2' ? 'left hand' : 'right hand', x, 136, { font: '700 12px Jost', col: on ? col : C.muted, align: 'center' });
-    });
-    txt(g, p.L && p.R ? 'both straps: steady, slower' : p.L ? 'pulling the load left' : p.R ? 'pulling the load right' : 'hands free', 895, 160, { font: '700 13px Jost', col: C.navy, align: 'center' });
-  }
-  function drawStraps(g, focus, t, focusName) {
-    bg(g);
-    const i = clamp(Math.round(t / DT), 0, focus.pts.length - 1), p = focus.pts[i] || { th: 0, L: false, R: false, d: 0, down: false };
-    txt(g, focusName, 40, 30, { font: '800 16px Montserrat' });
-    txt(g, `${focus.pts[i] ? p.d.toFixed(1) : '0.0'} m walked · ${focus.ev.filter(([e]) => e <= t).length} falls`, 40, 52, { font: '600 13px Jost', col: C.muted });
-    drawSam(g, p, t, BUMPS);
-    const X0 = 230, X1 = 900, px = v => X0 + (X1 - X0) * v / DSPAN;
-    DSRUNS.forEach((r, k) => {
-      const y0 = 262 + k * 104, mid = y0 + 40, py = v => mid - 34 * v / 30, q = r.pts[clamp(Math.round(t / DT), 0, r.pts.length - 1)], vis = r.pts.slice(0, Math.round(t / DT) + 1);
-      txt(g, POL[k].name, 40, y0 + 22, { font: '800 15px Montserrat' }); txt(g, POL[k].rule, 40, y0 + 42, { font: '600 11px Jost', col: C.muted });
-      g.fillStyle = 'rgba(239,230,210,.55)'; g.fillRect(X0, mid - 34, X1 - X0, 68);
-      g.fillStyle = 'rgba(229,50,45,.12)'; g.fillRect(X0, mid - 40, X1 - X0, 6); g.fillRect(X0, mid + 34, X1 - X0, 6);
-      g.strokeStyle = 'rgba(38,44,106,.3)'; g.lineWidth = 1; g.beginPath(); g.moveTo(X0, mid); g.lineTo(X1, mid); g.stroke();
-      txt(g, 'R', X0 - 8, mid - 26, { font: '700 10px Jost', col: C.muted, align: 'right' }); txt(g, 'L', X0 - 8, mid + 26, { font: '700 10px Jost', col: C.muted, align: 'right' });
-      vis.forEach(v => { if (v.L) { g.fillStyle = DSL; g.fillRect(px(v.t), mid + 44, (X1 - X0) * DT / DSPAN + .6, 4); } if (v.R) { g.fillStyle = DSR; g.fillRect(px(v.t), mid + 49, (X1 - X0) * DT / DSPAN + .6, 4); } if (v.down) { g.fillStyle = 'rgba(229,50,45,.18)'; g.fillRect(px(v.t), mid - 34, (X1 - X0) * DT / DSPAN + .6, 68); } });
-      g.strokeStyle = C.navy; g.lineWidth = 2.5; g.beginPath(); let pen = false; vis.forEach(v => { if (v.down) { pen = false; return; } pen ? g.lineTo(px(v.t), py(v.th)) : g.moveTo(px(v.t), py(v.th)); pen = true; }); g.stroke();
-      r.ev.filter(([e]) => e <= t).forEach(([e]) => { g.fillStyle = C.red; g.beginPath(); g.arc(px(e), mid, 6, 0, TAU); g.fill(); });
-      g.strokeStyle = 'rgba(21,32,68,.4)'; g.lineWidth = 1; g.strokeRect(X0, mid - 34, X1 - X0, 68);
-      txt(g, `${q.d.toFixed(1)} m`, X1 + 14, mid - 8, { font: '800 18px Montserrat', col: C.navy });
-      const f = r.ev.filter(([e]) => e <= t).length; txt(g, `${f} fall${f === 1 ? '' : 's'}`, X1 + 14, mid + 14, { font: '700 13px Jost', col: f ? C.red : C.good });
-    });
-    lanesAxis(g, X0, X1, 252, DSPAN);
-    txt(g, 'line: lean (up is right, down is left) · shaded: cargo down for 3 s · bars below: L2 held, R2 held', X0, H - 8, { font: '600 11px Jost', col: C.muted });
-  }
-  canvasDemo('straps', (s, cv, g) => {
-    const st = { tour: true, held: false, t: 0, key: '', run: dsInit() }, tourBtn = $(s, '.ds-tour');
-    const manual = () => { if (st.tour) { st.tour = false; tourBtn.classList.remove('on'); st.run = dsInit(); } };
-    const l2 = holdInput(s, $(s, '.ds-l2'), ['q'], manual), r2 = holdInput(s, $(s, '.ds-r2'), ['e'], manual);
-    tourBtn.onclick = () => { st.tour = true; st.t = 0; tourBtn.classList.add('on'); };
-    $(s, '.ds-reset').onclick = () => { manual(); st.run = dsInit(); };
-    function info(focus, t, cap) {
-      const k = cap + Math.floor(t); if (k === st.key) return; st.key = k;
-      const at = r => r.pts[clamp(Math.round(t / DT), 0, r.pts.length - 1)];
-      const rows = (st.tour ? DSRUNS.map((r, i) => [POL[i].name, r]) : [['You', focus], ...DSRUNS.map((r, i) => [POL[i].name, r])]);
-      say($(s, '.ds-stats'), rows.map(([n, r]) => { const f = r.ev.filter(([e]) => e <= t).length; return `<div class="${f ? 'r' : 'g'}"><b>${at(r) ? at(r).d.toFixed(1) : '0.0'} m</b><span>${n}: ${f} fall${f === 1 ? '' : 's'}</span></div>`; }).join(''));
-      say($(s, '.ds-out'), cap);
-    }
-    const cap = t => t < 7 ? 'Each trigger is one hand on one strap. When the load tips left, R2 pulls it back to the right; when it tips right, L2 pulls it left.'
-      : t < 15 ? 'With no hands, every bump grows until the cargo goes over. One hand at the right moment keeps Sam upright at full speed.'
-      : t < 23 ? 'Holding both straps never falls, but Sam walks more slowly, so the both-hands lane falls behind.'
-      : 'The metaphor makes the trade-off physical: two free hands for speed, two hands on the straps for safety.';
-    s._seek = t => { const tt = Math.min(DSPAN, t); drawStraps(g, DSRUNS[1], tt, 'Walk-through: one hand at a time'); info(DSRUNS[1], tt, cap(t)); };
-    window.__seek = t => { st.held = true; s._seek(t); };
-    window.__dur = () => DSPAN + 2;
-    return dt => {
-      if (st.held) return; dt = Math.max(0, dt);
-      if (st.tour) { st.t += dt; if (st.t >= DSPAN + 2) st.t = 0; s._seek(st.t); return; }
-      const run = st.run, end = run.t + dt; while (run.t < Math.min(end, DSPAN)) dsStep(run, l2.down, r2.down);
-      const tt = Math.min(run.t, DSPAN); drawStraps(g, run, tt, 'Your hands');
-      info(run, tt, run.t >= DSPAN ? 'Walk over. Compare your distance and falls with the three lanes, then start over.' : 'Hold Q or the L2 button to pull the load left, E or R2 to pull it right, both to steady it.');
+  /* ---------- Death Stranding: one trigger per hand ---------- */
+  SCN.run('straps', s => {
+    const FLOOR = 470, BUMPS = [3.2, 6.1, 9.3, 11.8, 14.6, 17.2, 19.9, 22.4, 25.3, 28.2, 31, 34.1], DIR = [1, -1, 1, 1, -1, 1, -1, -1, 1, -1, 1, -1];
+    let z;
+    const api = {
+      dur: 30,
+      reset(tour) { z = { t: 0, th: 0, om: 0, L: false, R: false, d: 0, down: 0, spills: 0, auto: tour ? 'none' : null, msg: '', bi: 0 }; },
+      step(h) {
+        z.t += h; if (z.down > 0) { z.down -= h; if (z.down <= 0) { z.th = 0; z.om = 0; } return; }
+        if (z.auto === 'react') { z.L = z.th > .12 || (z.th > 0 && z.om > .25); z.R = z.th < -.12 || (z.th < 0 && z.om < -.25); }
+        if (z.auto === 'both') z.L = z.R = true;
+        if (z.auto === 'none') z.L = z.R = false;
+        const both = z.L && z.R, sp = both ? .45 : 1;
+        z.d += h * sp * 1.4;
+        const u = z.d % 36 / 1.4; const bi = BUMPS.findIndex((b, i) => i >= 0 && Math.abs(u - b) < .02 * sp + h);   // a rock underfoot knocks the load one way
+        if (bi >= 0 && bi !== z.lastB) { z.lastB = bi; z.om += DIR[bi] * (both ? .5 : 1.25); } if (bi < 0) z.lastB = -1;
+        const pull = both ? 0 : (z.L ? -2.6 : 0) + (z.R ? 2.6 : 0);
+        z.om += h * (2.0 * z.th + pull - (both ? 5 : .5) * z.om); z.th += h * z.om; if (both) z.th -= h * z.th * 1.6;
+        if (Math.abs(z.th) >= 1) { z.down = 1.8; z.spills++; z.msg = `The load went over to the ${z.th > 0 ? 'right' : 'left'}. A pull on the ${z.th > 0 ? 'left' : 'right'} strap would have caught it.`; SCN.noise({ dur: .4, vol: .25 }); }
+      },
+      script: [[9.5, () => { z.auto = 'react'; z.th = 0; z.om = 0; z.down = 0; }], [21, () => { z.auto = 'both'; }]],
+      caption: t => t < 4 ? 'Pip carries a tall load over rough ground. Every rock underfoot tips it left or right.'
+        : t < 9.5 ? 'With both hands off the straps, the lean feeds itself and the cargo goes over.'
+        : t < 21 ? 'L2 is the left hand, R2 is the right hand. Load tipping right? Squeeze L2: the left hand hauls it back. The mapping is the body.'
+        : 'Squeeze both and Pip braces with both hands. The load stays put, and he walks at less than half speed. Safety has a price too.',
+      status: () => z.down > 0 ? z.msg : z.L && z.R ? 'Both hands on the straps: steady, and slow.' : z.L ? 'Left hand pulling: the load comes back to the left.' : z.R ? 'Right hand pulling: the load comes back to the right.' : 'Hold L2 (the button, or A) and R2 (or D). Pull the strap opposite the lean; hold both to brace.',
+      stats: () => `<div><b>${Math.round(z.d)} m</b><span>carried</span></div><div class="r"><b>${z.spills}</b><span>spills</span></div><div class="y"><b>${z.L && z.R ? '45%' : '100%'}</b><span>walking speed</span></div>`,
+      acts: { L(v) { z.auto = null; z.L = !!v; }, R(v) { z.auto = null; z.R = !!v; } }, holds: { a: 'L', d: 'R' },
+      draw(g) {
+        g.clearRect(0, 0, W, H); g.save(); SCN.clipStage(g, W, H);
+        const sky = g.createLinearGradient(0, 0, 0, H); sky.addColorStop(0, '#8b98a3'); sky.addColorStop(1, '#c9cdc4'); g.fillStyle = sky; g.fillRect(0, 0, W, H);
+        g.fillStyle = 'rgba(70,84,90,.45)'; g.beginPath(); g.moveTo(0, 360); g.lineTo(120, 230); g.lineTo(260, 340); g.lineTo(400, 200); g.lineTo(560, 350); g.lineTo(620, 300); g.lineTo(620, H); g.lineTo(0, H); g.fill();
+        g.fillStyle = '#566246'; g.fillRect(0, FLOOR, 620, H - FLOOR); g.fillStyle = '#3f4a33'; g.fillRect(0, FLOOR, 620, 6);
+        const scroll = z.d * 60; for (let i = 0; i < 12; i++) { const wx = BUMPS[i] * 1.4 * 60, x = ((wx - scroll + 260) % (36 * 60) + 36 * 60) % (36 * 60) - 200; if (x < 640) { g.fillStyle = '#7d8672'; g.beginPath(); g.ellipse(x, FLOOR + 2, 26, 14, 0, Math.PI, 0); g.fill(); } }
+        g.strokeStyle = 'rgba(255,255,255,.25)'; g.lineWidth = 1.5; for (let i = 0; i < 40; i++) { const x = (i * 97 + z.t * 90) % 640, y = (i * 53 + z.t * 420) % FLOOR; g.beginPath(); g.moveTo(x, y); g.lineTo(x - 5, y + 16); g.stroke(); }
+        const downK = z.down > 0 ? clamp((1.8 - z.down) / .4) : 0, both = z.L && z.R;
+        const px = 300, pose = z.down > 0 ? CAST.mix('idle', 'crumple', downK) : { base: CAST.cycle('walk', z.d * .9), lean: 12, ba: [30, 110], fa: [40, 120] };
+        // the stack on his back (side view): it wobbles with the lean
+        g.save(); g.translate(px - 42, FLOOR - 96); g.scale(1.4, 1.4); g.rotate((-.08 + Math.abs(z.th) * .12 + downK * 1.2)); [['#d9a441', 46, 34], ['#c7c9cc', 44, 30], ['#d9a441', 40, 28], ['#3b5b8c', 36, 26]].forEach(([c, w, hh], i) => { const y = -i * 31; box(g, -w / 2, y - hh, w, hh, { r: 4, fill: c, stroke: C.navy, lw: 2.5 }); }); g.restore();
+        CAST.draw(g, 'pip', { x: px, y: FLOOR + 6, s: 1.55, pose, weapon: null });
+        txt(g, `${Math.round(z.d)} m`, 30, 40, { size: 30, w: 800, col: '#fff', display: true }); txt(g, both ? 'braced: slow and steady' : 'walking', 30, 68, { size: 15, w: 700, col: '#eef' });
+        // from behind: the pack, two straps, two hands, two triggers
+        const bx = 830, by = 430; box(g, 632, 14, 394, H - 28, { r: 14, fill: 'rgba(255,252,244,.95)', stroke: C.navy, lw: 3 });
+        txt(g, 'FROM BEHIND', bx, 38, { size: 13, w: 800, col: C.muted, align: 'center' });
+        key(g, 'L2', 690, 84, { w: 84, h: 56, size: 24, down: z.L, col: C.blue }); key(g, 'R2', 970, 84, { w: 84, h: 56, size: 24, down: z.R, col: C.amber });
+        txt(g, 'left hand', 690, 130, { size: 14, w: 800, col: C.blue, align: 'center' }); txt(g, 'right hand', 970, 130, { size: 14, w: 800, col: C.amber, align: 'center' });
+        const ang = (z.down > 0 ? Math.sign(z.th) * (1 + downK * .5) : z.th) * .5;
+        // tilt scale
+        g.strokeStyle = '#cdbf9f'; g.lineWidth = 10; g.beginPath(); g.arc(bx, by - 60, 250, -Math.PI / 2 - .5, -Math.PI / 2 + .5); g.stroke();
+        g.strokeStyle = C.red; [-1, 1].forEach(sg => { g.beginPath(); g.arc(bx, by - 60, 250, -Math.PI / 2 + sg * .5 - (sg > 0 ? .1 : 0), -Math.PI / 2 + sg * .5 + (sg > 0 ? 0 : .1)); g.stroke(); });
+        dot(g, bx + Math.sin(ang) * 250, by - 60 - Math.cos(ang) * 250, 9, Math.abs(z.th) > .7 ? C.red : C.navy);
+        // legs, body, head
+        g.strokeStyle = '#152044'; g.lineWidth = 16; g.lineCap = 'round'; g.beginPath(); g.moveTo(bx - 20, by + 20); g.lineTo(bx - 24, by + 110); g.moveTo(bx + 20, by + 20); g.lineTo(bx + 24, by + 110); g.stroke();
+        box(g, bx - 46, by - 70, 92, 100, { r: 20, fill: '#2ea3dc', stroke: '#152044', lw: 4 }); dot(g, bx, by - 96, 28, '#2ea3dc'); ring(g, bx, by - 96, 28, '#152044', 4);
+        g.save(); g.translate(bx, by + 10); g.rotate(ang);
+        box(g, -52, -110, 104, 112, { r: 12, fill: '#5d618c', stroke: C.navy, lw: 4 });
+        [['#d9a441', 112, 54], ['#c7c9cc', 100, 48], ['#d9a441', 92, 44], ['#3b5b8c', 80, 40]].forEach(([c, w, hh], i) => { const y = -112 - [0, 54, 102, 146][i]; box(g, -w / 2, y - hh, w, hh, { r: 6, fill: c, stroke: C.navy, lw: 3 }); g.strokeStyle = 'rgba(21,32,68,.4)'; g.lineWidth = 3; g.beginPath(); g.moveTo(-w / 2 + 8, y - hh / 2); g.lineTo(w / 2 - 8, y - hh / 2); g.stroke(); });
+        const sl = { x: -52, y: -90 }, sr = { x: 52, y: -90 }; g.restore();
+        // straps from the pack's top corners down to the hands
+        const rot = (p) => ({ x: bx + p.x * Math.cos(ang) - p.y * Math.sin(ang), y: by + 10 + p.x * Math.sin(ang) + p.y * Math.cos(ang) });
+        [[rot(sl), { x: bx - 78, y: by - 6 }, z.L, C.blue], [rot(sr), { x: bx + 78, y: by - 6 }, z.R, C.amber]].forEach(([a, hnd, on, col]) => {
+          g.strokeStyle = on ? col : '#8d8fa6'; g.lineWidth = on ? 8 : 5; g.beginPath(); g.moveTo(a.x, a.y); g.lineTo(hnd.x, hnd.y); g.stroke();
+          g.strokeStyle = '#152044'; g.lineWidth = 12; g.beginPath(); g.moveTo(bx + Math.sign(hnd.x - bx) * 44, by - 50); g.lineTo(hnd.x, hnd.y + 4); g.stroke();
+          dot(g, hnd.x, hnd.y, on ? 13 : 15, on ? col : '#f2c79a'); ring(g, hnd.x, hnd.y, on ? 13 : 15, '#152044', 3);
+          txt(g, on ? 'gripping' : 'open', hnd.x + Math.sign(hnd.x - bx) * 56, hnd.y, { size: 14, w: 800, col: on ? col : C.muted, align: 'center' });
+        });
+        if (z.down > 0) pill(g, 'cargo spilled', bx, 250, { size: 20, w: 800, fill: C.red });
+        else if (Math.abs(z.th) > .25 && !both) { const right = z.th > 0; pill(g, right ? 'tipping right: pull with the LEFT hand' : 'tipping left: pull with the RIGHT hand', bx, 168, { size: 14, w: 800, fill: (right ? z.L : z.R) ? C.green : C.red }); }
+        g.restore();
+      },
     };
+    return api;
   });
 
-  /* ---------- 3. Katamari Damacy ---------- */
-  const KSPAN = 30, RX0 = 24, RY0 = 24, RX1 = 600, RY1 = 560;
-  const ITEMS = (() => { const R = mulberry(31), out = [], cols = ['#e5322d', '#2ea3dc', '#2fae63', '#e0a92d', '#8a4fd6', '#ef7921', '#5d618c'];
-    for (let k = 0; k < 150; k++) { const r = 3 + Math.pow(R(), 2.6) * 22, x = RX0 + 30 + R() * (RX1 - RX0 - 60), y = RY0 + 30 + R() * (RY1 - RY0 - 60); if (Math.hypot(x - 312, y - 470) < 50) continue; out.push({ x, y, r, col: cols[k % cols.length], sh: k % 3 }); } return out; })();
-  const KTOUR = [[0, 3, 1, 1], [3, 3.9, 1, -1], [3.9, 7, 1, 1], [7, 8.6, -1, 1], [8.6, 11, 1, 1], [11, 12.4, 1, -1], [12.4, 15, 1, 1], [15, 16.5, -1, -1], [16.5, 17.6, 1, -1], [17.6, 21, 1, 1], [21, 22.8, -1, 1], [22.8, 26, 1, 1], [26, 27.2, 1, -1], [27.2, 30, 1, 1]];
-  const ktour = t => { const k = KTOUR.find(([a, b]) => t >= a && t < b); return k ? [k[2], k[3]] : [0, 0]; };
-  function kInit() { return { t: 0, x: 312, y: 470, a: 0, R: 16, got: new Set(), pts: [], L: 0, Rs: 0 }; }
-  function kStep(st, L, Rv) {
-    const v = (L + Rv) / 2 * 110, w = (L - Rv) / 2 * 2.4;
-    st.a += w * DT; st.x = clamp(st.x + Math.sin(st.a) * v * DT, RX0 + st.R, RX1 - st.R); st.y = clamp(st.y - Math.cos(st.a) * v * DT, RY0 + st.R, RY1 - st.R);
-    ITEMS.forEach((it, k) => { if (st.got.has(k) || it.r > st.R * 0.6) return; if (Math.hypot(it.x - st.x, it.y - st.y) < st.R + it.r * .5) { st.got.add(k); st.R = Math.sqrt(st.R * st.R + 0.6 * it.r * it.r); } });
-    st.L = L; st.Rs = Rv; if (st.pts.length % 5 === 0) st.pts.push([st.x, st.y]); else st.pts.length++; st.t += DT;
-  }
-  const kTourAt = (() => { const cache = new Map(); return t => { const n = Math.round(Math.min(t, KSPAN) / DT); if (cache.has(n)) return cache.get(n); const st = kInit(); for (let k = 0; k < n; k++) { const [l, r] = ktour(st.t); kStep(st, l, r); } cache.clear(); cache.set(n, st); return st; }; })();
-  function itemShape(g, it, x, y, r) { g.fillStyle = it.col; g.beginPath(); if (it.sh === 0) g.arc(x, y, r, 0, TAU); else if (it.sh === 1) g.roundRect(x - r, y - r * .7, 2 * r, 1.4 * r, r * .3); else { g.moveTo(x, y - r); g.lineTo(x + r, y + r * .8); g.lineTo(x - r, y + r * .8); g.closePath(); } g.fill(); }
-  function stick(g, cx, cy, v, lab, col) {
-    g.fillStyle = '#e6e8f4'; g.strokeStyle = C.navy; g.lineWidth = 2.5; g.beginPath(); g.arc(cx, cy, 46, 0, TAU); g.fill(); g.stroke();
-    g.fillStyle = col; g.beginPath(); g.arc(cx, cy - v * 30, 22, 0, TAU); g.fill(); g.strokeStyle = C.navy; g.stroke();
-    if (Math.abs(v) > .1) txt(g, v > 0 ? '▲' : '▼', cx, cy - v * 30 + 1, { font: '800 16px Jost', col: '#fff', align: 'center' });
-    txt(g, lab, cx, cy + 64, { font: '700 13px Jost', col: C.navy, align: 'center' });
-  }
-  function drawKata(g, st) {
-    bg(g);
-    rr(g, RX0, RY0, RX1 - RX0, RY1 - RY0, 10, '#efe3c8'); g.strokeStyle = 'rgba(201,180,138,.45)'; g.lineWidth = 1;
-    for (let x = RX0 + 96; x < RX1; x += 96) { g.beginPath(); g.moveTo(x, RY0); g.lineTo(x, RY1); g.stroke(); }
-    for (let y = RY0 + 134; y < RY1; y += 134) { g.beginPath(); g.moveTo(RX0, y); g.lineTo(RX1, y); g.stroke(); }
-    ITEMS.forEach((it, k) => { if (!st.got.has(k)) { itemShape(g, it, it.x, it.y, it.r); if (it.r > st.R * 0.6) { g.strokeStyle = 'rgba(21,32,68,.35)'; g.lineWidth = 1.5; g.stroke(); } } });
-    g.strokeStyle = 'rgba(38,44,106,.25)'; g.lineWidth = 2; g.setLineDash([3, 5]); g.beginPath(); st.pts.forEach((p, k) => { if (!p) return; k ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1]); }); g.stroke(); g.setLineDash([]);
-    // ball with stuck items
-    const b = g.createRadialGradient(st.x - st.R * .3, st.y - st.R * .3, 2, st.x, st.y, st.R); b.addColorStop(0, '#ff9ccf'); b.addColorStop(1, '#d24b8f');
-    g.fillStyle = b; g.beginPath(); g.arc(st.x, st.y, st.R, 0, TAU); g.fill();
-    [...st.got].slice(-14).forEach((k, n) => { const it = ITEMS[k], an = n * 2.4 + st.t * 1.2; itemShape(g, it, st.x + Math.cos(an) * st.R * .85, st.y + Math.sin(an) * st.R * .85, Math.min(it.r, st.R * .35)); });
-    // the Prince pushes from behind
-    const px = st.x - Math.sin(st.a) * (st.R + 12), py = st.y + Math.cos(st.a) * (st.R + 12);
-    g.fillStyle = '#2fae63'; g.strokeStyle = C.navy; g.lineWidth = 2; g.beginPath(); g.arc(px, py, 10, 0, TAU); g.fill(); g.stroke(); g.fillStyle = '#f2d7a8'; g.beginPath(); g.arc(px, py, 5, 0, TAU); g.fill();
-    // sticks and combos
-    stick(g, 740, 110, st.L, 'left hand', '#2ea3dc'); stick(g, 900, 110, st.Rs, 'right hand', '#e0a92d');
-    const COMBOS = [[[1, 1], '▲ ▲', 'both push: roll ahead'], [[-1, -1], '▼ ▼', 'both pull: roll back'], [[1, -1], '▲ ▼', 'left pushes, right pulls: turn right'], [[-1, 1], '▼ ▲', 'left pulls, right pushes: turn left']];
-    const sg = v => v > .3 ? 1 : v < -.3 ? -1 : 0;
-    COMBOS.forEach(([[l, r], k, lab], n) => { const on = sg(st.L) === l && sg(st.Rs) === r, y = 236 + n * 44; rr(g, 650, y - 17, 360, 36, 8, on ? '#fde9b8' : 'rgba(38,44,106,.05)'); txt(g, k, 680, y + 1, { font: '800 15px Jost', col: C.navy }); txt(g, lab, 740, y + 1, { font: on ? '700 14px Jost' : '600 14px Jost', col: on ? C.navy : C.muted }); });
-    txt(g, `Ball ${(st.R * 2 / 10).toFixed(1)} cm across · ${st.got.size} things rolled up`, 830, 430, { font: '800 16px Montserrat', col: C.navy, align: 'center' });
-    txt(g, 'Outlined objects are too big to roll up yet.', 830, 456, { font: '600 13px Jost', col: C.muted, align: 'center' });
-  }
-  canvasDemo('kata', (s, cv, g) => {
-    const st = { tour: true, held: false, t: 0, key: '', run: kInit(), keys: {} }, tourBtn = $(s, '.kd-tour'), ls = $(s, '.kd-l'), rs = $(s, '.kd-r');
-    const manual = () => { if (st.tour) { st.tour = false; tourBtn.classList.remove('on'); st.run = kInit(); } };
-    tourBtn.onclick = () => { st.tour = true; st.t = 0; tourBtn.classList.add('on'); };
-    $(s, '.kd-reset').onclick = () => { manual(); st.run = kInit(); ls.value = 0; rs.value = 0; };
-    [ls, rs].forEach(el => el.oninput = manual);
-    addEventListener('keydown', e => { if (!s.classList.contains('active')) return; const k = e.key.toLowerCase(); if ('wsik'.includes(k) && k.length === 1) { manual(); st.keys[k] = true; } });
-    addEventListener('keyup', e => { st.keys[e.key.toLowerCase()] = false; });
-    function info(run, cap) {
-      const k = cap + run.got.size; if (k === st.key) return; st.key = k;
-      say($(s, '.kd-stats'), `<div class="y"><b>${(run.R * 2 / 10).toFixed(1)} cm</b><span>ball size</span></div><div class="g"><b>${run.got.size}</b><span>things rolled up</span></div>`);
-      say($(s, '.kd-out'), cap);
-    }
-    const cap = t => t < 3.9 ? 'Both sticks forward: two hands push the ball straight ahead.'
-      : t < 8.6 ? 'Left stick forward, right stick back: the hands twist the ball, and it turns right. Reverse them and it turns left.'
-      : t < 17.6 ? 'Both back rolls it backwards. Each thing it picks up makes it bigger, so it can pick up bigger things.'
-      : 'Tank steering is usually a hard sell. Framed as two hands on a ball, it reads at once.';
-    s._seek = t => { const run = kTourAt(t); ls.value = run.L; rs.value = run.Rs; drawKata(g, run); info(run, cap(t)); };
-    window.__seek = t => { st.held = true; s._seek(t); };
-    window.__dur = () => KSPAN + 2;
-    return dt => {
-      if (st.held) return; dt = Math.max(0, dt);
-      if (st.tour) { st.t += dt; if (st.t >= KSPAN + 2) st.t = 0; s._seek(st.t); return; }
-      const kL = st.keys.w ? 1 : st.keys.s ? -1 : null, kR = st.keys.i ? 1 : st.keys.k ? -1 : null;
-      if (kL !== null) ls.value = kL; else if (st.keys.w === false || st.keys.s === false) { if (!st.keys.w && !st.keys.s && (ls.value == 1 || ls.value == -1)) ls.value = 0; }
-      if (kR !== null) rs.value = kR; else if (!st.keys.i && !st.keys.k && (rs.value == 1 || rs.value == -1) && (st.keys.i === false || st.keys.k === false)) rs.value = 0;
-      const run = st.run, n = Math.round(Math.min(dt, .1) / DT); for (let k = 0; k < n; k++) kStep(run, +ls.value, +rs.value);
-      drawKata(g, run); info(run, 'Drag the two sliders, or hold W / S and I / K. Push both to roll, push one and pull the other to turn.');
+  /* ---------- Katamari Damacy: one stick per hand ---------- */
+  SCN.run('katamari', s => {
+    const FW = 700, rnd0 = () => SCN.rng(5);
+    const KIND = [['#e5322d', 8], ['#e0a92d', 11], ['#2fae63', 14], ['#8a4fd6', 19], ['#2ea3dc', 26], ['#d0574f', 36]];
+    let z;
+    const api = {
+      dur: 26,
+      reset() { const r = rnd0(); z = { t: 0, x: 120, y: 470, a: -Math.PI / 2, r: 26, spin: 0, lu: 0, ld: 0, ru: 0, rd: 0, got: 0, items: Array.from({ length: 46 }, (_, i) => { const k = KIND[Math.min(5, Math.floor(r() * r() * 6.5))]; return { x: 40 + r() * (FW - 80), y: 40 + r() * (H - 80), col: k[0], sz: k[1], on: false, sa: r() * TAU, sr: r() }; }).filter(it => Math.hypot(it.x - 120, it.y - 470) > 80), msg: '' }; },
+      step(h) {
+        z.t += h; const L = z.lu - z.ld, R = z.ru - z.rd, v = (L + R) / 2 * 185, w = (L - R) * 1.5;
+        z.a += w * h; z.x = clamp(z.x + Math.cos(z.a) * v * h, z.r + 6, FW - z.r - 6); z.y = clamp(z.y + Math.sin(z.a) * v * h, z.r + 6, H - z.r - 6); z.spin += v * h / z.r;
+        z.items.forEach(it => { if (!it.on && Math.hypot(it.x - z.x, it.y - z.y) < z.r + it.sz * .4) { if (it.sz <= z.r * .62) { it.on = true; z.got++; z.r += it.sz * .12; SCN.tone({ f: 500 + z.got * 14, dur: .07, vol: .06 }); } else { z.x -= Math.cos(z.a) * v * h * 1.5; z.y -= Math.sin(z.a) * v * h * 1.5; z.msg = 'Too big to pick up yet: roll up smaller things first.'; } } });
+      },
+      script: [[.6, 'lu1 ru1'], [3, 'ru0'], [4.2, 'ru1'], [6.6, 'lu0'], [7.7, 'lu1'], [10, 'lu0 ru0'], [10.4, 'lu1 rd1'], [11.5, 'lu0 rd0'], [11.8, 'lu1 ru1'], [15, 'lu0 ru0'], [15.3, 'ld1 rd1'], [16.4, 'ld0 rd0'], [16.7, 'ld1 ru1'], [17.6, 'ld0 ru0'], [17.9, 'lu1 ru1'], [20.3, 'ru0'], [21.3, 'ru1'], [24.5, 'lu0 ru0']]
+        .map(([t, a]) => [t, () => a.split(' ').forEach(c => { z[c.slice(0, 2)] = +c[2]; })]),
+      caption: t => t < 3 ? 'Each stick is one of the Prince\'s hands on the ball. Both hands push: the ball rolls straight ahead.'
+        : t < 10 ? 'Push with one hand only and the ball swings round the idle hand, the way a wheelbarrow or a shopping trolley turns.'
+        : t < 11.8 ? 'One hand forward and one back: the Prince spins the ball on the spot.'
+        : t < 16.5 ? 'Nobody needs a tutorial for long. You already know how two hands push a heavy ball.'
+        : t < 18 ? 'Both back pulls it backward. The whole control scheme is the two hands.'
+        : 'Two sticks, no buttons, and the pad has become a body. Small things stick first, so the ball grows into the bigger ones.',
+      status: () => { const L = z.lu - z.ld, R = z.ru - z.rd; return L > 0 && R > 0 ? 'Both hands push: straight ahead.' : L < 0 && R < 0 ? 'Both hands pull: backward.' : L && R && L !== R ? 'Hands in opposite directions: spin on the spot.' : L || R ? `Only the ${L ? 'left' : 'right'} hand: the ball arcs to the ${L > 0 || R < 0 ? 'right' : 'left'}.` : z.msg || 'Left stick: W and S. Right stick: I and K. Or hold the buttons. Push both to roll.'; },
+      stats: () => `<div><b>${z.got}</b><span>things rolled up</span></div><div class="y"><b>${(z.r / 26 * 10).toFixed(0)} cm</b><span>ball size</span></div>`,
+      acts: { lu(v) { z.lu = +!!v; }, ld(v) { z.ld = +!!v; }, ru(v) { z.ru = +!!v; }, rd(v) { z.rd = +!!v; } }, holds: { w: 'lu', s: 'ld', i: 'ru', k: 'rd' },
+      draw(g) {
+        g.clearRect(0, 0, W, H); g.save(); SCN.clipStage(g, W, H);
+        g.fillStyle = '#cfe6a8'; g.fillRect(0, 0, FW, H); g.fillStyle = 'rgba(255,255,255,.22)'; for (let i = 0; i < 8; i++) for (let j = 0; j < 7; j++) if ((i + j) % 2) g.fillRect(i * 100, j * 100, 100, 100);
+        const shape = (it, x, y, k = 1) => { g.fillStyle = it.col; g.strokeStyle = C.navy; g.lineWidth = 2; g.beginPath(); if (it.sz < 12) g.arc(x, y, it.sz * k, 0, TAU); else if (it.sz < 20) g.roundRect(x - it.sz * k, y - it.sz * k * .7, it.sz * 2 * k, it.sz * 1.4 * k, 4); else { for (let i = 0; i < 5; i++) { const a = it.sa + i / 5 * TAU; g.lineTo(x + Math.cos(a) * it.sz * k, y + Math.sin(a) * it.sz * k); } g.closePath(); } g.fill(); g.stroke(); };
+        z.items.filter(it => !it.on).forEach(it => shape(it, it.x, it.y));
+        // the Prince and his two hands
+        const L = z.lu - z.ld, R = z.ru - z.rd, bx = z.x - Math.cos(z.a) * (z.r + 30), by = z.y - Math.sin(z.a) * (z.r + 30), nx = -Math.sin(z.a), ny = Math.cos(z.a);
+        [[-1, L, C.blue], [1, R, C.amber]].forEach(([sd, on, col]) => { const hx = z.x - Math.cos(z.a) * z.r * .86 + nx * sd * z.r * .5, hy = z.y - Math.sin(z.a) * z.r * .86 + ny * sd * z.r * .5; g.strokeStyle = on ? col : '#3c6a3a'; g.lineWidth = 9; g.lineCap = 'round'; g.beginPath(); g.moveTo(bx + nx * sd * 11, by + ny * sd * 11); g.lineTo(hx, hy); g.stroke(); dot(g, hx, hy, 8, on ? col : '#3c6a3a'); });
+        dot(g, bx, by, 17, '#59b24a'); ring(g, bx, by, 17, C.navy, 3); g.save(); g.translate(bx, by); g.rotate(z.a); box(g, -8, -24, 16, 48, { r: 6, fill: '#8a4fd6', stroke: C.navy, lw: 2.5 }); g.restore();
+        // the ball with what it has picked up
+        dot(g, z.x + 4, z.y + 6, z.r, 'rgba(0,0,0,.15)'); dot(g, z.x, z.y, z.r, '#e86fa8'); ring(g, z.x, z.y, z.r, C.navy, 3);
+        for (let i = 0; i < 9; i++) { const a = z.spin + i / 9 * TAU; dot(g, z.x + Math.cos(a) * z.r * .62 * Math.cos(z.a) - Math.sin(a) * 0, z.y + Math.sin(a * 1.0) * z.r * .62, z.r * .13, '#f6a8cd'); }
+        z.items.filter(it => it.on).slice(-26).forEach(it => { const a = it.sa + z.spin * .6; shape(it, z.x + Math.cos(a) * z.r * (.5 + it.sr * .5), z.y + Math.sin(a) * z.r * (.5 + it.sr * .5), .7); });
+        // the two sticks
+        box(g, FW + 12, 14, W - FW - 26, H - 28, { r: 14, fill: 'rgba(255,252,244,.96)', stroke: C.navy, lw: 3 });
+        [[FW + 96, 'LEFT STICK', 'left hand', L, C.blue, 'W', 'S'], [FW + 246, 'RIGHT STICK', 'right hand', R, C.amber, 'I', 'K']].forEach(([cx, t1, t2, v, col, ku, kd]) => {
+          txt(g, t1, cx, 44, { size: 13, w: 800, col: C.muted, align: 'center' }); txt(g, '= ' + t2, cx, 64, { size: 16, w: 800, col, align: 'center' });
+          dot(g, cx, 150, 56, '#e3dccb'); ring(g, cx, 150, 56, C.navy, 3); dot(g, cx, 150 - v * 30, 32, v ? col : '#8d8fa6'); ring(g, cx, 150 - v * 30, 32, C.navy, 3);
+          txt(g, ku, cx, 150 - v * 30 - 9, { size: 13, w: 800, col: '#fff', align: 'center' }); txt(g, kd, cx, 150 - v * 30 + 11, { size: 13, w: 800, col: '#fff', align: 'center' });
+        });
+        const mv = L > 0 && R > 0 ? ['both push', 'roll ahead'] : L < 0 && R < 0 ? ['both pull', 'roll back'] : L && R ? ['one each way', 'spin on the spot'] : L || R ? ['one hand', 'arc round the other'] : ['hands off', 'the ball rests'];
+        txt(g, mv[0], FW + 171, 252, { size: 15, w: 700, col: C.muted, align: 'center' }); txt(g, mv[1], FW + 171, 280, { size: 23, w: 800, align: 'center', display: true });
+        [['both forward', 'roll ahead', 1, 1], ['one forward', 'arc', 1, 0], ['opposite', 'spin', 1, -1], ['both back', 'reverse', -1, -1]].forEach(([a, b, l, r], i) => { const y = 330 + i * 54, on = Math.sign(L) === l && Math.sign(R) === r || (i === 1 && !!L !== !!R) || (i === 2 && L && R && L !== R);
+          box(g, FW + 30, y, 282, 46, { r: 10, fill: on ? '#fde9b8' : '#fffaf0', stroke: on ? C.amber : '#cdbf9f' });
+          [[l, C.blue, 0], [r, C.amber, 1]].forEach(([d, col, j]) => { const ax = FW + 54 + j * 26; if (d) arrow(g, ax, y + 23 + d * 12, ax, y + 23 - d * 12, { col, lw: 5, head: 10 }); else dot(g, ax, y + 23, 5, '#8d8fa6'); });
+          txt(g, a, FW + 110, y + 16, { size: 14, w: 700, col: C.muted }); txt(g, b, FW + 110, y + 33, { size: 16, w: 800 }); });
+        g.restore();
+      },
     };
+    return api;
   });
 })();

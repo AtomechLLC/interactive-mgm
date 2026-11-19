@@ -1,213 +1,113 @@
-/* SOUL: heal or strike (mock-up for MGM C4 M2, beside Resource Pool and the Life Tap trade).
-   Hollow Knight's one-pool, two-spender loop as a deterministic duel: nail hits generate SOUL, 33 SOUL buys a Focus
-   (one mask back, rooted while it charges) or a spell (3x a nail hit). Three spending rules fight the same boss and
-   the run is precomputed (sim), so drawing is a pure function of t. All numbers are illustrative (see the page's src note). */
+/* One pool, two spenders (Hollow Knight's SOUL), beside Resource Pool / Life Tap (MGM C4 M2).
+   Pip plays the Knight against Grub. Nail hits generate SOUL (11 a hit, vessel of 99: the game's numbers); 33 SOUL buys
+   either a Focus (one mask back, 1.1 s standing still) or a Vengeful Spirit (15 damage, 0.4 s). The boss strikes on a
+   fixed clock: free hands dodge on their own, busy hands get hit, so time is the second price of every spender.
+   Rules: N (numbers), act() and step(). Boss health and its clock are illustrative. */
 (function () {
-  const { $, $$, canvasDemo, say } = FPF.kit;
-  const T = TD, C = TD.C, { clamp, lerp, ease } = TD, TAU = Math.PI * 2;
-  const W = 1040, H = 585;
-  const BASE = { bossHP: 300, nail: 5, spell: 15, soulHit: 11, cost: 33, max: 99, focusT: 1.0, spellT: .5, nailT: .45, open: 2.4, atk: .8, masks: 5, missEvery: 3, bossDmg: 2 };
-  const POL = {
-    spell: { name: 'Strike: every spell', short: 'Strike', col: '#8a4fd6', f: s => s.inOpen ? 'spell' : 'wait' },
-    asap: { name: 'Heal the moment it can', short: 'Heal ASAP', col: '#e5322d', f: s => s.masks < s.c.masks ? 'focus' : (s.inOpen ? 'spell' : 'wait') },
-    safe: { name: 'Heal only in openings', short: 'Heal in openings', col: '#1a8a4c', f: s => s.masks < s.c.masks && s.inOpen && s.left >= s.c.focusT ? 'focus' : (s.inOpen && s.soul >= 66 ? 'spell' : 'wait') },
-  };
-  const ORDER = ['spell', 'asap', 'safe'];
+  const { txt, box, bar, pill, clamp, lerp, C, dot, ring, arrow } = SCN, TAU = SCN.TAU;
+  const W = 1040, H = 585, FLOOR = 372, PX = 400, BX = 640;
+  const N = { hit: 11, cost: 33, max: 99, nail: 5, spell: 15, masks: 5, boss: 200, nailT: .32, focusT: 1.1, spellT: .4, cycle: 3.2, tele: 2.2, strike: 3.0 };
 
-  function sim(key, c) {
-    const pol = POL[key].f, dt = .01, cyc = c.open + c.atk;
-    let t = 0, hp = c.bossHP, soul = 0, masks = c.masks, act = null, last = 0, heals = 0, broken = 0, wasted = 0;
-    const acts = [], atks = [], samp = [];
-    while (hp > 0 && masks > 0 && t < 90) {
-      const ct = t % cyc, inOpen = ct < c.open, left = c.open - ct, ci = Math.floor(t / cyc);
-      if (ci > last) {   // the telegraphed attack lands at the end of each cycle
-        last = ci;
-        const mistake = ci % c.missEvery === 0;
-        if (act && act.k === 'focus') { masks -= c.bossDmg; broken++; wasted += c.cost; act.e = t; act.broken = true; acts.push(act); act = null; atks.push({ t, r: 'broke' }); }
-        else if (mistake) { masks -= c.bossDmg; atks.push({ t, r: 'hit' }); }
-        else atks.push({ t, r: 'dodge' });
-        if (masks <= 0) break;
-      }
-      if (!act) {
-        const d = pol({ soul, masks, left, inOpen, c });
-        if (d === 'focus' && soul >= c.cost && masks < c.masks) { soul -= c.cost; act = { k: 'focus', s: t, e: t + c.focusT }; }
-        else if (d === 'spell' && soul >= c.cost && inOpen) { soul -= c.cost; act = { k: 'spell', s: t, e: t + c.spellT }; }
-        else if (inOpen && left > .05) act = { k: 'nail', s: t, e: t + c.nailT };
-        else act = { k: 'wait', s: t, e: t + dt };
-      }
-      t += dt;
-      if (act && t >= act.e) {
-        if (act.k === 'nail') { hp -= c.nail; soul = Math.min(c.max, soul + c.soulHit); }
-        if (act.k === 'spell') hp -= c.spell;
-        if (act.k === 'focus') { masks = Math.min(c.masks, masks + 1); heals++; }
-        if (act.k !== 'wait') acts.push(act);
-        act = null;
-      }
-      if (Math.round(t * 100) % 5 === 0) samp.push([t, soul, masks, Math.max(0, hp)]);
+  SCN.run('soul', s => {
+    let z;
+    const busy = () => z.act && z.act.t < z.act.dur;
+    function act(kind) {
+      if (z.over || busy() || z.stun > 0 || z.dodge > 0) return;
+      if (kind !== 'nail' && z.soul < N.cost) { z.deny = .5; return; }
+      z.act = { kind, t: 0, dur: N[kind + 'T'], done: false };
     }
-    samp.push([t, soul, Math.max(0, masks), Math.max(0, hp)]);
-    return { key, end: t, win: hp <= 0, masks: Math.max(0, masks), heals, broken, wasted, acts, atks, samp, c };
-  }
-  const at = (run, t) => { const s = run.samp; let lo = 0, hi = s.length - 1; while (lo < hi) { const m = (lo + hi + 1) >> 1; if (s[m][0] <= t) lo = m; else hi = m - 1; } return s[lo]; };
-  const txt = (g, s, x, y, o = {}) => { g.font = o.font || '600 15px Jost, sans-serif'; g.fillStyle = o.col || C.ink; g.textAlign = o.align || 'left'; g.textBaseline = o.base || 'middle'; g.fillText(s, x, y); };
-
-  /* ---------- characters ---------- */
-  function knight(g, x, y, o = {}) {
-    g.save(); g.translate(x, y + (o.jump || 0));
-    // cloak
-    g.fillStyle = '#3a4380'; g.strokeStyle = '#9aa3c8'; g.lineWidth = 2; g.beginPath(); g.moveTo(-22, 0); g.quadraticCurveTo(-26, -40, 0, -46); g.quadraticCurveTo(26, -40, 22, 0); g.closePath(); g.fill(); g.stroke();
-    // legs
-    g.fillStyle = '#10142c'; g.fillRect(-11, -4, 7, 12); g.fillRect(4, -4, 7, 12);
-    // mask with horns
-    g.fillStyle = o.flash ? '#ffb4b4' : '#f4f6ff'; g.strokeStyle = '#10142c'; g.lineWidth = 2;
-    g.beginPath(); g.moveTo(-14, -76); g.quadraticCurveTo(-20, -104, -12, -112); g.quadraticCurveTo(-10, -94, -6, -84); g.lineTo(6, -84); g.quadraticCurveTo(10, -94, 12, -112); g.quadraticCurveTo(20, -104, 14, -76); g.closePath(); g.fill(); g.stroke();
-    g.beginPath(); g.ellipse(0, -66, 19, 21, 0, 0, TAU); g.fill(); g.stroke();
-    g.fillStyle = '#10142c'; g.beginPath(); g.ellipse(-7, -64, 4.5, 7, 0, 0, TAU); g.ellipse(7, -64, 4.5, 7, 0, 0, TAU); g.fill();
-    // nail
-    if (o.swing != null) {
-      const a = lerp(-1.6, .6, ease(o.swing));
-      g.strokeStyle = '#d7dcf0'; g.lineWidth = 4; g.beginPath(); g.moveTo(16, -34); g.lineTo(16 + Math.cos(a) * 46, -34 + Math.sin(a) * 46); g.stroke();
-      g.strokeStyle = `rgba(255,255,255,${.7 * (1 - o.swing)})`; g.lineWidth = 10; g.beginPath(); g.arc(16, -34, 52, -1.6, a); g.stroke();
-    } else { g.strokeStyle = '#d7dcf0'; g.lineWidth = 4; g.beginPath(); g.moveTo(14, -28); g.lineTo(30, 6); g.stroke(); }
-    // focus glow
-    if (o.focus != null) {
-      const k = o.focus; g.fillStyle = `rgba(255,236,170,${.25 + .25 * k})`; g.beginPath(); g.arc(0, -50, 46 + 10 * Math.sin(k * 12), 0, TAU); g.fill();
-      for (let i = 0; i < 8; i++) { const a = i / 8 * TAU + k * 3, r = 70 * (1 - k); g.fillStyle = '#fff3c4'; g.beginPath(); g.arc(Math.cos(a) * r, -50 + Math.sin(a) * r, 4, 0, TAU); g.fill(); }
-    }
-    g.restore();
-  }
-  function hornet(g, x, y, o = {}) {
-    g.save(); g.translate(x, y);
-    if (o.tele) { g.strokeStyle = `rgba(229,50,45,${.5 + .5 * Math.sin(o.tele * 30)})`; g.lineWidth = 6; g.beginPath(); g.arc(0, -55, 64, 0, TAU); g.stroke(); }
-    g.fillStyle = o.flash ? '#ff9a9a' : '#b3262d'; g.beginPath(); g.moveTo(-26, 0); g.quadraticCurveTo(-30, -58, 0, -62); g.quadraticCurveTo(30, -58, 26, 0); g.closePath(); g.fill();
-    g.fillStyle = '#10142c'; g.fillRect(-8, -4, 5, 12); g.fillRect(4, -4, 5, 12);
-    g.fillStyle = '#f4f6ff'; g.strokeStyle = '#10142c'; g.lineWidth = 2;
-    g.beginPath(); g.moveTo(-10, -90); g.quadraticCurveTo(-26, -120, -8, -138); g.quadraticCurveTo(-12, -112, -2, -96); g.closePath(); g.fill(); g.stroke();
-    g.beginPath(); g.moveTo(10, -90); g.quadraticCurveTo(26, -120, 8, -138); g.quadraticCurveTo(12, -112, 2, -96); g.closePath(); g.fill(); g.stroke();
-    g.beginPath(); g.ellipse(0, -80, 15, 18, 0, 0, TAU); g.fill(); g.stroke();
-    g.fillStyle = '#10142c'; g.beginPath(); g.ellipse(-6, -78, 3.5, 6, 0, 0, TAU); g.ellipse(6, -78, 3.5, 6, 0, 0, TAU); g.fill();
-    g.strokeStyle = '#d7dcf0'; g.lineWidth = 3; g.beginPath(); g.moveTo(-20, -30); g.lineTo(-62, -14); g.stroke();
-    g.restore();
-  }
-  function vessel(g, x, y, soul, max) {
-    g.fillStyle = '#0b0f24'; g.beginPath(); g.arc(x, y, 34, 0, TAU); g.fill();
-    g.save(); g.beginPath(); g.arc(x, y, 30, 0, TAU); g.clip();
-    const lv = y + 30 - 60 * soul / max; g.fillStyle = '#e9ecff'; g.fillRect(x - 32, lv, 64, 70);
-    g.restore();
-    g.strokeStyle = '#f4f6ff'; g.lineWidth = 3; g.beginPath(); g.arc(x, y, 34, 0, TAU); g.stroke();
-    for (let k = 1; k < 3; k++) { const ly = y + 30 - 60 * k * 33 / max; g.strokeStyle = 'rgba(138,79,214,.8)'; g.lineWidth = 2; g.beginPath(); g.moveTo(x - 30, ly); g.lineTo(x + 30, ly); g.stroke(); }
-  }
-  function mask(g, x, y, full) {
-    g.save(); g.translate(x, y); g.fillStyle = full ? '#f4f6ff' : 'rgba(244,246,255,.15)'; g.strokeStyle = full ? '#f4f6ff' : 'rgba(244,246,255,.35)'; g.lineWidth = 1.5;
-    g.beginPath(); g.moveTo(-7, -6); g.lineTo(-9, -16); g.lineTo(-3, -9); g.lineTo(3, -9); g.lineTo(9, -16); g.lineTo(7, -6); g.quadraticCurveTo(10, 12, 0, 13); g.quadraticCurveTo(-10, 12, -7, -6); g.closePath(); g.fill(); g.stroke();
-    if (full) { g.fillStyle = '#10142c'; g.beginPath(); g.ellipse(-3.5, 1, 2, 3.5, 0, 0, TAU); g.ellipse(3.5, 1, 2, 3.5, 0, 0, TAU); g.fill(); }
-    g.restore();
-  }
-
-  /* ---------- the scene at time t ---------- */
-  const AX = 14, AY = 12, AW = W - 28, AH = 330, KX = 400, HX = 650, GY = AY + 285;
-  const TLX = 150, TLW = W - 180, TMAX = 36;
-  const tx = t => TLX + TLW * clamp(t / TMAX);
-  function draw(g, run, t) {
-    T.use(g); g.clearRect(0, 0, W, H);
-    g.fillStyle = 'rgba(255,252,244,.9)'; g.beginPath(); g.roundRect(0, 0, W, H, 14); g.fill();
-    const c = run.c, tt = Math.min(t, run.end), [, soul, masks, hp] = at(run, tt), cyc = c.open + c.atk;
-    // arena
-    const grd = g.createLinearGradient(0, AY, 0, AY + AH); grd.addColorStop(0, '#26305e'); grd.addColorStop(1, '#0d1230');
-    g.fillStyle = grd; g.beginPath(); g.roundRect(AX, AY, AW, AH, 12); g.fill();
-    g.fillStyle = '#3a4478'; g.fillRect(AX, GY + 10, AW, AH - (GY + 10 - AY)); g.fillStyle = '#5a65a8'; g.fillRect(AX, GY + 8, AW, 3);
-    // what is happening now
-    const act = run.acts.find(a => tt >= a.s && tt < a.e), ct = tt % cyc, tele = ct >= c.open && tt < run.end ? (ct - c.open) / c.atk : null;
-    const atk = run.atks.find(a => tt >= a.t && tt < a.t + .45);
-    const ko = { }, ho = { };
-    if (act?.k === 'nail') ko.swing = (tt - act.s) / (act.e - act.s);
-    if (act?.k === 'focus') ko.focus = (tt - act.s) / (act.e - act.s);
-    if (tele != null) ho.tele = tele;
-    if (atk && atk.r !== 'dodge') ko.flash = true;
-    if (atk && atk.r === 'dodge') ko.jump = -60 * Math.sin(Math.PI * (tt - atk.t) / .45);
-    if (act?.k === 'nail' && ko.swing > .5) ho.flash = true;
-    let hx = HX; if (atk) hx = HX - 230 * Math.sin(Math.PI * (tt - atk.t) / .45);
-    knight(g, KX, GY, ko); if (run.win && t >= run.end) { g.globalAlpha = .25; } hornet(g, hx, GY, ho); g.globalAlpha = 1;
-    if (act?.k === 'spell') { const k = (tt - act.s) / (act.e - act.s), sx = lerp(KX + 30, HX - 20, k); g.fillStyle = 'rgba(233,236,255,.9)'; g.beginPath(); g.ellipse(sx, GY - 60, 34, 18, 0, 0, TAU); g.fill(); g.fillStyle = 'rgba(138,79,214,.55)'; g.beginPath(); g.ellipse(sx - 26, GY - 60, 28, 12, 0, 0, TAU); g.fill(); }
-    if (atk) T.popText(atk.r === 'dodge' ? 'dodged' : atk.r === 'hit' ? `−${c.bossDmg} masks` : `Focus broken · −${c.bossDmg}`, KX, GY - 150 - 30 * ((tt - atk.t) / .45), atk.r === 'dodge' ? '#8fd3ff' : '#ff6b6b', 1);
-    if (tele != null && tele < .9 && !atk) txt(g, '!', HX, GY - 160, { font: '800 34px Montserrat', col: '#ff6b6b', align: 'center' });
-    // HUD
-    vessel(g, AX + 56, AY + 56, soul, c.max);
-    for (let i = 0; i < c.masks; i++) mask(g, AX + 108 + i * 26, AY + 44, i < masks);
-    txt(g, `SOUL ${Math.round(soul)}`, AX + 100, AY + 76, { font: '700 14px Jost', col: '#e9ecff' });
-    const bw = 300, bx = AX + AW - bw - 24; g.fillStyle = 'rgba(0,0,0,.4)'; g.fillRect(bx, AY + 24, bw, 14); g.fillStyle = '#e5322d'; g.fillRect(bx, AY + 24, bw * hp / c.bossHP, 14);
-    txt(g, `Boss ${Math.ceil(hp)} / ${c.bossHP}`, bx + bw, AY + 54, { font: '700 14px Jost', col: '#e9ecff', align: 'right' });
-    txt(g, POL[run.key].name, AX + AW / 2, AY + 30, { font: '800 22px Montserrat', col: '#fff', align: 'center' });
-    if (t >= run.end) {
-      g.fillStyle = 'rgba(10,14,34,.55)'; g.beginPath(); g.roundRect(AX + AW / 2 - 230, AY + 110, 460, 70, 12); g.fill();
-      txt(g, run.win ? `Won in ${run.end.toFixed(1)} s with ${run.masks} mask${run.masks === 1 ? '' : 's'} left` : `Knight falls at ${run.end.toFixed(1)} s`, AX + AW / 2, AY + 145, { font: '800 24px Montserrat', col: run.win ? '#5fe0a0' : '#ff6b6b', align: 'center' });
-    }
-    // timeline
-    const y0 = AY + AH + 22;
-    txt(g, 'Boss', TLX - 14, y0 + 14, { font: '700 14px Jost', col: C.muted, align: 'right' });
-    txt(g, 'Knight', TLX - 14, y0 + 54, { font: '700 14px Jost', col: C.muted, align: 'right' });
-    txt(g, 'SOUL', TLX - 14, y0 + 118, { font: '700 14px Jost', col: C.muted, align: 'right' });
-    for (let k = 0; k * cyc < TMAX; k++) {
-      const a = tx(k * cyc + c.open), b = tx((k + 1) * cyc);
-      g.fillStyle = 'rgba(229,50,45,.28)'; g.fillRect(a, y0, b - a, 28);
-      g.fillStyle = 'rgba(46,163,220,.12)'; g.fillRect(tx(k * cyc), y0, a - tx(k * cyc), 28);
-    }
-    run.atks.filter(a => a.t <= tt).forEach(a => { const x = tx(a.t); txt(g, a.r === 'dodge' ? '✓' : '✗', x, y0 + 14, { font: '800 16px Jost', col: a.r === 'dodge' ? C.good : C.red, align: 'center' }); });
-    run.acts.filter(a => a.s <= tt).forEach(a => {
-      const x1 = tx(a.s), x2 = tx(Math.min(a.e, tt)), col = a.k === 'nail' ? '#9aa3c8' : a.k === 'spell' ? '#8a4fd6' : a.broken ? C.red : '#e0a92d';
-      g.fillStyle = col; g.fillRect(x1, a.k === 'nail' ? y0 + 46 : y0 + 38, Math.max(2, x2 - x1 - 1), a.k === 'nail' ? 14 : 30);
-    });
-    // SOUL line
-    const sy = y0 + 140, sh = 50; g.strokeStyle = 'rgba(38,44,106,.25)'; g.lineWidth = 1; [33, 66, 99].forEach(v => { g.beginPath(); g.moveTo(TLX, sy - sh * v / 99); g.lineTo(TLX + TLW, sy - sh * v / 99); g.stroke(); });
-    g.strokeStyle = '#5562eb'; g.lineWidth = 2.5; g.beginPath();
-    run.samp.forEach(([st, so], i) => { if (st > tt) return; const x = tx(st), y = sy - sh * so / 99; i ? g.lineTo(x, y) : g.moveTo(x, y); }); g.stroke();
-    g.strokeStyle = C.navy; g.lineWidth = 2; g.beginPath(); g.moveTo(TLX, sy); g.lineTo(TLX + TLW, sy); g.stroke();
-    for (let s = 0; s <= TMAX; s += 6) txt(g, s + ' s', tx(s), sy + 14, { font: '600 12px Jost', col: C.muted, align: 'center' });
-    const px = tx(tt); g.strokeStyle = C.navy; g.lineWidth = 2; g.beginPath(); g.moveTo(px, y0 - 6); g.lineTo(px, sy + 4); g.stroke();
-    // legend
-    [['nail', '#9aa3c8'], ['spell', '#8a4fd6'], ['Focus', '#e0a92d'], ['broken Focus', C.red]].forEach(([l, col], i) => { const lx = TLX + 10 + i * 130; g.fillStyle = col; g.fillRect(lx, H - 14, 14, 10); txt(g, l, lx + 20, H - 9, { font: '600 12px Jost', col: C.ink }); });
-  }
-
-  /* ---------- demo ---------- */
-  const SPEED = 1.6;
-  canvasDemo('soul', (s, cv, g) => {
-    const st = { pol: 'spell', focusT: 1, dmg: 2, tour: true, t: 0, held: false, key: '', runs: null };
-    const build = () => { const c = { ...BASE, focusT: st.focusT, bossDmg: st.dmg }; st.runs = Object.fromEntries(ORDER.map(k => [k, sim(k, c)])); };
-    build();
-    const tourBtn = $(s, '.so-tour');
-    const mark = () => $$(s, '.so-pol .btn').forEach(b => b.classList.toggle('on', b.dataset.v === st.pol));
-    const manual = () => { if (st.tour) { st.tour = false; tourBtn.classList.remove('on'); } };
-    $$(s, '.so-pol .btn').forEach(b => b.onclick = () => { manual(); st.pol = b.dataset.v; st.t = 0; mark(); });
-    $(s, '.so-f').oninput = e => { manual(); st.focusT = +e.target.value; $(s, '.so-fv').textContent = st.focusT.toFixed(1) + ' s'; build(); st.t = 0; };
-    $(s, '.so-dmg').onchange = e => { manual(); st.dmg = e.target.checked ? 2 : 1; build(); st.t = 0; };
-    $(s, '.so-replay').onclick = () => { st.t = 0; };
-    tourBtn.onclick = () => { st.tour = true; st.t = 0; tourBtn.classList.add('on'); st.focusT = 1; st.dmg = 2; $(s, '.so-f').value = 1; $(s, '.so-fv').textContent = '1.0 s'; $(s, '.so-dmg').checked = true; build(); };
-    mark();
-    const CAP = {
-      spell: r => `Every 33 SOUL goes into a spell. Fastest kill (${r.end.toFixed(1)} s), but the hits it could not dodge leave it on ${r.masks} mask${r.masks === 1 ? '' : 's'}.`,
-      asap: r => `Heals whenever it has 33 SOUL, even with an attack on the way. ${r.broken} Focus${r.broken === 1 ? '' : 'es'} broken, ${r.wasted} SOUL thrown away${r.win ? '' : ', and the Knight falls'}.`,
-      safe: r => `Heals only when the opening has time left for a full Focus, spends the rest on spells. Slower (${r.end.toFixed(1)} s), ${r.masks} masks left.`,
+    const api = {
+      dur: 20,
+      reset() { z = { soul: 0, masks: N.masks, boss: N.boss, t: 0, act: null, stun: 0, dodge: 0, deny: 0, gained: 0, heal: 0, spell: 0, hits: 0, fx: [], shot: null, flash: 0, bflash: 0, over: null, msg: '' }; },
+      step(h) {
+        if (z.over) { z.t += h; return; }
+        const c0 = z.t % N.cycle; z.t += h; const c1 = z.t % N.cycle;
+        z.stun = Math.max(0, z.stun - h); z.dodge = Math.max(0, z.dodge - h); z.deny = Math.max(0, z.deny - h); z.flash = Math.max(0, z.flash - h * 3); z.bflash = Math.max(0, z.bflash - h * 4);
+        z.fx = z.fx.filter(f => (f.t += h) < f.dur);
+        if (z.shot) { z.shot.x += h * 900; if (z.shot.x > BX - 40) { z.shot = null; z.boss -= N.spell; z.bflash = 1; } }
+        const a = z.act;
+        if (a && a.t < a.dur) {
+          a.t += h;
+          if (a.kind === 'nail' && !a.done && a.t >= .16) { a.done = true; z.boss -= N.nail; z.bflash = 1; const got = Math.min(N.hit, N.max - z.soul); z.soul += got; z.gained += got; z.fx.push({ k: 'gain', t: 0, dur: .6 }); SCN.tone({ f: 520, f2: 260, dur: .08, type: 'square', vol: .06 }); }
+          if (a.kind === 'spell' && !a.done && a.t >= .2) { a.done = true; z.soul -= N.cost; z.spell += N.cost; z.shot = { x: PX + 50 }; z.fx.push({ k: 'spell', t: 0, dur: .6 }); SCN.tone({ f: 300, f2: 900, dur: .25, vol: .1 }); }
+          if (a.kind === 'focus' && a.t >= a.dur) { z.soul -= N.cost; z.heal += N.cost; z.masks = Math.min(N.masks, z.masks + 1); z.fx.push({ k: 'heal', t: 0, dur: .8 }); z.msg = 'Focus finished: 33 SOUL and 1.1 s bought one mask.'; SCN.tone({ f: 440, f2: 880, dur: .3, vol: .1 }); }
+        }
+        if (c0 < N.strike && c1 >= N.strike) {           // the boss's strike lands
+          if (busy() || z.stun > 0) {
+            const was = z.act?.kind; z.masks--; z.hits++; z.stun = .5; z.flash = 1; SCN.noise({ dur: .2, vol: .25 });
+            if (was === 'focus' && busy()) { z.soul -= N.cost; z.msg = 'Hit mid-Focus: the 33 SOUL is gone and so is a mask.'; } else z.msg = 'Hit while committed to an action: the swing cost a mask.';
+            z.act = null;
+          } else { z.dodge = .55; z.msg = 'Hands free when the strike came: dodged.'; }
+        }
+        if (z.boss <= 0) { z.boss = 0; z.over = 'won'; } else if (z.masks <= 0) z.over = 'lost';
+      },
+      script: [.3, .7, 1.1, 1.5, 1.9, 2.3, 4.1, 4.5, 4.9, 5.3, 6.0, 8.3, 8.7, 10.9, 11.3, 11.7, 12.1, 13.1, 13.5, 13.9, 14.3].map(t => [t, () => act('nail')])
+        .concat([3.6, 9.9, 10.4].map(t => [t, () => act('spell')]), [7.0, 15.0].map(t => [t, () => act('focus')])),
+      caption: t => t < 3.3 ? 'Every nail hit puts 11 SOUL in the vessel. The nail is the generator. With free hands Pip dodges the boss on its own.'
+        : t < 5.6 ? 'First spender: 33 SOUL becomes a Vengeful Spirit. Three nail hits of damage, bought in 0.4 seconds.'
+        : t < 6.8 ? 'One swing too many. Still mid-swing when the strike lands, so it costs a mask.'
+        : t < 9.5 ? 'Second spender, same pool: 33 SOUL becomes a mask back. Focus also costs 1.1 seconds of standing still, so it has to fit inside an opening.'
+        : t < 12.8 ? 'Health is full, so the pool goes back into damage. Every 33 SOUL is a choice between the two.'
+        : t < 15.9 ? 'A Focus started late...'
+        : 'The strike lands mid-Focus: the SOUL is spent, the mask is lost, nothing healed. Time was the real price.',
+      status: () => z.over === 'won' ? 'Grub is down. Look at how you split the pool between masks and damage.' : z.over === 'lost' ? 'Out of masks. A late Focus or one swing too many is what the boss\'s clock punishes.' : z.deny > 0 ? 'Not enough SOUL: both spenders cost 33.' : z.msg || 'Strike with the nail to fill the vessel, then choose: Focus to heal, or Spirit for damage. Finish before the red strike lands.',
+      stats: () => `<div><b>${z.gained}</b><span>SOUL generated by nail hits</span></div><div class="g"><b>${z.heal}</b><span>SOUL spent on masks (Focus)</span></div><div class="y"><b>${z.spell}</b><span>SOUL spent on damage (Spirit)</span></div><div class="r"><b>${z.hits}</b><span>masks lost to bad timing</span></div>`,
+      acts: { nail: () => act('nail'), focus: () => act('focus'), spell: () => act('spell') },
+      keys: { j: 'nail', k: 'focus', i: 'spell' },
+      draw(g, t) {
+        g.clearRect(0, 0, W, H); g.save(); SCN.clipStage(g, W, H);
+        const gr = g.createLinearGradient(0, 0, 0, FLOOR); gr.addColorStop(0, '#0e1630'); gr.addColorStop(1, '#27365e'); g.fillStyle = gr; g.fillRect(0, 0, W, FLOOR + 40);
+        const rnd = SCN.rng(7);
+        for (let i = 0; i < 14; i++) { const x = rnd() * W, hgt = 40 + rnd() * 120; g.fillStyle = 'rgba(8,12,28,.75)'; g.beginPath(); g.moveTo(x - 16, 0); g.lineTo(x, hgt); g.lineTo(x + 16, 0); g.fill(); }
+        for (let i = 0; i < 26; i++) { const x = rnd() * W, y = (rnd() * FLOOR + z.t * (6 + rnd() * 10)) % FLOOR; dot(g, x, FLOOR - y, 1.6, 'rgba(210,230,255,.35)'); }
+        g.fillStyle = '#0a0f22'; g.fillRect(0, FLOOR + 8, W, 34); g.fillStyle = '#3d4d7c'; g.fillRect(0, FLOOR + 8, W, 4);
+        g.fillStyle = 'rgba(255,252,244,.96)'; g.fillRect(0, FLOOR + 42, W, H);
+        // HUD: the vessel and the masks
+        const vx = 58, vy = 58, vr = 34, k = z.soul / N.max;
+        dot(g, vx, vy, vr + 5, '#05070f'); g.save(); g.beginPath(); g.arc(vx, vy, vr, 0, TAU); g.clip(); g.fillStyle = '#1a2140'; g.fillRect(vx - vr, vy - vr, vr * 2, vr * 2); g.fillStyle = '#f4f7ff'; g.fillRect(vx - vr, vy + vr - 2 * vr * k, vr * 2, 2 * vr * k); g.restore();
+        ring(g, vx, vy, vr, '#cfd8ee', 4); [1, 2].forEach(i => { g.strokeStyle = 'rgba(20,26,54,.55)'; g.lineWidth = 2; g.beginPath(); g.moveTo(vx - vr, vy + vr - 2 * vr * i / 3); g.lineTo(vx + vr, vy + vr - 2 * vr * i / 3); g.stroke(); });
+        txt(g, `SOUL ${z.soul} / 99`, vx - 34, vy + 54, { size: 14, w: 700, col: '#dfe6fb' });
+        for (let i = 0; i < N.masks; i++) { const mx = 124 + i * 36, on = i < z.masks; g.fillStyle = on ? '#f4f7ff' : 'rgba(255,255,255,.14)'; g.beginPath(); g.moveTo(mx - 12, 36); g.quadraticCurveTo(mx - 14, 62, mx, 68); g.quadraticCurveTo(mx + 14, 62, mx + 12, 36); g.quadraticCurveTo(mx + 6, 44, mx, 40); g.quadraticCurveTo(mx - 6, 44, mx - 12, 36); g.fill(); if (on) { dot(g, mx - 5, 52, 3, '#0e1630'); dot(g, mx + 5, 52, 3, '#0e1630'); } }
+        txt(g, 'Grub', W - 330, 34, { size: 16, w: 800, col: '#fff' }); bar(g, W - 330, 46, 300, 14, z.boss / N.boss, { col: C.red, back: 'rgba(255,255,255,.15)', stroke: '#cfd8ee' });
+        // the boss clock
+        const c = z.t % N.cycle, tele = !z.over && c >= N.tele && c < N.strike, hitting = !z.over && c >= N.strike && c < N.strike + .2;
+        const cx0 = W - 330, cy0 = 78; bar(g, cx0, cy0, 300, 8, c / N.cycle, { col: tele || hitting ? C.red : '#8fa2d8', back: 'rgba(255,255,255,.12)', stroke: null });
+        g.fillStyle = C.red; g.fillRect(cx0 + 300 * N.strike / N.cycle - 2, cy0 - 4, 4, 16); txt(g, 'next strike', cx0, cy0 + 20, { size: 12, w: 600, col: '#aab6dd' });
+        // figures
+        const a = z.act && z.act.t < z.act.dur ? z.act : null; let pose = 'guard', px = PX;
+        if (z.over === 'lost') pose = 'down';
+        else if (z.stun > 0) pose = 'hit';
+        else if (z.dodge > 0) { const kk = 1 - z.dodge / .55; px = PX - Math.sin(kk * Math.PI) * 110; pose = CAST.roll(kk); }
+        else if (a?.kind === 'nail') pose = CAST.swing(a.t / a.dur * 10, 3, 6, 10).pose;
+        else if (a?.kind === 'spell') pose = CAST.mix('guard', 'thrust', clamp(a.t / .2));
+        else if (a?.kind === 'focus') pose = CAST.mix('guard', 'crouch', clamp(a.t / .2));
+        if (a?.kind === 'focus') { const kk = a.t / a.dur; ring(g, px, FLOOR - 50, 60 - kk * 40, 'rgba(244,247,255,.8)', 4); for (let i = 0; i < 8; i++) { const an = i / 8 * TAU + z.t * 3, r = 70 - kk * 50; dot(g, px + Math.cos(an) * r, FLOOR - 50 + Math.sin(an) * r * .7, 3, '#f4f7ff'); } txt(g, `Focus ${(a.dur - a.t).toFixed(1)} s`, px, FLOOR - 170, { size: 16, w: 800, col: '#f4f7ff', align: 'center' }); }
+        CAST.draw(g, 'pip', { x: px, y: FLOOR + 8, pose, flash: z.flash, face: pose === 'down' ? 1 : 1 });
+        const bpose = z.over === 'won' ? 'down' : hitting ? 'strike' : tele ? CAST.mix('idle', 'windup', clamp((c - N.tele) / .5)) : 'idle';
+        CAST.draw(g, 'grub', { x: BX, y: FLOOR + 8, s: 1.45, face: -1, pose: bpose, flash: z.bflash * .8 });
+        if (tele) { txt(g, '!', BX - 30, FLOOR - 250, { size: 44, w: 800, col: C.red, align: 'center', display: true }); }
+        if (hitting) { g.strokeStyle = 'rgba(255,90,80,.9)'; g.lineWidth = 10; g.beginPath(); g.arc(BX - 60, FLOOR - 90, 150, Math.PI * .75, Math.PI * 1.2); g.stroke(); }
+        if (z.shot) { g.fillStyle = '#f4f7ff'; g.beginPath(); g.ellipse(z.shot.x, FLOOR - 70, 34, 18, 0, 0, TAU); g.fill(); g.fillStyle = 'rgba(244,247,255,.4)'; g.beginPath(); g.ellipse(z.shot.x - 30, FLOOR - 70, 44, 12, 0, 0, TAU); g.fill(); }
+        z.fx.forEach(f => { const kk = f.t / f.dur; if (f.k === 'gain') { dot(g, lerp(BX - 70, vx, SCN.ease(kk)), lerp(FLOOR - 90, vy, SCN.ease(kk)), 7, '#f4f7ff'); txt(g, '+11', BX - 90, FLOOR - 120 - kk * 30, { size: 18, w: 800, col: '#f4f7ff', align: 'center' }); } if (f.k === 'heal') txt(g, '+1 mask', px, FLOOR - 170 - kk * 30, { size: 20, w: 800, col: '#9df0b8', align: 'center' }); });
+        txt(g, 'Pip, as the Knight', PX, FLOOR + 27, { size: 13, w: 700, col: '#aab6dd', align: 'center' });
+        // the ledger: one generator, one pool, two spenders
+        const y0 = FLOOR + 62, cardW = 232, cards = [
+          { x: 20, title: 'GENERATOR', name: 'Nail hit', l1: '+11 SOUL', l2: '0.3 s, in reach of the boss', col: C.blue, on: a?.kind === 'nail' },
+          { x: 286, title: 'POOL', name: 'SOUL vessel', l1: `${z.soul} of 99`, l2: 'three spends when full', col: C.navy, on: false },
+          { x: 548, title: 'SPENDER', name: 'Focus', l1: '33 SOUL  →  +1 mask', l2: '1.1 s standing still', col: C.green, on: a?.kind === 'focus' },
+          { x: 804, title: 'SPENDER', name: 'Vengeful Spirit', l1: '33 SOUL  →  15 damage', l2: '0.4 s, from range', col: C.amber, on: a?.kind === 'spell' }];
+        cards.forEach(cd => {
+          box(g, cd.x, y0, cd.x === 804 ? 220 : cd.x === 548 ? 222 : cardW, 104, { r: 12, fill: cd.on ? '#fff' : '#fffaf0', stroke: cd.col, lw: cd.on ? 5 : 3 });
+          txt(g, cd.title, cd.x + 14, y0 + 18, { size: 12, w: 800, col: cd.col }); txt(g, cd.name, cd.x + 14, y0 + 42, { size: 21, w: 800, display: true });
+          txt(g, cd.l1, cd.x + 14, y0 + 68, { size: 16, w: 700 }); txt(g, cd.l2, cd.x + 14, y0 + 88, { size: 14, w: 500, col: C.muted });
+        });
+        bar(g, 286 + 130, y0 + 12, 88, 12, z.soul / N.max, { col: '#9fb4ea', stroke: C.navy });
+        arrow(g, 256, y0 + 52, 282, y0 + 52, { col: C.blue, lw: 4 }); arrow(g, 520, y0 + 52, 544, y0 + 52, { col: C.navy, lw: 4 });
+        txt(g, 'or', 787, y0 + 52, { size: 15, w: 800, col: C.muted, align: 'center' });
+        if (z.over) pill(g, z.over === 'won' ? 'Grub falls' : 'Out of masks', W / 2, 150, { size: 26, w: 800, fill: z.over === 'won' ? C.green : C.red, pad: 36, padY: 20 });
+        g.restore();
+      },
     };
-    function info(key, cap) {
-      const k = key + cap; if (k === st.key) return; st.key = k;
-      say($(s, '.so-stats'), ORDER.map(p => { const r = st.runs[p]; return `<div class="${{ spell: 'y', asap: 'r', safe: 'g' }[p]}"><b>${r.win ? r.end.toFixed(0) + ' s' : '✗'}</b><span>${POL[p].short}: ${r.win ? `won, ${r.masks} masks left` : 'Knight falls'} · ${r.heals} heals, ${r.broken} broken</span></div>`; }).join(''));
-      say($(s, '.so-out'), cap);
-    }
-    // walk-through: each rule plays its whole fight, then holds 2.5 s
-    const segs = () => { let a = 0; return ORDER.map(p => { const d = st.runs[p].end / SPEED + 2.5, r = { p, a, d }; a += d; return r; }); };
-    const tourDur = () => segs().reduce((n, x) => n + x.d, 0) + 3;
-    s._seek = t => {
-      const sg = segs(), cur = sg.find(x => t < x.a + x.d);
-      if (!cur) { const r = st.runs.safe; draw(g, r, r.end + 1); info('end', 'Same pool, same numbers. The skill is spending time, not only SOUL: a heal is worth a mask only if the opening is long enough to finish it.'); return; }
-      st.pol = cur.p; mark(); const r = st.runs[cur.p], lt = (t - cur.a) * SPEED; draw(g, r, lt); info(cur.p, CAP[cur.p](r));
-    };
-    window.__seek = t => { st.held = true; s._seek(t); };
-    window.__dur = () => tourDur();
-    return dt => {
-      if (st.held) return;
-      st.t += Math.max(0, dt);
-      if (st.tour) { if (st.t >= tourDur()) st.t = 0; s._seek(st.t); }
-      else { const r = st.runs[st.pol]; if (st.t * SPEED > r.end + 4) st.t = 0; draw(g, r, st.t * SPEED); info(st.pol + st.focusT + st.dmg, CAP[st.pol](r)); }
-    };
+    return api;
   });
 })();

@@ -9,9 +9,9 @@
 <link rel="stylesheet" href="../../assets/deck.css">
 <link rel="stylesheet" href="../../assets/kit.css">
 <link rel="stylesheet" href="../shared/um.css">
-<style>.mt-side .src { font-size: 13px; color: var(--muted); margin-top: 8px; line-height: 1.35; }</style>
+<link rel="stylesheet" href="../../assets/scene.css">
 <script>
-  window.DECK = { title: 'Mastering Game Mechanics · Understand Mechanics · Disguises as Signals (mock-up)', home: '../index.html', audio: false, cues: null };
+  window.DECK = { title: "Mastering Game Mechanics · Understand Mechanics · Disguises as Signals (mock-up)", home: '../index.html', audio: false, cues: null };
 </script>
 <script src="notes.js"></script>
 </head>
@@ -20,17 +20,18 @@
 
 <section class="slide" data-title="Disguises as signals" data-demo="disguise">
   <div class="kicker">signals and receivers · Hitman</div>
-  <h2 class="sm">The outfit is the signal, <span class="accent">every guard a receiver</span></h2>
+  <h2 class="sm">The outfit is the signal, <span class="accent">every door has a receiver</span></h2>
   <div class="mt-wrap">
     <canvas class="demo" width="1040" height="585"></canvas>
     <div class="mt-side">
-      <h4>Wear</h4>
-      <div class="seg dg-dis"><button class="btn" data-v="suit">Suit</button><button class="btn" data-v="waiter">Waiter</button><button class="btn" data-v="security">Security</button></div>
-      <label class="chk"><input type="checkbox" class="dg-sig" checked> Show the signal and each receiver's rule</label>
-      <div class="row wrap"><button class="btn dg-tour on">▶ Walk-through</button><button class="btn dg-reset">Clear grid</button></div>
-      <div class="mt-stats dg-stats"></div>
-      <p class="mt-out dg-out"></p>
-      <p class="src">After Hitman (IO Interactive, 2016 to 2021): a disguise lets 47 into the areas that outfit belongs in, and an enforcer (marked with a white dot) can see through the outfit they know best. The mansion, staff and rules here are our own example.</p>
+      <h4>Pip wears</h4>
+      <div class="seg"><button class="btn on" data-set="sig" data-v="suit">Suit</button><button class="btn" data-set="sig" data-v="waiter">Waiter</button><button class="btn" data-set="sig" data-v="guard">Guard uniform</button><button class="btn" data-set="sig" data-v="pick">Suit + lockpick</button></div>
+      <h4>Send him to</h4>
+      <div class="seg"><button class="btn" data-do="go" data-arg="0">Kitchen</button><button class="btn" data-do="go" data-arg="1">Security office</button><button class="btn" data-do="go" data-arg="2">VIP lounge</button><button class="btn" data-do="go" data-arg="3">Cellar</button></div>
+      <div class="row wrap"><button class="btn tour on">▶ Walk-through</button><button class="btn" data-do="reset">↻ Start over</button></div>
+      <div class="mt-stats"></div>
+      <p class="mt-out"></p>
+      <p class="src">After Hitman (IO Interactive, 2016 to 2021): a disguise opens the areas that outfit belongs in, an enforcer (white dot) sees through the outfit they know, and tools such as the lockpick open doors only while nobody is watching. The mansion, staff and rules here are our own example. Pip plays Agent 47.</p>
     </div>
   </div>
 </section>
@@ -38,7 +39,8 @@
 </div></div>
 <script src="../../assets/deck.js"></script>
 <script src="../../assets/kit.js"></script>
-<script src="../shared/topdown.js"></script>
+<script src="../../assets/cast.js"></script>
+<script src="../../assets/scene.js"></script>
 <script src="disguises.js"></script>
 </body>
 </html>

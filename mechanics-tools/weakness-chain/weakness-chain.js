@@ -1,130 +1,118 @@
-/* Weakness chain (mock-up for MGM C4 M3, beside Reverse Sequencing).
-   Mega Man 2's stage select as a 3x3 grid. Each boss drops a weapon; WEAK maps each boss to the boss whose weapon beats it.
-   Build a route by clicking bosses or pick a preset: forward in grid order, or backward from Quick Man. Each fight costs
-   14 buster shots or 4 with the weakness (illustrative). Drawing is a function of the route and t. */
+/* Weakness chain (Mega Man 2), beside the Reverse Sequencing Map (MGM C4 M3).
+   The real stage select, the real damage table. Click the Robot Masters in the order you would fight them: every fight
+   uses the strongest weapon you already hold, and the route list counts the hits. Then plan it backward from the boss
+   you fear. DMG is damage per hit on Normal (each Robot Master has 28 health), from mmhp.net's Mega Man 2 data page. */
 (function () {
-  const { $, $$, canvasDemo, say } = FPF.kit;
-  const T = TD, C = TD.C, { clamp, lerp, ease } = TD, TAU = Math.PI * 2;
-  const W = 1040, H = 585;
+  const { txt, box, pill, clamp, lerp, C, arrow, sprite } = SCN;
+  const W = 1040, H = 585, IMG = new URL('img/', document.currentScript.src).href;
+  const WPN = { P: ['Mega Buster', '#6fb7ff'], ME: ['Metal Blade', '#c9c2a0'], WO: ['Leaf Shield', '#55b54a'], BU: ['Bubble Lead', '#9aa7b8'], AI: ['Air Shooter', '#58a8f0'], CR: ['Crash Bomber', '#f08a3c'], HE: ['Atomic Fire', '#f05a3c'], FL: ['Time Stopper', '#c779e8'], QU: ['Quick Boomerang', '#f0c23c'] };
   const B = {
-    bubble: { name: 'Bubble Man', wpn: 'Bubble Lead', col: '#2fae63' },
-    air: { name: 'Air Man', wpn: 'Air Shooter', col: '#2e7fd6' },
-    quick: { name: 'Quick Man', wpn: 'Quick Boomerang', col: '#d8582e' },
-    heat: { name: 'Heat Man', wpn: 'Atomic Fire', col: '#e5322d' },
-    wood: { name: 'Wood Man', wpn: 'Leaf Shield', col: '#8a5a2b' },
-    metal: { name: 'Metal Man', wpn: 'Metal Blade', col: '#c2401f' },
-    flash: { name: 'Flash Man', wpn: 'Time Stopper', col: '#5fa8e8' },
-    crash: { name: 'Crash Man', wpn: 'Crash Bomber', col: '#e58a2a' },
+    bubble: { name: 'Bubble Man', f: 'bubbleman', gives: 'BU', dmg: { P: 2, ME: 8, CR: 4, QU: 4 } },
+    air: { name: 'Air Man', f: 'airman', gives: 'AI', dmg: { P: 4, WO: 20, HE: 12, QU: 4 } },
+    quick: { name: 'Quick Man', f: 'quickman', gives: 'QU', dmg: { P: 4, AI: 4, CR: 8, HE: 20, FL: 14 } },
+    heat: { name: 'Heat Man', f: 'heatman', gives: 'HE', dmg: { P: 4, ME: 2, BU: 10, AI: 4, QU: 4 } },
+    wood: { name: 'Wood Man', f: 'woodman', gives: 'WO', dmg: { P: 2, ME: 4, AI: 8, CR: 4, HE: 28 } },
+    metal: { name: 'Metal Man', f: 'metalman', gives: 'ME', dmg: { P: 2, QU: 8, HE: 8 } },
+    flash: { name: 'Flash Man', f: 'flashman', gives: 'FL', dmg: { P: 4, ME: 8, BU: 4, CR: 6, HE: 12 } },
+    crash: { name: 'Crash Man', f: 'crashman', gives: 'CR', dmg: { P: 2, BU: 2, AI: 14, HE: 12, QU: 2 } },
   };
-  const GRID = [['bubble', 'air', 'quick'], ['heat', null, 'wood'], ['metal', 'flash', 'crash']];
-  const WEAK = { bubble: 'metal', air: 'wood', quick: 'crash', heat: 'bubble', wood: 'heat', metal: 'quick', flash: 'metal', crash: 'air' };
-  const BUSTER = 14, WEAKN = 4;
-  const FWD = ['bubble', 'air', 'quick', 'heat', 'wood', 'metal', 'flash', 'crash'];
-  const BACK = ['metal', 'bubble', 'heat', 'wood', 'air', 'crash', 'quick', 'flash'];
-  const CX = 30, CY = 30, CW = 170, CH = 165;
-  const cell = k => { for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) if (GRID[r][c] === k) return [CX + c * CW + CW / 2, CY + r * CH + CH / 2]; };
-  const txt = (g, s, x, y, o = {}) => { g.font = o.font || '600 15px Jost, sans-serif'; g.fillStyle = o.col || C.ink; g.textAlign = o.align || 'left'; g.textBaseline = o.base || 'middle'; g.fillText(s, x, y); };
-  const cost = route => route.map((k, i) => { const has = route.slice(0, i).includes(WEAK[k]); return { k, has, shots: has ? WEAKN : BUSTER }; });
-
-  function head(g, x, y, col, s = 1, dim = false) {
-    g.save(); g.translate(x, y); g.scale(s, s); if (dim) g.globalAlpha = .35;
-    g.fillStyle = col; g.strokeStyle = C.navy; g.lineWidth = 3;
-    g.beginPath(); g.arc(0, 0, 34, Math.PI, 0); g.lineTo(34, 18); g.quadraticCurveTo(0, 30, -34, 18); g.closePath(); g.fill(); g.stroke();
-    g.fillStyle = '#ffd9b3'; g.beginPath(); g.roundRect(-20, -6, 40, 30, 8); g.fill(); g.stroke();
-    g.fillStyle = C.navy; g.fillRect(-11, 2, 6, 9); g.fillRect(5, 2, 6, 9);
-    g.fillStyle = 'rgba(255,255,255,.5)'; g.beginPath(); g.ellipse(-12, -20, 10, 5, -.4, 0, TAU); g.fill();
-    g.restore();
+  const GRID = ['bubble', 'air', 'quick', 'heat', null, 'wood', 'metal', 'flash', 'crash'];
+  const MENU = GRID.filter(Boolean), PLAN = ['metal', 'flash', 'quick', 'bubble', 'heat', 'wood', 'air', 'crash'];
+  const CHAIN = [['flash', 'quick'], ['metal', 'flash'], ['metal', 'bubble'], ['bubble', 'heat'], ['heat', 'wood'], ['wood', 'air'], ['air', 'crash'], ['quick', 'metal']];   // weapon owner -> boss it beats
+  // one fight with the weapons held: the strongest weapon, and how many hits it takes (Time Stopper empties in one use for 14)
+  function fight(id, held) {
+    const d = B[id].dmg, opts = ['P', ...held].filter(w => d[w]).sort((a, b) => d[b] - d[a]);
+    if (opts[0] === 'FL') { const next = opts[1]; return { w: 'FL', w2: next, hits: 1 + Math.ceil(14 / d[next]), chunks: [14, ...Array(Math.ceil(14 / d[next])).fill(d[next])] }; }
+    const w = opts[0], n = Math.ceil(28 / d[w]); return { w, hits: n, chunks: Array(n).fill(d[w]) };
   }
-  function megaman(g, x, y) { head(g, x, y, '#2f7bff', 1.1); g.fillStyle = '#8fd3ff'; g.beginPath(); g.ellipse(x, y - 26, 10, 5, 0, 0, TAU); g.fill(); }
-  function arrow(g, from, to, col, a = 1, w = 3) {
-    const [x1, y1] = cell(from), [x2, y2] = cell(to), mx = (x1 + x2) / 2 + (y2 - y1) * .18, my = (y1 + y2) / 2 - (x2 - x1) * .18;
-    const ang = Math.atan2(y2 - my, x2 - mx), ex = x2 - Math.cos(ang) * 48, ey = y2 - Math.sin(ang) * 48;
-    g.save(); g.globalAlpha = a; g.strokeStyle = col; g.fillStyle = col; g.lineWidth = w;
-    g.beginPath(); g.moveTo(x1, y1); g.quadraticCurveTo(mx, my, ex, ey); g.stroke();
-    g.beginPath(); g.moveTo(ex + Math.cos(ang) * 12, ey + Math.sin(ang) * 12); g.lineTo(ex + Math.cos(ang + 2.5) * 10, ey + Math.sin(ang + 2.5) * 10); g.lineTo(ex + Math.cos(ang - 2.5) * 10, ey + Math.sin(ang - 2.5) * 10); g.closePath(); g.fill();
-    g.restore();
-  }
+  function plan(route) { const held = []; return route.map(id => { const f = fight(id, held); held.push(B[id].gives); return { id, ...f }; }); }
+  const TX = 20, TY = 20, TS = 132, cell = i => ({ x: TX + 14 + (i % 3) * TS, y: TY + 40 + Math.floor(i / 3) * 122 });
+  const centre = id => { const c = cell(GRID.indexOf(id)); return [c.x + 48, c.y + 48]; };
 
-  function draw(g, route, shown, opt) {
-    T.use(g); g.clearRect(0, 0, W, H);
-    g.fillStyle = 'rgba(255,252,244,.9)'; g.beginPath(); g.roundRect(0, 0, W, H, 14); g.fill();
-    g.fillStyle = '#10163a'; g.beginPath(); g.roundRect(CX - 12, CY - 12, 3 * CW + 24, 3 * CH + 24, 14); g.fill();
-    const done = route.slice(0, shown), costs = cost(route);
-    GRID.forEach((row, r) => row.forEach((k, c) => {
-      const x = CX + c * CW, y = CY + r * CH;
-      g.fillStyle = '#1d2558'; g.strokeStyle = '#3d4aa0'; g.lineWidth = 2; g.beginPath(); g.roundRect(x + 8, y + 8, CW - 16, CH - 16, 10); g.fill(); g.stroke();
-      if (!k) { megaman(g, x + CW / 2, y + CH / 2 - 8); txt(g, 'MEGA MAN', x + CW / 2, y + CH - 24, { font: '800 14px Montserrat', col: '#8fd3ff', align: 'center' }); return; }
-      const i = done.indexOf(k), beat = i >= 0, focus = opt.focus === k;
-      if (focus) { g.strokeStyle = C.gold; g.lineWidth = 4; g.beginPath(); g.roundRect(x + 5, y + 5, CW - 10, CH - 10, 12); g.stroke(); }
-      head(g, x + CW / 2, y + CH / 2 - 14, B[k].col, 1, beat);
-      if (beat) { const cc = costs[i]; g.fillStyle = cc.has ? C.good : C.red; g.beginPath(); g.arc(x + 26, y + 26, 15, 0, TAU); g.fill(); txt(g, String(i + 1), x + 26, y + 27, { font: '800 15px Montserrat', col: '#fff', align: 'center' }); }
-    }));
-    if (opt.arrows) Object.entries(WEAK).forEach(([k, by]) => { const lit = opt.chain && opt.chain.includes(k) && opt.chain.includes(by); arrow(g, by, k, lit ? C.gold : '#8fd3ff', lit ? 1 : .35, lit ? 4 : 2.5); });
-    GRID.forEach((row, r) => row.forEach((k, c) => {
-      if (!k) return; const x = CX + c * CW, y = CY + r * CH;
-      g.fillStyle = 'rgba(16,22,58,.88)'; g.beginPath(); g.roundRect(x + 14, y + CH - 52, CW - 28, 40, 6); g.fill();
-      txt(g, B[k].name.toUpperCase(), x + CW / 2, y + CH - 40, { font: '800 13px Montserrat', col: '#fff', align: 'center' });
-      txt(g, 'drops ' + B[k].wpn, x + CW / 2, y + CH - 22, { font: '600 12px Jost', col: '#a9b7d6', align: 'center' });
-      const i = done.indexOf(k); if (i >= 0) { const cc = costs[i]; g.fillStyle = cc.has ? C.good : C.red; g.beginPath(); g.arc(x + 26, y + 26, 15, 0, TAU); g.fill(); txt(g, String(i + 1), x + 26, y + 27, { font: '800 15px Montserrat', col: '#fff', align: 'center' }); }
-    }));
-    // route panel
-    const PX = 3 * CW + 64, PW = W - PX - 20;
-    txt(g, 'Your route', PX, 34, { font: '800 20px Montserrat', col: C.navy });
-    txt(g, 'shots to win each fight', PX + PW, 36, { font: '600 12px Jost', col: C.muted, align: 'right' });
-    for (let i = 0; i < 8; i++) {
-      const y = 58 + i * 50, cc = costs[i];
-      g.fillStyle = i < shown ? 'rgba(239,230,210,.95)' : 'rgba(239,230,210,.4)'; g.beginPath(); g.roundRect(PX, y, PW, 42, 8); g.fill();
-      txt(g, String(i + 1), PX + 16, y + 21, { font: '800 16px Montserrat', col: C.muted, align: 'center' });
-      if (!cc || i >= shown) continue;
-      head(g, PX + 46, y + 22, B[cc.k].col, .45);
-      txt(g, B[cc.k].name, PX + 70, y + 14, { font: '700 14px Jost' });
-      txt(g, cc.has ? 'with ' + B[WEAK[cc.k]].wpn : 'Mega Buster only', PX + 70, y + 31, { font: '600 12px Jost', col: cc.has ? C.good : C.redDk });
-      const bx = PX + 210, bw = PW - 250; g.fillStyle = cc.has ? C.good : C.red; g.fillRect(bx, y + 13, bw * cc.shots / BUSTER, 16);
-      txt(g, String(cc.shots), bx + bw * cc.shots / BUSTER + 8, y + 21, { font: '800 14px Jost' });
-    }
-    const tot = costs.slice(0, shown).reduce((n, c) => n + c.shots, 0), slogs = costs.slice(0, shown).filter(c => !c.has).length;
-    txt(g, `${tot} shots · ${slogs} buster fight${slogs === 1 ? '' : 's'}`, PX, 470, { font: '800 20px Montserrat', col: C.navy });
-    if (shown >= 8) { const crash = route.indexOf('crash') >= 0; txt(g, crash ? 'Wily 4: the Boobeam Trap falls only to the Crash Bomber ✓' : '', PX, 500, { font: '600 13px Jost', col: C.muted }); }
-  }
-
-  canvasDemo('chain', (s, cv, g) => {
-    const st = { route: [], tour: true, held: false, t: 0, arrows: true, key: '' };
-    const tourBtn = $(s, '.wc-tour');
-    const manual = () => { if (st.tour) { st.tour = false; tourBtn.classList.remove('on'); st.route = []; } };
-    const preset = r => { manual(); st.route = r.slice(); st.t = 0; };
-    $$(s, '.wc-plan .btn').forEach(b => b.onclick = () => { preset(b.dataset.v === 'fwd' ? FWD : BACK); $$(s, '.wc-plan .btn').forEach(x => x.classList.toggle('on', x === b)); });
-    $(s, '.wc-arrows').onchange = e => { st.arrows = e.target.checked; };
-    $(s, '.wc-clear').onclick = () => { manual(); st.route = []; $$(s, '.wc-plan .btn').forEach(x => x.classList.remove('on')); };
-    tourBtn.onclick = () => { st.tour = true; st.t = 0; tourBtn.classList.add('on'); };
-    cv.addEventListener('click', e => {
-      const r = cv.getBoundingClientRect(), x = (e.clientX - r.left) * W / r.width, y = (e.clientY - r.top) * H / r.height;
-      const c = Math.floor((x - CX) / CW), rr = Math.floor((y - CY) / CH); if (c < 0 || c > 2 || rr < 0 || rr > 2) return;
-      const k = GRID[rr][c]; if (!k) return; manual(); $$(s, '.wc-plan .btn').forEach(x => x.classList.remove('on'));
-      if (!st.route.includes(k)) st.route.push(k);
-    });
-    function info(cap, route, shown) {
-      const k = cap + route.join() + shown; if (k === st.key) return; st.key = k;
-      const sum = r => cost(r).reduce((n, c) => n + c.shots, 0), sl = r => cost(r).filter(c => !c.has).length;
-      say($(s, '.wc-stats'), `<div class="r"><b>${sum(FWD)}</b><span>Forward, as the grid reads: ${sl(FWD)} buster fights</span></div><div class="g"><b>${sum(BACK)}</b><span>Backward from Quick Man: ${sl(BACK)} buster fight</span></div>${route.length && !st.tour ? `<div><b>${sum(route.slice(0, shown))}</b><span>Your route so far</span></div>` : ''}`);
-      say($(s, '.wc-out'), cap);
-    }
-    // walk-through: forward route fills (0-9 s), backward chain traced from Quick Man (9-17 s), backward route fills (17-26 s)
-    const DUR = 30;
-    s._seek = t => {
-      if (t < 10) { const n = clamp(Math.floor(t / 1.1), 0, 8); draw(g, FWD, n, { arrows: false }); info('Forward: fight them as the menu reads, Bubble Man first. You keep arriving before you hold the weakness: three long buster fights.', FWD, n); return; }
-      if (t < 18) { const n = clamp(Math.floor((t - 10) / 1.1) + 1, 1, 7), chain = ['quick', 'crash', 'air', 'wood', 'heat', 'bubble', 'metal'].slice(0, n); draw(g, [], 0, { arrows: true, chain, focus: chain[chain.length - 1] }); info(`Backward: start at the boss you fear, Quick Man. What beats him? ${chain.slice(1).map(k => B[k].wpn).join(', then ') || '…'}`, [], 0); return; }
-      const n = clamp(Math.floor((t - 18) / 1.1), 0, 8); draw(g, BACK, n, { arrows: true, chain: BACK }); info('Walk the chain forward again from Metal Man. One buster fight, seven with the weakness in hand.', BACK, n);
+  SCN.run('chain', s => {
+    let route, show, hl, age, lastT;
+    const add = id => { if (!route.includes(id) && route.length < 8) { route.push(id); lastT = 0; } };
+    const api = {
+      dur: 32,
+      reset(tour) { route = []; show = tour ? false : s.querySelector('[data-chk=show]').checked; hl = []; age = 0; lastT = 9; },
+      step(h) { age += h; lastT += h; },
+      script: MENU.map((id, i) => [1 + i * 1.0, () => add(id)]).concat([[12, () => { route = []; hl = [['x', 'quick']]; }], [14, () => { hl = [['flash', 'quick']]; }], [16, () => { hl = [['flash', 'quick'], ['metal', 'flash']]; }], [18.5, () => { hl = []; show = true; }]], PLAN.map((id, i) => [19 + i * 1.0, () => add(id)])),
+      caption: t => t < 9.4 ? 'Fight them as the menu reads and you keep arriving before you hold the weakness. Three fights are Mega Buster only: 14 hits on Bubble Man, 7 on Air Man, 7 on Quick Man.'
+        : t < 12 ? '42 hits in all, and Quick Man, the hardest fight in the game, was done the long way.'
+        : t < 14 ? 'Plan it backward. Start from the boss you fear: Quick Man.'
+        : t < 16 ? 'What beats him? Flash Man\'s Time Stopper takes half his health in one use.'
+        : t < 18.5 ? 'And what beats Flash Man? The Metal Blade. So the route starts at Metal Man.'
+        : t < 27.5 ? 'Metal Man first with the buster, then every fight after it tests the tool you just earned.'
+        : 'Same eight bosses: 35 hits and one buster fight, with Quick Man starting at half health. The designers built the chain; reverse sequencing is how a player (or you) reads it.',
+      status() {
+        if (!route.length) return 'Click the Robot Masters in the order you would fight them, or load a route. Each fight uses the strongest weapon you hold.';
+        const p = plan(route), l = p[p.length - 1];
+        return `${B[l.id].name}: ${WPN[l.w][0]}${l.w2 ? ', then the ' + WPN[l.w2][0] : ''}, ${l.hits} hit${l.hits > 1 ? 's' : ''}. ${l.w === 'P' ? 'Nothing you hold is stronger than the buster here.' : 'You get the ' + WPN[B[l.id].gives][0] + '.'}`;
+      },
+      stats() {
+        const p = plan(route), hits = p.reduce((a, f) => a + f.hits, 0), bust = p.filter(f => f.w === 'P').length, q = p.find(f => f.id === 'quick');
+        return `<div><b>${hits}</b><span>hits to clear ${route.length} of 8 bosses</span></div><div class="r"><b>${bust}</b><span>fights with only the Mega Buster</span></div><div class="y"><b>${q ? q.hits : '-'}</b><span>hits on Quick Man</span></div>`;
+      },
+      acts: { menu() { route = MENU.slice(); lastT = 9; }, plan() { route = PLAN.slice(); lastT = 9; }, clear() { route = []; } },
+      set(k, v) { if (k === 'show') show = v; },
+      point(p) { if (p.type !== 'down') return; GRID.forEach((id, i) => { if (!id) return; const c = cell(i); if (p.x > c.x - 6 && p.x < c.x + 102 && p.y > c.y - 6 && p.y < c.y + 112) { if (route.includes(id)) route = route.slice(0, route.indexOf(id)); else add(id); } }); },
+      draw(g) {
+        SCN.paper(g, W, H); g.save(); g.imageSmoothingEnabled = false;
+        // stage select
+        box(g, TX, TY, 412, 412, { r: 8, fill: '#0058f8' });
+        g.save(); g.beginPath(); g.rect(TX, TY, 412, 412); g.clip();
+        for (let r = 0; r < 3; r++) { const y = TY + 60 + r * 122; g.fillStyle = '#00e8d8'; g.fillRect(TX, y + 14, 412, 6); g.fillRect(TX, y + 68, 412, 6); g.fillStyle = '#3cbcfc'; g.fillRect(TX, y + 24, 412, 40); }
+        g.restore();
+        
+        const p = plan(route);
+        GRID.forEach((id, i) => {
+          const c = cell(i);
+          if (!id) { box(g, c.x, c.y, 96, 96, { r: 0, fill: '#000', stroke: '#fff', lw: 3 }); sprite(g, SCN.img(IMG + 'megaman.png'), c.x + 48, c.y + 88, 78, { pix: true }); return; }
+          const n = route.indexOf(id), im = SCN.img(IMG + 'p-' + B[id].f + '.png');
+          if (im) g.drawImage(im, c.x, c.y, 96, 96);
+          if (n >= 0) { g.fillStyle = 'rgba(0,10,60,.38)'; g.fillRect(c.x, c.y, 96, 96); SCN.dot(g, c.x + 10, c.y + 10, 17, '#000'); SCN.dot(g, c.x + 10, c.y + 10, 14, C.gold); txt(g, n + 1, c.x + 10, c.y + 11, { size: 18, w: 800, align: 'center', display: true }); }
+          if (hl.some(a => a[1] === id || a[0] === id)) { g.strokeStyle = C.gold; g.lineWidth = 6; g.strokeRect(c.x - 5, c.y - 5, 106, 106); }
+          txt(g, B[id].name.toUpperCase(), c.x + 48, c.y + 107, { size: 12, w: 800, col: '#fff', align: 'center', display: true });
+        });
+        g.imageSmoothingEnabled = true;
+        const lastF = p[p.length - 1], src = lastF && lastF.w !== 'P' ? Object.keys(B).find(k => B[k].gives === lastF.w) : null;
+        const arrows = hl.length ? hl.filter(a => a[0] !== 'x') : !show ? [] : !route.length ? CHAIN : src ? [[src, lastF.id]] : [];
+        arrows.forEach(([a, b]) => { const [x1, y1] = centre(a), [x2, y2] = centre(b), dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy), col = WPN[B[a].gives][1];
+          arrow(g, x1 + dx / L * 40, y1 + dy / L * 40, x2 - dx / L * 44, y2 - dy / L * 44, { col: '#000', lw: 9, head: 20, bend: L < 140 ? 0 : 26 }); arrow(g, x1 + dx / L * 40, y1 + dy / L * 40, x2 - dx / L * 44, y2 - dy / L * 44, { col, lw: 5, head: 16, bend: L < 140 ? 0 : 26 }); });
+        const top = hl.length > 1 || (hl.length && hl[0][0] !== 'x') ? `${WPN[B[hl[hl.length - 1][0]].gives][0]} beats ${B[hl[hl.length - 1][1]].name}` : hl.length ? 'the boss you fear' : arrows.length === 1 ? `${WPN[B[arrows[0][0]].gives][0]} beats ${B[arrows[0][1]].name}` : arrows.length ? 'arrow: this boss\'s weapon beats that boss' : 'STAGE SELECT';
+        txt(g, top, TX + 206, TY + 21, { size: 16, w: 800, col: '#fff', align: 'center', display: true });
+        // the latest fight, acted out
+        const fy = 452; box(g, TX, fy, 412, 118, { r: 8, fill: '#101830' });
+        g.fillStyle = '#3a4a7a'; g.fillRect(TX, fy + 96, 412, 22);
+        const cur = p[p.length - 1];
+        sprite(g, SCN.img(IMG + 'megaman.png'), TX + 70, fy + 96, 66, { pix: true });
+        if (cur) {
+          const per = Math.max(.12, Math.min(.3, 2.2 / cur.hits)), k = lastT / per, done = Math.min(cur.hits, Math.floor(k)), left = 28 - cur.chunks.slice(0, done).reduce((a, b) => a + b, 0);
+          sprite(g, SCN.img(IMG + 's-' + B[cur.id].f + '.png'), TX + 340, fy + 96, 78, { pix: true, alpha: left <= 0 ? .35 : 1 });
+          if (done < cur.hits) { const fx = lerp(TX + 100, TX + 310, k % 1), wc = WPN[done === 0 || !cur.w2 ? cur.w : cur.w2][1]; SCN.dot(g, fx, fy + 62, 9, wc); SCN.dot(g, fx - 14, fy + 62, 5, wc); }
+          for (let i = 0; i < 28; i++) { g.fillStyle = i < Math.max(0, left) ? '#f8d878' : '#2a2440'; g.fillRect(TX + 388, fy + 88 - i * 2.9, 14, 2); }
+          txt(g, `${WPN[cur.w][0]}${cur.w2 ? ' + ' + WPN[cur.w2][0] : ''}`, TX + 14, fy + 16, { size: 14, w: 800, col: WPN[cur.w][1] }); txt(g, `vs ${B[cur.id].name}`, TX + 398, fy + 16, { size: 14, w: 700, col: '#fff', align: 'right' });
+        } else txt(g, 'pick a first boss', TX + 206, fy + 40, { size: 15, w: 600, col: '#8fa2d8', align: 'center' });
+        // the route
+        const RX = 452, RW = W - RX - 16;
+        txt(g, 'Your route', RX, 34, { size: 24, w: 800, display: true }); txt(g, 'each bar is the boss\'s 28 health, one block per hit', W - 16, 38, { size: 13, w: 600, col: C.muted, align: 'right' });
+        for (let i = 0; i < 8; i++) {
+          const y = 58 + i * 56, f = p[i];
+          box(g, RX, y, RW, 50, { r: 9, fill: f ? (f.w === 'P' ? '#fbe2df' : '#e7f3e4') : 'rgba(239,230,210,.6)', stroke: f ? (f.w === 'P' ? '#e07b72' : '#5fb47c') : null });
+          txt(g, i + 1, RX + 18, y + 26, { size: 20, w: 800, col: C.muted, align: 'center', display: true });
+          if (!f) continue;
+          g.imageSmoothingEnabled = false; sprite(g, SCN.img(IMG + 's-' + B[f.id].f + '.png'), RX + 58, y + 46, 42, { pix: true }); g.imageSmoothingEnabled = true;
+          txt(g, B[f.id].name, RX + 90, y + 16, { size: 16, w: 800 });
+          txt(g, f.w === 'P' ? 'Mega Buster only' : WPN[f.w][0] + (f.w2 ? ' + ' + WPN[f.w2][0].replace('Mega ', '') : ''), RX + 90, y + 36, { size: 14, w: 700, col: f.w === 'P' ? '#a1261e' : '#145c33' });
+          let bx = RX + 262; const bw = 224 / 28;
+          f.chunks.forEach((ch, j) => { const w2 = Math.min(ch, 28 - (bx - RX - 262) / bw) * bw; if (w2 <= 0) return; box(g, bx + 1, y + 14, w2 - 2, 22, { r: 3, fill: WPN[j === 0 || !f.w2 ? f.w : f.w2][1], stroke: C.navy, lw: 1.5 }); bx += w2; });
+          txt(g, f.hits, W - 64, y + 26, { size: 24, w: 800, align: 'right', display: true }); txt(g, f.hits > 1 ? 'hits' : 'hit', W - 58, y + 28, { size: 13, w: 600, col: C.muted });
+        }
+        const hits = p.reduce((a, f) => a + f.hits, 0), bust = p.filter(f => f.w === 'P').length;
+        txt(g, route.length ? `${hits} hits · ${bust} buster-only fight${bust === 1 ? '' : 's'}` : 'no route yet', RX, 548, { size: 24, w: 800, display: true, col: route.length === 8 ? C.ink : C.muted });
+        g.restore();
+      },
     };
-    window.__seek = t => { st.held = true; s._seek(t); };
-    window.__dur = () => DUR;
-    return dt => {
-      if (st.held) return;
-      st.t += Math.max(0, dt);
-      if (st.tour) { if (st.t >= DUR) st.t = 0; s._seek(st.t); return; }
-      const n = Math.min(st.route.length, Math.floor(st.t / .5) + 1);
-      draw(g, st.route, st.route.length ? n : 0, { arrows: st.arrows });
-      const c = cost(st.route), sl = c.filter(x => !x.has).length;
-      info(st.route.length ? `${st.route.length} of 8 beaten, ${sl} with the buster alone. ${st.route.length < 8 ? 'Click the next boss.' : sl <= 1 ? 'A clean chain.' : 'Try starting from the boss you find hardest and work back.'}` : 'Click a boss to fight it first. Each weapon you earn beats one other boss.', st.route, n);
-    };
+    return api;
   });
 })();

@@ -9,9 +9,9 @@
 <link rel="stylesheet" href="../../assets/deck.css">
 <link rel="stylesheet" href="../../assets/kit.css">
 <link rel="stylesheet" href="../shared/mech.css">
-<style>.mt-side .tip { font-size: 16px; margin: 0 0 8px; color: var(--muted); } .mt-side .src { font-size: 13px; color: var(--muted); margin-top: 8px; line-height: 1.35; }</style>
+<link rel="stylesheet" href="../../assets/scene.css">
 <script>
-  window.DECK = { title: 'Mastering Game Mechanics · Mechanics Design Tools · Weakness Chain (mock-up)', home: '../index.html', audio: false, cues: null };
+  window.DECK = { title: "Mastering Game Mechanics · Mechanics Design Tools · Weakness Chain (mock-up)", home: '../index.html', audio: false, cues: null };
 </script>
 <script src="notes.js"></script>
 </head>
@@ -25,13 +25,13 @@
     <canvas class="demo" width="1040" height="585"></canvas>
     <div class="mt-side">
       <h4>Plan the order</h4>
-      <div class="seg wc-plan"><button class="btn" data-v="fwd">Forward: as the grid reads</button><button class="btn" data-v="back">Backward from Quick Man</button></div>
-      <p class="tip">Or click the bosses yourself, in the order you would fight them.</p>
-      <label class="chk"><input type="checkbox" class="wc-arrows" checked> Show who beats whom</label>
-      <div class="row wrap"><button class="btn wc-tour on">▶ Walk-through</button><button class="btn wc-clear">Clear route</button></div>
-      <div class="mt-stats wc-stats"></div>
-      <p class="mt-out wc-out"></p>
-      <p class="src">After Mega Man 2 (Capcom, 1988): each Robot Master drops a weapon that another is weak to. The arrows use one well-known weakness per boss (several bosses have more than one). Shots to win are illustrative: 14 with the Mega Buster, 4 with the weakness.</p>
+      <div class="row wrap"><button class="btn" data-do="menu">As the menu reads</button><button class="btn" data-do="plan">Backward from Quick Man</button><button class="btn" data-do="clear">Clear</button></div>
+      <p class="keys">Or click the portraits in the order you would fight them. Click a numbered one to undo back to it.</p>
+      <label class="chk"><input type="checkbox" data-chk="show" checked> Show whose weapon beats whom</label>
+      <div class="row wrap"><button class="btn tour on">▶ Walk-through</button></div>
+      <div class="mt-stats"></div>
+      <p class="mt-out"></p>
+      <p class="src">Mega Man 2 (Capcom, 1988). Portraits and sprites are the game's. Damage per hit is the Normal mode table from The Mega Man Home Page (mmhp.net), with 28 health per Robot Master; Atomic Fire is counted fully charged, and Time Stopper empties in one use for 14 damage on Quick Man. Each fight uses the strongest weapon held, and missed shots are not counted.</p>
     </div>
   </div>
 </section>
@@ -39,7 +39,7 @@
 </div></div>
 <script src="../../assets/deck.js"></script>
 <script src="../../assets/kit.js"></script>
-<script src="../shared/topdown.js"></script>
+<script src="../../assets/scene.js"></script>
 <script src="weakness-chain.js"></script>
 </body>
 </html>
