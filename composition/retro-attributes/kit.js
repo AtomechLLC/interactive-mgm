@@ -3,8 +3,9 @@
    attributes, 13 qualities and 16 abilities, plus triggers that switch them on and off.
    Each attribute here is one small loop, a pure function of time, in the same 240 x 180 box (centred on 0,0) the Souls
    archetype loops use (../archetypes/arch.js). The article is about sidescrollers and top-down games, so a loop is either
-   a side view (view: 'side', drawn with the helpers below and the Super Mario Bros. sprites in student-tokens) or a
-   top-down view (view: 'top', drawn with ../shared/topdown.js).
+   a side view (view: 'side', drawn with the helpers below, the Super Mario Bros. sprites in student-tokens and the Castlevania and Zelda II sprites in img/) or a
+   top-down view (view: 'top', drawn with ../shared/topdown.js and The Legend of Zelda sprites in img/). Where the article names a
+   Zelda or Castlevania enemy and its NES sprite exists, the loop uses that sprite, with Link or Simon Belmont as the player.
    RA.A[key] = { name, group, view, gi, col, line, counter, ex, loop(g, t) }.
    line is the article's definition in our words; ex is the example the article names ('' when it names none);
    counter is our reading of the answer the attribute asks the player for (the article does not give answers). */
@@ -27,6 +28,43 @@
     if (o.rot) { g.translate(0, -h / 2); g.rotate(o.rot); g.translate(0, h / 2); }
     g.scale((o.flip ? -1 : 1) * (o.sx ?? 1), o.sy ?? 1);
     g.drawImage(im, b[0], b[1], sw, sh, -w / 2, -h, w, h); g.restore();
+  }
+  // classic sprites in img/ (The Legend of Zelda, Zelda II, Castlevania), trimmed to their own pixels, one file per frame.
+  // P draws one with its feet at x,y at k units per pixel. o: flip, vflip, a, rot (about its centre), c (centre it on y),
+  // dx (shift in sprite pixels, for poses where the body is not the middle of the image).
+  const IDIR = new URL('img/', document.currentScript.src).href, PI = {};
+  const pim = n => { let im = PI[n]; if (!im) { im = PI[n] = new Image(); im.src = IDIR + n + '.png'; } return im; };
+  ('z-bubble z-darknut-left z-ghini z-octorok-front z-octorok-left z-peahat z-peahat2 z-rope z-trap z-vire z-keese z-keese2 z-wallmaster z-wizzrobe z-goriya-front z-goriya-left ' +
+    'z-dodongo z-dodongo-bomb z-link-front z-link-front2 z-link-left z-link-left2 z-link-back z-link-sword-left z-bomb z-arrow z-moldorm z2-myu z2-link z2-link-walk z2-link-walk2 z2-link-stab ' +
+    'z2-link-crouch z2-link-crouch-stab cv-bat0 cv-bat1 cv-bat2 cv-bat3 cv-bat-hang cv-medusa cv-redskel cv-redskel2 cv-redskel-grow0 cv-redskel-grow1 cv-redskel-grow2 cv-skel cv-skel2 ' +
+    'cv-bone0 cv-bone1 cv-bone2 cv-leopard0 cv-leopard1 cv-leopard2 cv-leopard-sit cv-ghost cv-simon0 cv-simon1 cv-simon2 cv-simon3 cv-simon-kneel cv-simon-whip cv-dagger').split(' ').forEach(pim);
+  function P(g, n, x, y, k, o = {}) {
+    const im = pim(n); if (!im.complete || !im.naturalWidth) return;
+    const w = im.naturalWidth * k, h = im.naturalHeight * k;
+    g.save(); g.globalAlpha *= o.a ?? 1; g.imageSmoothingEnabled = false; g.translate(x, o.c ? y + h / 2 : y);
+    if (o.rot || o.vflip) { g.translate(0, -h / 2); if (o.rot) g.rotate(o.rot); if (o.vflip) g.scale(1, -1); g.translate(0, h / 2); }
+    if (o.flip) g.scale(-1, 1);
+    g.drawImage(im, -w / 2 + (o.dx || 0) * k, -h, w, h); g.restore();
+  }
+  const CV = 1.6, ZT = 1.9;   // units per sprite pixel: Castlevania and Zelda II in side view, The Legend of Zelda from above
+  // Simon Belmont, feet at x,y, facing right unless o.flip. o.whip for the whip pose, o.jump for the jump pose, o.walk (a clock) to step
+  function simon(g, x, y, o = {}) {
+    if (o.whip) return P(g, 'cv-simon-whip', x, y, CV, { flip: o.flip, a: o.a, dx: 14 });
+    P(g, o.jump ? 'cv-simon-kneel' : 'cv-simon' + (o.walk != null ? Math.floor(o.walk * 8) % 4 : 0), x, y, CV, { flip: o.flip, a: o.a });
+  }
+  // Link from Zelda II in side view. o.stab, o.crouch, o.cstab pick the pose
+  function link2(g, x, y, o = {}) {
+    const n = o.cstab ? 'z2-link-crouch-stab' : o.stab ? 'z2-link-stab' : o.crouch ? 'z2-link-crouch' : o.walk != null ? (Math.floor(o.walk * 8) % 2 ? 'z2-link-walk' : 'z2-link-walk2') : 'z2-link';
+    P(g, n, x, y, CV, { flip: o.flip, dx: o.stab || o.cstab ? 8 : 0 });
+  }
+  // a Zelda sprite seen from above, centred on x,y, with a ground shadow
+  function zs(g, n, x, y, o = {}) { if (!o.noShadow) T.shadow(x + 2, y + 13, 13, 5, .2 * (o.a ?? 1)); P(g, n, x, y, o.k || ZT, { ...o, c: true }); }
+  // the player in the top-down loops: Link, centred on x,y, facing the angle ang. o.sword for the sword pose (sideways only), o.walk to step
+  function pl(g, x, y, ang = 0, o = {}) {
+    if (typeof o !== 'object') o = {};
+    const dx = Math.cos(ang), dy = Math.sin(ang), f = o.walk != null && Math.floor(o.walk * 6) % 2 ? '2' : '';
+    if (Math.abs(dx) >= Math.abs(dy)) zs(g, o.sword ? 'z-link-sword-left' : 'z-link-left' + f, x, y, { flip: dx > 0, a: o.a });
+    else zs(g, dy > 0 ? 'z-link-front' + f : 'z-link-back', x, y, { a: o.a });
   }
   // the player in side view: Mario, feet at x,y. o.jump for the jump pose, o.walk (a clock) to step, o.flip to face left
   function hero(g, x, y, o = {}) {
@@ -67,11 +105,12 @@
   const hit = (x0, y0, x1, y1, age, col = C.gold) => { if (age >= 0 && age < .22) T.tracer(x0, y0, x1, y1, 1 - age / .22, col, 5); };
   const spark = (x, y, age, r = 22) => { if (age >= 0 && age < .3) T.flash(x, y, r, 1 - age / .3); };
   // Mario's fireball from x0 to x1 over d seconds, starting at t0
+  const dshot = (g, t, t0, x0, x1, y = GY - 30, d = .4) => { const k = (t - t0) / d; if (k >= 0 && k <= 1) P(g, 'cv-dagger', lerp(x0, x1, k), y + 7, CV, { flip: x1 < x0 }); };
   const shot = (g, t, t0, x0, x1, y = GY - 18, d = .4) => { const k = (t - t0) / d; if (k >= 0 && k <= 1) S(g, 'fireball', lerp(x0, x1, k), y + 6, 12, { rot: t * 14 }); };
   const note = (s, x, y, col = C.muted) => T.label(s, x, y, 'center', col, 11);
   const dizzy = (g, x, y, t) => { g.fillStyle = C.gold; for (let i = 0; i < 3; i++) { const a = t * 4 + i * 2.1; g.beginPath(); g.arc(x + Math.cos(a) * 14, y + Math.sin(a) * 4, 3, 0, TAU); g.fill(); } };
   const face = (ax, ay, bx, by) => Math.atan2(by - ay, bx - ax);
   const tri = u => 4 * Math.abs(u - Math.floor(u + .5)) - 1;   // triangle wave, -1 to 1, period 1
 
-  window.RA = { A: {}, LOOP, GY, SKY, FOE, S, hero, blob, side, top, gap, spikes, pipe, orb, ph, arc, pop, hit, spark, shot, note, dizzy, face, tri, T, C, clamp, lerp, ease, TAU };
+  window.RA = { A: {}, LOOP, GY, SKY, FOE, S, P, CV, ZT, simon, link2, zs, pl, dshot, hero, blob, side, top, gap, spikes, pipe, orb, ph, arc, pop, hit, spark, shot, note, dizzy, face, tri, T, C, clamp, lerp, ease, TAU };
 })();
