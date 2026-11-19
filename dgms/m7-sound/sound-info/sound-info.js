@@ -1,286 +1,231 @@
-/* Sound as information (mock-up for DGMS M7, beside Hear the Boss Coming, Four Classes Sorter and Same Scene, Four Rules).
-   1. Overwatch: the same team fight twice; on one map ultimates are silent, on the other they start with a shout the
-      targeted team reacts to. Units caught in each blast are counted.
-   2. Left 4 Dead: special infected approach a group of survivors in fog; each is heard before it is seen.
-   3. Counter-Strike: three attackers take one route to a site; running is heard by the defender, walking is silent.
-   Positions are closed-form functions of t. Sounds are synthesised with the Web Audio API after the first Sound click,
-   and only while a slide plays live (never while seeking). */
+/* Sound that carries information (DGMS M7), beside "hear the boss coming" and "same scene, four rules".
+   ult    Overwatch: every ultimate is shouted, with one line for the enemy team and another for allies. Kit plays
+          Hanzo. The same Dragonstrike is a warning to one team and a rally call to the other; mute it and both fail.
+   spec   Left 4 Dead: each special infected has its own sound, heard before it is seen. The cast plays them in a dark
+          corridor: Wisp the Hunter, Sam the Smoker, Bram the Boomer, Grub the Tank, Sage the Witch.
+   steps  Counter-Strike: running is loud and walking is silent but about half speed, so noise is a price Pip pays for
+          time. Rook holds the site and turns if he hears steps.
+   The voice lines and the sound descriptions are the games'. Distances, speeds and timings are ours. */
 (function () {
-  const { $, $$, canvasDemo, say } = FPF.kit;
-  const T = TD, C = TD.C, { clamp, lerp } = TD, TAU = Math.PI * 2;
+  const { txt, box, bar, pill, clamp, lerp, C, dot, ring, wrap } = SCN, TAU = SCN.TAU;
   const W = 1040, H = 585;
-  const txt = (g, s, x, y, o = {}) => { g.font = o.font || '600 15px Jost, sans-serif'; g.fillStyle = o.col || C.ink; g.textAlign = o.align || 'left'; g.textBaseline = o.base || 'middle'; g.fillText(s, x, y); };
-  const bg = g => { T.use(g); g.clearRect(0, 0, W, H); g.fillStyle = 'rgba(255,252,244,.9)'; g.beginPath(); g.roundRect(0, 0, W, H, 14); g.fill(); };
-  const rr = (g, x, y, w, h, r, col) => { g.fillStyle = col; g.beginPath(); g.roundRect(x, y, w, h, r); g.fill(); };
-  function mulberry(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  const team = (g, x, y, col) => { g.fillStyle = col; g.beginPath(); g.moveTo(x - 9, y - 12); g.lineTo(x + 9, y - 12); g.lineTo(x, y); g.closePath(); g.fill(); };
 
-  /* ---------- audio ---------- */
-  const AU = { ctx: null, master: null, on: false };
-  function ensure() {
-    if (!AU.ctx) { const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null; AU.ctx = new AC(); AU.master = AU.ctx.createGain(); AU.master.gain.value = 0; AU.master.connect(AU.ctx.destination); }
-    if (AU.ctx.state === 'suspended') AU.ctx.resume(); return AU.ctx;
-  }
-  function setSound(on) { if (on && !ensure()) return; AU.on = on; if (AU.ctx) AU.master.gain.setTargetAtTime(on ? .5 : 0, AU.ctx.currentTime, .03); $$(document, '.si-snd').forEach(b => { b.classList.toggle('on', on); b.textContent = on ? '♪ Sound: on' : '♪ Sound: off'; }); }
-  $$(document, '.si-snd').forEach(b => b.addEventListener('click', () => setSound(!AU.on)));
-  function tone(f0, f1, dur, type = 'sine', vol = .3, at = 0) {
-    if (!AU.on || !AU.ctx) return; const c = AU.ctx, t = c.currentTime + at, o = c.createOscillator(), gn = c.createGain();
-    o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(Math.max(20, f1), t + dur);
-    gn.gain.setValueAtTime(0, t); gn.gain.linearRampToValueAtTime(vol, t + .02); gn.gain.exponentialRampToValueAtTime(.001, t + dur);
-    o.connect(gn); gn.connect(AU.master); o.start(t); o.stop(t + dur + .05);
-  }
-  function noise(dur, freq, vol = .3, at = 0) {
-    if (!AU.on || !AU.ctx) return; const c = AU.ctx, t = c.currentTime + at, n = c.createBuffer(1, Math.ceil(c.sampleRate * dur), c.sampleRate), d = n.getChannelData(0);
-    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
-    const s = c.createBufferSource(), f = c.createBiquadFilter(), gn = c.createGain(); s.buffer = n; f.type = 'bandpass'; f.frequency.value = freq; f.Q.value = 2;
-    gn.gain.setValueAtTime(vol, t); gn.gain.exponentialRampToValueAtTime(.001, t + dur); s.connect(f); f.connect(gn); gn.connect(AU.master); s.start(t);
-  }
-  // play events whose time falls in (a, b], only while live
-  const fire = (list, a, b, fn) => list.forEach(e => { if (e.t > a && e.t <= b) fn(e); });
-
-  /* ---------- 1. Overwatch ---------- */
-  const BLUE = '#2ea3dc', RED = '#e5322d', RAD = 78, WIND = 1.2;
-  const ULTS = [
-    { t: 2, team: 'blue', hero: 'Stormcaller', tx: 340, ty: 140, own: '“Storm\'s coming. On me!”', foe: '“Nowhere to hide from the storm!”' },
-    { t: 8, team: 'red', hero: 'Wrecker', tx: 150, ty: 140, own: '“Breaking through. Follow me in!”', foe: '“Here comes the wrecking ball!”' },
-    { t: 14, team: 'blue', hero: 'Stormcaller', tx: 330, ty: 170, own: '“Storm\'s coming. On me!”', foe: '“Nowhere to hide from the storm!”' },
-  ];
-  const UNITS = (() => { const R = mulberry(9), u = []; ['blue', 'red'].forEach(team => { const cx = team === 'blue' ? 150 : 340, cy = 150; for (let i = 0; i < 5; i++) { const a = R() * TAU, d = 12 + R() * 38; u.push({ team, bx: cx + Math.cos(a) * d, by: cy + Math.sin(a) * d, react: 0.35 + R() * 0.6 }); } }); return u; })();
-  function unitAt(u, t, loud) {
-    let x = u.bx, y = u.by, caught = null;
-    ULTS.forEach((e, k) => {
-      if (e.team === u.team || t < e.t) return;
-      const hit = e.t + WIND, dx = u.bx - e.tx, dy = u.by - e.ty, d = Math.hypot(dx, dy) || 1, ux = dx / d, uy = dy / d;
-      const flee = loud ? Math.max(0, Math.min(t, hit) - (e.t + u.react)) * 100 : 0, back = t > hit + 1 ? clamp((t - hit - 1) / 2, 0, 1) : 0;
-      const fleeAtHit = loud ? Math.max(0, WIND - u.react) * 100 : 0;
-      if (t < hit + 3.5) { const f = t <= hit ? flee : fleeAtHit * (1 - back); x = u.bx + ux * f; y = u.by + uy * f; }
-      if (t >= hit && d + fleeAtHit < RAD) { caught = caught || { k, at: hit }; }
-    });
-    return { x, y, caught };
-  }
-  function caughtCount(loud, t) { let n = 0; ULTS.forEach((e, k) => { if (t < e.t + WIND) return; UNITS.forEach(u => { if (u.team === e.team) return; const d = Math.hypot(u.bx - e.tx, u.by - e.ty), fl = loud ? Math.max(0, WIND - u.react) * 100 : 0; if (d + fl < RAD) n++; }); }); return n; }
-  function drawFight(g, x0, y0, t, loud) {
-    rr(g, x0, y0, 490, 290, 10, '#e6dcc4'); g.save(); g.beginPath(); g.roundRect(x0, y0, 490, 290, 10); g.clip();
-    g.fillStyle = '#cdbf9f'; [[200, 60, 50, 40], [230, 200, 40, 50], [60, 230, 60, 30]].forEach(([x, y, w, h]) => g.fillRect(x0 + x, y0 + y, w, h));
-    const live = ULTS.filter(e => t >= e.t && t < e.t + WIND + 1.2);
-    live.forEach(e => {
-      const f = clamp((t - e.t) / WIND, 0, 1), col = e.team === 'blue' ? BLUE : RED;
-      if (t < e.t + WIND) { g.strokeStyle = col; g.lineWidth = 3; g.setLineDash([6, 5]); g.beginPath(); g.arc(x0 + e.tx, y0 + e.ty, RAD, 0, TAU); g.stroke(); g.setLineDash([]); g.fillStyle = col; g.globalAlpha = .12 + .2 * f; g.beginPath(); g.arc(x0 + e.tx, y0 + e.ty, RAD * f, 0, TAU); g.fill(); g.globalAlpha = 1; }
-      else { const k = (t - e.t - WIND) / 1.2; g.fillStyle = col; g.globalAlpha = .45 * (1 - k); g.beginPath(); g.arc(x0 + e.tx, y0 + e.ty, RAD, 0, TAU); g.fill(); g.globalAlpha = 1; }
-      if (loud && t < e.t + WIND) { const cx = e.team === 'blue' ? 150 : 340; for (let r = 0; r < 3; r++) { const rad = ((t - e.t) * 260 + r * 70) % 420; g.strokeStyle = col; g.globalAlpha = Math.max(0, .5 - rad / 840); g.lineWidth = 2; g.beginPath(); g.arc(x0 + cx, y0 + 60, rad, 0, TAU); g.stroke(); } g.globalAlpha = 1; }
-    });
-    UNITS.forEach(u => {
-      const p = unitAt(u, t, loud), hurt = p.caught && t >= p.caught.at && t < p.caught.at + 2.5;
-      g.fillStyle = u.team === 'blue' ? BLUE : RED; g.globalAlpha = hurt ? .35 : 1; g.beginPath(); g.arc(x0 + p.x, y0 + p.y, 9, 0, TAU); g.fill(); g.globalAlpha = 1;
-      g.strokeStyle = C.navy; g.lineWidth = 1.5; g.stroke(); if (hurt) txt(g, '✕', x0 + p.x, y0 + p.y + 1, { font: '800 12px Jost', col: C.navy, align: 'center' });
-    });
-    g.restore(); g.save(); g.beginPath(); g.roundRect(x0, y0, 490, 290, 10); g.strokeStyle = C.navy; g.lineWidth = 2; g.stroke(); g.restore();
-  }
-  function drawUlt(g, t) {
-    bg(g);
-    txt(g, 'Silent ultimates', 30, 26, { font: '800 16px Montserrat' }); txt(g, 'Ultimates start with a shout', 540, 26, { font: '800 16px Montserrat' });
-    drawFight(g, 20, 44, t, false); drawFight(g, 530, 44, t, true);
-    const n0 = caughtCount(false, t), n1 = caughtCount(true, t);
-    txt(g, `${n0} caught so far`, 30, 352, { font: '800 15px Montserrat', col: RED }); txt(g, `${n1} caught so far`, 540, 352, { font: '800 15px Montserrat', col: n1 < n0 ? C.good : RED });
-    // what each team hears
-    const e = ULTS.filter(u => t >= u.t).pop(), on = e && t < e.t + WIND + 2.5;
-    rr(g, 20, 378, 490, 186, 10, 'rgba(38,44,106,.05)'); rr(g, 530, 378, 490, 186, 10, 'rgba(38,44,106,.05)');
-    txt(g, 'What the players hear', 36, 400, { font: '700 13px Jost', col: C.muted }); txt(g, 'What the players hear', 546, 400, { font: '700 13px Jost', col: C.muted });
-    if (on) {
-      const own = e.team === 'blue' ? BLUE : RED, foe = e.team === 'blue' ? RED : BLUE;
-      txt(g, `${e.hero} (${e.team} team) starts an ultimate.`, 36, 430, { font: '700 14px Jost', col: C.navy });
-      txt(g, 'Nothing. The first sign is the blast itself.', 36, 462, { font: '600 14px Jost', col: C.muted });
-      txt(g, `${e.hero} (${e.team} team) starts an ultimate.`, 546, 430, { font: '700 14px Jost', col: C.navy });
-      rr(g, 546, 450, 458, 44, 8, 'rgba(255,255,255,.9)'); g.fillStyle = own; g.fillRect(546, 450, 6, 44); txt(g, `${e.team === 'blue' ? 'Blue' : 'Red'} team hears: ${e.own}`, 562, 472, { font: '700 14px Jost', col: C.navy });
-      rr(g, 546, 502, 458, 44, 8, 'rgba(255,255,255,.9)'); g.fillStyle = foe; g.fillRect(546, 502, 6, 44); txt(g, `${e.team === 'blue' ? 'Red' : 'Blue'} team hears: ${e.foe}`, 562, 524, { font: '700 14px Jost', col: C.navy });
-    } else { txt(g, 'quiet', 36, 430, { font: '600 14px Jost', col: C.muted }); txt(g, 'quiet', 546, 430, { font: '600 14px Jost', col: C.muted }); }
-  }
-  canvasDemo('ult', (s, cv, g) => {
-    const st = { held: false, t: 0, prev: 0, key: '', tour: true }, DUR = 19, tourBtn = $(s, '.ult-tour');
-    tourBtn.onclick = () => { st.t = 0; st.prev = 0; };
-    function info(t) {
-      const cap = t < 2 ? 'Two copies of one team fight. Blue on the left of each map, red on the right.' : t < 8 ? 'Blue starts an ultimate. On the right, the shout reaches red first, and most of them step out before the blast.' : t < 14 ? 'Red answers. The same line that warns blue tells red\'s own team to follow up.' : 'One sound, two jobs: a warning for the targets and a rally call for the team. On the silent map, everyone is caught.';
-      const k = cap + caughtCount(false, t) + caughtCount(true, t); if (k === st.key) return; st.key = k;
-      say($(s, '.ult-stats'), `<div class="r"><b>${caughtCount(false, t)}</b><span>players caught by silent ultimates</span></div><div class="g"><b>${caughtCount(true, t)}</b><span>caught when each ultimate starts with a shout</span></div>`);
-      say($(s, '.ult-out'), cap);
-    }
-    s._seek = t => { drawUlt(g, Math.min(t, DUR)); info(t); };
-    window.__seek = t => { st.held = true; s._seek(t); };
-    window.__dur = () => DUR;
-    return dt => {
-      if (st.held) return; st.prev = st.t; st.t += Math.max(0, dt); if (st.t >= DUR) { st.t = 0; st.prev = 0; }
-      fire(ULTS, st.prev, st.t, e => { if (e.team === 'blue') { tone(330, 660, .35, 'triangle', .25); tone(495, 990, .35, 'triangle', .15, .12); } else { tone(140, 90, .5, 'sawtooth', .18); noise(.4, 400, .2); } });
-      s._seek(st.t);
+  /* ---------------- Overwatch: ultimates you can hear ---------------- */
+  SCN.run('ult', s => {
+    const FLOOR = 318, WALL = 640, LEDGE = 170, SPEED = 520, CALL = 1.5;
+    const LINES = [['Hanzo', 'Ryuu ga waga teki wo kurau!', 'Let the dragon consume my foes!'], ['Pharah', 'Justice rains from above!', 'Rocket barrage incoming!'], ['Reaper', 'Die! Die! Die!', 'Clearing the area.'], ['Zarya', 'Ogon\' po gotovnosti!', 'Fire at will!']];
+    let z, who = 'enemy', voice = 'on', self = 'auto';
+    const round = () => { Object.assign(z, { ph: 'wait', pt: 0, rt: 0, acted: false, res: '', px: 300, lift: 0, pst: 'idle', dx: null, est: 'idle', et: 0, seen: -1 }); };
+    function act() { if (z.acted || z.ph === 'wait' || z.res) return; z.acted = true; z.pst = who === 'enemy' ? 'flee' : 'push'; }
+    const api = {
+      dur: 27,
+      reset(tour) { if (tour) { who = 'enemy'; voice = 'on'; self = 'auto'; api.mark('who', who); api.mark('voice', voice); api.mark('self', self); } z = { t: 0, esc: 0, hit: 0, push: 0, late: 0, warn: 0 }; round(); },
+      step(h) {
+        z.t += h; z.pt += h; const ph = z.ph;
+        if (ph === 'wait' && z.pt > .9) { z.ph = 'call'; z.pt = 0; z.rt = 0; if (voice === 'on') { z.seen = 0; SCN.tone({ f: 330, f2: 660, dur: .5, type: 'sawtooth', vol: .1 }); SCN.tone({ f: 494, f2: 880, dur: .6, type: 'triangle', vol: .08, at: .25 }); } }
+        if (ph !== 'wait') z.rt += h;
+        if (ph === 'call' && z.pt > CALL) { z.ph = 'fly'; z.pt = 0; z.dx = who === 'enemy' ? 850 : 110; SCN.noise({ dur: 1.2, cut: 500, vol: .25 }); }
+        if (z.ph === 'fly') {
+          const dir = who === 'enemy' ? -1 : 1; z.dx += dir * SPEED * h;
+          if (z.seen < 0 && (who === 'enemy' ? z.dx < WALL : z.dx > z.px - 40)) z.seen = z.rt;
+          if (who === 'enemy' && !z.res && z.dx < z.px + 20) { if (z.lift > 140) { z.res = 'esc'; z.esc++; } else { z.res = 'hit'; z.hit++; z.pst = 'down'; SCN.noise({ dur: .3, cut: 300, vol: .3 }); } z.warn = z.rt - z.seen; }
+          if (who === 'ally' && z.est === 'idle' && z.dx > 790) { z.est = 'stun'; z.et = 0; z.warn = z.rt - z.seen; }
+          if (z.dx < -420 || z.dx > W + 420) { z.ph = 'after'; z.pt = 0; }
+        }
+        if (z.est === 'stun') { z.et += h; if (z.px >= 740 && !z.res) { z.res = 'push'; z.push++; z.est = 'down'; SCN.noise({ dur: .2, cut: 900, vol: .25 }); } else if (z.et > .9) { z.est = 'back'; if (!z.res) { z.res = 'late'; z.late++; } } }
+        if (z.ph === 'after' && z.pt > (who === 'ally' ? 2.2 : 1.6)) { if (who === 'ally' && !z.res) { z.res = 'late'; z.late++; } if (z.pt > (who === 'ally' ? 2.6 : 1.6)) round(); }
+        if (self === 'auto' && !z.acted && z.seen >= 0 && z.rt - z.seen > (voice === 'on' ? .45 : .3)) act();
+        if (z.pst === 'flee') { if (z.px > 170) z.px = Math.max(170, z.px - 300 * h); else z.lift = Math.min(LEDGE, z.lift + LEDGE / .45 * h); }
+        if (z.pst === 'push' && z.px < 745) z.px = Math.min(745, z.px + 260 * h);
+      },
+      script: [[6.6, () => { voice = 'off'; api.mark('voice', voice); round(); }], [13.2, () => { who = 'ally'; voice = 'on'; api.mark('who', who); api.mark('voice', voice); round(); }], [20.2, () => { voice = 'off'; api.mark('voice', voice); round(); }]],
+      caption: t => t < 6.6 ? 'Kit plays Hanzo on the enemy team, out of sight behind the wall. His ultimate is shouted across the whole map, so Pip and Sam have time to leave the lane.'
+        : t < 13.2 ? 'Mute the line and the first sign is the dragon coming through the wall. The same ultimate is now a coin toss you cannot play around.'
+        : t < 20.2 ? 'On your own team the same ultimate has a different line, in English. It is a rally call: go in with the dragon.'
+        : 'Mute that too and Pip follows a beat late. One loud line was doing two jobs: a warning for one team, a go signal for the other.',
+      status: () => z.res === 'esc' ? 'Out of the lane in time. The shout bought the escape.' : z.res === 'hit' ? 'Caught in the lane. The warning came too late to use.' : z.res === 'push' ? 'Pip arrived with the dragon and the push landed.' : z.res === 'late' ? 'The dragon went in alone. Rook and Bram stepped back in before anyone followed.' : self === 'you' ? 'Press J when you know what is coming: leave the lane against an enemy dragon, or charge in behind a friendly one.' : 'Switch who is ulting, and whether the line is spoken.',
+      stats: () => `<div class="${voice === 'on' ? 'g' : 'r'}"><b>${z.warn ? z.warn.toFixed(1) + 's' : 'n/a'}</b><span>between the first cue and the dragon arriving</span></div><div><b>${z.esc} / ${z.esc + z.hit}</b><span>enemy dragons escaped</span></div><div class="y"><b>${z.push} / ${z.push + z.late}</b><span>friendly dragons followed in</span></div>`,
+      acts: { act }, keys: { j: 'act' },
+      set(k, v) { if (k === 'who') who = v; if (k === 'voice') voice = v; if (k === 'self') self = v; },
+      draw(g) {
+        g.clearRect(0, 0, W, H); g.save(); SCN.clipStage(g, W, H);
+        const sky = g.createLinearGradient(0, 0, 0, FLOOR); sky.addColorStop(0, '#f3c98b'); sky.addColorStop(1, '#f7e3c0'); g.fillStyle = sky; g.fillRect(0, 0, W, FLOOR);
+        g.fillStyle = 'rgba(150,90,60,.18)'; [[690, 90, 130, 228], [860, 130, 160, 188], [300, 60, 200, 258]].forEach(([x, y, w, h]) => { g.fillRect(x, y, w, h); g.beginPath(); g.moveTo(x - 14, y); g.lineTo(x + w / 2, y - 26); g.lineTo(x + w + 14, y); g.fill(); });
+        g.fillStyle = '#c9a57a'; g.fillRect(0, FLOOR, W, 50); g.fillStyle = '#a07f58'; g.fillRect(0, FLOOR, W, 5);
+        // the ledge on the left, out of the lane
+        g.fillStyle = '#8a6748'; g.fillRect(30, FLOOR - LEDGE, 215, 14); g.fillRect(40, FLOOR - LEDGE, 12, LEDGE); g.fillRect(222, FLOOR - LEDGE, 12, LEDGE); g.strokeStyle = '#8a6748'; g.lineWidth = 4; for (let i = 1; i < 6; i++) { g.beginPath(); g.moveTo(222, FLOOR - i * 28); g.lineTo(250, FLOOR - i * 28); g.stroke(); } g.beginPath(); g.moveTo(250, FLOOR); g.lineTo(250, FLOOR - LEDGE); g.stroke();
+        if (who === 'enemy') txt(g, 'out of the lane', 137, FLOOR - LEDGE + 28, { size: 13, w: 800, col: '#6b4d33', align: 'center' });
+        // lane band
+        g.fillStyle = 'rgba(63,193,255,.08)'; g.fillRect(0, FLOOR - 130, W, 130);
+        const enemyCol = '#e5322d', allyCol = '#2ea3dc';
+        // who is where
+        const kx = who === 'enemy' ? 850 : 110, kface = who === 'enemy' ? -1 : 1, calling = z.ph === 'call';
+        const rest = [];
+        if (who === 'enemy') rest.push(['kit', kx, 0, kface, calling ? 'aim' : z.ph === 'fly' ? 'follow' : 'idle', enemyCol]);
+        else { rest.push(['kit', kx, 0, 1, calling ? 'aim' : z.ph === 'fly' ? 'follow' : 'idle', allyCol]); const ep = z.est === 'stun' ? 'hit' : z.est === 'down' ? 'down' : 'guard'; rest.push(['rook', 800, 0, -1, ep, enemyCol], ['bram', 900, 0, -1, ep, enemyCol]); }
+        const pp = z.pst === 'down' ? 'down' : z.pst === 'flee' ? (z.px > 170 ? CAST.cycle('run', z.t * 1.6) : z.lift < LEDGE ? 'jump' : 'crouch') : z.pst === 'push' ? (z.px < 745 ? CAST.cycle('run', z.t * 1.6) : 'strike') : 'guard';
+        const pface = z.pst === 'flee' && z.px > 170 ? -1 : 1;
+        rest.push(['sam', z.px - (z.pst === 'push' ? 60 : 78), z.lift, pface, pp, allyCol], ['pip', z.px, z.lift, pface, pp, allyCol]);
+        rest.forEach(([id, x, lift, face, pose, col]) => { const down = pose === 'down'; CAST.draw(g, id, { x, y: FLOOR - lift, face, pose, s: .95, tint: id === 'sam' ? '#9fb7d8' : undefined }); team(g, x, FLOOR - lift - (down ? 50 : 132), col); });
+        // the wall between the teams
+        g.fillStyle = '#7d5a44'; g.fillRect(WALL - 16, 40, 32, FLOOR - 40); g.fillStyle = '#684936'; for (let y = 60; y < FLOOR; y += 34) g.fillRect(WALL - 16, y, 32, 3);
+        txt(g, who === 'enemy' ? 'enemy side: out of Pip\'s sight' : 'enemy side', 840, 26, { size: 13, w: 800, col: '#6b4d33', align: 'center' }); txt(g, 'your team', 300, 26, { size: 13, w: 800, col: '#6b4d33', align: 'center' });
+        // the dragon
+        if (z.dx != null && z.ph === 'fly') { const dir = who === 'enemy' ? -1 : 1; g.save(); g.lineCap = 'round';
+          for (let k = 0; k < 2; k++) { g.strokeStyle = k ? 'rgba(190,240,255,.95)' : 'rgba(40,150,255,.9)'; g.lineWidth = 20; g.shadowColor = '#3fc1ff'; g.shadowBlur = 24; g.beginPath(); for (let i = 0; i <= 40; i++) { const u = i / 40, x = z.dx - dir * u * 400, y = FLOOR - 68 + Math.sin(u * 9 - z.t * 14 + k * Math.PI) * 44 * (1 - u * .3); i ? g.lineTo(x, y) : g.moveTo(x, y); } g.stroke();
+            const hy = FLOOR - 68 + Math.sin(-z.t * 14 + k * Math.PI) * 44; g.fillStyle = k ? '#dff7ff' : '#3fa0ff'; g.beginPath(); g.moveTo(z.dx + dir * 34, hy); g.lineTo(z.dx - dir * 6, hy - 20); g.lineTo(z.dx - dir * 6, hy + 20); g.fill(); }
+          g.restore(); }
+        // the shouted line
+        if (voice === 'on' && (z.ph === 'call' || (z.ph === 'fly' && z.pt < .5))) { const en = who === 'enemy'; for (let i = 0; i < 3; i++) ring(g, kx, FLOOR - 110, 60 + ((z.rt * 420 + i * 220) % 660), en ? enemyCol : allyCol, 3, .35 * (1 - ((z.rt * 420 + i * 220) % 660) / 660));
+          SCN.bubble(g, LINES[0][en ? 1 : 2], kx, FLOOR - 150, { size: 20, w: 800, max: 300, stroke: en ? enemyCol : allyCol, col: en ? enemyCol : '#14608a', dx: en ? -60 : 60 }); pill(g, en ? 'heard by everyone on the map' : 'allies hear it in their own words', clamp(kx + (en ? -60 : 110), 150, 880), FLOOR - 252, { size: 13, w: 800, fill: en ? enemyCol : allyCol }); }
+        if (voice === 'off' && z.ph === 'call') { txt(g, '(silence)', kx, FLOOR - 170, { size: 18, w: 800, col: C.muted, align: 'center' }); }
+        if (z.res) { const m = { esc: ['ESCAPED', C.green], hit: ['CAUGHT IN THE LANE', enemyCol], push: ['PUSH LANDED', C.green], late: ['A BEAT LATE', '#b26a00'] }[z.res]; pill(g, m[0], 520, 70, { size: 20, w: 800, fill: m[1], display: true }); }
+        g.fillStyle = 'rgba(255,252,244,.97)'; g.fillRect(0, FLOOR + 50, W, H);
+        // the lines table
+        const ty = FLOOR + 66, en = who === 'enemy';
+        txt(g, 'hero', 28, ty + 8, { size: 13, w: 800, col: C.muted }); txt(g, 'what the enemy team hears', 170, ty + 8, { size: 13, w: 800, col: enemyCol }); txt(g, 'what the hero\'s own team hears', 590, ty + 8, { size: 13, w: 800, col: '#14608a' });
+        box(g, en ? 160 : 580, ty - 8, en ? 410 : 440, 196, { r: 10, fill: en ? 'rgba(229,50,45,.07)' : 'rgba(46,163,220,.09)', stroke: en ? enemyCol : allyCol, lw: 2 });
+        LINES.forEach(([hero, a, b], i) => { const y = ty + 44 + i * 40; if (!i) box(g, 16, y - 18, 1008, 36, { r: 8, fill: 'rgba(255,185,81,.22)' }); txt(g, hero, 28, y, { size: 17, w: 800, display: true }); txt(g, '"' + a + '"', 170, y, { size: 17, w: 700 }); txt(g, '"' + b + '"', 590, y, { size: 17, w: 700 }); });
+        g.restore();
+      },
     };
+    return api;
   });
 
-  /* ---------- 2. Left 4 Dead ---------- */
-  const SX = 300, SY = 290, VIS = 120, CUE = { smoker: '#5d8a3a', hunter: '#3a6fd8', boomer: '#c9a227', witch: '#c94fa0', tank: '#a8201c' };
-  const SPECS = [
-    { k: 'smoker', name: 'Smoker', cue: 'cough', t: 1, ang: -60, from: 420, speed: 70, stop: 105, range: 330 },
-    { k: 'hunter', name: 'Hunter', cue: 'growl, then a screech', t: 5, ang: 160, from: 420, speed: 90, stop: 30, range: 300, pounce: 150 },
-    { k: 'boomer', name: 'Boomer', cue: 'gurgle', t: 10, ang: 30, from: 380, speed: 45, stop: 60, range: 260 },
-    { k: 'witch', name: 'Witch', cue: 'crying', t: 14, ang: 110, from: 220, speed: 0, stop: 220, range: 300 },
-    { k: 'tank', name: 'Tank', cue: 'its own music', t: 18, ang: 200, from: 430, speed: 55, stop: 70, range: 9999 },
-  ];
-  function specAt(sp, t) {
-    if (t < sp.t) return null;
-    let d = sp.from, dt = t - sp.t;
-    if (sp.pounce) { const walk = (sp.from - sp.pounce) / sp.speed; d = dt < walk ? sp.from - sp.speed * dt : Math.max(sp.stop, sp.pounce - 420 * (dt - walk)); }
-    else d = Math.max(sp.stop, sp.from - sp.speed * dt);
-    const a = sp.ang * Math.PI / 180; return { d, x: SX + Math.cos(a) * d, y: SY + Math.sin(a) * d };
-  }
-  // first time a special is heard / seen (searched on a fine grid; fine for a mock-up)
-  const firstWhen = (sp, pred) => { for (let t = sp.t; t < sp.t + 20; t += 0.02) { const p = specAt(sp, t); if (p && pred(p)) return t; } return null; };
-  SPECS.forEach(sp => { sp.heard = firstWhen(sp, p => p.d <= sp.range); sp.seen = firstWhen(sp, p => p.d <= VIS); });
-  const SPAN = 26;
-  function drawSpec(g, t, cues) {
-    bg(g);
-    rr(g, 20, 20, 560, 545, 10, '#4a4f3a');
-    const R = mulberry(4); g.fillStyle = 'rgba(255,255,255,.05)'; for (let k = 0; k < 60; k++) g.fillRect(20 + R() * 540, 20 + R() * 530, 18, 6);
-    // survivors
-    [[-14, -8], [12, -10], [-10, 12], [14, 10]].forEach(([dx, dy], i) => { g.fillStyle = ['#e0a92d', '#2ea3dc', '#2fae63', '#d24b8f'][i]; g.beginPath(); g.arc(SX + dx, SY + dy, 8, 0, TAU); g.fill(); g.strokeStyle = '#fff'; g.lineWidth = 1.5; g.stroke(); });
-    // specials (drawn before the fog so the fog hides them)
-    SPECS.forEach(sp => { const p = specAt(sp, t); if (!p) return; g.fillStyle = CUE[sp.k]; g.beginPath(); g.arc(p.x, p.y, sp.k === 'tank' ? 16 : sp.k === 'boomer' ? 13 : 10, 0, TAU); g.fill(); g.strokeStyle = '#fff'; g.lineWidth = 2; g.stroke(); });
-    // fog outside the survivors' sight
-    g.save(); g.beginPath(); g.roundRect(20, 20, 560, 545, 10); g.arc(SX, SY, VIS, 0, TAU, true); g.fillStyle = 'rgba(12,16,30,.86)'; g.fill(); g.restore();
-    g.strokeStyle = 'rgba(255,255,255,.35)'; g.lineWidth = 1.5; g.setLineDash([4, 4]); g.beginPath(); g.arc(SX, SY, VIS, 0, TAU); g.stroke(); g.setLineDash([]);
-    // what is heard through the fog
-    SPECS.forEach(sp => {
-      const p = specAt(sp, t); if (!p) return;
-      const heard = cues && p.d <= sp.range, seen = p.d <= VIS;
-      if (seen) { txt(g, sp.name, p.x, p.y - 22, { font: '800 13px Montserrat', col: '#fff', align: 'center' }); if (sp.k === 'smoker' && p.d <= sp.stop + 1) { g.strokeStyle = CUE.smoker; g.lineWidth = 3; g.beginPath(); g.moveTo(p.x, p.y); g.lineTo(SX, SY); g.stroke(); } }
-      if (heard && !seen) {
-        for (let r = 0; r < 3; r++) { const rad = ((t * 40 + r * 14) % 42) + 6; g.strokeStyle = CUE[sp.k]; g.globalAlpha = 1 - rad / 48; g.lineWidth = 2.5; g.beginPath(); g.arc(p.x, p.y, rad, 0, TAU); g.stroke(); }
-        g.globalAlpha = 1; txt(g, sp.cue, p.x, p.y + 30, { font: '700 12px Jost', col: '#fff', align: 'center' });
-        const a = Math.atan2(p.y - SY, p.x - SX), ex = SX + Math.cos(a) * (VIS + 8), ey = SY + Math.sin(a) * (VIS + 8);
-        g.fillStyle = CUE[sp.k]; g.beginPath(); g.moveTo(ex + Math.cos(a) * 12, ey + Math.sin(a) * 12); g.lineTo(ex + Math.cos(a + 2.5) * 8, ey + Math.sin(a + 2.5) * 8); g.lineTo(ex + Math.cos(a - 2.5) * 8, ey + Math.sin(a - 2.5) * 8); g.fill();
-      }
-      if (sp.k === 'tank' && cues && t < sp.t + 6 && t >= sp.t) txt(g, '♪ Tank music', SX, 44, { font: '800 15px Montserrat', col: '#ff9a8f', align: 'center' });
-    });
-    txt(g, 'survivors see only the clear circle', 300, 552, { font: '600 12px Jost', col: 'rgba(255,255,255,.7)', align: 'center' });
-    // warning table
-    const X0 = 610; txt(g, 'Warning before it is in sight', X0, 34, { font: '800 16px Montserrat' });
-    const tx0 = X0 + 110, tx1 = 1010, px = v => tx0 + (tx1 - tx0) * v / SPAN;
-    [0, 10, 20].forEach(v => txt(g, v + ' s', px(v), 62, { font: '600 11px Jost', col: C.muted, align: 'center' }));
-    SPECS.forEach((sp, i) => {
-      const y = 96 + i * 72, h = cues ? sp.heard : null, se = sp.seen;
-      txt(g, sp.name, X0, y, { font: '800 14px Montserrat', col: CUE[sp.k] }); txt(g, sp.cue, X0, y + 18, { font: '600 11px Jost', col: C.muted });
-      rr(g, tx0, y - 8, tx1 - tx0, 16, 4, 'rgba(38,44,106,.06)');
-      if (h !== null && t >= h) { const b = se === null ? Math.min(t, SPAN) : Math.min(t, se); g.fillStyle = CUE[sp.k]; g.globalAlpha = .55; g.fillRect(px(h), y - 8, Math.max(2, px(b) - px(h)), 16); g.globalAlpha = 1; }
-      if (se !== null && t >= se) { g.fillStyle = C.navy; g.fillRect(px(se) - 1.5, y - 12, 3, 24); }
-      let lab = '';
-      if (t >= sp.t) lab = se === null ? (h !== null && t >= h ? 'heard, never seen: steer clear' : '') : t >= se ? (h !== null ? `${(se - h).toFixed(1)} s of warning` : 'no warning: seen first') : (h !== null && t >= h ? 'heard, not yet seen' : '');
-      txt(g, lab, tx0, y + 22, { font: '700 12px Jost', col: lab.startsWith('no') ? C.red : C.navy });
-    });
-    txt(g, 'coloured bar: heard · navy tick: seen', X0, 470, { font: '600 12px Jost', col: C.muted });
-  }
-  canvasDemo('spec', (s, cv, g) => {
-    const st = { held: false, t: 0, prev: 0, key: '', cues: true }, chk = $(s, '.sp-cues');
-    chk.onchange = () => { st.cues = chk.checked; st.key = ''; };
-    $(s, '.sp-tour').onclick = () => { st.t = 0; st.prev = 0; };
-    function info(t) {
-      const done = SPECS.filter(sp => sp.seen !== null && t >= sp.seen), warn = st.cues ? done.map(sp => sp.seen - sp.heard) : done.map(() => 0);
-      const avg = warn.length ? warn.reduce((a, b) => a + b, 0) / warn.length : 0;
-      const cap = !st.cues ? 'With the sounds off, each special is a surprise: the first sign is the moment it steps out of the dark.' : t < 5 ? 'A cough in the dark: the Smoker is heard long before it is seen, and the arrow at the edge of sight points to it.' : t < 10 ? 'The Hunter growls while it stalks, then screeches as it pounces. Even a fast special gives a little warning.' : t < 18 ? 'The Witch\'s crying says where not to go. If the survivors listen, they never need to see her.' : 'The Tank brings its own music, heard across the map. Every special has a sound, so the players can sort threats by ear.';
-      const k = cap + done.length + st.cues; if (k === st.key) return; st.key = k;
-      say($(s, '.sp-stats'), `<div class="${st.cues ? 'g' : 'r'}"><b>${avg.toFixed(1)}</b><span>seconds of warning, on average, before a special is in sight (${done.length} seen so far)</span></div>`);
-      say($(s, '.sp-out'), cap);
-    }
-    s._seek = t => { drawSpec(g, Math.min(t, SPAN), st.cues); info(t); };
-    window.__seek = t => { st.held = true; s._seek(t); };
-    window.__dur = () => SPAN;
-    const EV = SPECS.map(sp => ({ t: sp.heard ?? sp.t, k: sp.k }));
-    return dt => {
-      if (st.held) return; st.prev = st.t; st.t += Math.max(0, dt); if (st.t >= SPAN) { st.t = 0; st.prev = 0; }
-      if (st.cues) fire(EV, st.prev, st.t, e => ({
-        smoker: () => { noise(.12, 900, .3); noise(.12, 900, .3, .2); },
-        hunter: () => { tone(110, 90, .5, 'sawtooth', .15); tone(900, 1800, .3, 'sawtooth', .12, .55); },
-        boomer: () => { tone(70, 55, .8, 'sine', .35); noise(.6, 200, .15); },
-        witch: () => { tone(620, 420, .9, 'sine', .15); tone(560, 380, .9, 'sine', .12, .9); },
-        tank: () => { [0, .5, 1, 1.5].forEach(a => { tone(60, 40, .3, 'sine', .45, a); }); tone(98, 98, 1.8, 'triangle', .1); },
-      }[e.k]()));
-      s._seek(st.t);
+  /* ---------------- Left 4 Dead: heard before seen ---------------- */
+  SCN.run('spec', s => {
+    const FLOOR = 300;
+    const SP = [
+      { id: 'hunter', name: 'Hunter', cast: 'wisp', tint: '#4b5a78', sc: 1, hear: 'a low growl, then a shriek as it leaps', glyph: 'grrr…  SKREEE!', todo: 'Stay close. Shove it off whoever it pins.', pose: 'crouch' },
+      { id: 'smoker', name: 'Smoker', cast: 'sam', tint: '#7d9a6a', sc: 1.12, hear: 'a hacking, wheezing cough', glyph: 'hack… hack… wheeze', todo: 'Look up and back. Shoot the tongue to free a friend.', pose: 'idle' },
+      { id: 'boomer', name: 'Boomer', cast: 'bram', tint: '#b9b06a', sc: 1.05, hear: 'wet gurgling and belching', glyph: 'glurp… BURP… glurp', todo: 'Back off before you shoot: its bile calls the horde.', pose: 'idle' },
+      { id: 'tank', name: 'Tank', cast: 'grub', tint: '#a8646a', sc: 1.5, hear: 'a roar, shaking ground, and its own music', glyph: 'BOOM… BOOM… ROAR', todo: 'Everyone shoots it. Keep moving, never get cornered.', pose: 'guard' },
+      { id: 'witch', name: 'Witch', cast: 'sage', tint: '#d9d3e6', sc: .95, hear: 'a woman sobbing in the dark', glyph: 'sob… sob… sniff', todo: 'Torches off. Go round. Do not startle her.', pose: 'crouch' }];
+    const SOUND = {
+      hunter() { SCN.tone({ f: 90, dur: .5, type: 'sawtooth', vol: .1, vib: 18 }); SCN.tone({ f: 1500, f2: 600, dur: .5, type: 'sawtooth', vol: .1, at: .7 }); },
+      smoker() { [0, .28, .52].forEach(a => SCN.noise({ dur: .12, cut: 900, vol: .3, at: a })); SCN.noise({ dur: .6, cut: 2400, filter: 'bandpass', vol: .1, at: .8 }); },
+      boomer() { [0, .35, .8].forEach((a, i) => SCN.tone({ f: 120 - i * 20, f2: 60, dur: .3, type: 'square', vol: .1, vib: 9, at: a })); },
+      tank() { [0, .45, .9].forEach(a => { SCN.tone({ f: 55, f2: 35, dur: .3, type: 'sine', vol: .35, at: a }); SCN.noise({ dur: .15, cut: 200, vol: .3, at: a }); }); SCN.tone({ f: 140, f2: 70, dur: .8, type: 'sawtooth', vol: .14, at: 1.2, vib: 12 }); },
+      witch() { [0, .5, 1].forEach(a => SCN.tone({ f: 620, f2: 440, dur: .35, type: 'sine', vol: .1, vib: 7, at: a })); },
     };
+    let z, order = [0, 1, 2, 3, 4];
+    function cue(i) { z.cur = i; z.ph = 'hear'; z.pt = 0; z.guess = null; z.x = 900; SOUND[SP[i].id](); z.heardAt = z.t; }
+    function next() { const r = SCN.rng((z.n + 1) * 977 + 5)(); let i = Math.floor(r * 5); if (i === z.cur) i = (i + 1) % 5; z.n++; cue(i); }
+    function guess(i) { if (z.ph !== 'hear' || z.cur < 0) return; z.guess = i; z.asked++; if (i === z.cur) { z.right++; z.known[i] = true; } z.ph = 'show'; z.pt = 0; }
+    const api = {
+      dur: 30,
+      reset(tour) { z = { t: 0, cur: -1, ph: 'idle', pt: 0, guess: null, x: 900, n: 0, asked: 0, right: 0, known: {}, quiz: !tour, heardAt: 0, lead: 0 }; if (!tour) next(); },
+      step(h) {
+        z.t += h; z.pt += h;
+        if (z.ph === 'hear' && z.pt > 1.9 && Math.floor(z.pt / 1.9) !== Math.floor((z.pt - h) / 1.9)) SOUND[SP[z.cur].id]();
+        if (z.ph === 'hear' && !z.quiz && z.pt > 2.6) { z.ph = 'show'; z.pt = 0; z.known[z.cur] = true; }
+        if (z.ph === 'show') { const tx = SP[z.cur].id === 'witch' ? 700 : 560; if (z.x > tx) z.x = Math.max(tx, z.x - 150 * h); if (z.x < 660 && !z.lead) z.lead = z.t - z.heardAt; if (z.quiz && z.pt > 4.2) next(); }
+      },
+      script: [0, 1, 2, 3, 4].map(i => [.6 + i * 5.6, () => cue(i)]),
+      caption: t => t < 5.6 ? 'Pip can see as far as his torch. Past that it is dark, but it is not silent. A growl and a shriek: that is a Hunter, before anyone has seen it.'
+        : t < 11.8 ? 'A hacking cough means a Smoker. Each special infected has one sound that belongs to nothing else in the game.'
+        : t < 17.4 ? 'Gurgling means a Boomer, and the right answer to a Boomer is different: back away before you shoot.'
+        : t < 23 ? 'The Tank even brings its own music. The sound names the threat, and the name tells the team what to do.'
+        : 'The Witch is the reverse: her crying is a warning to go quiet. Five sounds, five different plans, all chosen before anything is on screen.',
+      status: () => z.ph === 'hear' ? 'Something is out there. Which one is it? Answer from the sound alone.' : z.guess == null ? 'Press a name when you hear the next one.' : z.guess === z.cur ? `Yes: ${SP[z.cur].name}. ${SP[z.cur].todo}` : `That was the ${SP[z.cur].name}, not the ${SP[z.guess].name}. ${SP[z.cur].todo}`,
+      stats: () => `<div class="g"><b>${z.lead ? z.lead.toFixed(1) + 's' : 'n/a'}</b><span>from first hearing it to first seeing it</span></div>` + (z.quiz ? `<div><b>${z.right} / ${z.asked}</b><span>named from the sound alone</span></div>` : `<div><b>${Object.keys(z.known).length} / 5</b><span>special infected introduced</span></div>`),
+      acts: Object.fromEntries(SP.map((p, i) => ['g' + i, () => guess(i)])), keys: { 1: 'g0', 2: 'g1', 3: 'g2', 4: 'g3', 5: 'g4' },
+      draw(g) {
+        g.clearRect(0, 0, W, H); g.save(); SCN.clipStage(g, W, H);
+        g.fillStyle = '#10131f'; g.fillRect(0, 0, W, FLOOR + 40);
+        g.fillStyle = '#1a2032'; for (let i = 0; i < 7; i++) { g.fillRect(40 + i * 150, 70, 90, 150); } g.fillStyle = '#0b0d16'; for (let i = 0; i < 7; i++) g.fillRect(52 + i * 150, 82, 66, 126);
+        g.fillStyle = '#232a3d'; g.fillRect(0, FLOOR, W, 40); g.fillStyle = '#2f3850'; g.fillRect(0, FLOOR, W, 4);
+        const sp = z.cur >= 0 ? SP[z.cur] : null;
+        // the special, drawn before the torch light so the dark hides it
+        if (sp && z.ph === 'show') { const pose = sp.id === 'witch' || (sp.id === 'hunter' && z.x > 562) ? 'crouch' : z.x > 562 ? CAST.cycle('walk', z.t * (sp.id === 'tank' ? .8 : 1.2)) : sp.pose; CAST.draw(g, sp.cast, { x: z.x, y: FLOOR, face: -1, pose, s: sp.sc, tint: sp.tint, weapon: sp.id === 'tank' || sp.id === 'hunter' ? 'claws' : null }); if (sp.id === 'smoker' && z.x <= 562) { g.strokeStyle = '#c96a7a'; g.lineWidth = 5; g.lineCap = 'round'; g.beginPath(); g.moveTo(z.x - 10, FLOOR - 118); g.quadraticCurveTo(450, FLOOR - 150 + Math.sin(z.t * 6) * 10, 300, FLOOR - 90); g.stroke(); } }
+        // darkness with a torch cone cut out of it
+        g.save(); g.fillStyle = 'rgba(4,5,10,.93)'; g.beginPath(); g.rect(0, 0, W, FLOOR + 40); g.moveTo(240, FLOOR - 92); g.lineTo(650, FLOOR - 215); g.lineTo(650, FLOOR + 40); g.lineTo(240, FLOOR + 40); g.closePath(); g.fill('evenodd');
+        const cone = g.createLinearGradient(240, 0, 650, 0); cone.addColorStop(0, 'rgba(255,240,190,.20)'); cone.addColorStop(1, 'rgba(255,240,190,0)'); g.fillStyle = cone; g.beginPath(); g.moveTo(240, FLOOR - 92); g.lineTo(650, FLOOR - 215); g.lineTo(650, FLOOR + 40); g.lineTo(240, FLOOR + 40); g.fill(); g.restore();
+        g.strokeStyle = 'rgba(255,240,190,.5)'; g.setLineDash([4, 8]); g.lineWidth = 2; g.beginPath(); g.moveTo(650, 40); g.lineTo(650, FLOOR + 36); g.stroke(); g.setLineDash([]); txt(g, 'as far as the torch reaches', 644, 30, { size: 13, w: 700, col: 'rgba(255,240,190,.7)', align: 'right' });
+        CAST.draw(g, 'pip', { x: 200, y: FLOOR, pose: z.ph === 'hear' ? 'guard' : 'aim', weapon: null }); CAST.draw(g, 'kit', { x: 120, y: FLOOR, pose: 'guard', s: .95 });
+        // the sound in the dark
+        if (sp && z.ph === 'hear') { const sx = 860; for (let i = 0; i < 4; i++) { const r = ((z.pt * 180 + i * 90) % 360); g.strokeStyle = `rgba(255,185,81,${.7 * (1 - r / 360)})`; g.lineWidth = 4; g.beginPath(); g.arc(sx, FLOOR - 100, 30 + r, Math.PI * .72, Math.PI * 1.28); g.stroke(); }
+          txt(g, '?', sx, FLOOR - 100, { size: 80, w: 800, col: 'rgba(255,255,255,.16)', align: 'center', display: true });
+          txt(g, sp.glyph, 720, 78, { size: 30, w: 800, col: C.gold, align: 'center', display: true }); txt(g, 'you hear: ' + sp.hear, 720, 112, { size: 16, w: 700, col: '#e9e2cf', align: 'center' }); }
+        if (sp && z.ph === 'show') { const ok = z.guess == null || z.guess === z.cur; pill(g, sp.name.toUpperCase(), clamp(z.x, 560, 900), FLOOR - 190 * sp.sc - 8, { size: 18, w: 800, fill: ok ? C.green : C.red, display: true }); txt(g, sp.todo, 820, 40, { size: 16, w: 700, col: '#e9e2cf', align: 'center' }); }
+        // the five cards
+        g.fillStyle = 'rgba(255,252,244,.97)'; g.fillRect(0, FLOOR + 40, W, H);
+        SP.forEach((p, i) => { const x = 16 + i * 203, y = FLOOR + 54, on = z.cur === i && (z.ph === 'show' || !z.quiz), known = !z.quiz || z.known[i];
+          box(g, x, y, 195, H - y - 14, { r: 12, fill: on ? '#fff4d6' : '#fffaf0', stroke: on ? C.gold : C.line, lw: on ? 4 : 2 });
+          g.save(); g.beginPath(); g.rect(x, y, 195, H - y - 14); g.clip(); if (known) CAST.draw(g, p.cast, { x: x + 44, y: y + 122, s: .62 * Math.min(p.sc, 1.25), pose: p.id === 'witch' || p.id === 'hunter' ? 'crouch' : 'idle', tint: p.tint, weapon: p.id === 'tank' || p.id === 'hunter' ? 'claws' : null, shadow: false }); else txt(g, '?', x + 44, y + 80, { size: 54, w: 800, col: '#d5cbb4', align: 'center', display: true }); g.restore();
+          txt(g, (i + 1) + '  ' + p.name, x + 88, y + 24, { size: 18, w: 800, display: true });
+          if (known) { wrap(g, p.hear, x + 88, y + 52, 100, { size: 13.5, w: 700, col: '#a0530a', lh: 16 }); wrap(g, p.todo, x + 12, y + 148, 174, { size: 13, w: 600, col: C.ink, lh: 16 }); }
+          else wrap(g, 'name it from its sound to fill this in', x + 88, y + 52, 100, { size: 13, w: 600, col: C.muted, lh: 16 }); });
+        g.restore();
+      },
+    };
+    return api;
   });
 
-  /* ---------- 3. Counter-Strike ---------- */
-  const U = 3, RUN = 250 / U, WALK = 130 / U, HEAR = 660 / U, DEFX = 470, DEFY = 345;
-  const ROUTE = [[70, 520], [70, 160], [420, 160], [420, 330]];
-  const RSEG = ROUTE.slice(1).map((q, i) => { const p = ROUTE[i]; return { p, q, len: Math.hypot(q[0] - p[0], q[1] - p[1]) }; }), RLEN = RSEG.reduce((a, s) => a + s.len, 0);
-  const posAt = d => { for (const s of RSEG) { if (d <= s.len) { const f = d / s.len; return [lerp(s.p[0], s.q[0], f), lerp(s.p[1], s.q[1], f)]; } d -= s.len; } return ROUTE[ROUTE.length - 1]; };
-  const near = d => { const [x, y] = posAt(d); return Math.hypot(x - DEFX, y - DEFY) <= HEAR; };
-  // a policy says, for each distance along the route, whether the attacker walks
-  function travel(walkFn, holdList) {
-    const pts = [], steps = []; let d = 0, t = 0, heard = 0, firstHeard = null, nextStep = 0;
-    while (d < RLEN && t < 60) {
-      const walking = holdList ? holdList(t) : walkFn(d);
-      if (!walking && t >= nextStep) { const h = near(d); steps.push({ t, d, h }); nextStep = t + 0.33; if (h && firstHeard === null) firstHeard = t; }
-      d += (walking ? WALK : RUN) * 0.02; t += 0.02; pts.push({ t, d, walking });
-    }
-    return { pts, steps, arrive: t, firstHeard, warn: firstHeard === null ? 0 : t - firstHeard };
-  }
-  const CS_POL = [
-    { name: 'Runs all the way', col: '#e5322d', run: travel(() => false) },
-    { name: 'Walks all the way', col: '#2ea3dc', run: travel(() => true) },
-    { name: 'Runs, then walks in earshot', col: '#2fae63', run: travel(d => near(d + RUN * 0.4)) },
-  ];
-  const dAt = (r, t) => { const p = r.pts[clamp(Math.round(t / 0.02), 0, r.pts.length - 1)]; return p ? p.d : 0; };
-  function drawSteps(g, t, runs) {
-    bg(g);
-    rr(g, 20, 20, 560, 545, 10, '#e6dcc4');
-    g.fillStyle = '#cdbf9f'; [[110, 200, 290, 90], [110, 330, 270, 210], [470, 40, 90, 260]].forEach(([x, y, w, h]) => g.fillRect(x, y, w, h));
-    g.save(); g.beginPath(); g.roundRect(20, 20, 560, 545, 10); g.clip();
-    g.fillStyle = 'rgba(229,50,45,.07)'; g.beginPath(); g.arc(DEFX, DEFY, HEAR, 0, TAU); g.fill();
-    g.strokeStyle = 'rgba(229,50,45,.5)'; g.lineWidth = 2; g.setLineDash([6, 5]); g.beginPath(); g.arc(DEFX, DEFY, HEAR, 0, TAU); g.stroke(); g.setLineDash([]); g.restore();
-    txt(g, 'running footsteps carry this far', DEFX - 40, DEFY - HEAR - 12, { font: '700 12px Jost', col: C.red, align: 'center' });
-    g.strokeStyle = 'rgba(21,32,68,.25)'; g.lineWidth = 16; g.lineJoin = 'round'; g.beginPath(); ROUTE.forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y)); g.stroke();
-    rr(g, DEFX - 34, DEFY - 24, 68, 48, 8, 'rgba(229,50,45,.2)'); txt(g, 'site', DEFX, DEFY - 34, { font: '800 12px Montserrat', col: C.red, align: 'center' });
-    g.fillStyle = '#5d618c'; g.beginPath(); g.arc(DEFX, DEFY, 10, 0, TAU); g.fill(); txt(g, 'defender', DEFX, DEFY + 22, { font: '700 11px Jost', col: C.navy, align: 'center' });
-    runs.forEach((p, i) => {
-      const r = p.run, off = (i - (runs.length - 1) / 2) * 10;
-      r.steps.filter(sp => sp.t <= t && t - sp.t < 1.2).forEach(sp => { const [x, y] = posAt(sp.d), a = 1 - (t - sp.t) / 1.2; g.strokeStyle = sp.h ? C.red : 'rgba(21,32,68,.4)'; g.globalAlpha = a; g.lineWidth = sp.h ? 2.5 : 1.5; g.beginPath(); g.arc(x + off, y, 8 + (t - sp.t) * 30, 0, TAU); g.stroke(); g.globalAlpha = 1; });
-      const [x, y] = posAt(dAt(r, t)); g.fillStyle = p.col; g.beginPath(); g.arc(x + off, y, 8, 0, TAU); g.fill(); g.strokeStyle = '#fff'; g.lineWidth = 2; g.stroke();
-    });
-    // results
-    const X0 = 610; txt(g, 'Route to the site', X0, 34, { font: '800 16px Montserrat' });
-    runs.forEach((p, i) => {
-      const r = p.run, y = 80 + i * 96, arrived = t >= r.arrive, heardNow = r.firstHeard !== null && t >= r.firstHeard;
-      g.fillStyle = p.col; g.beginPath(); g.arc(X0 + 8, y, 7, 0, TAU); g.fill(); txt(g, p.name, X0 + 24, y, { font: '800 14px Montserrat' });
-      txt(g, arrived ? `arrives at ${r.arrive.toFixed(1)} s` : `on the way · ${dAt(r, t) / RLEN * 100 | 0}%`, X0 + 24, y + 24, { font: '700 13px Jost', col: C.navy });
-      txt(g, r.firstHeard === null ? 'never heard' : heardNow ? `heard ${arrived ? r.warn.toFixed(1) + ' s before arriving' : 'now: the defender turns'}` : 'not heard yet', X0 + 24, y + 46, { font: '700 13px Jost', col: r.firstHeard === null ? C.good : heardNow ? C.red : C.muted });
-    });
-    txt(g, `running ${250} units/s · walking ${130} units/s`, X0, 400, { font: '600 13px Jost', col: C.muted });
-  }
-  canvasDemo('steps', (s, cv, g) => {
-    const st = { held: false, t: 0, prev: 0, key: '', tour: true, hold: [], down: false, mine: null }, tourBtn = $(s, '.cs-tour'), wb = $(s, '.cs-walk');
-    const manual = () => { if (st.tour) { st.tour = false; tourBtn.classList.remove('on'); st.t = 0; st.hold = []; } };
-    const setDown = v => { if (v === st.down) return; manual(); st.down = v; wb.classList.toggle('down', v); st.hold.push([st.t, v]); };
-    wb.addEventListener('pointerdown', e => { e.preventDefault(); setDown(true); }); ['pointerup', 'pointercancel', 'pointerleave'].forEach(n => wb.addEventListener(n, () => setDown(false)));
-    addEventListener('keydown', e => { if (e.key === 'Shift' && s.classList.contains('active')) setDown(true); }); addEventListener('keyup', e => { if (e.key === 'Shift') setDown(false); });
-    tourBtn.onclick = () => { st.tour = true; st.t = 0; st.prev = 0; tourBtn.classList.add('on'); };
-    const holdAt = t => { let v = false; st.hold.forEach(([a, x]) => { if (a <= t) v = x; }); return v; };
-    function info(t, runs, cap) {
-      const k = cap + runs.map(p => (t >= p.run.arrive) + '' + (p.run.firstHeard !== null && t >= p.run.firstHeard)).join(); if (k === st.key) return; st.key = k;
-      say($(s, '.cs-stats'), runs.map(p => `<div class="${p.run.firstHeard === null ? 'g' : 'r'}"><b>${p.run.arrive.toFixed(1)} s</b><span>${p.name}: ${p.run.firstHeard === null ? 'never heard' : p.run.warn.toFixed(1) + ' s of warning'}</span></div>`).join(''));
-      say($(s, '.cs-out'), cap);
-    }
-    const DUR = 20;
-    const cap = t => t < 6 ? 'Three attackers take one route to the site. Running is fast; every running step makes a ring, red once the defender can hear it.' : t < 11 ? 'The runner gets there first, but the defender has heard them coming for seconds and is already aiming at the door.' : t < 16 ? 'The walker is never heard, and pays for it in time.' : 'Running until the edge of earshot, then walking, is the expert play: the rule turns information into something you spend.';
-    s._seek = t => { drawSteps(g, Math.min(t, DUR), CS_POL); info(t, CS_POL, cap(t)); };
-    window.__seek = t => { st.held = true; s._seek(t); };
-    window.__dur = () => DUR;
-    return dt => {
-      if (st.held) return; st.prev = st.t; st.t += Math.max(0, dt);
-      if (st.tour) {
-        if (st.t >= DUR) { st.t = 0; st.prev = 0; }
-        CS_POL.forEach(p => fire(p.run.steps, st.prev, st.t, sp => noise(.05, sp.h ? 1500 : 700, sp.h ? .35 : .08)));
-        s._seek(st.t); return;
-      }
-      // the viewer's attacker: recomputed from the hold timeline; the three references are ghosts
-      const mine = { name: 'You', col: '#e0a92d', run: travel(null, t => (t <= st.t ? holdAt(t) : st.down)) };
-      fire(mine.run.steps, st.prev, st.t, sp => noise(.05, sp.h ? 1500 : 700, sp.h ? .35 : .08));
-      const runs = [...CS_POL, mine]; drawSteps(g, Math.min(st.t, 40), runs);
-      info(st.t, [mine], st.t >= mine.run.arrive ? `You arrived at ${mine.run.arrive.toFixed(1)} s, ${mine.run.firstHeard === null ? 'unheard' : 'heard for ' + mine.run.warn.toFixed(1) + ' s'}. Press Walk-through to replay the references.` : 'Hold the button or Shift to walk silently; let go to run.');
+  /* ---------------- Counter-Strike: footsteps cost speed ---------------- */
+  SCN.run('steps', s => {
+    const FLOOR = 300, X0 = 70, RX = 900, EAR = 480, RUN = 170, WALK = RUN * .52;
+    let z, limit = 14, plan = 'run';
+    const PLANS = { run: 'Run all the way', walk: 'Walk all the way', mix: 'Run, then walk the last stretch' };
+    const start = () => { Object.assign(z, { x: X0, rt: 0, heard: false, heardAt: 0, done: '', mode: 'stop', rings: [], stepT: 0, after: 0 }); };
+    const api = {
+      dur: 36,
+      reset(tour) { if (tour) { limit = 14; plan = 'run'; api.mark('limit', 14); api.mark('plan', plan); } z = { t: 0, log: {}, auto: true, run: false, walk: false }; start(); },
+      step(h) {
+        z.t += h; z.rings = z.rings.filter(r => (r.t += h) < .9);
+        if (z.done) { z.after += h; if (z.after > 2.6 && z.auto) start(); return; }
+        const mode = z.auto ? (plan === 'run' ? 'run' : plan === 'walk' ? 'walk' : z.x < EAR - 6 ? 'run' : 'walk') : z.run ? 'run' : z.walk ? 'walk' : 'stop'; z.mode = mode;
+        if (mode !== 'stop' || z.rt > 0) z.rt += h;
+        z.x += (mode === 'run' ? RUN : mode === 'walk' ? WALK : 0) * h;
+        if (mode !== 'stop') { z.stepT -= h; if (z.stepT <= 0) { z.stepT = mode === 'run' ? .3 : .55; z.rings.push({ x: z.x, t: 0, loud: mode === 'run' }); if (mode === 'run') SCN.noise({ dur: .07, cut: 700, vol: .28 }); else SCN.noise({ dur: .04, cut: 300, vol: .02 }); } }
+        if (mode === 'run' && z.x > EAR && !z.heard) { z.heard = true; z.heardAt = z.rt; SCN.tone({ f: 880, dur: .12, vol: .1 }); }
+        const end = r => { z.done = r; z.after = 0; z.log[z.auto ? plan : 'you'] = { t: z.rt, r, limit }; };
+        if (z.rt > limit) end('time'); else if (z.x >= RX - 120) { end(z.heard ? 'shot' : 'won'); SCN.noise({ dur: .12, cut: 2500, vol: .3 }); }
+      },
+      script: [[9, () => { plan = 'walk'; api.mark('plan', plan); start(); }], [19.5, () => { limit = 7; api.mark('limit', 7); start(); }], [28, () => { plan = 'mix'; api.mark('plan', plan); start(); }]],
+      caption: t => t < 9 ? 'Pip has to cross to the site that Rook is holding. Running gets there in under five seconds, but every footstep is loud, and Rook turns to face the door.'
+        : t < 19.5 ? 'Walking makes no sound at all, so Rook is still watching the other way. It is also roughly half the speed.'
+        : t < 28 ? 'So silence is paid for in time. Shorten the round clock and walking the whole way no longer arrives.'
+        : 'The skilled answer is to spend noise where nobody can hear it: run the far stretch, walk the last one. Sound has become a resource to budget.',
+      status: () => z.done === 'shot' ? 'Rook heard the steps and was aiming at the door when Pip came through.' : z.done === 'won' ? 'Rook never heard a thing. Pip arrives behind him.' : z.done === 'time' ? 'Out of time. Silence costs seconds, and this round did not have them.' : z.auto ? PLANS[plan] + '. Rook hears running anywhere past the marker.' : 'Hold D to run, hold S to walk. Rook hears running anywhere past the marker.',
+      stats: () => `<div class="${z.heard ? 'r' : 'g'}"><b>${z.heard ? 'heard' : 'unheard'}</b><span>${z.heard ? 'Rook turned at ' + z.heardAt.toFixed(1) + ' s' : 'Rook is watching the other door'}</span></div><div class="${z.rt > limit - 2 ? 'r' : ''}"><b>${Math.max(0, limit - z.rt).toFixed(1)} s</b><span>left on the round clock</span></div><div class="y"><b>${Math.round(WALK / RUN * 100)}%</b><span>walking speed, as a share of running</span></div>`,
+      acts: { run(v) { z.auto = false; z.run = !!v; if (v && z.done) start(); }, walk(v) { z.auto = false; z.walk = !!v; if (v && z.done) start(); } }, holds: { d: 'run', s: 'walk' },
+      set(k, v) { if (k === 'limit') limit = +v; if (k === 'plan') plan = v; },
+      draw(g) {
+        g.clearRect(0, 0, W, H); g.save(); SCN.clipStage(g, W, H);
+        g.fillStyle = '#e9d9b5'; g.fillRect(0, 0, W, FLOOR); g.fillStyle = '#d9c79d'; for (let i = 0; i < 6; i++) g.fillRect(i * 190 + 20, 96, 120, 8);
+        g.fillStyle = 'rgba(229,50,45,.10)'; g.fillRect(EAR, 60, RX - EAR + 140, FLOOR - 60);
+        g.fillStyle = '#b89c6b'; g.fillRect(0, FLOOR, W, 36); g.fillStyle = '#9a7f52'; g.fillRect(0, FLOOR, W, 4);
+        g.strokeStyle = C.red; g.setLineDash([6, 6]); g.lineWidth = 3; g.beginPath(); g.moveTo(EAR, 60); g.lineTo(EAR, FLOOR + 30); g.stroke(); g.setLineDash([]);
+        txt(g, 'Rook can hear running from here on', EAR + 10, 74, { size: 14, w: 800, col: C.red }); txt(g, 'too far away to be heard', EAR - 10, 74, { size: 14, w: 700, col: '#7c6a45', align: 'right' });
+        // crates: Rook's cover and the door he watches
+        g.fillStyle = '#8c6b3e'; g.fillRect(RX - 46, FLOOR - 62, 40, 62); g.fillStyle = '#6f5330'; g.fillRect(RX - 46, FLOOR - 62, 40, 5); g.fillStyle = '#5b6a7a'; g.fillRect(W - 26, FLOOR - 150, 14, 150); txt(g, 'other door', W - 12, FLOOR + 20, { size: 12, w: 800, col: '#fff', align: 'right' });
+        // round clock
+        box(g, 20, 14, 330, 34, { r: 8, fill: '#152044' }); txt(g, 'ROUND', 34, 32, { size: 13, w: 800, col: '#9fb0e6' }); bar(g, 96, 24, 170, 14, 1 - z.rt / limit, { col: z.rt > limit - 2 ? C.red : C.gold, back: 'rgba(255,255,255,.15)', stroke: null }); txt(g, Math.max(0, limit - z.rt).toFixed(1) + ' s', 338, 32, { size: 16, w: 800, col: '#fff', align: 'right', display: true });
+        z.rings.forEach(r => { if (r.loud) { ring(g, r.x, FLOOR - 4, 20 + r.t * 420, C.red, 4, .55 * (1 - r.t / .9)); } else ring(g, r.x, FLOOR - 4, 6 + r.t * 16, '#7c6a45', 2, .5 * (1 - r.t / .9)); });
+        const pd = z.done === 'shot', rd = z.done === 'won';
+        CAST.draw(g, 'rook', { x: RX, y: FLOOR, face: z.heard ? -1 : 1, pose: rd ? 'down' : z.heard ? 'aim' : 'guard', weapon: rd ? null : 'bow' });
+        if (z.heard && !rd) { txt(g, '!', RX, FLOOR - 156, { size: 40, w: 800, col: C.red, align: 'center', display: true }); if (!pd) { g.strokeStyle = 'rgba(229,50,45,.6)'; g.setLineDash([3, 7]); g.lineWidth = 2; g.beginPath(); g.moveTo(RX - 40, FLOOR - 96); g.lineTo(z.x + 20, FLOOR - 90); g.stroke(); g.setLineDash([]); } }
+        else if (!rd) txt(g, 'watching the other door', RX, FLOOR - 150, { size: 13, w: 700, col: '#7c6a45', align: 'center' });
+        CAST.draw(g, 'pip', { x: z.x + (pd ? -50 : z.done === 'won' ? 50 : 0), y: FLOOR, pose: pd ? 'down' : z.done === 'won' ? 'strike' : z.mode === 'run' ? CAST.cycle('run', z.t * 1.7) : z.mode === 'walk' ? CAST.cycle('walk', z.t * 1.1) : 'guard', weapon: 'dagger' });
+        if (!z.done && z.mode !== 'stop') pill(g, z.mode === 'run' ? 'RUNNING: loud' : 'WALKING: silent', clamp(z.x, 100, 800), FLOOR - 162, { size: 14, w: 800, fill: z.mode === 'run' ? C.red : '#5d6b4a' });
+        if (z.done) { const m = { shot: ['HEARD, AND SHOT AT THE DOOR', C.red], won: ['ARRIVED UNHEARD', C.green], time: ['OUT OF TIME', '#b26a00'] }[z.done]; pill(g, m[0], 520, 130, { size: 22, w: 800, fill: m[1], display: true }); }
+        // the three plans, filled in as they are tried
+        g.fillStyle = 'rgba(255,252,244,.97)'; g.fillRect(0, FLOOR + 36, W, H);
+        const y0 = FLOOR + 62, sx = 300, sw = 520, tmax = 14;
+        txt(g, 'the plan', 24, y0, { size: 13, w: 800, col: C.muted }); txt(g, 'seconds to reach the site', sx, y0, { size: 13, w: 800, col: C.muted }); txt(g, 'result', sx + sw + 30, y0, { size: 13, w: 800, col: C.muted });
+        const lx = sx + sw * limit / tmax;
+        [['run', PLANS.run], ['walk', PLANS.walk], ['mix', PLANS.mix], ['you', 'Your own route']].forEach(([k, name], i) => { const y = y0 + 34 + i * 44, L = z.log[k], live = !z.done && (z.auto ? plan === k : k === 'you');
+          if (live || (z.done && (z.auto ? plan : 'you') === k)) box(g, 14, y - 19, 1012, 38, { r: 8, fill: 'rgba(255,185,81,.2)' });
+          txt(g, name, 24, y, { size: 16, w: 800 }); box(g, sx, y - 9, sw, 18, { r: 4, fill: 'rgba(20,26,54,.1)' });
+          const tt = live ? z.rt : L ? L.t : 0, r = live ? '' : L ? L.r : ''; if (tt) box(g, sx, y - 9, sw * Math.min(tt, tmax) / tmax, 18, { r: 4, fill: r === 'won' ? C.green : r === 'shot' ? C.red : r === 'time' ? '#b26a00' : C.blue });
+          if (tt) txt(g, tt.toFixed(1) + ' s', sx + sw * Math.min(tt, tmax) / tmax + 8, y, { size: 14, w: 800 });
+          txt(g, r === 'won' ? 'unheard' : r === 'shot' ? 'heard' : r === 'time' ? 'too slow' : live ? '…' : 'not tried', sx + sw + 30, y, { size: 15, w: 800, col: r === 'won' ? C.green : r === 'shot' ? C.red : r === 'time' ? '#b26a00' : C.muted }); });
+        g.strokeStyle = C.navy; g.lineWidth = 3; g.beginPath(); g.moveTo(lx, y0 + 12); g.lineTo(lx, y0 + 192); g.stroke(); txt(g, 'round ends', lx, y0 + 204, { size: 12, w: 800, col: C.navy, align: 'center' });
+        g.restore();
+      },
     };
+    return api;
   });
 })();

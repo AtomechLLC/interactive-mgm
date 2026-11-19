@@ -3,19 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sound as Information · Directing Game Mechanics</title>
+<title>Sound That Carries Information · Directing Game Mechanics</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../../assets/deck.css">
 <link rel="stylesheet" href="../../../assets/kit.css">
 <link rel="stylesheet" href="../../shared/dgms.css">
-<style>
-  .mt-side .btn.si-snd.on { background: #2fae63; border-color: #2fae63; color: #fff; }
-  .mt-side .btn.si-hold.down { background: #ffb951; color: #152044; }
-  .si-hold { touch-action: none; user-select: none; }
-</style>
+<link rel="stylesheet" href="../../../assets/scene.css">
 <script>
-  window.DECK = { title: 'Directing Game Mechanics · Module 7 · Sound as Information (mock-up)', home: '../index.html', audio: false, cues: null };
+  window.DECK = { title: "Directing Game Mechanics · Module 7 · Sound That Carries Information (mock-up)", home: '../index.html', audio: false, cues: null };
 </script>
 <script src="notes.js"></script>
 </head>
@@ -24,14 +20,20 @@
 
 <section class="slide" data-title="Ultimates you can hear" data-demo="ult">
   <div class="kicker">sound design · hear the boss coming · Overwatch</div>
-  <h2 class="sm">A loud line is <span class="accent">a warning and a rally call</span></h2>
+  <h2 class="sm">One loud line is <span class="accent">a warning and a rally call</span></h2>
   <div class="mt-wrap">
     <canvas class="demo" width="1040" height="585"></canvas>
     <div class="mt-side">
-      <div class="row wrap"><button class="btn ult-tour on">▶ Walk-through</button><button class="btn si-snd">♪ Sound: off</button></div>
-      <div class="mt-stats ult-stats"></div>
-      <p class="mt-out ult-out"></p>
-      <p class="src">After Overwatch (Blizzard, 2016): every hero shouts a voice line when their ultimate starts, loud enough to carry across the fight, and some heroes say one line to their own team and a different one to the enemy. The heroes, lines and reaction times here are made up for the demo; the two maps run the same fight with and without the shout.</p>
+      <h4>Who is ulting</h4>
+      <div class="seg"><button class="btn on" data-set="who" data-v="enemy">Enemy Hanzo</button><button class="btn" data-set="who" data-v="ally">Your Hanzo</button></div>
+      <h4>The voice line</h4>
+      <div class="seg"><button class="btn on" data-set="voice" data-v="on">Spoken</button><button class="btn" data-set="voice" data-v="off">Muted</button></div>
+      <h4>Pip reacts</h4>
+      <div class="seg"><button class="btn on" data-set="self" data-v="auto">By himself</button><button class="btn" data-set="self" data-v="you">When you press J</button></div>
+      <div class="row wrap"><button class="btn tour on">▶ Walk-through</button><button class="btn snd">🔈 Sound off</button></div>
+      <div class="mt-stats"></div>
+      <p class="mt-out"></p>
+      <p class="src">After Overwatch (Blizzard, 2016): every ultimate has a voice line heard across the map, and most heroes have two, one the enemy team hears and one their own team hears. The four pairs in the table are the game's. The street, the timings and the ledge are our own. Kit plays Hanzo; Pip and Sam are your team; Rook and Bram are the other one.</p>
     </div>
   </div>
 </section>
@@ -42,11 +44,14 @@
   <div class="mt-wrap">
     <canvas class="demo" width="1040" height="585"></canvas>
     <div class="mt-side">
-      <div class="row wrap"><button class="btn sp-tour on">▶ Walk-through</button><button class="btn si-snd">♪ Sound: off</button></div>
-      <label class="chk"><input type="checkbox" class="sp-cues" checked> Special infected make their sounds</label>
-      <div class="mt-stats sp-stats"></div>
-      <p class="mt-out sp-out"></p>
-      <p class="src">After Left 4 Dead (Valve, 2008): each special infected has its own sound, such as the Smoker's cough, the Boomer's gurgle, the Hunter's growl and the Witch's crying, and the Tank arrives with its own music. Survivors often hear a special long before they see it. Distances, speeds and the synthesised cues here are illustrative.</p>
+      <h4>Name it from the sound</h4>
+      <div class="row wrap"><button class="btn" data-do="g0">1 Hunter</button><button class="btn" data-do="g1">2 Smoker</button><button class="btn" data-do="g2">3 Boomer</button></div>
+      <div class="row wrap"><button class="btn" data-do="g3">4 Tank</button><button class="btn" data-do="g4">5 Witch</button></div>
+      <p class="keys">Press a name, or <kbd>1</kbd> to <kbd>5</kbd>, to start the quiz. Turn the sound on to hear our stand-in for each cue.</p>
+      <div class="row wrap"><button class="btn tour on">▶ Walk-through</button><button class="btn snd">🔈 Sound off</button></div>
+      <div class="mt-stats"></div>
+      <p class="mt-out"></p>
+      <p class="src">After Left 4 Dead (Valve, 2008): each special infected has a distinct sound that plays before it is in view, and the Tank has its own music. The descriptions and the advice follow the game. The synthesised cues are rough stand-ins for the real recordings, and the corridor is our own. Wisp plays the Hunter, Sam the Smoker, Bram the Boomer, Grub the Tank and Sage the Witch; Pip and Kit are the survivors.</p>
     </div>
   </div>
 </section>
@@ -57,11 +62,16 @@
   <div class="mt-wrap">
     <canvas class="demo" width="1040" height="585"></canvas>
     <div class="mt-side">
-      <div class="row wrap"><button class="btn cs-tour on">▶ Walk-through</button><button class="btn si-snd">♪ Sound: off</button></div>
-      <div class="row"><button class="btn si-hold cs-walk">Hold to walk (or Shift)</button></div>
-      <div class="mt-stats cs-stats"></div>
-      <p class="mt-out cs-out"></p>
-      <p class="src">After Counter-Strike (Valve, from 1999): running makes footsteps that enemies can hear and locate; holding the walk key makes you silent but roughly half as fast. Speeds follow the familiar 250 units a second running with a knife and about 130 walking; the hearing range here is illustrative.</p>
+      <h4>Pip's plan</h4>
+      <div class="seg col"><button class="btn on" data-set="plan" data-v="run">Run all the way</button><button class="btn" data-set="plan" data-v="walk">Walk all the way</button><button class="btn" data-set="plan" data-v="mix">Run, then walk</button></div>
+      <h4>Round clock</h4>
+      <div class="seg"><button class="btn on" data-set="limit" data-v="14">14 seconds</button><button class="btn" data-set="limit" data-v="7">7 seconds</button></div>
+      <div class="row wrap"><button class="btn big" data-hold="walk">Hold: walk</button><button class="btn big" data-hold="run">Hold: run</button></div>
+      <p class="keys"><kbd>S</kbd> walks and <kbd>D</kbd> runs, while held.</p>
+      <div class="row wrap"><button class="btn tour on">▶ Walk-through</button><button class="btn snd">🔈 Sound off</button></div>
+      <div class="mt-stats"></div>
+      <p class="mt-out"></p>
+      <p class="src">After Counter-Strike (Valve, 2000 onward): running footsteps can be heard by other players at a distance, and holding walk makes them silent at roughly half speed (about 52% in Global Offensive). The corridor, the hearing distance and the clock are our own. Pip is attacking; Rook is holding the site.</p>
     </div>
   </div>
 </section>
@@ -69,7 +79,8 @@
 </div></div>
 <script src="../../../assets/deck.js"></script>
 <script src="../../../assets/kit.js"></script>
-<script src="../../shared/topdown.js"></script>
+<script src="../../../assets/cast.js"></script>
+<script src="../../../assets/scene.js"></script>
 <script src="sound-info.js"></script>
 </body>
 </html>
