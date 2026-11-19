@@ -1,147 +1,107 @@
-/* Enemy intents (mock-up for MGM C4 M5, beside Readable Enemies).
-   One Slay the Spire turn: the Ironclad's opening hand against a Jaw Worm, a Red Louse and a Cultist. With intents shown
-   the player can plan; hidden, intents read "?" until the turn ends. play(state, action) is pure, and the walk-through
-   applies two scripted lines by time, so the drawing is a function of t. */
+/* Enemy intents (Slay the Spire), beside Readable Enemies and Into the Breach (MGM C4 M5).
+   The Ironclad against Gremlin Nob, three turns. Nob's pattern is the game's: Bellow (he gains Enrage: +2 Strength every
+   time you play a Skill), then Rush for 14, then Skull Bash for 6. With intents shown, the number over his head is the
+   exact damage coming, and it updates the moment a Defend feeds his Enrage. Hide the intents and the same turn is a guess.
+   Rules: CARDS, PATTERN, play(), endTurn(). The fixed five-card hand each turn is ours, to keep the puzzle small. */
 (function () {
-  const { $, $$, canvasDemo, say } = FPF.kit;
-  const T = TD, C = TD.C, { clamp, lerp, ease } = TD, TAU = Math.PI * 2;
-  const W = 1040, H = 585;
-  const IMG = new URL('../../student-tokens/256px/more-games/', document.currentScript.src).href, imgs = {};
-  const im = n => { if (!imgs[n]) { imgs[n] = new Image(); imgs[n].src = IMG + 'slay-the-spire-' + n + '.png'; } return imgs[n].complete && imgs[n].naturalWidth ? imgs[n] : null; };
-  ['ironclad', 'strike', 'defend', 'bash'].forEach(im);
-  const CARDS = { strike: { name: 'Strike', cost: 1, dmg: 6, text: 'Deal 6' }, defend: { name: 'Defend', cost: 1, block: 5, text: 'Gain 5 Block' }, bash: { name: 'Bash', cost: 2, dmg: 8, vuln: 2, text: 'Deal 8, Vulnerable 2' } };
-  const HAND = ['strike', 'bash', 'defend', 'strike', 'defend'];
-  const FOES = [
-    { id: 'worm', name: 'Jaw Worm', hp: 42, intent: { k: 'atk', n: 11, say: 'Chomp' }, col: '#8a6a3a', x: 600 },
-    { id: 'louse', name: 'Red Louse', hp: 12, intent: { k: 'atk', n: 6, say: 'Bite' }, col: '#c8443a', x: 760 },
-    { id: 'cult', name: 'Cultist', hp: 50, intent: { k: 'buff', say: 'Incantation' }, col: '#3a4a8a', x: 915 },
-  ];
-  const fresh = () => ({ hp: 80, energy: 3, block: 0, hand: HAND.map((c, i) => ({ c, i, used: false })), foes: FOES.map(f => ({ id: f.id, hp: f.hp, vuln: 0 })), ended: false, lost: 0, log: [] });
-  function play(s, a) {
-    s = JSON.parse(JSON.stringify(s));
-    if (a.end) {
-      if (s.ended) return s;
-      let dmg = 0; s.foes.forEach((f, i) => { if (f.hp > 0 && FOES[i].intent.k === 'atk') dmg += FOES[i].intent.n; });
-      const through = Math.max(0, dmg - s.block); s.hp -= through; s.lost = through; s.ended = true; s.incoming = dmg; return s;
-    }
-    const h = s.hand[a.card], cd = CARDS[h.c]; if (h.used || s.ended || cd.cost > s.energy) return s;
-    if (cd.dmg) { const f = s.foes[a.target]; if (!f || f.hp <= 0) return s; f.hp = Math.max(0, f.hp - Math.floor(cd.dmg * (f.vuln ? 1.5 : 1))); if (cd.vuln) f.vuln += cd.vuln; }
-    if (cd.block) s.block += cd.block;
-    s.energy -= cd.cost; h.used = true; return s;
-  }
-  // the two scripted lines: [time, action]
-  const LINES = {
-    shown: [[2, { card: 0, target: 1 }], [3.4, { card: 3, target: 1 }], [4.8, { card: 2 }], [6.4, { end: true }]],
-    hidden: [[2, { card: 1, target: 2 }], [3.6, { card: 0, target: 2 }], [5.4, { end: true }]],
-  };
-  const stateAt = (mode, t) => LINES[mode].filter(([at]) => at <= t).reduce((s, [, a]) => play(s, a), fresh());
-  const txt = (g, s, x, y, o = {}) => { g.font = o.font || '600 15px Jost, sans-serif'; g.fillStyle = o.col || C.ink; g.textAlign = o.align || 'left'; g.textBaseline = o.base || 'middle'; g.fillText(s, x, y); };
+  const { txt, box, bar, pill, clamp, lerp, C, sprite, dot } = SCN;
+  const W = 1040, H = 585, IMG = new URL('../../student-tokens/256px/more-games/slay-the-spire-', document.currentScript.src).href;
+  const CARDS = { strike: { name: 'Strike', cost: 1, dmg: 6, text: 'Deal 6 damage', kind: 'Attack' }, defend: { name: 'Defend', cost: 1, block: 5, text: 'Gain 5 Block', kind: 'Skill' }, bash: { name: 'Bash', cost: 2, dmg: 8, vuln: 2, text: 'Deal 8. Apply 2 Vulnerable', kind: 'Attack' } };
+  const HAND = ['strike', 'strike', 'defend', 'defend', 'bash'];
+  const PATTERN = [{ name: 'Bellow', kind: 'buff' }, { name: 'Rush', kind: 'attack', dmg: 14 }, { name: 'Skull Bash', kind: 'attack', dmg: 6, debuff: true }];
+  const CX = i => 250 + i * 136, CY = 408, CWD = 124, CHT = 164;
 
-  const GY = 300;
-  function foe(g, f, st, show, sel, hit) {
-    const x = f.x, alive = st.hp > 0;
-    g.save(); if (!alive) g.globalAlpha = .25;
-    T.shadow(x, GY + 6, 56, 14, .3);
-    g.fillStyle = f.col; g.strokeStyle = C.navy; g.lineWidth = 3;
-    if (f.id === 'worm') { g.beginPath(); g.ellipse(x, GY - 40, 62, 40, 0, 0, TAU); g.fill(); g.stroke(); g.fillStyle = '#f2e3c0'; for (let i = 0; i < 4; i++) { g.beginPath(); g.moveTo(x - 58 + i * 8, GY - 52); g.lineTo(x - 52 + i * 8, GY - 38); g.lineTo(x - 46 + i * 8, GY - 52); g.fill(); } }
-    if (f.id === 'louse') { g.beginPath(); g.ellipse(x, GY - 30, 44, 30, 0, 0, TAU); g.fill(); g.stroke(); g.strokeStyle = C.navy; for (let i = -2; i <= 2; i++) { g.beginPath(); g.moveTo(x + i * 14, GY - 4); g.lineTo(x + i * 18, GY + 6); g.stroke(); } }
-    if (f.id === 'cult') { g.beginPath(); g.moveTo(x - 40, GY); g.quadraticCurveTo(x - 46, GY - 110, x, GY - 120); g.quadraticCurveTo(x + 46, GY - 110, x + 40, GY); g.closePath(); g.fill(); g.stroke(); g.fillStyle = '#e9e1c8'; g.beginPath(); g.moveTo(x - 18, GY - 130); g.lineTo(x, GY - 160); g.lineTo(x + 18, GY - 130); g.closePath(); g.fill(); g.stroke(); }
-    g.fillStyle = '#fff'; g.beginPath(); g.arc(x - 12, GY - (f.id === 'cult' ? 92 : 48), 6, 0, TAU); g.arc(x + 12, GY - (f.id === 'cult' ? 92 : 48), 6, 0, TAU); g.fill();
-    if (hit) { g.fillStyle = 'rgba(255,255,255,.6)'; g.beginPath(); g.arc(x, GY - 50, 60, 0, TAU); g.fill(); }
-    g.restore();
-    if (sel) { g.strokeStyle = C.gold; g.lineWidth = 3; g.setLineDash([6, 5]); g.beginPath(); g.ellipse(x, GY - 50, 78, 84, 0, 0, TAU); g.stroke(); g.setLineDash([]); }
-    // hp bar
-    const bw = 120, by = GY + 24; g.fillStyle = '#2a1c1c'; g.fillRect(x - bw / 2, by, bw, 12); g.fillStyle = '#d23a2a'; g.fillRect(x - bw / 2, by, bw * st.hp / f.hp, 12);
-    txt(g, `${st.hp}/${f.hp}${st.vuln ? ' · Vulnerable ' + st.vuln : ''}`, x, by + 26, { font: '700 13px Jost', align: 'center', col: '#f3e6c8' });
-    txt(g, f.name, x, by + 46, { font: '800 14px Montserrat', align: 'center', col: '#fff' });
-    // intent
-    if (!alive) return;
-    const iy = GY - (f.id === 'cult' ? 196 : 130);
-    if (!show) { g.fillStyle = '#6b6f8f'; g.beginPath(); g.arc(x, iy, 22, 0, TAU); g.fill(); txt(g, '?', x, iy + 1, { font: '800 26px Montserrat', col: '#fff', align: 'center' }); return; }
-    const it = f.intent;
-    if (it.k === 'atk') {
-      g.save(); g.translate(x - 12, iy); g.rotate(-.7); g.fillStyle = '#e8e8f0'; g.strokeStyle = C.navy; g.lineWidth = 2; g.beginPath(); g.moveTo(-4, 18); g.lineTo(-4, -20); g.lineTo(0, -28); g.lineTo(4, -20); g.lineTo(4, 18); g.closePath(); g.fill(); g.stroke(); g.fillStyle = '#9a5a06'; g.fillRect(-10, 16, 20, 5); g.restore();
-      txt(g, String(it.n), x + 12, iy + 4, { font: '800 26px Montserrat', col: '#fff', align: 'left' }); g.lineWidth = 1;
-      g.strokeStyle = C.navy; g.font = '800 26px Montserrat'; g.strokeText(String(it.n), x + 12, iy + 4);
-    } else { g.fillStyle = '#2fae63'; g.beginPath(); g.moveTo(x, iy - 22); g.lineTo(x + 18, iy); g.lineTo(x + 8, iy); g.lineTo(x + 8, iy + 18); g.lineTo(x - 8, iy + 18); g.lineTo(x - 8, iy); g.lineTo(x - 18, iy); g.closePath(); g.fill(); g.strokeStyle = C.navy; g.lineWidth = 2; g.stroke(); }
-    T.label(it.say, x, iy - 36, 'center', C.ink, 12);
-  }
-  const cardRect = i => [150 + i * 150, 395, 128, 172];
-  function draw(g, s, show, ui = {}) {
-    T.use(g); g.clearRect(0, 0, W, H);
-    const grd = g.createLinearGradient(0, 0, 0, H); grd.addColorStop(0, '#3b3550'); grd.addColorStop(.6, '#5a4a52'); grd.addColorStop(1, '#2a2430'); g.fillStyle = grd; g.beginPath(); g.roundRect(0, 0, W, H, 14); g.fill();
-    g.fillStyle = 'rgba(0,0,0,.25)'; g.fillRect(0, GY + 6, W, 80);
-    // ironclad
-    const ic = im('ironclad'); if (ic) { g.save(); g.beginPath(); g.arc(200, GY - 90, 92, 0, TAU); g.clip(); g.drawImage(ic, 108, GY - 182, 184, 184); g.restore(); g.strokeStyle = '#e9d9b0'; g.lineWidth = 4; g.beginPath(); g.arc(200, GY - 90, 92, 0, TAU); g.stroke(); }
-    const bw = 160; g.fillStyle = '#2a1c1c'; g.fillRect(120, GY + 24, bw, 12); g.fillStyle = '#d23a2a'; g.fillRect(120, GY + 24, bw * s.hp / 80, 12);
-    txt(g, `Ironclad ${s.hp}/80`, 200, GY + 50, { font: '800 14px Montserrat', align: 'center', col: '#fff' });
-    if (s.block) { g.fillStyle = '#4a8fd6'; g.beginPath(); g.arc(110, GY + 30, 16, 0, TAU); g.fill(); txt(g, String(s.block), 110, GY + 31, { font: '800 14px Montserrat', col: '#fff', align: 'center' }); }
-    const showNow = show || s.ended;
-    FOES.forEach((f, i) => foe(g, f, s.foes[i], showNow, ui.target === i, ui.hit === i));
-    // energy
-    g.fillStyle = '#e5322d'; g.beginPath(); g.arc(70, 470, 40, 0, TAU); g.fill(); g.strokeStyle = '#ffb951'; g.lineWidth = 4; g.stroke();
-    txt(g, `${s.energy}/3`, 70, 472, { font: '800 24px Montserrat', col: '#fff', align: 'center' });
-    // hand
-    s.hand.forEach((h, i) => {
-      const [x, y, w, hh] = cardRect(i), cd = CARDS[h.c], lift = ui.card === i ? -18 : 0;
-      if (h.used) return;
-      g.save(); g.translate(0, lift); if (cd.cost > s.energy || s.ended) g.globalAlpha = .45;
-      g.fillStyle = cd.dmg ? '#7a2a22' : '#2a5a8a'; g.strokeStyle = '#e9d9b0'; g.lineWidth = 3; g.beginPath(); g.roundRect(x, y, w, hh, 10); g.fill(); g.stroke();
-      const art = im(h.c); if (art) g.drawImage(art, x + 6, y + 6, w - 12, w - 12);
-      txt(g, cd.text, x + w / 2, y + hh - 22, { font: '700 13px Jost', col: '#fff', align: 'center' });
-      g.fillStyle = '#e5322d'; g.beginPath(); g.arc(x + 6, y + 6, 15, 0, TAU); g.fill(); g.strokeStyle = '#ffb951'; g.lineWidth = 2; g.stroke();
-      txt(g, String(cd.cost), x + 6, y + 7, { font: '800 15px Montserrat', col: '#fff', align: 'center' });
-      g.restore();
-    });
-    if (s.ended) {
-      g.fillStyle = 'rgba(10,8,20,.7)'; g.beginPath(); g.roundRect(330, 12, 400, 90, 14); g.fill();
-      txt(g, `Enemies deal ${s.incoming} · block ${s.block}`, 530, 40, { font: '700 17px Jost', col: '#e9d9b0', align: 'center' });
-      txt(g, `You lose ${s.lost} HP`, 530, 76, { font: '800 28px Montserrat', col: s.lost > 10 ? '#ff6b6b' : '#5fe0a0', align: 'center' });
+  SCN.run('intent', s => {
+    let z, shown = true; const res = {};
+    function fresh() { z = { hp: 80, block: 0, nob: 82, str: 0, enrage: false, vuln: 0, turn: 0, energy: 3, hand: HAND.map(t => ({ t, used: 0 })), phase: 'play', pt: 0, dealt: 0, taken: 0, wasted: 0, fx: [], msg: '', hitP: 0, hitN: 0 }; }
+    const incoming = () => { const m = PATTERN[z.turn]; return m && m.kind === 'attack' ? m.dmg + z.str : 0; };
+    function play(i) {
+      const c = z.hand[i]; if (z.phase !== 'play' || !c || c.used) return; const d = CARDS[c.t];
+      if (d.cost > z.energy) { z.msg = 'Not enough energy for that card.'; return; }
+      z.energy -= d.cost; c.used = 1e-6;
+      if (d.dmg) { const dmg = Math.floor(d.dmg * (z.vuln ? 1.5 : 1)); z.nob = Math.max(0, z.nob - dmg); z.dealt += dmg; z.hitN = 1; z.fx.push({ x: 640, y: 260, s: '-' + dmg, col: '#ffd0c8', t: 0 }); if (d.vuln) z.vuln = Math.max(z.vuln, d.vuln); z.msg = `${d.name}: ${dmg} damage${z.vuln && !d.vuln ? ' (Vulnerable adds half)' : ''}.`; }
+      if (d.block) { z.block += d.block; z.msg = 'Defend: 5 Block.'; if (z.enrage) { z.str += 2; z.fx.push({ x: 630, y: 200, s: '+2 Strength', col: '#ffb951', t: 0 }); z.msg = 'Defend is a Skill: Enrage gives Nob 2 Strength. ' + (shown && incoming() ? `His intent now reads ${incoming()}.` : ''); } }
+      SCN.tone({ f: d.dmg ? 180 : 420, f2: d.dmg ? 90 : 620, dur: .12, type: d.dmg ? 'sawtooth' : 'sine', vol: .08 });
     }
-  }
-
-  canvasDemo('intents', (s, cv, g) => {
-    const st = { mode: 'shown', s: fresh(), card: null, tour: true, held: false, t: 0, key: '' };
-    const tourBtn = $(s, '.si-tour');
-    const mark = () => $$(s, '.si-mode .btn').forEach(b => b.classList.toggle('on', b.dataset.v === st.mode));
-    const manual = () => { if (st.tour) { st.tour = false; tourBtn.classList.remove('on'); st.s = fresh(); st.card = null; } };
-    $$(s, '.si-mode .btn').forEach(b => b.onclick = () => { manual(); st.mode = b.dataset.v; st.s = fresh(); st.card = null; mark(); });
-    $(s, '.si-end').onclick = () => { manual(); st.s = play(st.s, { end: true }); st.card = null; };
-    $(s, '.si-reset').onclick = () => { manual(); st.s = fresh(); st.card = null; };
-    tourBtn.onclick = () => { st.tour = true; st.t = 0; tourBtn.classList.add('on'); };
-    mark();
-    cv.addEventListener('click', e => {
-      const r = cv.getBoundingClientRect(), x = (e.clientX - r.left) * W / r.width, y = (e.clientY - r.top) * H / r.height;
-      manual();
-      const ci = st.s.hand.findIndex((h, i) => { const [cx, cy, w, hh] = cardRect(i); return !h.used && x >= cx && x <= cx + w && y >= cy - 18 && y <= cy + hh; });
-      if (ci >= 0) { const cd = CARDS[st.s.hand[ci].c]; if (cd.dmg) st.card = ci; else { st.s = play(st.s, { card: ci }); st.card = null; } return; }
-      const fi = FOES.findIndex(f => Math.abs(x - f.x) < 75 && y > GY - 170 && y < GY + 60);
-      if (fi >= 0 && st.card != null) { st.s = play(st.s, { card: st.card, target: fi }); st.card = null; }
-    });
-    const lost = m => stateAt(m, 99).lost;
-    function info(cap) {
-      const k = cap + st.mode; if (k === st.key) return; st.key = k;
-      say($(s, '.si-stats'), `<div class="g"><b>−${lost('shown')}</b><span>Intents shown: kill the Louse, block the rest</span></div><div class="r"><b>−${lost('hidden')}</b><span>Intents hidden: the hand goes into the Cultist</span></div>`);
-      say($(s, '.si-out'), cap);
+    const playType = t => { const i = z.hand.findIndex(c => c.t === t && !c.used); if (i >= 0) play(i); };
+    function endTurn() { if (z.phase === 'play') { z.phase = 'enemy'; z.pt = 0; } }
+    function resolve() {
+      const m = PATTERN[z.turn];
+      if (m.kind === 'buff') { z.enrage = true; if (z.block) z.wasted += z.block; z.msg = 'Nob only bellowed. ' + (z.block ? `${z.block} Block stopped nothing.` : 'Nothing to block: every point of energy went into damage.'); }
+      else { const dmg = m.dmg + z.str, got = Math.max(0, dmg - z.block); z.hp -= got; z.taken += got; z.hitP = 1; z.fx.push({ x: 400, y: 260, s: got ? '-' + got : 'blocked', col: '#ffd0c8', t: 0 }); z.msg = `${m.name} hits for ${dmg}${z.block ? `, ${Math.min(dmg, z.block)} blocked` : ''}.`; SCN.noise({ dur: .2, vol: .2 }); }
     }
-    const SEG = 10, DUR = 2 * SEG + 4;
-    s._seek = t => {
-      if (t >= 2 * SEG) { const z = stateAt('shown', 99); draw(g, z, true); info('Same hand, same monsters. Showing the next move turns a guess into a puzzle with an answer; that is what makes an enemy readable.'); return; }
-      const m = t < SEG ? 'shown' : 'hidden', lt = t % SEG; st.mode = m; mark();
-      const z = stateAt(m, lt), next = LINES[m].find(([at]) => at > lt), ui = {};
-      if (next && !next[1].end && next[0] - lt < .8) { ui.card = next[1].card; ui.target = next[1].target; }
-      const prev = LINES[m].filter(([at]) => at <= lt).pop(); if (prev && lt - prev[0] < .25 && prev[1].target != null) ui.hit = prev[1].target;
-      draw(g, z, m === 'shown', ui);
-      info(m === 'shown' ? 'Intents shown: the Worm will Chomp for 11, the Louse Bite for 6, the Cultist only chants. Two Strikes kill the Louse, a Defend soaks 5 of the Chomp.' : 'Intents hidden: the Cultist looks like the biggest threat, so Bash and Strike go into it. It was only ever going to chant. Both attackers land.');
+    const api = {
+      dur: 35,
+      reset(tour) { if (tour) { shown = false; delete res.shown; delete res.hidden; api.mark('shown', 'no'); } fresh(); },
+      step(h) {
+        z.hand.forEach(c => { if (c.used) c.used += h; }); z.fx = z.fx.filter(f => (f.t += h) < 1.1); z.hitP = Math.max(0, z.hitP - h * 3); z.hitN = Math.max(0, z.hitN - h * 4);
+        if (z.phase === 'enemy') {
+          const p0 = z.pt; z.pt += h;
+          if (p0 < .6 && z.pt >= .6) resolve();
+          if (z.pt >= 1.4) { if (z.vuln) z.vuln--; z.block = 0; z.turn++; if (z.turn >= 3 || z.nob <= 0) { z.phase = 'done'; res[shown ? 'shown' : 'hidden'] = { dealt: z.dealt, taken: z.taken, str: z.str, wasted: z.wasted }; } else { z.phase = 'play'; z.energy = 3; z.hand = HAND.map(t => ({ t, used: 0 })); } }
+        }
+      },
+      script: [[1, 'defend'], [1.8, 'defend'], [2.6, 'strike'], [3.6, 0], [5.6, 'defend'], [6.4, 'defend'], [7.2, 'strike'], [8, 0], [10, 'defend'], [10.8, 'defend'], [11.6, 'strike'], [12.4, 0],
+        [17.5, 'bash'], [18.5, 'strike'], [19.6, 0], [22, 'bash'], [23, 'strike'], [24, 0], [26.2, 'bash'], [27.2, 'strike'], [28.2, 0]].map(([t, a]) => [t, () => a ? playType(a) : endTurn()])
+        .concat([[15.5, () => { shown = true; api.mark('shown', 'yes'); fresh(); }]]),
+      caption: t => t < 3.6 ? 'Intents hidden. Nob could do anything, so the careful play is two Defends and a Strike.'
+        : t < 5.2 ? 'He only bellowed. Ten Block stopped nothing, and now every Skill you play makes him stronger.'
+        : t < 13.6 ? 'Still guessing, still defending. Each Defend feeds his Enrage: +2 Strength, for the rest of the fight.'
+        : t < 15.5 ? 'Three careful turns: 18 damage dealt, and a boss with 8 Strength who has barely been touched.'
+        : t < 19.6 ? 'Intents shown. Turn one reads "buff": no attack is coming, so all three energy goes into Bash and a Strike.'
+        : t < 24.2 ? 'Turn two reads 14, exactly. Is 5 Block worth 2 Strength forever? The number makes it a decision you can reason about.'
+        : t < 29.6 ? 'Turn three reads 6. Take it and keep hitting.'
+        : 'Same hand, same boss: 59 damage against 18. The intent turns "what might he do?" into "what is my best answer to exactly this?"',
+      status: () => z.phase === 'done' ? `Three turns: ${z.dealt} dealt, ${z.taken} taken, Nob on ${z.nob} health with ${z.str} Strength. Switch the intents and play the same hand again.` : z.msg || (shown ? 'Read the intent over Nob, click cards to play them, then end the turn.' : 'No intent: you have to guess what Nob does next. Click cards, then end the turn.'),
+      stats() { const row = (k, cls, lab) => { const r = k === (shown ? 'shown' : 'hidden') && z.phase !== 'done' ? { dealt: z.dealt, taken: z.taken, str: z.str } : res[k]; return `<div class="${cls}"><b>${r ? r.dealt : '-'}</b><span>${lab}: damage dealt${r ? `, ${r.taken} taken, Nob at +${r.str} Strength` : ''}</span></div>`; }; return row('hidden', 'r', 'Intents hidden') + row('shown', 'g', 'Intents shown'); },
+      acts: { end: endTurn },
+      set(k, v) { if (k === 'shown') shown = v === 'yes'; },
+      point(p) { if (p.type !== 'down') return; if (p.x > 920 && p.y > 440 && p.y < 500) return endTurn(); z.hand.forEach((c, i) => { if (!c.used && p.x > CX(i) - CWD / 2 && p.x < CX(i) + CWD / 2 && p.y > CY && p.y < CY + CHT) play(i); }); },
+      draw(g) {
+        g.clearRect(0, 0, W, H); g.save(); SCN.clipStage(g, W, H);
+        const gr = g.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, '#3a1d1d'); gr.addColorStop(.655, '#3a1d1d'); gr.addColorStop(.66, '#1c1420'); gr.addColorStop(1, '#120d18'); g.fillStyle = gr; g.fillRect(0, 0, W, H);
+        
+        const lunge = z.phase === 'enemy' && PATTERN[z.turn]?.kind === 'attack' ? Math.sin(clamp(z.pt / 1.2) * Math.PI) * 90 : 0;
+        const im1 = SCN.img(IMG + 'ironclad.png'), im2 = SCN.img(IMG + 'nob.png');
+        g.save(); if (z.hitP > 0) g.filter = `brightness(${1 + z.hitP * 1.5})`; sprite(g, im1, 240 - z.hitP * 14, 366, 250); g.restore();
+        g.save(); if (z.hitN > 0) g.filter = `brightness(${1 + z.hitN * 1.5})`; sprite(g, im2, 790 - lunge + z.hitN * 10, 366, 262); g.restore();
+        // health, block and statuses
+        bar(g, 150, 372, 180, 14, z.hp / 80, { col: '#d0423a', back: '#3a2226', stroke: '#000' }); txt(g, `${z.hp}/80`, 240, 380, { size: 13, w: 800, col: '#fff', align: 'center' });
+        txt(g, 'Ironclad', 240, 44, { size: 20, w: 800, col: '#f0d7a0', align: 'center', display: true });
+        if (z.block) { g.fillStyle = '#7fb6e8'; g.beginPath(); g.moveTo(118, 364); g.lineTo(146, 364); g.lineTo(146, 384); g.lineTo(132, 396); g.lineTo(118, 384); g.fill(); txt(g, z.block, 132, 378, { size: 15, w: 800, align: 'center', col: '#0d2140' }); }
+        bar(g, 700, 372, 180, 14, z.nob / 82, { col: '#d0423a', back: '#3a2226', stroke: '#000' }); txt(g, `${z.nob}/82`, 790, 380, { size: 13, w: 800, col: '#fff', align: 'center' });
+        txt(g, 'Gremlin Nob', 790, 26, { size: 20, w: 800, col: '#f0d7a0', align: 'center', display: true });
+        let sx = 900; [[z.enrage, 'Enrage 2', '#e0913a'], [z.str, 'Strength ' + z.str, '#e5322d'], [z.vuln, 'Vulnerable ' + z.vuln, '#8a4fd6']].forEach(([on, label, col], i) => { if (on) pill(g, label, 946, 196 + i * 32, { size: 13, w: 800, fill: col }); });
+        if (z.enrage) txt(g, '+2 Strength', 946, 156, { size: 12, w: 600, col: '#e9c9a0', align: 'center' }); txt(g, 'per Skill you play', 946, 171, { size: 12, w: 600, col: '#e9c9a0', align: 'center' });
+        // the intent
+        const m = PATTERN[Math.min(z.turn, 2)], iy = 76, ix = 790 - lunge * .3;
+        if (z.phase !== 'done') {
+          if (!shown) { dot(g, ix, iy + 6, 26, 'rgba(0,0,0,.55)'); txt(g, '?', ix, iy + 8, { size: 34, w: 800, col: '#cfc3d8', align: 'center', display: true }); txt(g, 'intent hidden', ix, iy + 44, { size: 13, w: 700, col: '#cfc3d8', align: 'center' }); }
+          else if (m.kind === 'buff') { g.strokeStyle = '#7ddc5a'; g.lineWidth = 6; g.lineCap = 'round'; [-14, 0, 14].forEach((dx, i) => { const yy = iy + 22 - (i === 1 ? 8 : 0); g.beginPath(); g.moveTo(ix + dx, yy); g.lineTo(ix + dx, yy - 26); g.moveTo(ix + dx - 7, yy - 18); g.lineTo(ix + dx, yy - 28); g.lineTo(ix + dx + 7, yy - 18); g.stroke(); }); txt(g, 'Bellow: a buff, no attack', ix, iy + 44, { size: 14, w: 800, col: '#b9f0a0', align: 'center' }); }
+          else { const n = incoming(), big = z.str > 0;
+            g.save(); g.translate(ix - 34, iy + 8); g.rotate(-.7); g.fillStyle = '#d9dde8'; g.fillRect(-4, -30, 8, 44); g.beginPath(); g.moveTo(-4, -30); g.lineTo(0, -40); g.lineTo(4, -30); g.fill(); g.fillStyle = '#b5762a'; g.fillRect(-11, 12, 22, 6); g.fillRect(-3, 18, 6, 12); g.restore();
+            txt(g, n, ix + 8, iy + 8, { size: 44, w: 800, col: big ? '#ffb951' : '#fff', align: 'center', display: true, halo: '#000', haloW: 6 });
+            txt(g, `${m.name}: ${n} damage${m.debuff ? ' and 2 Vulnerable' : ''}${z.block ? `, ${Math.max(0, n - z.block)} after Block` : ''}`, ix, iy + 46, { size: 14, w: 800, col: '#ffd0c8', align: 'center' }); }
+        }
+        z.fx.forEach(f => txt(g, f.s, f.x, f.y - f.t * 50, { size: 30, w: 800, col: f.col, align: 'center', display: true, halo: '#000', haloW: 5 }));
+        // hand, energy, end turn
+        dot(g, 96, 480, 44, '#7a1f12'); dot(g, 96, 480, 37, '#e2572a'); txt(g, `${z.energy}/3`, 96, 482, { size: 28, w: 800, col: '#fff', align: 'center', display: true }); txt(g, 'energy', 96, 540, { size: 13, w: 700, col: '#cfc3d8', align: 'center' });
+        txt(g, z.phase === 'done' ? 'after three turns' : `turn ${z.turn + 1} of 3`, 96, 420, { size: 15, w: 800, col: '#f0d7a0', align: 'center' });
+        z.hand.forEach((c, i) => {
+          const d = CARDS[c.t], k = c.used ? clamp(c.used / .35) : 0; if (k >= 1) return;
+          const x = CX(i) - CWD / 2, y = CY - k * 70, afford = d.cost <= z.energy && z.phase === 'play';
+          g.save(); g.globalAlpha = (1 - k) * (afford ? 1 : .5);
+          box(g, x, y, CWD, CHT, { r: 10, fill: '#2a2230', stroke: d.kind === 'Skill' ? '#6fb7d6' : '#d36a52', lw: 3 });
+          const im = SCN.img(IMG + c.t + '.png'); if (im) g.drawImage(im, x + 6, y + 6, CWD - 12, CWD - 12);
+          const L = SCN.lines(g, d.text, CWD - 14, { size: 13, w: 700 }); L.forEach((l, j) => txt(g, l, x + CWD / 2, y + CWD + 12 + j * 16 - (L.length - 1) * 4, { size: 13, w: 700, col: '#f3ead8', align: 'center' }));
+          dot(g, x + 8, y + 8, 16, '#7a1f12'); dot(g, x + 8, y + 8, 13, '#e2572a'); txt(g, d.cost, x + 8, y + 9, { size: 17, w: 800, col: '#fff', align: 'center' });
+          g.restore();
+        });
+        const can = z.phase === 'play'; box(g, 928, 446, 96, 46, { r: 10, fill: can ? '#2c8f8a' : '#3b3440', stroke: '#0c2a2a', lw: 3 }); txt(g, 'End turn', 976, 470, { size: 16, w: 800, col: can ? '#fff' : '#8d8496', align: 'center' });
+        if (z.phase === 'done') pill(g, `${z.dealt} dealt · ${z.taken} taken · Nob +${z.str} Strength`, W / 2, 210, { size: 22, w: 800, fill: 'rgba(0,0,0,.8)', pad: 30, padY: 18 });
+        g.restore();
+      },
     };
-    window.__seek = t => { st.held = true; s._seek(t); };
-    window.__dur = () => DUR;
-    return dt => {
-      if (st.held) return;
-      st.t += Math.max(0, dt);
-      if (st.tour) { if (st.t >= DUR) st.t = 0; s._seek(st.t); return; }
-      draw(g, st.s, st.mode === 'shown', { card: st.card });
-      info(st.s.ended ? `You lost ${st.s.lost} HP this turn. Reset and try the other mode.` : st.card != null ? 'Now click an enemy to attack it.' : st.mode === 'shown' ? 'Intents shown: plan the turn against what each monster will do.' : 'Intents hidden: every monster is a question mark until the turn ends.');
-    };
+    return api;
   });
 })();

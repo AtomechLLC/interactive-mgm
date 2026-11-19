@@ -1,0 +1,7 @@
+/* Extras for the game-example mock-ups built on assets/scene.js. Layout classes (.mt-wrap, .mt-side) come from each module's own stylesheet. */
+.mt-side .src { font-size: 13px; color: var(--muted); margin-top: 8px; line-height: 1.35; }
+.mt-side .btn.down { background: var(--navy); color: #fff; transform: translateY(2px); }
+.mt-side .keys { font-size: 14px; color: var(--muted); margin: 6px 0 2px; line-height: 1.5; }
+.mt-side .keys kbd { font-family: var(--display); font-weight: 800; font-size: 13px; background: #fffaf0; border: 2px solid #152044; border-bottom-width: 4px; border-radius: 6px; padding: 0 6px; color: #152044; }
+.mt-side .btn.big { font-size: 18px; padding: 9px 16px; touch-action: none; user-select: none; }
+.mt-wrap canvas.demo { touch-action: none; }

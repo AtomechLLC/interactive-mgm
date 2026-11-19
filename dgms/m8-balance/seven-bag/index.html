@@ -9,8 +9,9 @@
 <link rel="stylesheet" href="../../../assets/deck.css">
 <link rel="stylesheet" href="../../../assets/kit.css">
 <link rel="stylesheet" href="../../shared/dgms.css">
+<link rel="stylesheet" href="../../../assets/scene.css">
 <script>
-  window.DECK = { title: 'Directing Game Mechanics · Module 8 · Seven-Bag Randomiser (mock-up)', home: '../index.html', audio: false, cues: null };
+  window.DECK = { title: "Directing Game Mechanics · Module 8 · Seven-Bag Randomiser (mock-up)", home: '../index.html', audio: false, cues: null };
 </script>
 <script src="notes.js"></script>
 </head>
@@ -23,11 +24,12 @@
   <div class="mt-wrap">
     <canvas class="demo" width="1040" height="585"></canvas>
     <div class="mt-side">
-      <div class="row wrap"><button class="btn sb-tour on">▶ Walk-through</button><button class="btn sb-reroll">↻ New seed</button></div>
-      <label class="rng">Pieces dealt <b class="sb-nv">700</b><input type="range" class="sb-n" min="35" max="3500" step="35" value="700"></label>
-      <div class="mt-stats sb-stats"></div>
-      <p class="mt-out sb-out"></p>
-      <p class="src">Pure random picks each of the seven pieces with equal odds. NES Tetris (1989) rolls once more when it would repeat the last piece. Modern Tetris shuffles a bag of all seven and deals it out, then fills a new bag. A drought is how many pieces fall between two I pieces. Sequences come from a seeded generator.</p>
+      <h4>Deal</h4>
+      <div class="seg"><button class="btn" data-do="one">One piece</button><button class="btn" data-set="rate" data-v="3">Slow</button><button class="btn" data-set="rate" data-v="20">Fast</button><button class="btn" data-set="rate" data-v="120">Very fast</button></div>
+      <div class="row wrap"><button class="btn" data-do="seed">↻ New seed</button><button class="btn tour on">▶ Walk-through</button></div>
+      <div class="mt-stats"></div>
+      <p class="mt-out"></p>
+      <p class="src">Pure random gives each of the seven pieces equal odds every time. NES Tetris (1989) rolls once more when it would repeat the last piece. Modern Tetris shuffles a bag of all seven, deals it out, then fills a new bag, so the longest possible wait for an I is 12 pieces. The wells are a toy model of our own: each other piece adds four cells to a nine-wide stack and an I clears four rows. Sequences come from a seeded generator.</p>
     </div>
   </div>
 </section>
@@ -35,7 +37,7 @@
 </div></div>
 <script src="../../../assets/deck.js"></script>
 <script src="../../../assets/kit.js"></script>
-<script src="../../shared/topdown.js"></script>
+<script src="../../../assets/scene.js"></script>
 <script src="seven-bag.js"></script>
 </body>
 </html>

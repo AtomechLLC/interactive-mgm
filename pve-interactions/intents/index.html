@@ -9,28 +9,28 @@
 <link rel="stylesheet" href="../../assets/deck.css">
 <link rel="stylesheet" href="../../assets/kit.css">
 <link rel="stylesheet" href="../shared/comp.css">
-<style>.mt-side .tip { font-size: 16px; margin: 0 0 8px; color: var(--muted); }</style>
+<link rel="stylesheet" href="../../assets/scene.css">
 <script>
-  window.DECK = { title: 'Mastering Game Mechanics · PvE Interactions · Enemy Intents (mock-up)', home: '../index.html', audio: false, cues: null };
+  window.DECK = { title: "Mastering Game Mechanics · PvE Interactions · Enemy Intents (mock-up)", home: '../index.html', audio: false, cues: null };
 </script>
 <script src="notes.js"></script>
 </head>
 <body>
 <div class="viewport"><div class="stage">
 
-<section class="slide" data-title="Enemy intents" data-demo="intents">
+<section class="slide" data-title="Enemy intents" data-demo="intent">
   <div class="kicker">readable enemies · Slay the Spire</div>
   <h2 class="sm">Show the next move, <span class="accent">and the turn becomes a puzzle</span></h2>
   <div class="mt-wrap">
     <canvas class="demo" width="1040" height="585"></canvas>
     <div class="mt-side">
       <h4>Enemy intents</h4>
-      <div class="seg si-mode"><button class="btn" data-v="shown">Shown</button><button class="btn" data-v="hidden">Hidden</button></div>
-      <p class="tip">Click a card, then an enemy for attacks. End the turn to see what the enemies do.</p>
-      <div class="row wrap"><button class="btn si-end">End turn</button><button class="btn si-reset">↻ Reset turn</button><button class="btn si-tour on">▶ Walk-through</button></div>
-      <div class="mt-stats si-stats"></div>
-      <p class="mt-out si-out"></p>
-      <p class="src">After Slay the Spire (Mega Crit, 2019), first floor: the Ironclad's starting cards against a Jaw Worm (Chomp, 11), a Red Louse (Bite, 6) and a Cultist, whose first move is always Incantation, a buff. Monster health is picked from each one's range, and the Louse's Curl Up is left out to keep the turn small. Card art: the course's student tokens.</p>
+      <div class="seg"><button class="btn on" data-set="shown" data-v="yes">Shown</button><button class="btn" data-set="shown" data-v="no">Hidden</button></div>
+      <p class="keys">Click cards to play them, then end the turn. You get the same five cards and 3 energy every turn, for three turns.</p>
+      <div class="row wrap"><button class="btn" data-do="end">End turn</button><button class="btn" data-do="reset">↻ Restart fight</button><button class="btn tour on">▶ Walk-through</button></div>
+      <div class="mt-stats"></div>
+      <p class="mt-out"></p>
+      <p class="src">After Slay the Spire (Mega Crit, 2019). Card and character art is the game's. Gremlin Nob's moves are the game's too: Bellow gives him Enrage (2 Strength whenever you play a Skill), Rush hits for 14 and Skull Bash for 6 with 2 Vulnerable, and Vulnerable adds half again to damage taken. The fixed order of his moves and the same five-card hand every turn are ours.</p>
     </div>
   </div>
 </section>
@@ -38,7 +38,7 @@
 </div></div>
 <script src="../../assets/deck.js"></script>
 <script src="../../assets/kit.js"></script>
-<script src="../shared/topdown.js"></script>
+<script src="../../assets/scene.js"></script>
 <script src="intents.js"></script>
 </body>
 </html>

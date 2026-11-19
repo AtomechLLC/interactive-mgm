@@ -9,66 +9,60 @@
 <link rel="stylesheet" href="../../../assets/deck.css">
 <link rel="stylesheet" href="../../../assets/kit.css">
 <link rel="stylesheet" href="../../shared/dgms.css">
-<style>
-  .bh-hold { flex: 1; min-height: 46px; font-weight: 800; touch-action: none; user-select: none; }
-  .bh-hold.down { background: var(--gold, #ffb951); color: #152044; }
-  .bh-sticks { display: flex; gap: 18px; justify-content: center; }
-  .bh-sticks label { display: flex; flex-direction: column; align-items: center; gap: 6px; font-weight: 600; font-size: 13px; }
-  .bh-sticks input[type=range] { writing-mode: vertical-lr; direction: rtl; height: 120px; width: 28px; }
-  .mt-side p.bh-keys { font-size: 13px; line-height: 1.3; opacity: .8; margin: 2px 0 0; }
-</style>
+<link rel="stylesheet" href="../../../assets/scene.css">
 <script>
-  window.DECK = { title: 'Directing Game Mechanics · Module 5 · The Button Is the Hand (mock-up)', home: '../index.html', audio: false, cues: null };
+  window.DECK = { title: "Directing Game Mechanics · Module 5 · The Button Is the Hand (mock-up)", home: '../index.html', audio: false, cues: null };
 </script>
 <script src="notes.js"></script>
 </head>
 <body>
 <div class="viewport"><div class="stage">
 
-<section class="slide" data-title="Hold to hang on" data-demo="grip">
+<section class="slide" data-title="Holding R1 is holding on" data-demo="grip">
   <div class="kicker">controls as metaphor · Shadow of the Colossus</div>
   <h2 class="sm">Holding R1 <span class="accent">is holding on</span></h2>
   <div class="mt-wrap">
     <canvas class="demo" width="1040" height="585"></canvas>
     <div class="mt-side">
-      <div class="row wrap"><button class="btn sg-tour on">▶ Walk-through</button><button class="btn sg-reset">↺ Start over</button></div>
-      <div class="row"><button class="btn bh-hold sg-r1">Hold R1</button></div>
-      <p class="bh-keys">or hold the R key</p>
-      <div class="mt-stats sg-stats"></div>
-      <p class="mt-out sg-out"></p>
-      <p class="src">After Shadow of the Colossus (Team Ico, 2005): R1 grips while held, a circular grip gauge drains while you hang on, and colossi try to shake you off. Here, holding also climbs, except during a shake. Ledges, drain rates and shake times are illustrative.</p>
+      <div class="row wrap"><button class="btn big" data-hold="grip">Hold R1</button></div>
+      <p class="keys">Or hold <kbd>R</kbd>. Let go on a ledge to rest. Hold on when it shakes.</p>
+      <div class="row wrap"><button class="btn tour on">▶ Walk-through</button><button class="btn" data-do="reset">↻ Start over</button></div>
+      <div class="mt-stats"></div>
+      <p class="mt-out"></p>
+      <p class="src">After Shadow of the Colossus (Team Ico, 2005): R1 grips while it is held, a circular grip gauge drains while you hang on, and colossi try to shake you off. Here holding also climbs, and the ledges, drain rates and shake times are our own. Pip plays Wander and Grub, at three times his size, plays the colossus.</p>
     </div>
   </div>
 </section>
 
-<section class="slide" data-title="Two triggers, two straps" data-demo="straps">
+<section class="slide" data-title="One trigger per hand" data-demo="straps">
   <div class="kicker">controls as metaphor · Death Stranding</div>
-  <h2 class="sm">L2 and R2 are <span class="accent">Sam's two hands</span></h2>
+  <h2 class="sm">L2 and R2 <span class="accent">are your two hands</span></h2>
   <div class="mt-wrap">
     <canvas class="demo" width="1040" height="585"></canvas>
     <div class="mt-side">
-      <div class="row wrap"><button class="btn ds-tour on">▶ Walk-through</button><button class="btn ds-reset">↺ Start over</button></div>
-      <div class="row"><button class="btn bh-hold ds-l2">Hold L2</button><button class="btn bh-hold ds-r2">Hold R2</button></div>
-      <p class="bh-keys">or hold Q for L2 and E for R2</p>
-      <div class="mt-stats ds-stats"></div>
-      <p class="mt-out ds-out"></p>
-      <p class="src">After Death Stranding (Kojima Productions, 2019): L2 and R2 grab Sam's left and right straps. A trigger pulls the load toward its side, so a lean to the left is caught with R2; holding both steadies him at a slower walk. Lean physics, bumps and speeds here are illustrative.</p>
+      <div class="row wrap"><button class="btn big" data-hold="L">Hold L2</button><button class="btn big" data-hold="R">Hold R2</button></div>
+      <p class="keys"><kbd>A</kbd> is L2, the left hand. <kbd>D</kbd> is R2, the right hand. Pull the strap opposite the lean. Hold both to brace.</p>
+      <div class="row wrap"><button class="btn tour on">▶ Walk-through</button><button class="btn" data-do="reset">↻ Start over</button></div>
+      <div class="mt-stats"></div>
+      <p class="mt-out"></p>
+      <p class="src">After Death Stranding (Kojima Productions, 2019): L2 and R2 are Sam's left and right hands on his pack straps. One trigger shifts the load back when it tips, and holding both braces at a slower walk. The terrain, the tipping model and the speeds are our own. Pip carries the cargo.</p>
     </div>
   </div>
 </section>
 
-<section class="slide" data-title="Two sticks, two hands" data-demo="kata">
+<section class="slide" data-title="One stick per hand" data-demo="katamari">
   <div class="kicker">controls as metaphor · Katamari Damacy</div>
-  <h2 class="sm">Two sticks are <span class="accent">two hands on the ball</span></h2>
+  <h2 class="sm">Two sticks, <span class="accent">two hands on the ball</span></h2>
   <div class="mt-wrap">
     <canvas class="demo" width="1040" height="585"></canvas>
     <div class="mt-side">
-      <div class="row wrap"><button class="btn kd-tour on">▶ Walk-through</button><button class="btn kd-reset">↺ Start over</button></div>
-      <div class="bh-sticks"><label>Left stick<input type="range" class="kd-l" min="-1" max="1" step="0.05" value="0"></label><label>Right stick<input type="range" class="kd-r" min="-1" max="1" step="0.05" value="0"></label></div>
-      <p class="bh-keys">or hold W / S for the left stick and I / K for the right</p>
-      <div class="mt-stats kd-stats"></div>
-      <p class="mt-out kd-out"></p>
-      <p class="src">After Katamari Damacy (Namco, 2004): both sticks forward rolls ahead, both back rolls back, and one forward with one back turns, like pushing a ball with two hands. The room, objects and growth rule are illustrative.</p>
+      <div class="row wrap"><button class="btn big" data-hold="lu">Left ▲</button><button class="btn big" data-hold="ru">Right ▲</button></div>
+      <div class="row wrap"><button class="btn big" data-hold="ld">Left ▼</button><button class="btn big" data-hold="rd">Right ▼</button></div>
+      <p class="keys">Left stick <kbd>W</kbd> <kbd>S</kbd>, right stick <kbd>I</kbd> <kbd>K</kbd>. Hold two at once.</p>
+      <div class="row wrap"><button class="btn tour on">▶ Walk-through</button><button class="btn" data-do="reset">↻ Start over</button></div>
+      <div class="mt-stats"></div>
+      <p class="mt-out"></p>
+      <p class="src">After Katamari Damacy (Namco, 2004): both sticks forward rolls the ball ahead, one stick arcs it, and opposite sticks turn on the spot. Things smaller than the ball stick to it and make it grow. The lawn, the objects and the growth rate are our own.</p>
     </div>
   </div>
 </section>
@@ -76,7 +70,8 @@
 </div></div>
 <script src="../../../assets/deck.js"></script>
 <script src="../../../assets/kit.js"></script>
-<script src="../../shared/topdown.js"></script>
+<script src="../../../assets/cast.js"></script>
+<script src="../../../assets/scene.js"></script>
 <script src="button-hands.js"></script>
 </body>
 </html>
