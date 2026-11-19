@@ -72,4 +72,12 @@ rec 'audits/index.html#10' audit-deadlock audit-deadlock
 rec 'audits/index.html#11' audit-factorio audit-factorio
 rec 'audits/index.html#12' audit-slay-the-spire audit-slay-the-spire
 rec 'audits/index.html#13' audit-runeterra audit-runeterra
+rec 'retro-attributes/index.html#1' ra-move-ground retro-movement-on-the-ground
+rec 'retro-attributes/index.html#2' ra-move-air retro-movement-in-the-air
+rec 'retro-attributes/index.html#3' ra-move-paths retro-movement-paths
+rec 'retro-attributes/index.html#4' ra-quality-attack retro-qualities-attack
+rec 'retro-attributes/index.html#5' ra-quality-body retro-qualities-body
+rec 'retro-attributes/index.html#6' ra-ability-bodies retro-abilities-bodies
+rec 'retro-attributes/index.html#7' ra-ability-state retro-abilities-state
+rec 'retro-attributes/index.html#8' ra-mix retro-mix-and-match
 wait
