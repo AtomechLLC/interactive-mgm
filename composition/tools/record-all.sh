@@ -80,4 +80,13 @@ rec 'retro-attributes/index.html#5' ra-quality-body retro-qualities-body
 rec 'retro-attributes/index.html#6' ra-ability-bodies retro-abilities-bodies
 rec 'retro-attributes/index.html#7' ra-ability-state retro-abilities-state
 rec 'retro-attributes/index.html#8' ra-mix retro-mix-and-match
+rec 'nine-scenes/index.html#1' f-initiate fundamental-initiate
+rec 'nine-scenes/index.html#2' f-zone fundamental-zone
+rec 'nine-scenes/index.html#3' f-punish fundamental-punish
+rec 'nine-scenes/index.html#4' f-mitigate fundamental-mitigate
+rec 'nine-scenes/index.html#5' f-reflex fundamental-reflex
+rec 'nine-scenes/index.html#6' f-react fundamental-react
+rec 'nine-scenes/index.html#7' f-setup fundamental-setup
+rec 'nine-scenes/index.html#8' f-counterplay fundamental-counterplay
+rec 'nine-scenes/index.html#9' f-response fundamental-response
 wait
