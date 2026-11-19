@@ -159,6 +159,7 @@ window.DGMS = {
     ['m8-balance--hammer-time-stun.gif', 'Binary plus analog', 'A stun on every hit is a stun-lock, while a build-up bar adds three values to tune.'],
     ['m8-balance--comebacks.gif', 'Comeback tug-of-war', 'The same match under five rule sets: a proportional comeback keeps it close, while the others run away, never end, flip, or drag on after the result is settled.'],
     ['m9-game-feel--polish-ladder.gif', 'One strike, five stages', 'The slasher climbs from blockout to proof, then hit stop is turned up until it brakes every 10 feet.'],
+    ['m9-game-feel--polish-ladder-slasher-3d.gif', 'The slasher, rebuilt in 3D', 'The same seven presets in a three.js rebuild: no polish, attack feedback, enemy reaction, camera reaction, UI, a fixed camera and a dolly camera.'],
     ['m9-game-feel--polish-ladder-fps.gif', 'One shot, seven parts', 'The first-person shot gains recoil, hit flash, charge FOV and a visor UI, one layer at a time.'],
     ['m9-game-feel--polish-ladder-rail.gif', 'One ship, seven parts', 'The rail shooter gets banks, aim assist, bursts, trails and a boost that only feels fast with FOV and sound.'],
     ['m9-game-feel--seven-principles.gif', 'Seven principles score sheet', 'Two kinds of game make different trades across the seven principles, and neither shape is complete.'],
