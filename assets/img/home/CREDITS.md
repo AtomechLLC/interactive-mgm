@@ -271,3 +271,17 @@ Genre breakdowns (Blog Posts):
 | `practice--self-study.svg` | [quill-ink](https://game-icons.net/1x1/lorc/quill-ink.html) | Lorc |
 | `practice--workshop.svg` | [round-table](https://game-icons.net/1x1/delapouite/round-table.html) | Delapouite |
 | `games.svg` | [gamepad](https://game-icons.net/1x1/delapouite/gamepad.html) | Delapouite |
+| `pvp--hit-reactions.svg` | [punch-blast](https://game-icons.net/1x1/lorc/punch-blast.html) | Lorc |
+| `mechanics-tools--weakness-chain.svg` | [crossed-chains](https://game-icons.net/1x1/lorc/crossed-chains.html) | Lorc |
+| `understand-mechanics--disguises.svg` | [domino-mask](https://game-icons.net/1x1/lorc/domino-mask.html) | Lorc |
+| `understand-mechanics--soul.svg` | [heart-bottle](https://game-icons.net/1x1/lorc/heart-bottle.html) | Lorc |
+| `pve-interactions--intents.svg` | [semi-closed-eye](https://game-icons.net/1x1/lorc/semi-closed-eye.html) | Lorc |
+| `composition--nine-scenes.svg` | [tic-tac-toe](https://game-icons.net/1x1/delapouite/tic-tac-toe.html) | Delapouite |
+| `dgms--m5-controller--button-hands.svg` | [hand-grip](https://game-icons.net/1x1/delapouite/hand-grip.html) | Delapouite |
+| `dgms--m5-controller--input-context.svg` | [gamepad](https://game-icons.net/1x1/delapouite/gamepad.html) | Delapouite |
+| `dgms--m5-controller--priced-cancels.svg` | [price-tag](https://game-icons.net/1x1/delapouite/price-tag.html) | Delapouite |
+| `dgms--m6-camera--lakitu.svg` | [video-camera](https://game-icons.net/1x1/delapouite/video-camera.html) | Delapouite |
+| `dgms--m7-sound--sound-info.svg` | [sound-on](https://game-icons.net/1x1/delapouite/sound-on.html) | Delapouite |
+| `dgms--m8-balance--hidden-variance.svg` | [perspective-dice-six-faces-random](https://game-icons.net/1x1/delapouite/perspective-dice-six-faces-random.html) | Delapouite |
+| `dgms--m8-balance--seven-bag.svg` | [swap-bag](https://game-icons.net/1x1/lorc/swap-bag.html) | Lorc |
+| `dgms--m8-balance--two-bars.svg` | [checked-shield](https://game-icons.net/1x1/lorc/checked-shield.html) | Lorc |

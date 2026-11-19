@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Module Proposals · Directing Game Mechanics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/home.css">
+</head>
+<body>
+<div class="band"><header>
+  <a class="up" href="../index.html">← Directing Game Mechanics</a>
+  <div class="kicker">DGMS · Planning notes</div>
+  <h1>Module <span>Proposals</span></h1>
+  <p>One proposal per module: the interactive pages and GIFs pitched for that module’s deck. Each opens as a Markdown file.</p>
+</header></div>
+<main>
+  <section class="mod">
+    <div class="pages" id="list"></div>
+  </section>
+</main>
+<script src="../shared/catalog.js"></script>
+<script>
+  // one row per module in course order, from the catalog; the file is <module key>.md in this folder
+  document.getElementById('list').innerHTML = window.DGMS.PARTS.map(([k, code, title]) =>
+    `<a class="pg" href="${k}.md"><img src="../../assets/img/home/dgms--${k}.svg" alt=""><span><b>${title}</b><small>${code} · ${k}.md</small></span></a>`).join('');
+</script>
+</body>
+</html>

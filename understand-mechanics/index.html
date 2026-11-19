@@ -84,9 +84,11 @@
     ['life-tap-trade', 'Mana_Crystal', 'The Life Tap Trade', 'The two slides as drawn, animated: solo, the warlock trades 40 HP for 40 mana and the same boss hit that it survived at full health now defeats it; in a raid the priest heals the 40 HP straight back', '230 to 231', 'life-tap-solo-risky', 'In Solo Play It’s Risky', 'Life Tap takes the warlock from 100/100 HP and 40/100 mana to 60/100 and 80/100, and no one heals it back: a 70 HP boss hit leaves 30 HP without the tap and defeats the warlock after it.'],
     ['resource-variety', 'Mana_Crystal', 'Resource Variety', 'Health, mana and gold as themed vessels that fill, cap and get spent, then six more resources drawn as the meters their genres use: super meters, cooldowns, real currency, cards, potions and durability', '220 to 221', '', '', ''],
     ['life-tap', 'Plague', 'Life Tap Solo vs Raid', 'The same warlock rotation twice: solo, a monster is always hitting you and the taps get you killed; in a raid the priest heals them straight back', '226 to 228', 'life-tap-solo-vs-raid', 'Risky Alone, Free in a Raid', 'Cast until out of mana, then trade 40 HP for 40 mana. Solo the warlock goes down; in the raid the priest heals every tap back.'],
+    ['disguises', 'Hammer', 'Disguises as Signals', 'The guarded door with a real game behind it: in Hitman the outfit is the signal and every door and guard is a receiver; send Pip to four rooms in a suit, a waiter outfit, a guard uniform or with a lockpick, and meet the enforcer who sees through the outfit they know. One slide, for The Guarded Door', '58 to 63', '', '', '', 'mock-up'],
+    ['soul', 'Mana_Crystal', 'One Pool, Two Spenders', 'The resource pool lesson in Hollow Knight: every nail hit fills the SOUL vessel and both Focus (heal) and Vengeful Spirit (strike) spend from it, with the game’s own numbers against a three-second boss clock. One slide, for Resource Pool', '198 to 216', '', '', '', 'mock-up'],
   ];
   // pages that are built so far
-  const READY = ['xray', 'guarded-door', 'cast-timeline', 'resource-pool', 'grass', 'type-weakness', 'life-tap', 'life-tap-trade', 'chaotic-energy', 'resource-variety'];
+  const READY = ['xray', 'guarded-door', 'cast-timeline', 'resource-pool', 'grass', 'type-weakness', 'life-tap', 'life-tap-trade', 'chaotic-energy', 'resource-variety', 'disguises', 'soul'];
   const LIVE = PAGES.filter(p => READY.includes(p[0]));
   // deck parts in deck order: [title, first slide, last slide]. Each page sits under the part its first slide is in.
   const PARTS = [
@@ -99,8 +101,8 @@
   ];
   const first = sl => parseInt(sl, 10);
   LIVE.sort((a, b) => first(a[4]) - first(b[4]));
-  const card = ([f, ic, t, b, sl, gif]) =>
-    `<a class="mod" href="${f}/index.html"><img src="../assets/img/home/understand-mechanics--${f}.svg" alt=""><span><b>${t}</b><small>${b} (deck slides ${sl}). ${gif ? `GIF: gifs/${gif}.gif` : `Stills: stills/${f}-*.png`}</small><br><span class="tag">ready</span></span></a>`;
+  const card = ([f, ic, t, b, sl, gif, , , tag]) =>
+    `<a class="mod" href="${f}/index.html"><img src="../assets/img/home/understand-mechanics--${f}.svg" alt=""><span><b>${t}</b><small>${b} (deck slides ${sl}).${gif ? ` GIF: gifs/${gif}.gif` : tag ? '' : ` Stills: stills/${f}-*.png`}</small><br><span class="tag">${tag || 'ready'}</span></span></a>`;
   document.getElementById('cards').innerHTML = PARTS.map(([pt, from, to]) => {
     const here = LIVE.filter(p => first(p[4]) >= from && first(p[4]) <= to);
     return here.length ? `<div class="part" style="--n:${here.length}"><h3>${pt}<span>slides ${from} to ${to}</span></h3><div class="row">${here.map(card).join('')}</div></div>` : '';
