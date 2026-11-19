@@ -1,7 +1,7 @@
 /* The article's 16 abilities (actions other than movement), in two sets: size, force and bodies; then state and timing.
    See kit.js. */
 (function () {
-  const { A, GY, FOE, S, hero, blob, gap, spikes, pipe, orb, ph, arc, pop, hit, spark, shot, note, dizzy, face, T, C, clamp, lerp, ease, TAU } = RA;
+  const { A, GY, FOE, S, P, CV, ZT, simon, zs, pl, dshot, hero, blob, gap, spikes, pipe, orb, ph, arc, pop, hit, spark, shot, note, dizzy, face, T, C, clamp, lerp, ease, TAU } = RA;
   const add = (view, o) => Object.entries(o).forEach(([k, v]) => { A[k] = { group: 'Ability', view, ...v }; });
   const step = (t, at, vals) => { let v = vals[0]; at.forEach((a, i) => { v = lerp(v, vals[i + 1], ease(ph(t, a, a + .2))); }); return v; };
 
@@ -49,33 +49,27 @@
         const cx = lerp(10, -64, c), cy = lerp(30, -22, c);
         const px = t < 1 ? walk : t < 2.6 ? cx : lerp(-64, -20, ph(t, 3, 4)), py = t < 1 ? 30 : t < 2.6 ? cy : lerp(-22, 4, ph(t, 3, 4));
         if (t > .4 && t < 1) T.shadow(walk, 30, 26 * ph(t, .4, 1), 20 * ph(t, .4, 1), .35);
-        T.player(px, py, t < 1 ? 0 : t < 2.6 ? Math.PI : .5, t >= 1 && t < 2.6 ? .7 : .85);
-        if (t >= .85 && t < 2.9) {
-          const a = t < 1 ? ph(t, .85, 1) : 1 - ph(t, 2.5, 2.9);
-          g.save(); g.globalAlpha = a; g.strokeStyle = '#5a2f9a'; g.fillStyle = 'rgba(138,79,214,.55)'; g.lineWidth = 3;
-          g.beginPath(); g.arc(cx, cy, 22, 0, TAU); g.fill(); g.stroke();
-          for (let i = 0; i < 5; i++) { const q = -2.4 + i * .5; g.beginPath(); g.moveTo(cx + Math.cos(q) * 22, cy + Math.sin(q) * 22); g.lineTo(cx + Math.cos(q) * 32, cy + Math.sin(q) * 32); g.stroke(); }
-          g.restore();
-        }
+        pl(g, px, py, t < 1 ? 0 : t < 2.6 ? Math.PI : .5, t >= 1 && t < 2.6 ? .7 : .85);
+        if (t >= .85 && t < 2.9) zs(g, 'z-wallmaster', cx, cy - 4, { k: 2.6, a: t < 1 ? ph(t, .85, 1) : 1 - ph(t, 2.5, 2.9), noShadow: true });
         if (t > 1.3 && t < 2.5) note('carried back', cx + 30, cy + 36, C.purple);
         pop('grabbed', 10, 4, t - 1, C.purple);
       } },
   });
   add('side', {
     thrower: { name: 'Thrower', gi: 'thrown-daggers', col: '#b0392f', line: 'Throws what it is holding: an object, the player, an enemy', counter: 'Dodge until its pile runs out', ex: 'Castlevania’s barrel-throwing Skeletons; Super Mario Bros. 3’s Buster Beetle',
-      loop(g, t) {
+      loop(g, t) {   // Castlevania's white skeleton and its bones; the pile is ours, to show a supply that ends
         const at = [.5, 1.6, 2.7], land = [-50, -82, -46], left = 3 - at.filter(a => t > a - .25).length;
-        for (let i = 0; i < left; i++) S(g, 'used-block', 102, GY - i * 14, 14);
-        blob(g, 72, GY, 13, FOE);
+        for (let i = 0; i < left; i++) P(g, 'cv-bone1', 104, GY - i * 9, CV);
+        P(g, 'cv-skel' + (Math.floor(t * 3) % 2 ? '2' : ''), 74, GY, CV);
         at.forEach((a, i) => {
           const k = (t - a) / .8;
-          if (k < 0 && t > a - .25) S(g, 'used-block', 66, GY - 28, 14);
-          if (k >= 0 && k <= 1) S(g, 'used-block', lerp(62, land[i], k), GY - 22 * (1 - k) - arc(k, 54), 14, { rot: t * 9 });
-          if (k > 1 && k < 1.5) { S(g, 'used-block', land[i], GY, 14, { a: 1 - (k - 1) * 2 }); T.poof(land[i], GY - 4, (k - 1) * .8, 8); }
+          if (k < 0 && t > a - .25) P(g, 'cv-bone0', 66, GY - 44, CV);
+          if (k >= 0 && k <= 1) P(g, 'cv-bone' + Math.floor(t * 12) % 3, lerp(62, land[i], k), GY - 30 * (1 - k) - arc(k, 54), CV);
+          if (k > 1 && k < 1.5) { P(g, 'cv-bone1', land[i], GY, CV, { a: 1 - (k - 1) * 2 }); T.poof(land[i], GY - 4, (k - 1) * .8, 8); }
         });
         const hx = step(t, [.95, 2.05, 3.15], [-50, -82, -46, -76]);
-        hero(g, hx, GY, { walk: [.95, 2.05, 3.15].some(a => t > a && t < a + .2) ? t : null });
-        if (t > 3.5) note('pile is empty', 92, GY - 44, C.blue);
+        simon(g, hx, GY, { walk: [.95, 2.05, 3.15].some(a => t > a && t < a + .2) ? t : null });
+        if (t > 3.5) note('pile is empty', 92, GY - 64, C.blue);
       } },
     emitter: { name: 'Emitter', gi: 'spawn-node', col: '#23263f', line: 'Emits enemies or shots from an endless supply', counter: 'Learn the interval; the supply never ends', ex: 'Super Mario Bros. 3’s Bullet Bill cannons; Lakitus; Gauntlet’s spawners; anything with a gun',
       loop(g, t) {
@@ -93,17 +87,17 @@
       } },
   });
   add('top', {
-    splitter: { name: 'Splitter', gi: 'split-arrows', col: '#2fae63', line: 'Splits into several enemies and destroys itself', counter: 'Clear room first: each kill adds bodies', ex: 'Rogue Legacy’s Slimes; The Legend of Zelda’s Vire and Biri',
-      loop(g, t) {
-        const s1 = ease(ph(t, .7, 1)), s2 = ease(ph(t, 1.7, 2)), s3 = ease(ph(t, 2.7, 3)), n = 1 + [.7, 1.7, 2.7].filter(a => t > a).length, col = '#57c98a', o = { edge: '#1a6a3c' };
-        if (t < .7) T.foe(36, 0, 24, Math.PI, col, o);
-        else {
-          if (t < 1.7) T.foe(36 - 6 * s1, -34 * s1, 15, Math.PI, col, o); else [-1, 1].forEach(d => T.foe(30 + d * 24 * s2 - (t - 1.7) * 6, -34 - 16 * s2, 9, Math.PI, col, o));
-          if (t < 2.7) T.foe(36 - 6 * s1, 34 * s1, 15, Math.PI, col, o); else [-1, 1].forEach(d => T.foe(30 + d * 24 * s3 - (t - 2.7) * 6, 34 + 16 * s3, 9, Math.PI, col, o));
-        }
-        T.player(-78, 0, 0, .85);
-        hit(-64, 0, 14, 0, t - .7); hit(-64, 0, 18, -30, t - 1.7); hit(-64, 0, 18, 30, t - 2.7);
-        [.7, 1.7, 2.7].forEach((a, i) => pop('split', 36, [-34, -62, 6][i], t - a, C.good));
+    splitter: { name: 'Splitter', gi: 'split-arrows', col: '#2f6fb0', line: 'Splits into several enemies and destroys itself', counter: 'Clear room first: each kill adds bodies', ex: 'Rogue Legacy’s Slimes; The Legend of Zelda’s Vire and Biri',
+      loop(g, t) {   // The Legend of Zelda's Vire: one sword blow turns it into two Keese
+        const V = [[30, -36, .8], [44, 34, 2]]; let n = 2;
+        V.forEach(([x, y, at], i) => {
+          if (t < at) { zs(g, 'z-vire', x, y + Math.abs(Math.sin(t * 5 + i)) * -6); return; }
+          n++; const k = ease(ph(t, at, at + .4));
+          [-1, 1].forEach(d => zs(g, Math.floor(t * 8 + d) % 2 ? 'z-keese' : 'z-keese2', x + d * 24 * k - (t - at) * 9, y + d * 12 * k + Math.sin(t * 9 + d) * 4, { noShadow: true }));
+        });
+        pl(g, -78, 0, 0, { sword: Math.abs(t - .8) < .15 || Math.abs(t - 2) < .15 });
+        hit(-64, 0, 22, -32, t - .8); hit(-64, 0, 36, 30, t - 2);
+        pop('split', 30, -62, t - .8, C.good); pop('split', 44, 6, t - 2, C.good);
         note(`bodies: ${n}`, -70, 60, n > 2 ? C.redDk : C.muted);
       } },
     cloner: { name: 'Cloner', gi: 'egg-clutch', col: '#e07a6e', line: 'Copies itself; the original survives', counter: 'Find the original and hit that one', ex: 'The Legend of Zelda’s Ghini',
@@ -112,11 +106,11 @@
         P.forEach(([x, y], i) => {
           const a = .6 + i * .8, k = ease(ph(t, a, a + .35)); if (t < a) return;
           if (gone) { T.poof(x, y, t - 3, 14); return; }
-          T.foe(lerp(52, x, k), lerp(0, y, k), 14, Math.PI, '#eeb4ac', { a: .85, edge: '#c0766c' }); if (k >= 1) note('copy', x, y + 26);
+          zs(g, 'z-ghini', lerp(52, x, k), lerp(0, y, k), { a: .5 }); if (k >= 1) note('copy', x, y + 26);
         });
-        T.foe(52, 0, 17, Math.PI, FOE, { mark: 'staff', a: gone && t < 3.5 && Math.floor(t * 14) % 2 ? .4 : 1 });
+        zs(g, 'z-ghini', 52, 0, { a: gone && t < 3.5 && Math.floor(t * 14) % 2 ? .4 : 1 });
         if (t > 2.4) note('original', 52, -30, C.redDk);
-        T.player(-82, 0, 0, .85);
+        pl(g, -82, 0, 0, .85);
         hit(-68, 0, 34, 0, t - 3); pop('-12', 52, -44, t - 3.02);
       } },
   });
@@ -126,7 +120,7 @@
     morpher: { name: 'Morpher', gi: 'cycle', col: '#8a4fd6', line: 'Transforms into another kind of enemy', counter: 'Re-read it after every change', ex: '',
       loop(g, t) {
         if (t < 1.5) S(g, 'goomba', 90 - 30 * t, GY, 26, { flip: Math.floor(t * 6) % 2 });
-        else S(g, 'paratroopa', 45 - 45 * (t - 1.6), GY - 46 * ease(ph(t, 1.6, 2.1)) + 4 * Math.sin(t * 5), 28, { flip: true });
+        else S(g, 'paratroopa', 45 - 45 * (t - 1.6), GY - 46 * ease(ph(t, 1.6, 2.1)) + 4 * Math.sin(t * 5), 28);
         if (t > 1.35 && t < 2.1) { T.poof(46, GY - 16, t - 1.35, 16); T.flash(46, GY - 16, 30, 1 - ph(t, 1.35, 1.8)); }
         if (t < 1.35) note('walks', 90 - 30 * t, GY - 38); else if (t > 1.8 && t < 3.4) note('now it flies', 45 - 45 * (t - 1.6), -42, C.purple);
         const hx = t < 2.4 ? -60 : lerp(-60, 50, ph(t, 2.4, 3.5));
@@ -171,10 +165,10 @@
     switcher: { name: 'Switcher', gi: 'gears', col: '#5d618c', line: 'Switches between sets of attributes', counter: 'Wait for the state that can be hurt', ex: 'Super Mario Bros. 3’s Boos; The Legend of Zelda’s Peahats',
       loop(g, t) {
         const fly = t < 2 || t > 3.5, m = t < 2 ? t : t > 3.5 ? 2 + (t - 3.5) : 2, fx = 40 + 40 * Math.cos(m * 2), fy = 34 * Math.sin(m * 2.6);
-        if (fly) { g.save(); g.translate(fx, fy); g.rotate(t * 16); g.strokeStyle = '#8b8fa8'; g.lineWidth = 5; g.lineCap = 'round'; g.beginPath(); g.moveTo(-26, 0); g.lineTo(26, 0); g.moveTo(0, -26); g.lineTo(0, 26); g.stroke(); g.restore(); }
-        T.foe(fx, fy, 15, Math.PI, fly ? '#8b8fa8' : FOE, { edge: fly ? C.navy : C.redDk, a: !fly && t > 2.62 && Math.floor(t * 14) % 2 ? .5 : 1 });
+        if (fly) { T.shadow(fx, fy + 22, 12, 4, .2); zs(g, Math.floor(t * 14) % 2 ? 'z-peahat' : 'z-peahat2', fx, fy - 6, { noShadow: true }); }
+        else zs(g, 'z-peahat', fx, fy, { a: t > 2.62 && Math.floor(t * 14) % 2 ? .5 : 1 });
         note(fly ? 'flying: no damage' : 'landed: open', fx, fy + 38, fly ? C.muted : C.redDk);
-        T.player(-80, 10, face(-80, 10, fx, fy), .85);
+        pl(g, -80, 10, face(-80, 10, fx, fy), .85);
         const f8 = [40 + 40 * Math.cos(1.6), 34 * Math.sin(2.08)];
         hit(-66, 10, f8[0], f8[1], t - .8); spark(f8[0] - 14, f8[1], t - .8, 18); pop('0', f8[0], f8[1] - 30, t - .82, C.muted);
         [2.6, 3].forEach(a => { hit(-66, 10, fx, fy, t - a); pop('-10', fx, fy - 30, t - a - .02); });
@@ -206,14 +200,14 @@
         shot(g, t, 2.4, -8, 80, GY - 16, .5); spark(80, GY - 14, t - 2.9, 16); pop('-1', 90, GY - 50, t - 2.9);
       } },
     charger: { name: 'Charger', gi: 'hourglass', col: '#62688a', line: 'Pauses between switching behaviours', counter: 'The pause is the tell: move on its release', ex: 'Castlevania’s Wolves: pause, then lunge',
-      loop(g, t) {
-        const d = ease(ph(t, 1.5, 1.8)), x = lerp(72, -78, d), flip = t > 1.9, crouch = (t > .3 && t < 1.5) || (t > 2.2 && t < 3.9);
-        blob(g, x + (t > 1.2 && t < 1.5 ? Math.sin(t * 50) * 1.5 : 0), GY - arc(d, 8), 12, '#8b8fa8', { sx: 1.5, sy: crouch ? .8 : 1, flip, a: (t > 2.82 && t < 3.6 && Math.floor(t * 14) % 2) ? .5 : 1 });
+      loop(g, t) {   // drawn with Castlevania's Black Leopard, which crouches on a ledge and then springs
+        const d = ease(ph(t, 1.5, 1.8)), x = lerp(72, -80, d), flip = t > 1.9, crouch = t < 1.5 || t > 2.1;
+        P(g, crouch ? 'cv-leopard-sit' : 'cv-leopard' + Math.floor(t * 14) % 3, x + (t > 1.2 && t < 1.5 ? Math.sin(t * 50) * 1.5 : 0), GY - arc(d, 8), CV, { flip, a: t > 2.72 && t < 3.6 && Math.floor(t * 14) % 2 ? .5 : 1 });
         const bar = (a, b) => { const k = ph(t, a, b); if (k > 0 && k < 1) { g.fillStyle = 'rgba(21,32,68,.75)'; g.fillRect(x - 18, GY - 42, 36, 7); g.fillStyle = C.gold; g.fillRect(x - 17, GY - 41, 34 * k, 5); note('pause', x, GY - 54, C.goldInk); } };
         bar(.3, 1.5); bar(2.2, 3.9);
         const j = ph(t, 1.42, 2.02);
-        hero(g, -40, GY - arc(j, 46), { jump: j > 0 && j < 1, flip: t > 2 });
-        shot(g, t, 2.6, -52, -68, GY - 14, .2); pop('-1', -78, GY - 62, t - 2.82); shot(g, t, 3.1, -52, -68, GY - 14, .2); pop('-1', -78, GY - 62, t - 3.32);
+        simon(g, -34, GY - arc(j, 46), { jump: j > 0 && j < 1, flip: t > 2, whip: (t > 2.6 && t < 2.9) || (t > 3.1 && t < 3.4) });
+        pop('-1', -80, GY - 62, t - 2.72); pop('-1', -80, GY - 62, t - 3.22);
       } },
   });
 })();
