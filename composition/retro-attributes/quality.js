@@ -10,7 +10,7 @@
         const x = 105 - 45 * t, inWall = Math.abs(x - 2) < 22, j = ph(t, 3.1, 3.8);
         T.wall(-10, -40, 24, 90);
         dshot(g, t, .4, -52, -22, GY - 30, .3); spark(-12, GY - 30, t - .7, 14); pop('blocked', -40, -10, t - .72, C.muted);
-        P(g, 'cv-ghost', x, GY - 8, CV, { a: inWall ? .45 : 1 });
+        P(g, 'cv-ghost', x, GY - 8, CV, { flip: true, a: inWall ? .45 : 1 });
         if (t > 1.6 && t < 2.6) note('through the wall', 2, -54, C.purple);
         simon(g, t < 3.1 ? -70 : lerp(-70, -14, j), GY - arc(j, 52), { jump: j > 0 && j < 1 });
       } },
@@ -76,10 +76,10 @@
     hardToHit: { name: 'Hard to Hit', gi: 'dodge', col: '#d0602a', line: 'Too fast or too tiny for normal attack ranges', counter: 'Strike at its height: crouch for the low ones', ex: 'Zelda II’s Myu',
       loop(g, t) {
         const mx = lerp(84, -14, ph(t, 0, 1.2)) + (t > 1.2 ? Math.sin(t * 5) * 5 : 0), my = GY - Math.abs(Math.sin(t * 9)) * 9, dead = t > 2.62;
-        if (!dead) P(g, 'z2-myu', mx, my, CV); else T.poof(-14, GY - 6, t - 2.62, 8);
+        if (!dead) { T.shadow(mx, GY - 1, 13, 3, .22); P(g, 'z2-myu', mx, my, 2.6); } else T.poof(-14, GY - 6, t - 2.62, 8);
         const stab = t > 1.4 && t < 1.75, low = t > 2.2, cstab = t > 2.5 && t < 2.85;
         link2(g, -52, GY, { stab, crouch: low && t < 3.3, cstab });
-        pop('miss', -14, -2, t - 1.5, C.muted); if (t > 1.5 && t < 2.2) note('the blade passes over it', -10, GY - 64);
+        pop('miss', 40, 8, t - 1.5, C.muted); if (t > 1.5 && t < 2.2) note('the blade passes over it', -10, GY - 64);
         spark(-16, GY - 8, t - 2.6, 14); pop('-1', -14, 6, t - 2.62);
         if (low && t < 3.3) note('crouch', -52, GY - 54, C.blue);
       } },
@@ -90,11 +90,11 @@
     revivor: { name: 'Revivor', gi: 'skull-crossed-bones', col: '#a8201c', line: 'Comes back after it dies', counter: 'Pass while it is down; it will get up', ex: 'Castlevania’s Skeletons; Super Mario’s Dry Bones',
       loop(g, t) {   // Castlevania's red skeleton: it collapses into a pile and rebuilds itself
         const sx = t < 1.3 ? 82 - 35 * t : 36 - 30 * Math.max(0, t - 3.4);
-        if (t < 1.3 || t >= 3.4) P(g, 'cv-redskel' + (Math.floor(t * 4) % 2 ? '2' : ''), sx, GY, CV);
+        if (t < 1.3 || t >= 3.4) P(g, 'cv-redskel' + (Math.floor(t * 4) % 2 ? '2' : ''), sx, GY, CV, { flip: true });
         else if (t < 3) {
-          P(g, 'cv-redskel-grow0', 36, GY, CV);
+          P(g, 'cv-redskel-grow0', 36, GY, CV, { flip: true });
           g.strokeStyle = C.purple; g.lineWidth = 4; g.beginPath(); g.arc(36, GY - 30, 9, -Math.PI / 2, -Math.PI / 2 + TAU * ph(t, 1.3, 3)); g.stroke();
-        } else P(g, 'cv-redskel-grow' + (t < 3.2 ? 1 : 2), 36, GY, CV);
+        } else P(g, 'cv-redskel-grow' + (t < 3.2 ? 1 : 2), 36, GY, CV, { flip: true });
         const hx = t < 1.6 ? -30 : lerp(-30, 104, ph(t, 1.6, 2.9));
         simon(g, hx, GY, { whip: t > 1.2 && t < 1.5, walk: t > 1.6 && t < 2.9 ? t : null });
         spark(30, GY - 32, t - 1.3, 16); pop('-1', 36, -30, t - 1.32); if (t > 3.4) note('back up', sx, GY - 62, C.redDk);
