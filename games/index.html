@@ -57,6 +57,33 @@
   .mod ul { margin: 0; padding-left: 18px; font-size: 15px; }
   .mod li { margin: 2px 0; }
   .mod a { color: var(--gold-ink); }
+  /* by-module view */
+  .jump { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 14px; }
+  .jump a { font-size: 13px; font-weight: 600; text-decoration: none; padding: 2px 9px; border-radius: 999px; background: #e8e1d0; color: var(--ink); white-space: nowrap; }
+  .jump a.mgm { background: #152044; color: #ffb951; }
+  .jump a.dgms { background: #2d5a8a; color: #fff; }
+  .jump a.blog { background: #9a5a06; color: #fff; }
+  .jump a small { font-weight: 500; opacity: .8; }
+  section.ms { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px 14px; margin: 0 0 12px; scroll-margin-top: 12px; }
+  section.ms h2 { font-family: Montserrat, sans-serif; font-weight: 700; font-size: 20px; margin: 0 0 8px; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
+  section.ms h2 a { color: inherit; text-decoration: none; }
+  section.ms h2 a:hover { text-decoration: underline; }
+  section.ms h2 .crs { font-size: 12px; font-weight: 700; letter-spacing: .06em; padding: 2px 8px; border-radius: 999px; }
+  section.ms h2 .crs.mgm { background: #152044; color: #ffb951; }
+  section.ms h2 .crs.dgms { background: #2d5a8a; color: #fff; }
+  section.ms h2 .crs.blog { background: #9a5a06; color: #fff; }
+  section.ms h2 small { font-family: Jost, sans-serif; font-weight: 500; font-size: 14px; color: var(--muted); }
+  ul.gl { list-style: none; margin: 0; padding: 0; columns: 260px; column-gap: 22px; }
+  ul.gl > li { break-inside: avoid; margin: 0; padding: 1px 0; }
+  ul.gl details summary { display: flex; gap: 8px; align-items: baseline; padding: 2px 0; grid-template-columns: none; }
+  ul.gl details summary::before { content: '▸'; color: var(--gold-ink); font-size: 12px; width: 10px; flex: none; }
+  ul.gl details[open] summary::before { content: '▾'; }
+  ul.gl .gn { font-weight: 500; font-size: 16px; }
+  ul.gl .gc { font-size: 13px; color: var(--muted); white-space: nowrap; }
+  ul.gl .gk { font-size: 11px; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 0 6px; white-space: nowrap; }
+  ul.gl details ul { margin: 2px 0 6px 18px; padding-left: 14px; font-size: 14px; }
+  ul.gl details ul a { color: var(--gold-ink); }
+  ul.gl details ul .also { color: var(--muted); list-style: none; margin-left: -14px; margin-top: 3px; font-size: 13px; }
   .empty { color: var(--muted); padding: 30px 0; text-align: center; }
   .note { margin-top: 30px; color: var(--muted); font-size: 14px; max-width: 900px; }
   footer { max-width: 1180px; margin: 0 auto; padding: 0 24px 40px; color: var(--muted); font-size: 13px; }
@@ -67,15 +94,16 @@
 <div class="band"><header>
   <div class="kicker"><a href="../index.html">← Mastering Game Mechanics</a> · Reference</div>
   <h1>Games <span>Referenced</span></h1>
-  <p>Every game the MGM and DGMS pages, GIFs and deck notes point to, plus the blog posts. Search for a game, or pick a course or module to see what it draws on. Open a game to see where it comes up.</p>
+  <p>Every game the MGM and DGMS pages, GIFs and deck notes point to, plus the blog posts. Search for a game, or pick a course or module to see what it draws on. Open a game to see where it comes up, or switch to the module view to see each module with the games it references.</p>
 </header></div>
 <main>
   <div class="bar">
+    <div class="row" id="views"><label>View</label></div>
     <div class="row"><input type="search" id="q" placeholder="Search games, e.g. Zelda, Street Fighter, chess" aria-label="Search games"></div>
     <div class="row" id="courses"><label>Course</label></div>
     <div class="row"><label for="mod">Module</label><select id="mod"></select></div>
     <div class="row" id="kinds"><label>Type</label></div>
-    <div class="row"><label for="sort">Sort</label><select id="sort"><option value="n">Most mentioned first</option><option value="a">A to Z</option><option value="w">In the most modules first</option></select></div>
+    <div class="row"><label for="sort">Sort</label><select id="sort"><option value="n" id="sort-n">Most mentioned first</option><option value="a">A to Z</option><option value="w">In the most modules first</option></select></div>
   </div>
   <div class="status" id="status"></div>
   <div class="grid" id="grid"></div>
@@ -119,8 +147,10 @@
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const fold = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
-  const st = { q: '', c: 'all', m: 'all', k: 'all', s: 'n' };
+  const VIEWS = [['games', 'By game'], ['modules', 'By module']];
+  const st = { v: 'games', q: '', c: 'all', m: 'all', k: 'all', s: 'n' };
   const p = new URLSearchParams(location.search);
+  if (p.get('view') === 'modules') st.v = 'modules';
   if (p.get('q')) st.q = p.get('q');
   if (p.get('m') && M[p.get('m')]) { st.m = p.get('m'); st.c = M[st.m].c; }
   else if (p.get('c') && COURSES.some(c => c[0] === p.get('c'))) st.c = p.get('c');
@@ -134,6 +164,7 @@
       el.appendChild(b);
     });
   }
+  chips($('views'), VIEWS, 'v');
   chips($('courses'), COURSES, 'c');
   chips($('kinds'), KINDS, 'k');
   $('q').value = st.q;
@@ -160,7 +191,37 @@
     return `<details class="g"><summary><span class="nm">${esc(g.n)}</span><span class="ct"><b>${n}</b> mention${n === 1 ? '' : 's'}</span><span class="tags">${g.t !== 'v' ? `<span class="tag kind">${KIND_NAME[g.t]}</span>` : ''}${tags}</span></summary><div class="det">${det}</div></details>`;
   }
 
+  const modName = k => (M[k].c === 'Blog' ? '' : M[k].c + ' ') + M[k].n;
+  const short = k => M[k].c === 'Blog' ? 'Blog' : M[k].c + ' ' + M[k].n.split(' · ')[0].replace('Self-Study & Workshops', 'Practice').replace('Course-wide notes', 'notes').replace('Course-wide pages', 'pages');
+
+  // one section per module in scope, listing the games it references
+  function renderModules() {
+    const q = fold(st.q.trim());
+    const games = window.GAMES.filter(g => (st.k === 'all' || g.t === st.k) && (!q || fold(g.n).includes(q)));
+    const secs = MODS.map(([k]) => k).filter(inScope).map(k => {
+      const rows = games.filter(g => g.m[k]).map(g => ({ g, n: g.m[k][0], w: Object.keys(g.m).length }));
+      const by = { n: (a, b) => b.n - a.n || a.g.n.localeCompare(b.g.n), a: (a, b) => a.g.n.localeCompare(b.g.n), w: (a, b) => b.w - a.w || b.n - a.n || a.g.n.localeCompare(b.g.n) }[st.s];
+      rows.sort(by);
+      return { k, rows };
+    }).filter(s => s.rows.length);
+    const total = new Set(secs.flatMap(s => s.rows.map(r => r.g.n))).size;
+    const scope = st.m !== 'all' ? `<a href="${M[st.m].h}">${esc(modName(st.m))}</a>` : st.c === 'all' ? 'all courses and the blog posts' : st.c === 'Blog' ? 'the blog posts' : 'all ' + st.c + ' modules';
+    $('status').innerHTML = `<span><b>${total}</b> game${total === 1 ? '' : 's'} across <b>${secs.length}</b> section${secs.length === 1 ? '' : 's'} in ${scope}</span>`;
+    if (!secs.length) { $('grid').innerHTML = '<p class="empty">No game matches. Clear the search or widen the course.</p>'; return; }
+    const jump = secs.length > 1 ? `<nav class="jump" aria-label="Jump to module">${secs.map(s => `<a class="${M[s.k].c.toLowerCase()}" href="#mod-${s.k}">${esc(short(s.k))} <small>${s.rows.length}</small></a>`).join('')}</nav>` : '';
+    $('grid').innerHTML = jump + secs.map(({ k, rows }) => {
+      const li = rows.map(({ g, n }) => {
+        const ws = g.m[k][1].map(([label, href]) => `<li>${href ? `<a href="../${esc(href)}">${esc(label)}</a>` : esc(label)}</li>`).join('');
+        const others = Object.keys(g.m).filter(o => o !== k).sort((a, b) => M[a].i - M[b].i).map(short);
+        const also = others.length ? `<li class="also">Also in ${esc(others.join(', '))}</li>` : '';
+        return `<li><details><summary><span class="gn">${esc(g.n)}</span>${g.t !== 'v' ? `<span class="gk">${KIND_NAME[g.t]}</span>` : ''}<span class="gc">${n}</span></summary><ul>${ws}${also}</ul></details></li>`;
+      }).join('');
+      return `<section class="ms" id="mod-${k}"><h2><span class="crs ${M[k].c.toLowerCase()}">${esc(M[k].c)}</span><a href="${M[k].h}">${esc(M[k].n)}</a><small>${rows.length} game${rows.length === 1 ? '' : 's'}</small></h2><ul class="gl">${li}</ul></section>`;
+    }).join('');
+  }
+
   function render() {
+    if (st.v === 'modules') return renderModules();
     const q = fold(st.q.trim());
     let rows = window.GAMES.map(g => {
       const ks = Object.keys(g.m).filter(inScope);
@@ -174,12 +235,16 @@
   }
 
   function sync(soft) {
+    document.querySelectorAll('#views .chip').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === st.v));
+    $('grid').className = st.v === 'modules' ? 'mods' : 'grid';
+    $('sort-n').textContent = st.v === 'modules' ? 'Most mentioned in the module first' : 'Most mentioned first';
     document.querySelectorAll('#courses .chip').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === st.c));
     document.querySelectorAll('#kinds .chip').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === st.k));
     $('sort').value = st.s;
     if (!soft) fillModules();
     render();
     const u = new URLSearchParams();
+    if (st.v !== 'games') u.set('view', st.v);
     if (st.q) u.set('q', st.q);
     if (st.m !== 'all') u.set('m', st.m); else if (st.c !== 'all') u.set('c', st.c);
     if (st.k !== 'all') u.set('k', st.k);
