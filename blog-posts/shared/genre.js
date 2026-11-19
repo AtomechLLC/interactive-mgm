@@ -96,6 +96,9 @@
   }
 
   window.GK = { scene, font, panel, head, text, wrap, big, axes, line, box, rng, img, act };
-  window.__seek = (t, which) => scenes[which || first].seek(t);
-  window.__dur = which => scenes[which || first].dur();
+  // a page whose first slide has its own __seek / __dur (loaded before this file) keeps them for its own scenes
+  const prevSeek = window.__seek, prevDur = window.__dur;
+  const mine = which => which ? !!scenes[which] : !prevSeek;
+  window.__seek = (t, which) => mine(which) ? scenes[which || first].seek(t) : prevSeek(t, which);
+  window.__dur = which => mine(which) ? scenes[which || first].dur() : prevDur(which);
 })();

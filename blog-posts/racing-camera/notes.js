@@ -1,4 +1,5 @@
 // Speaker notes. Source: funsmith.world genre breakdown, "Racing Game Design". Camera values are illustrative.
 window.NOTES = [
   { script: 'Racing games communicate speed mostly through the camera. Here is the same car at the same hundred and eighty kilometres an hour, twice. The left camera is plain. On the right, widen the field of view: the roadside posts sweep past the edges of the screen faster, which the eye reads as speed. Add camera shake that grows with speed, then speed lines streaking from the vanishing point. The speedometer never moves. If a car feels slow, check the camera before the physics.' },
+  { script: 'Play it: slide one made the same speed feel faster with the camera. Now drive twelve corners and brake on the 100 board. Six corners use the plain camera and six use the full kit, shuffled, so practice helps both equally, and the gap before each board changes so you cannot learn a rhythm. At the end you see your own brake points with each camera. Check whether the camera that feels faster is the one you brake less precisely with. Measure players rather than guessing where your camera sits.' },
 ];

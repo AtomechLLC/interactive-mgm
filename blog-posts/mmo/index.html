@@ -33,11 +33,32 @@
   </div>
 </section>
 
+<section class="slide" data-title="Write the tag rule" data-demo="tags">
+  <div class="kicker">genre breakdown · MMO · spike</div>
+  <h2 class="sm">Is the next player a <span class="accent">rival or a help?</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>One rare spawn, your rules</h4>
+      <label class="rng">Players in the zone <b class="tg-nv"></b><input type="range" class="tg-n" min="5" max="80" step="5" value="40"></label>
+      <div class="seg tg-rule"><button class="btn on" data-r="first">First tag wins</button><button class="btn" data-r="shared">Everyone who hits it</button></div>
+      <label class="rng">Respawn <b class="tg-rv"></b><input type="range" class="tg-r" min="2" max="20" step="1" value="5"></label>
+      <div class="seg tg-cap"><button class="btn on" data-c="0">One world</button><button class="btn" data-c="30">Layers of 30</button><button class="btn" data-c="15">Layers of 15</button></div>
+      <label class="chk"><input type="checkbox" class="tg-scale"> Health grows with attackers</label>
+      <div class="row wrap"><button class="btn tour on">▶ Walk-through</button></div>
+      <div class="mt-stats"></div>
+      <p class="mt-out"></p>
+      <p class="src">A per-hour average, not a simulation. Contest share, health and every threshold are illustrative.</p>
+    </div>
+  </div>
+</section>
+
 </div></div>
 <script src="../../assets/deck.js"></script>
 <script src="../../assets/kit.js"></script>
 <script src="../shared/topdown.js"></script>
 <script src="../shared/genre.js"></script>
 <script src="mmo.js"></script>
+<script src="tags.js"></script>
 </body>
 </html>
