@@ -9,6 +9,26 @@
 <link rel="stylesheet" href="../../assets/deck.css">
 <link rel="stylesheet" href="../../assets/kit.css">
 <link rel="stylesheet" href="../shared/blog.css">
+<style>
+  /* this deck's side-panel pieces */
+  .mt-side .act { display: block; width: 100%; font-size: 17px; padding: 9px 12px; margin: 6px 0 8px; background: var(--navy); color: #fff; }
+  .mt-side .act:disabled { opacity: .55; }
+  .mt-side .mt-stats b { min-width: 92px; font-size: 26px; flex: none; }
+  .mt-side .mt-stats span { font-size: 14.5px; line-height: 1.25; }
+  .slide .mt-side .mt-out { font-size: 17px; line-height: 1.38; }
+  .rd-bars { display: grid; gap: 5px; margin: 10px 0 2px; }
+  .rd-bar { display: grid; grid-template-columns: 112px 1fr 84px; gap: 8px; align-items: center; font-size: 14px; color: var(--muted); }
+  .rd-bar.on span { color: var(--ink); font-weight: 600; }
+  .rd-bar i { height: 12px; background: #e6dcc6; border-radius: 6px; overflow: hidden; }
+  .rd-bar u { display: block; height: 100%; background: #5562eb; border-radius: 6px; transition: width .3s; }
+  .rd-bar b { text-align: right; color: var(--ink); font-size: 14px; }
+  .or-grid { display: grid; gap: 4px; margin: 8px 0 4px; }
+  .or-grid div { display: grid; grid-template-columns: 1fr 62px 104px; gap: 8px; align-items: center; font-size: 14.5px; color: var(--ink); }
+  .or-grid i { display: flex; gap: 4px; }
+  .or-grid u { flex: 1; height: 11px; border-radius: 3px; background: #e6dcc6; border: 1px solid #cdbf9f; }
+  .or-grid u.on { background: #5562eb; border-color: #3a45b8; }
+  .or-grid b { font-size: 13.5px; color: var(--muted); text-align: right; font-weight: 600; }
+</style>
 <script>
   window.DECK = { title: 'Mastering Game Mechanics · Level Design Book · Environment art', home: '../index.html', audio: false, cues: null };
 </script>
@@ -17,21 +37,119 @@
 <body>
 <div class="viewport"><div class="stage">
 
-<section class="slide" data-title="Dress the wall" data-demo="art">
-  <div class="kicker">environment art · readability</div>
-  <h2 class="sm">Dress <span class="accent">the wall</span></h2>
+<section class="slide" id="pass" data-title="Same blockout, new skin" data-demo="pass">
+  <div class="kicker">environment art · what it is</div>
+  <h2 class="sm">Same blockout, <span class="accent">new skin</span></h2>
   <div class="mt-wrap">
     <canvas class="demo" width="1040" height="585"></canvas>
     <div class="mt-side">
-      <h4>The art pass</h4>
-      <label class="rng">Amount of detail <b class="ar-nv"></b><input type="range" class="ar-n" min="0" max="1" step="0.05" value="0.7"></label>
-      <div class="seg ar-group"><button class="btn on" data-v="scatter">Spread evenly</button><button class="btn" data-v="cluster">In clusters</button></div>
-      <label class="rng">Value contrast between surfaces <b class="ar-cv"></b><input type="range" class="ar-c" min="0" max="1" step="0.05" value="0.7"></label>
-      <label class="chk"><input type="checkbox" class="ar-res"> Keep red and orange for what matters</label>
-      <label class="chk"><input type="checkbox" class="ar-sq"> Squint at it</label>
-      <div class="mt-stats ar-stats"></div>
-      <p class="mt-out ar-out"></p>
-      <p class="src">Readability, clustering and reserved colours from <a href="https://book.leveldesignbook.com/process/env-art" target="_blank" rel="noopener">The Level Design Book: Environment art</a> (CC BY-NC-SA 4.0). The street, the measurement and the squint check are our own.</p>
+      <h4>Drag the divider across the street</h4>
+      <label class="chk"><input type="checkbox" class="ps-outline" checked> Outline the shapes that play</label>
+      <label class="chk"><input type="checkbox" class="ps-drift"> Let the art pass reshape them</label>
+      <div class="mt-stats ps-stats"></div>
+      <p class="mt-out ps-out"></p>
+      <p class="src">Definition from <a href="https://book.leveldesignbook.com/process/env-art" target="_blank" rel="noopener">The Level Design Book: Environment art</a> (CC BY-NC-SA 4.0). The street and every drawing in this deck are our own.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="readability" data-title="Find the enemy" data-demo="read">
+  <div class="kicker">environment art · readability</div>
+  <h2 class="sm">Find <span class="accent">the enemy</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Dress the street</h4>
+      <div class="seg rd-mode"><button class="btn" data-v="block">Blockout</button><button class="btn on" data-v="busy">Busy art pass</button><button class="btn" data-v="calm">Calm art pass</button></div>
+      <button class="btn act rd-go"></button>
+      <div class="mt-stats rd-stats"></div>
+      <div class="rd-bars"></div>
+      <p class="mt-out rd-out"></p>
+      <p class="src">Readability and the de_cache example from <a href="https://book.leveldesignbook.com/process/env-art#readability" target="_blank" rel="noopener">The Level Design Book: Environment art</a> (CC BY-NC-SA 4.0). The click test and the pixel measure are our own.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="ivy" data-title="Everything is ivy" data-demo="ivy">
+  <div class="kicker">environment art · readability</div>
+  <h2 class="sm">Everything <span class="accent">is ivy</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Two of these five doors open</h4>
+      <div class="seg iv-pre"><button class="btn" data-v="none">No ivy</button><button class="btn" data-v="rule">Ivy on every closed building</button><button class="btn" data-v="some">Ivy on one of them</button><button class="btn" data-v="decor">Ivy as decoration</button></div>
+      <button class="btn act iv-go">Send the player again</button>
+      <div class="mt-stats iv-stats"></div>
+      <p class="mt-out iv-out"></p>
+      <p class="src">The ivy rule is Naughty Dog’s, from The Last of Us Part II, as described in <a href="https://book.leveldesignbook.com/process/env-art#readability" target="_blank" rel="noopener">The Level Design Book: Environment art</a> (CC BY-NC-SA 4.0). The walk and the counts are our own.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="clustering" data-title="Cluster the clutter" data-demo="cluster">
+  <div class="kicker">environment art · clustering</div>
+  <h2 class="sm">Cluster <span class="accent">the clutter</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Dress the field</h4>
+      <button class="btn act cl-add">Duplicate, shrink, rotate, offset</button>
+      <label class="rng">Pieces <b class="cl-nv"></b><input type="range" class="cl-n" min="1" max="36" step="1" value="18"></label>
+      <label class="rng">From clusters to an even scatter <b class="cl-sv"></b><input type="range" class="cl-s" min="0" max="1" step="0.02" value="0"></label>
+      <div class="seg"><button class="btn cl-roll">Roll a new arrangement</button></div>
+      <div class="mt-stats cl-stats"></div>
+      <p class="mt-out cl-out"></p>
+      <p class="src">The recipe is from <a href="https://book.leveldesignbook.com/process/env-art#clustering" target="_blank" rel="noopener">The Level Design Book: Environment art</a> (CC BY-NC-SA 4.0). The group count and the clear-ground measure are our own.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="colour" data-title="Give each colour a job" data-demo="colour">
+  <div class="kicker">environment art · colour and value</div>
+  <h2 class="sm">Give each colour <span class="accent">a job</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Paint the street</h4>
+      <label class="rng">Saturation of every surface <b class="co-sv"></b><input type="range" class="co-s" min="0.4" max="2.2" step="0.05" value="1.9"></label>
+      <label class="rng">Ground value <b class="co-gv"></b><input type="range" class="co-g" min="38" max="86" step="1" value="80"></label>
+      <label class="chk"><input type="checkbox" class="co-res"> Keep red for explosive barrels</label>
+      <label class="chk"><input type="checkbox" class="co-grey"> Greyscale check</label>
+      <div class="mt-stats co-stats"></div>
+      <p class="mt-out co-out"></p>
+      <p class="src">Saturation, value order and reserved colours from <a href="https://book.leveldesignbook.com/process/env-art#color-and-value" target="_blank" rel="noopener">The Level Design Book: Environment art</a> (CC BY-NC-SA 4.0). The numbers are measured from this drawing.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="hero" data-title="One hero per place" data-demo="hero">
+  <div class="kicker">environment art · hero props</div>
+  <h2 class="sm">One hero <span class="accent">per place</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Click an area to change its hero</h4>
+      <div class="seg hr-pre"><button class="btn" data-v="000">Kit only</button><button class="btn" data-v="111">The same tower three times</button><button class="btn" data-v="123">One hero each</button><button class="btn" data-v="143">Polish the bin</button></div>
+      <div class="mt-stats hr-stats"></div>
+      <p class="mt-out hr-out"></p>
+      <p class="src">Hero props, callouts and the dumpster line from <a href="https://book.leveldesignbook.com/process/env-art#hero-props-landmarks" target="_blank" rel="noopener">The Level Design Book: Environment art</a> (CC BY-NC-SA 4.0). The three areas are our own.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="order" data-title="Start big, stop at half" data-demo="order">
+  <div class="kicker">environment art · how to art pass</div>
+  <h2 class="sm">Start big, <span class="accent">stop at half</span></h2>
+  <div class="mt-wrap">
+    <canvas class="demo" width="1040" height="585"></canvas>
+    <div class="mt-side">
+      <h4>Spend the art hours</h4>
+      <div class="seg or-mode"><button class="btn on" data-v="one">Finish one asset at a time</button><button class="btn" data-v="pass">Every asset, one pass at a time</button></div>
+      <label class="rng">Hours spent <b class="or-hv"></b><input type="range" class="or-h" min="0" max="24" step="2" value="12"></label>
+      <div class="or-grid"></div>
+      <div class="mt-stats or-stats"></div>
+      <p class="mt-out or-out"></p>
+      <p class="src">Working order from <a href="https://book.leveldesignbook.com/process/env-art#how-to-art-pass" target="_blank" rel="noopener">The Level Design Book: Environment art</a> (CC BY-NC-SA 4.0). Two hours a stage is our own round number.</p>
     </div>
   </div>
 </section>
@@ -39,8 +157,14 @@
 </div></div>
 <script src="../../assets/deck.js"></script>
 <script src="../../assets/kit.js"></script>
-<script src="../shared/topdown.js"></script>
-<script src="../shared/plan.js"></script>
-<script src="art.js"></script>
+<script src="scene.js"></script>
+<script src="street.js"></script>
+<script src="pass.js"></script>
+<script src="read.js"></script>
+<script src="ivy.js"></script>
+<script src="cluster.js"></script>
+<script src="colour.js"></script>
+<script src="hero.js"></script>
+<script src="order.js"></script>
 </body>
 </html>
