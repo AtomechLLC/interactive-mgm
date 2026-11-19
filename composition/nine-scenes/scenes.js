@@ -481,10 +481,14 @@
         shot(g, at(516, 190), at(312, 190), a, 1.5, 1.9); shot(g, at(312, 190), at(516, 190), a, 1.9, 2.3);
         spark(g, 312, 190, a, 1.9, '#ffd45e', 34); pop(g, 'DEFLECT', 290, 126, ROWS[1][3], a, 1.9, { size: 22, life: 1.2 }); spark(g, 516, 190, a, 2.3); pop(g, '−5', 548, 146, ROWS[0][3], a, 2.3);
       }),
-      V('Interrupt', 'lo', 'A fast jab during the long wind-up cancels the attack. Any moment before the hit works.', [[.6, 1.2, 'wind-up'], [1.2, 2.0, 'interrupted', 'stuck']], [[1.08, 1.32, 'jab']], (g, a) => {
-        const p = at(388, 190), e = at(455 + 14 * hitK(a, 1.2), 190);
-        const s = threat(g, E0, PI, a, .6, 1.9, { cancel: 1.2 }); foe(g, e, PI, { ...s, flash: hitK(a, 1.2) }); you(g, p, 0, { ...thrust(a, 1.05, 1.2) });
-        spark(g, 430, 190, a, 1.2, '#ffd45e', 24); pop(g, 'interrupted', 455, 126, ROWS[1][3], a, 1.2, { life: 1.4 }); tag(g, 'attack never comes out', 440, 262, LO, a, 1.6, 3.6);
+      V('Interrupt', 'lo', 'An instant spell cast into the long wind-up stops the attack. Any moment before the hit works.', [[.6, 1.4, 'wind-up'], [1.4, 2.3, 'interrupted', 'stuck']], [[1.0, 1.4, 'cast interrupt']], (g, a) => {
+        const p = at(350, 190), e = at(455 + 12 * hitK(a, 1.4), 190), cast = a > 1.0 && a < 1.3;
+        const s = threat(g, E0, PI, a, .6, 1.9, { cancel: 1.4 }); foe(g, e, PI, { ...s, flash: hitK(a, 1.4) }); stars(g, e.x, e.y, a, 1.45, 2.3);
+        if (cast) ring(g, p.x, p.y, 30, 14, a, 1.0, .3, '111,170,240');
+        you(g, p, 0, { weapon: 'staff', wa: a > .95 && a < 1.6 ? 0 : REST, glow: cast ? .9 : 0 });
+        if (a > .95 && a < 2.4) icon(g, 'wow-spell_frost_iceshock.jpg', p.x, p.y - 58, 30, { a: win(a, .95, 2.4), edge: ROWS[1][3] });
+        shot(g, at(392, 190), at(438, 190), a, 1.28, 1.4, 'bolt', '#7fc8ff'); spark(g, 440, 190, a, 1.4, '#9fd6ff', 34); ring(g, e.x, e.y, 12, 44, a, 1.4, .35, '111,170,240');
+        pop(g, 'INTERRUPTED', 492, 126, ROWS[1][3], a, 1.4, { size: 20, life: 1.5 }); tag(g, 'attack never comes out', 440, 262, LO, a, 1.8, 3.6);
       }),
       V('Pushback', 'lo', 'A shove mid-wind-up moves the enemy away. The swing comes out and reaches nothing.', ATK_D, [[1.15, 1.45, 'shove']], (g, a) => {
         const p = at(388, 190), e = mv(a, [[1.3, 455, 190], [1.65, 545, 190]]);
