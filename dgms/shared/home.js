@@ -19,9 +19,9 @@
       if (!here.length) return '';
       return `<section class="mod" id="${k}">
     <a class="head" href="${k}/index.html"><img src="${ROOT}dgms--${k}.svg" alt=""><span><span class="code">${code}</span><b>${esc(title)}<span class="gds">GDS Member</span></b><small><i>${esc(deck)}</i>: ${esc(line)}</small></span><span class="go">Module home →</span></a>
-    <div class="pages">${here.map(([p, t]) => {
+    <div class="pages">${here.map(([p, t, , , tag]) => {
         const g = gifs.filter(x => x[0].startsWith(p.replace('/', '--') + '.') || x[0].startsWith(p.replace('/', '--') + '-')).length;
-        return `<a class="pg" href="${p}/index.html"><img src="${ROOT}${icon(p)}" alt=""><span><b>${esc(t)}</b><small>${g ? n(g, 'GIF') : 'Interactive'}</small></span></a>`;
+        return `<a class="pg" href="${p}/index.html"><img src="${ROOT}${icon(p)}" alt=""><span><b>${esc(t)}</b><small>${g ? n(g, 'GIF') : tag === 'mock-up' ? 'Mock-up' : 'Interactive'}</small></span></a>`;
       }).join('')}</div>
   </section>`;
     }).join('');
@@ -40,8 +40,8 @@
   <p>Visuals for <i>${esc(deck)}</i>: ${esc(line)}.</p>
 </header></div>`);
   const prev = PARTS[i - 1], next = PARTS[i + 1];
-  document.getElementById('cards').innerHTML = here.map(([p, t, b]) =>
-    `<a class="card" href="${p.split('/')[1]}/index.html"><img src="${ROOT}${icon(p)}" alt=""><span><b>${esc(t)}</b><small>${esc(b)}</small></span></a>`).join('');
+  document.getElementById('cards').innerHTML = here.map(([p, t, b, , tag]) =>
+    `<a class="card" href="${p.split('/')[1]}/index.html"><img src="${ROOT}${icon(p)}" alt=""><span><b>${esc(t)}</b><small>${tag === 'mock-up' ? 'Mock-up: ' : ''}${esc(b)}</small></span></a>`).join('');
   document.getElementById('gifs').innerHTML = gifs.map(([f, t, c]) =>
     `<figure><a href="../gifs/${f}"><img src="../gifs/${f}" alt="${esc(t)}" loading="lazy"></a><figcaption><b>${esc(t)}</b>${esc(c)}</figcaption></figure>`).join('')
     || '<p>No GIFs yet.</p>';
