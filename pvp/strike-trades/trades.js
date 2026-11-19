@@ -268,8 +268,20 @@
       });
     }
 
-    return dt => {
-      state.t += dt * (state.slow ? .5 : 1);
+    // GIF tour: the same jab against each protection, then a throw into super armor
+    const TOUR = [['none', 'jab'], ['armor', 'jab'], ['super', 'jab'], ['immune', 'jab'], ['super', 'throw']], SEG = LEN + HOLD;
+    let held = false;
+    tradeApi = {
+      seek(T) {
+        held = true;
+        const [mode, atk] = TOUR[Math.floor(T / SEG) % TOUR.length];
+        if (mode !== state.mode || atk !== state.atk) set({ mode, atk });
+        state.t = T % SEG; frame(0);
+      },
+      dur: () => SEG * TOUR.length,
+    };
+    const frame = dt => {
+      if (!held) state.t += dt * (state.slow ? .5 : 1);
       if (state.t > LEN + HOLD) state.t = 0;
       const t = Math.min(state.t, LEN), now = at(t);
       g.clearRect(0, 0, W, H);
@@ -282,7 +294,12 @@
       }
       drawTimeline(t, now);
     };
+    return frame;
   });
+  // the GIF recorder's hooks (../../tools/record-slide-gif.js): which = 'trade'
+  let tradeApi = null;
+  window.__seek = t => tradeApi.seek(t);
+  window.__dur = () => tradeApi.dur();
 
   /* ---------- the outcome grid ---------- */
   demo('grid', {

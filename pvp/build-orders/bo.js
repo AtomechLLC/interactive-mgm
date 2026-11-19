@@ -533,12 +533,30 @@
         li.onpointerleave = () => explain(pinned);
       });
       explain(null);
-      s._frame = dt => { clock += dt; tr.tick(dt); fd(R, tr.t, clock); };
+      s._frame = dt => { if (held) return; clock += dt; tr.tick(dt); fd(R, tr.t, clock); };
       s._tr = tr; paint(0);
+      // GIF tour: the build plays from 0:00 to 4:30 at x18, each line explained as it starts, then holds
+      const SPEED = 18, PLAY = H / SPEED, HOLD = 2.5;
+      let held = false, last = -1;
+      readApi = {
+        seek(T) {
+          held = true; tr.stop(); clock = T;
+          const g = Math.min(H, T * SPEED);
+          let i = null; steps.forEach(st => { if (st.start <= g) i = st.i; });
+          if (i !== last) { last = i; explain(i); }
+          tr.set(g); fd(R, g, clock);
+        },
+        dur: () => PLAY + HOLD,
+      };
     },
     enter(s) { s._stop = raf(dt => s._frame(dt)); },
     leave(s) { s._stop?.(); s._tr.stop(); },
   });
+
+  // the GIF recorder's hooks (../../tools/record-slide-gif.js): which = 'read'
+  let readApi = null;
+  window.__seek = t => readApi.seek(t);
+  window.__dur = () => readApi.dur();
 
   /* =====================================================================
      slide 3: the sandbox

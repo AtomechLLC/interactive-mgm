@@ -144,9 +144,25 @@
         fix = b.dataset.fix; data = season(fix); run();
       }));
       s._run = run; s._stopMeta = () => stop?.();
+      // GIF tour: the season played under each patch, holding on the result
+      const FIXES = ['none', 'tax', 'answers'], PLAY = WEEKS / 6, HOLD = 3, SEG = PLAY + HOLD;
+      metaApi = {
+        seek(T) {
+          stop?.(); stop = null;
+          const f = FIXES[Math.floor(T / SEG) % FIXES.length], left = T % SEG;
+          if (f !== fix) { fix = f; data = season(fix); $$(s, '.mt-fix').forEach(x => x.classList.toggle('on', x.dataset.fix === fix)); }
+          shown = Math.min(WEEKS, left * 6); draw();
+          say(out, shown >= WEEKS ? SAY[fix] : '');
+        },
+        dur: () => SEG * FIXES.length,
+      };
       draw(); say(out, SAY[fix]);
     },
     enter(s) { s._run(); },
     leave(s) { s._stopMeta(); },
   });
+  // the GIF recorder's hooks (../../tools/record-slide-gif.js): which = 'meta'
+  let metaApi = null;
+  window.__seek = t => metaApi.seek(t);
+  window.__dur = () => metaApi.dur();
 })();

@@ -325,8 +325,27 @@
     };
     c.onpointerup = () => { drag = false; c.style.cursor = 'grab'; };
     setBeat(0);
-    return dt => {
-      t += dt * (slow ? .25 : 1);
+    // GIF tour: each weapon through neutral, the swing, their opening and your follow-up
+    let held = false;
+    const tour = () => ['fist', 'sword', 'spear'].flatMap(w => [0, 1, 2, 3].map(b => {
+      const len = b ? beatLen(plan(WEAPONS[w]), b) : 0;
+      return [w, b, Math.max(1.6, len + .7)];
+    }));
+    lineApi = {
+      seek(T) {
+        held = true;
+        const steps = tour(), total = steps.reduce((a, x) => a + x[2], 0);
+        let r = T % total, i = 0;
+        while (r >= steps[i][2]) r -= steps[i++][2];
+        const [w, b] = steps[i];
+        if (w !== S.w) { S.w = w; changed(); }
+        if (b !== beat) setBeat(b);
+        t = r; tick(0);
+      },
+      dur: () => tour().reduce((a, x) => a + x[2], 0),
+    };
+    const tick = dt => {
+      if (!held) t += dt * (slow ? .25 : 1);
       const len = beatLen(p, beat);
       g.clearRect(0, 0, W, H);
       scene(g, v, p, frame(p, beat, Math.min(t, len)));
@@ -337,7 +356,12 @@
         text(g, `their pressure ${fmt(p.EP)} m`, v.at(F.en.x - p.EP / 2)[0], v.oy + 24, { size: 17, col: '#a3262f' });
       }
     };
+    return tick;
   });
+  // the GIF recorder's hooks (../../tools/record-slide-gif.js): which = 'line'
+  let lineApi = null;
+  window.__seek = t => lineApi.seek(t);
+  window.__dur = () => lineApi.dur();
 
   /* ================= 303: the same exchange, side-on and top-down ================= */
   canvasDemo('views', (s, c, g) => {

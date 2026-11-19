@@ -379,8 +379,12 @@
       e.stopPropagation(); choose(KEYS[e.code]);
     });
     choose('all');
-    return dt => {
-      t += dt; if (t > 3.2) t = 0;
+    // GIF tour: all three steps at once, then each direction and standing still on its own
+    const TOUR = ['all', 'left', 'back', 'right', 'none'], SEG = 3.2;
+    let held = false;
+    qsApi = { seek(T) { held = true; const d = TOUR[Math.floor(T / SEG) % TOUR.length]; if (d !== pick) choose(d); t = T % SEG; frame(0); }, dur: () => SEG * TOUR.length };
+    const frame = dt => {
+      if (!held) { t += dt; if (t > 3.2) t = 0; }
       g.clearRect(0, 0, W, H);
       const shown = pick === 'all' ? dirs : [pick];
       const lines = [];
@@ -410,7 +414,12 @@
       });
       say(out, lines.length ? lines.join('<br>') : 'Sidestep a thrust, backstep a sweep. Pick a direction (A / S / D) to see each one on its own.');
     };
+    return frame;
   });
+  // the GIF recorder's hooks (../../tools/record-slide-gif.js): which = 'qs433'
+  let qsApi = null;
+  window.__seek = t => qsApi.seek(t);
+  window.__dur = () => qsApi.dur();
 
   /* ================= the duel: read your opponent ================= */
   const CATS = [['none', 'No action'], ['block', 'Block'], ['dodge', 'Dodge'], ['back', 'QS back'], ['side', 'QS left / right'], ['fwd', 'QS in']];
