@@ -3,6 +3,7 @@
    Every scene has the same layout: a top-down arena, the cell's definition, the 3 x 3 grid with the cell lit, the deck's own
    examples as a list, and a timeline with the cell's column (before, during, post) marked. The arena plays EVERY example the
    deck lists for that cell, one short vignette each, high risk first; the list row and the timeline follow along.
+   'f-grid' is the 3 x 3 grid itself: nine small arenas, each playing one example of its cell at the same time.
    Scenes: 'f-initiate', 'f-zone', 'f-punish', 'f-mitigate', 'f-reflex', 'f-react', 'f-setup', 'f-counterplay', 'f-response'.
    Names, definitions and the example lists are the deck's. How each example is staged, the captions and every number are
    this page's illustration. Each scene is a pure function of time: window.__seek(t, which) / __dur(which). */
@@ -279,7 +280,9 @@
     const x = sx(Math.min(a, L)); g.strokeStyle = 'rgba(21,32,68,.6)'; g.lineWidth = 2; g.beginPath(); g.moveTo(x, Y0 + 18); g.lineTo(x, Y1 - 1); g.stroke();
     g.fillStyle = C.navy; g.beginPath(); g.moveTo(x - 5, Y0 + 17); g.lineTo(x + 5, Y0 + 17); g.lineTo(x, Y0 + 24); g.closePath(); g.fill();
   }
+  const CFGS = {};
   function make(name, cfg) {
+    CFGS[name] = cfg;
     scene(name, { dur: cfg.vs.length * cfg.L, draw(g, t) { frame(g, t, cfg); }, side(t) { const v = cfg.vs[Math.min(cfg.vs.length - 1, Math.floor(t / cfg.L))]; return { out: `<b>${v.name}</b> (${v.risk === 'hi' ? 'high' : 'low'} risk): ${v.cap}` }; } });
   }
   const V = (name, risk, cap, foeBars, youBars, draw) => ({ name, risk, cap, foe: foeBars, you: youBars, draw });
@@ -696,5 +699,56 @@
         spark(g, 430, 190, a, .75); pop(g, '−8', 486, 146, ROWS[2][3], a, .75, { life: .6 }); tag(g, 'ally down', 170, 318, C.muted, a, .1, 2.9); plus(g, al.x, al.y, a, 3.0, 3.9); pop(g, 'REVIVED', 190, 226, GREEN, a, 3.1, { size: 21, life: 1.2 });
       }),
     ],
+  });
+
+  /* ================= all nine at once: one example per cell, in the grid's own layout ================= */
+  // one example per cell: the one that shows the cell's idea with the fewest moving parts
+  const PICK = ['Gap Closing', 'Far-reaching Pokes', 'Slow Launchers', 'Block', 'Parry', 'Heal', 'Trap', 'Grab / Throw', 'Equipment Change'];
+  const GCAP = ['Strike first, before they have acted.', 'A hitbox held out keeps them away.', 'They missed. Hit them while they recover.',
+    'Guard up before the swing begins.', 'Catch the hit on the frame it lands.', 'The hit landed. Repair it afterwards.',
+    'Predict their path and prepare for it.', 'Read the habit and pick its answer.', 'Learn from the exchange, then change.'];
+  const KEYS = ['f-initiate', 'f-zone', 'f-punish', 'f-mitigate', 'f-reflex', 'f-react', 'f-setup', 'f-counterplay', 'f-response'];
+  const GL = 4.6, GX = 112, GY = 40, GW = 304, GAP = 6, GS = GW / SW, GH = SH * GS, STRIP = 11, PITCH = GH + STRIP + 8;
+  function tile(g, x, y, cfg, v, a, r, c) {
+    g.save(); g.translate(x, y); g.scale(GS, GS);
+    g.beginPath(); g.roundRect(0, 0, SW, SH, 20); g.clip();
+    g.save(); g.translate(SW / 2, SH / 2); g.scale(Z, Z); g.translate(-350, -214);
+    T.use(g); T.floor(-40, -40, 800, 520); g.fillStyle = 'rgba(60,48,30,.07)'; g.fillRect(-40, -40, 800, 520);
+    READ = null; v.draw(g, a); g.restore(); READ = null;
+    if (a < .16) { g.fillStyle = `rgba(255,250,240,${.8 * (1 - a / .16)})`; g.fillRect(0, 0, SW, SH); }
+    g.fillStyle = 'rgba(255,252,244,.93)'; g.fillRect(0, SH - 24 / GS, SW, 24 / GS);
+    g.restore();
+    text(g, GCAP[r * 3 + c], x + GW / 2, y + GH - 11.5, { size: 12.5, w: 700, col: C.navy });
+    g.strokeStyle = ROWS[r][3]; g.lineWidth = 2; g.beginPath(); g.roundRect(x, y, GW, GH, 9); g.stroke();
+    // the cell's name, and the example that is playing
+    const name = CELLS[r * 3 + c][0];
+    g.save(); g.font = '800 15px Montserrat, Jost, sans-serif'; const nw = g.measureText(name).width; g.font = '700 11px Jost, sans-serif'; const ew = g.measureText(v.name).width; g.restore();
+    g.fillStyle = 'rgba(255,252,244,.95)'; g.strokeStyle = ROWS[r][3]; g.lineWidth = 2; g.beginPath(); g.roundRect(x + 6, y + 6, nw + ew + 30, 24, 8); g.fill(); g.stroke();
+    text(g, name, x + 14, y + 18.5, { align: 'left', size: 15, w: 800, display: true, col: C.navy });
+    text(g, v.name, x + 22 + nw, y + 19, { align: 'left', size: 11, w: 700, col: ROWS[r][3] });
+    // a strip of before / during / post under the tile, with your action on it
+    const L = cfg.L, sx = t => x + GW * t / L, edges = [0, cfg.bands[0], cfg.bands[1], L], sy = y + GH + 3;
+    for (let k = 0; k < 3; k++) { const x0 = sx(edges[k]), x1 = sx(edges[k + 1]); g.fillStyle = COLS[k][1]; g.globalAlpha = k === c ? .75 : .2; g.beginPath(); g.roundRect(x0 + 1, sy, x1 - x0 - 2, STRIP, 4); g.fill(); g.globalAlpha = 1; }
+    const key = v.you.find(b => b[3] !== 'plain') || v.you[0], k0 = sx(key[0]), k1 = sx(Math.min(key[1], L));
+    g.globalAlpha = a >= key[0] ? 1 : .35; g.fillStyle = ROWS[r][1]; g.strokeStyle = ROWS[r][3]; g.lineWidth = 1.6; g.beginPath(); g.roundRect(k0, sy + 1, Math.max(7, k1 - k0), STRIP - 2, 4); g.fill(); g.stroke(); g.globalAlpha = 1;
+    const px = sx(Math.min(a, L)); g.strokeStyle = C.navy; g.lineWidth = 2; g.beginPath(); g.moveTo(px, sy - 2); g.lineTo(px, sy + STRIP + 2); g.stroke();
+  }
+  scene('f-grid', {
+    dur: GL * 2,
+    draw(g, t) {
+      const u = t % GL;
+      COLS.forEach(([n, fill, dk], c) => { const x = GX + c * (GW + GAP); g.fillStyle = fill; g.globalAlpha = .55; g.beginPath(); g.roundRect(x, 6, GW, 27, 8); g.fill(); g.globalAlpha = 1; text(g, colName(c), x + GW / 2, 20, { size: 15, w: 800, display: true, col: dk }); });
+      ROWS.forEach(([n, fill, ic, dk], r) => {
+        const y = GY + r * PITCH;
+        g.fillStyle = fill; g.globalAlpha = .55; g.beginPath(); g.roundRect(6, y, GX - 14, GH + STRIP + 3, 8); g.fill(); g.globalAlpha = 1;
+        GI.draw(g, ic, 6 + (GX - 14) / 2, y + GH / 2 - 14, 34, dk);
+        text(g, n, 6 + (GX - 14) / 2, y + GH / 2 + 22, { size: 14, w: 800, display: true, col: dk });
+      });
+      for (let i = 0; i < 9; i++) {
+        const r = Math.floor(i / 3), c = i % 3, cfg = CFGS[KEYS[i]], v = cfg.vs.find(e => e.name === PICK[i]) || cfg.vs[0];
+        tile(g, GX + c * (GW + GAP), GY + r * PITCH, cfg, v, u * cfg.L / GL, r, c);
+      }
+    },
+    side() { return { out: 'Rows are the three sides of the Counter Circle. Columns are when you act against the enemy’s attack. The coloured bar under each arena is your action on that timeline.' }; },
   });
 })();
