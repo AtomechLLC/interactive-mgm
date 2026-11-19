@@ -94,7 +94,7 @@
 <div class="band"><header>
   <div class="kicker"><a href="../index.html">← Mastering Game Mechanics</a> · Reference</div>
   <h1>Games <span>Referenced</span></h1>
-  <p>Every game the MGM and DGMS pages, GIFs and deck notes point to, plus the blog posts. Search for a game, or pick a course or module to see what it draws on. Open a game to see where it comes up, or switch to the module view to see each module with the games it references.</p>
+  <p>Every game the MGM and DGMS pages, GIFs and deck notes point to, plus the blog posts. Search for a game, or pick a course or module to see what it draws on. Each module lists the games it references; open one to see where it comes up, or switch to the game view to see every game on its own card.</p>
 </header></div>
 <main>
   <div class="bar">
@@ -147,10 +147,10 @@
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const fold = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
-  const VIEWS = [['games', 'By game'], ['modules', 'By module']];
-  const st = { v: 'games', q: '', c: 'all', m: 'all', k: 'all', s: 'n' };
+  const VIEWS = [['modules', 'By module'], ['games', 'By game']];
+  const st = { v: 'modules', q: '', c: 'all', m: 'all', k: 'all', s: 'n' };
   const p = new URLSearchParams(location.search);
-  if (p.get('view') === 'modules') st.v = 'modules';
+  if (p.get('view') === 'games') st.v = 'games';
   if (p.get('q')) st.q = p.get('q');
   if (p.get('m') && M[p.get('m')]) { st.m = p.get('m'); st.c = M[st.m].c; }
   else if (p.get('c') && COURSES.some(c => c[0] === p.get('c'))) st.c = p.get('c');
@@ -244,7 +244,7 @@
     if (!soft) fillModules();
     render();
     const u = new URLSearchParams();
-    if (st.v !== 'games') u.set('view', st.v);
+    if (st.v !== 'modules') u.set('view', st.v);
     if (st.q) u.set('q', st.q);
     if (st.m !== 'all') u.set('m', st.m); else if (st.c !== 'all') u.set('c', st.c);
     if (st.k !== 'all') u.set('k', st.k);
