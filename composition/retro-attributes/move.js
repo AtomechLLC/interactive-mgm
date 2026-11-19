@@ -91,7 +91,7 @@
       loop(g, t) {
         const dead = t > 2.42, bx = 105 - 50 * Math.min(t, 2.42), by = GY - 20 + 4 * Math.sin(t * 5) + (dead ? 260 * (t - 2.42) ** 2 : 0);
         g.setLineDash([3, 6]); g.strokeStyle = 'rgba(74,58,106,.45)'; g.lineWidth = 2; g.beginPath(); g.moveTo(-120, GY - 32); g.lineTo(120, GY - 32); g.stroke(); g.setLineDash([]);
-        P(g, 'cv-bat' + (1 + Math.floor(t * 8) % 3), bx, by, CV, { rot: dead ? (t - 2.42) * 6 : 0, a: dead ? 1 - ph(t, 2.6, 3) : 1 });
+        P(g, 'cv-bat' + (1 + Math.floor(t * 8) % 3), bx, by, CV, { flip: true, rot: dead ? (t - 2.42) * 6 : 0, a: dead ? 1 - ph(t, 2.6, 3) : 1 });
         const hx = t < 2.9 ? lerp(-95, -62, ph(t, 0, .8)) : lerp(-62, 30, ph(t, 2.9, 4));
         simon(g, hx, GY, { whip: t > 2.35 && t < 2.65, walk: t < .8 || t > 2.9 ? t : null });
         if (t > 1 && t < 2.2) note('not in reach yet', -44, GY - 64);
@@ -102,7 +102,7 @@
         const wy = x => 8 + 30 * Math.sin(x / 22 - 1.184), x = 115 - 58 * t;
         g.setLineDash([2, 6]); g.strokeStyle = 'rgba(61,110,168,.75)'; g.lineWidth = 2; g.beginPath();
         for (let px = -120; px <= 120; px += 4) px === -120 ? g.moveTo(px, wy(px) - 11) : g.lineTo(px, wy(px) - 11); g.stroke(); g.setLineDash([]);
-        P(g, 'cv-medusa', x, wy(x), CV);
+        P(g, 'cv-medusa', x, wy(x), CV, { flip: true });
         simon(g, lerp(-90, 60, ph(t, .5, 3.5)), GY, { walk: t > .5 && t < 3.5 ? t : null });
         if (t > 1.8 && t < 2.5) note('under the crest', -8, -52, C.blue);
       } },
@@ -112,7 +112,7 @@
         const d = ease(ph(t, 1.2, 1.8)), r = ease(ph(t, 1.9, 2.8));
         const bx = t < 1.9 ? lerp(30, -25, d) : lerp(-25, 30, r), by = t < 1.9 ? lerp(-54, GY - 6, d * d) : lerp(GY - 6, -54, r);
         if (t > 1 && t < 1.25) T.label('!', 30, -40, 'center', C.redDk, 14);
-        if (t > 1.2 && t < 2.8) P(g, 'cv-bat' + (1 + Math.floor(t * 8) % 3), bx, by, CV); else P(g, 'cv-bat-hang', 30, -50, CV);
+        if (t > 1.2 && t < 2.8) P(g, 'cv-bat' + (1 + Math.floor(t * 8) % 3), bx, by, CV, { flip: t < 1.9 }); else P(g, 'cv-bat-hang', 30, -50, CV);
         if (t > 2.8 && t < 3.9) note('resetting', 30, -30);
         const hx = t < 1.1 ? lerp(-95, -25, ph(t, 0, 1)) : t < 2.2 ? lerp(-25, -58, ph(t, 1.1, 1.4)) : lerp(-58, 100, ph(t, 2.2, 3.7));
         simon(g, hx, GY, { walk: t < 1 || (t > 1.1 && t < 1.4) || (t > 2.2 && t < 3.7) ? t : null, flip: t > 1.1 && t < 1.4 });

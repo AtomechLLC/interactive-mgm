@@ -52,10 +52,10 @@
     if (o.whip) return P(g, 'cv-simon-whip', x, y, CV, { flip: o.flip, a: o.a, dx: 14 });
     P(g, o.jump ? 'cv-simon-kneel' : 'cv-simon' + (o.walk != null ? Math.floor(o.walk * 8) % 4 : 0), x, y, CV, { flip: o.flip, a: o.a });
   }
-  // Link from Zelda II in side view. o.stab, o.crouch, o.cstab pick the pose
+  // Link from Zelda II in side view, facing right unless o.flip (the sprites face left). o.stab, o.crouch, o.cstab pick the pose
   function link2(g, x, y, o = {}) {
     const n = o.cstab ? 'z2-link-crouch-stab' : o.stab ? 'z2-link-stab' : o.crouch ? 'z2-link-crouch' : o.walk != null ? (Math.floor(o.walk * 8) % 2 ? 'z2-link-walk' : 'z2-link-walk2') : 'z2-link';
-    P(g, n, x, y, CV, { flip: o.flip, dx: o.stab || o.cstab ? 8 : 0 });
+    P(g, n, x, y, CV, { flip: !o.flip, dx: o.stab || o.cstab ? -8 : 0 });
   }
   // a Zelda sprite seen from above, centred on x,y, with a ground shadow
   function zs(g, n, x, y, o = {}) { if (!o.noShadow) T.shadow(x + 2, y + 13, 13, 5, .2 * (o.a ?? 1)); P(g, n, x, y, o.k || ZT, { ...o, c: true }); }

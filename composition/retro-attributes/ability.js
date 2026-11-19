@@ -60,7 +60,7 @@
       loop(g, t) {   // Castlevania's white skeleton and its bones; the pile is ours, to show a supply that ends
         const at = [.5, 1.6, 2.7], land = [-50, -82, -46], left = 3 - at.filter(a => t > a - .25).length;
         for (let i = 0; i < left; i++) P(g, 'cv-bone1', 104, GY - i * 9, CV);
-        P(g, 'cv-skel' + (Math.floor(t * 3) % 2 ? '2' : ''), 74, GY, CV);
+        P(g, 'cv-skel' + (Math.floor(t * 3) % 2 ? '2' : ''), 74, GY, CV, { flip: true });
         at.forEach((a, i) => {
           const k = (t - a) / .8;
           if (k < 0 && t > a - .25) P(g, 'cv-bone0', 66, GY - 44, CV);
@@ -201,7 +201,7 @@
       } },
     charger: { name: 'Charger', gi: 'hourglass', col: '#62688a', line: 'Pauses between switching behaviours', counter: 'The pause is the tell: move on its release', ex: 'Castlevania’s Wolves: pause, then lunge',
       loop(g, t) {   // drawn with Castlevania's Black Leopard, which crouches on a ledge and then springs
-        const d = ease(ph(t, 1.5, 1.8)), x = lerp(72, -80, d), flip = t > 1.9, crouch = t < 1.5 || t > 2.1;
+        const d = ease(ph(t, 1.5, 1.8)), x = lerp(72, -80, d), flip = t <= 1.9, crouch = t < 1.5 || t > 2.1;
         P(g, crouch ? 'cv-leopard-sit' : 'cv-leopard' + Math.floor(t * 14) % 3, x + (t > 1.2 && t < 1.5 ? Math.sin(t * 50) * 1.5 : 0), GY - arc(d, 8), CV, { flip, a: t > 2.72 && t < 3.6 && Math.floor(t * 14) % 2 ? .5 : 1 });
         const bar = (a, b) => { const k = ph(t, a, b); if (k > 0 && k < 1) { g.fillStyle = 'rgba(21,32,68,.75)'; g.fillRect(x - 18, GY - 42, 36, 7); g.fillStyle = C.gold; g.fillRect(x - 17, GY - 41, 34 * k, 5); note('pause', x, GY - 54, C.goldInk); } };
         bar(.3, 1.5); bar(2.2, 3.9);
