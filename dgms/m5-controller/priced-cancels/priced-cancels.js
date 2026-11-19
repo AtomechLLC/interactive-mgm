@@ -1,166 +1,152 @@
-/* Cancels with a price (mock-up for DGMS M5, beside the cancel philosophies and the cancel anti-patterns).
-   1. Guilty Gear's Roman Cancel: the same attack pattern with no cancel, a free cancel and a cancel that costs Tension.
-      Lanes show whose turn it is over 20 s; the price slider moves the third lane between the other two.
-   2. Go's ko rule: on the left, a ko with no rule repeats forever; on the right, the rule forces a move elsewhere
-      before each retake, until one side ends the fight. Both are pure functions of t (or of the step counter). */
+/* Cancels with a price (DGMS M5, beside the Cancel Playground and the cancel anti-patterns).
+   roman  Guilty Gear's Roman Cancel: Pip's heavy slash is punishable when Rook blocks it. A Roman Cancel ends the
+          recovery on the spot, for half the Tension bar. Set the price to nothing and Rook never gets a turn.
+   ko     Go's ko rule: a capture that could be taken straight back would loop forever, so the rule forbids repeating
+          the position. Retaking the ko costs a move somewhere else first.
+   Frame counts, damage and Tension gains in roman are illustrative; the 50% price is the game's. */
 (function () {
-  const { $, canvasDemo, say } = FPF.kit;
-  const T = TD, C = TD.C, { clamp } = TD, TAU = Math.PI * 2;
+  const { txt, box, bar, pill, key, clamp, lerp, C, dot, ring } = SCN, TAU = SCN.TAU;
   const W = 1040, H = 585;
-  const txt = (g, s, x, y, o = {}) => { g.font = o.font || '600 15px Jost, sans-serif'; g.fillStyle = o.col || C.ink; g.textAlign = o.align || 'left'; g.textBaseline = o.base || 'middle'; g.fillText(s, x, y); };
-  const bg = g => { T.use(g); g.clearRect(0, 0, W, H); g.fillStyle = 'rgba(255,252,244,.9)'; g.beginPath(); g.roundRect(0, 0, W, H, 14); g.fill(); };
-  const rr = (g, x, y, w, h, r, col) => { g.fillStyle = col; g.beginPath(); g.roundRect(x, y, w, h, r); g.fill(); };
 
-  /* ---------- 1. Roman Cancel ---------- */
-  const SPAN = 20, ATK = '#2ea3dc', DEF = '#e5322d', TEN = '#e0a92d', END = '#5d618c';
-  function rcSim(mode, price) {
-    const seg = [], ten = [[0, 0]]; let t = 0, v = 0, rcs = 0;
-    while (t < SPAN) {
-      for (let h = 0; h < 4; h++) { seg.push([t, t + 0.35, 'hit']); t += 0.35; v = Math.min(100, v + 7); ten.push([t, v]); }
-      if (mode !== 'none' && v >= price) { seg.push([t, t + 0.3, 'rc']); v -= price; ten.push([t, v]); rcs++; t += 0.3; }
-      else { seg.push([t, t + 0.8, 'end']); t += 0.8; seg.push([t, t + 2, 'def']); t += 2; seg.push([t, t + 0.6, 'neutral']); t += 0.6; }
+  SCN.run('roman', s => {
+    const FLOOR = 330, FPS = 22, MV = { su: 9, act: 12, total: 32 }, STUN = 12, JAB = 5;
+    let z, cost = 50, auto = true;
+    function slash() { if (z.over || z.p.st !== 'idle') return; z.p = { st: 'slash', f: 0, hit: false, cut: -1 }; z.strip = { cut: -1, res: '', rs: -1 }; }
+    function rc() {
+      const p = z.p; if (p.st !== 'slash' || !p.hit) { z.msg = 'A Roman Cancel needs a move that has connected.'; return; }
+      if (z.ten < cost) { z.msg = `Not enough Tension: a Roman Cancel costs ${cost}%.`; z.deny = .6; return; }
+      z.ten -= cost; z.rcs++; z.strip.cut = p.f; z.ringT = 1e-6; z.slow = .5; z.p = { st: 'idle', f: 0, wait: 2 }; z.msg = cost ? `Roman Cancel: ${cost}% Tension buys back ${Math.round(MV.total - p.f)} frames of recovery.` : 'Cancelled for nothing. Rook is still in blockstun.';
+      SCN.tone({ f: 880, f2: 220, dur: .3, type: 'sawtooth', vol: .1 });
     }
-    const def = seg.filter(s => s[2] === 'def').reduce((a, [x, y]) => a + Math.max(0, Math.min(y, SPAN) - x), 0);
-    return { seg, ten, rcs, def };
-  }
-  const tenAt = (r, t) => { let v = 0; r.ten.forEach(([a, x]) => { if (a <= t) v = x; }); return v; };
-  const segAt = (r, t) => r.seg.find(([a, b]) => t >= a && t < b) || [0, 0, 'neutral'];
-  const LANES = [['No cancels', 'the slow finisher always ends the turn'], ['Free cancel', 'cancel every finisher, no cost'], ['Roman Cancel', 'cancel when the bar can pay']];
-  function fighter(g, x, y, col, face, pose) {
-    g.fillStyle = col; g.strokeStyle = C.navy; g.lineWidth = 2.5;
-    g.beginPath(); g.roundRect(x - 16, y - 70, 32, 56, 10); g.fill(); g.stroke();
-    g.beginPath(); g.arc(x, y - 86, 13, 0, TAU); g.fill(); g.stroke();
-    g.lineCap = 'round'; g.lineWidth = 7; g.strokeStyle = col;
-    g.beginPath(); g.moveTo(x - 8, y - 14); g.lineTo(x - 12, y + 18); g.moveTo(x + 8, y - 14); g.lineTo(x + 12, y + 18); g.stroke();
-    g.beginPath(); g.moveTo(x, y - 56);
-    if (pose === 'strike') g.lineTo(x + face * 52, y - 60); else if (pose === 'end') g.lineTo(x + face * 40, y - 30); else if (pose === 'guard') { g.lineTo(x + face * 20, y - 74); } else g.lineTo(x + face * 22, y - 40);
-    g.stroke();
-  }
-  function drawRC(g, runs, t, price) {
-    bg(g);
-    const focus = runs[2], s = segAt(focus, t), v = tenAt(focus, t);
-    // stage
-    g.fillStyle = '#e8dfca'; g.fillRect(30, 182, 520, 8);
-    const ak = s[2], ap = ak === 'hit' ? 'strike' : ak === 'end' ? 'end' : 'idle', dp = ak === 'def' ? 'strike' : ak === 'hit' || ak === 'end' ? 'guard' : 'idle';
-    fighter(g, 200, 180, ATK, 1, ap); fighter(g, ak === 'def' ? 290 : 310, 180, DEF, -1, dp);
-    if (ak === 'rc') { g.strokeStyle = TEN; g.lineWidth = 6; g.globalAlpha = 0.8; g.beginPath(); g.arc(200, 130, 50 + (t - s[0]) * 120, 0, TAU); g.stroke(); g.globalAlpha = 1; txt(g, 'ROMAN CANCEL', 200, 40, { font: '800 18px Montserrat', col: TEN, align: 'center' }); }
-    const lab = { hit: 'attacker strings hits', end: 'slow finisher: open to a punish', def: "defender's turn", rc: `finisher cancelled: −${price}% Tension`, neutral: 'reset to neutral' }[ak];
-    txt(g, lab, 260, 214, { font: '700 14px Jost', col: ak === 'def' ? DEF : ak === 'rc' ? '#9a5a06' : C.navy, align: 'center' });
-    // tension gauge
-    const gx = 600, gy = 70, gw = 400;
-    txt(g, 'TENSION', gx, gy - 18, { font: '800 14px Montserrat', col: '#9a5a06' }); txt(g, `${Math.round(v)}%`, gx + gw, gy - 18, { font: '800 16px Montserrat', col: C.navy, align: 'right' });
-    rr(g, gx, gy, gw, 26, 6, 'rgba(38,44,106,.12)'); rr(g, gx, gy, gw * v / 100, 26, 6, TEN);
-    if (price > 0) { const px = gx + gw * price / 100; g.strokeStyle = C.navy; g.lineWidth = 2; g.setLineDash([4, 3]); g.beginPath(); g.moveTo(px, gy - 6); g.lineTo(px, gy + 32); g.stroke(); g.setLineDash([]); txt(g, `price ${price}%`, px, gy + 44, { font: '700 12px Jost', col: C.navy, align: 'center' }); }
-    txt(g, 'fills 7% per hit; a cancel spends the price', gx, gy + 66, { font: '600 12px Jost', col: C.muted });
-    // lanes
-    const X0 = 220, X1 = 1010, px = x => X0 + (X1 - X0) * x / SPAN;
-    runs.forEach((r, k) => {
-      const y0 = 250 + k * 104;
-      txt(g, LANES[k][0] + (k === 2 ? ` · ${price}%` : ''), 30, y0 + 16, { font: '800 15px Montserrat' }); txt(g, LANES[k][1], 30, y0 + 36, { font: '600 11px Jost', col: C.muted });
-      rr(g, X0, y0, X1 - X0, 34, 6, 'rgba(38,44,106,.06)');
-      r.seg.forEach(([a, b, kind]) => { if (a >= t || a >= SPAN) return; const bb = Math.min(b, t, SPAN), col = { hit: ATK, end: END, rc: TEN, def: DEF, neutral: 'rgba(38,44,106,.12)' }[kind]; g.fillStyle = col; g.fillRect(px(a), y0 + (kind === 'hit' ? 6 : 0), px(bb) - px(a) - (kind === 'hit' ? 1.5 : 0), kind === 'hit' ? 22 : 34); if (kind === 'rc' && bb >= b) txt(g, 'RC', px(a) + (px(b) - px(a)) / 2, y0 + 17, { font: '800 9px Montserrat', col: C.navy, align: 'center' }); });
-      // tension trace
-      g.strokeStyle = TEN; g.lineWidth = 2; g.beginPath(); let last = 0; r.ten.forEach(([a, x], i) => { if (a > t) return; const y = y0 + 64 - 22 * x / 100; i ? (g.lineTo(px(a), y0 + 64 - 22 * last / 100), g.lineTo(px(a), y)) : g.moveTo(px(a), y); last = x; }); g.lineTo(px(Math.min(t, SPAN)), y0 + 64 - 22 * last / 100); g.stroke();
-      g.strokeStyle = 'rgba(38,44,106,.2)'; g.lineWidth = 1; g.beginPath(); g.moveTo(X0, y0 + 64); g.lineTo(X1, y0 + 64); g.stroke();
-      const dshare = r.seg.filter(s => s[2] === 'def').reduce((a, [x, y]) => a + Math.max(0, Math.min(y, t, SPAN) - Math.min(x, t)), 0);
-      txt(g, `defender acted ${dshare.toFixed(1)} s`, X1, y0 + 80, { font: '700 12px Jost', col: dshare > 0 ? DEF : C.muted, align: 'right' });
-    });
-    [0, 5, 10, 15, 20].forEach(x => txt(g, x + ' s', px(x), 238, { font: '600 11px Jost', col: C.muted, align: 'center' }));
-    let lx = X0; [['hit', ATK], ['slow finisher', END], ['Roman Cancel', TEN], ["defender's turn", DEF]].forEach(([n, col]) => { rr(g, lx, H - 16, 14, 10, 2, col); txt(g, n, lx + 20, H - 11, { font: '600 12px Jost', col: C.muted }); lx += 30 + g.measureText(n).width + 14; });
-    txt(g, 'gold line under each lane: Tension', X1, H - 11, { font: '600 12px Jost', col: C.muted, align: 'right' });
-  }
-  canvasDemo('rc', (s, cv, g) => {
-    const st = { price: 50, tour: true, held: false, t: 0, key: '' }, tourBtn = $(s, '.rc-tour'), rng = $(s, '.rc-p');
-    const mk = p => [rcSim('none', p), rcSim('priced', 0), rcSim('priced', p)];
-    let runs = mk(50);
-    tourBtn.onclick = () => { st.tour = true; st.t = 0; st.price = 50; rng.value = 50; runs = mk(50); tourBtn.classList.add('on'); };
-    rng.oninput = () => { st.tour = false; tourBtn.classList.remove('on'); st.price = +rng.value; runs = mk(st.price); st.t = 0; };
-    function info(cap) {
-      const k = cap + st.price; if (k === st.key) return; st.key = k; $(s, '.rc-pv').textContent = st.price + '%';
-      say($(s, '.rc-stats'), runs.map((r, i) => `<div class="${r.def === 0 ? 'r' : i === 2 ? 'y' : 'g'}"><b>${Math.round(100 * r.def / SPAN)}%</b><span>${LANES[i][0]}${i === 2 ? ' at ' + st.price + '%' : ''}: share of time the defender acts${r.rcs ? ` · ${r.rcs} cancels` : ''}</span></div>`).join(''));
-      say($(s, '.rc-out'), cap);
-    }
-    const DUR = 24;
-    const cap = t => t < 6 ? 'Each string is four quick hits and a slow finisher. Without a cancel, the finisher leaves an opening, and the defender takes a turn.'
-      : t < 12 ? 'Make the cancel free and every finisher is cancelled. The defender never acts: the loop the anti-pattern warns about.'
-      : t < 18 ? 'Charge half the Tension bar and the attacker can cancel about every other string, so they have to pick the moment.'
-      : 'Same cancel, different price. Drag the slider: at 0% the loop returns; at 100% the cancel almost never happens.';
-    s._seek = t => { if (st.price !== 50) { st.price = 50; runs = mk(50); } drawRC(g, runs, Math.min(SPAN, t), 50); info(cap(t)); };
-    window.__seek = t => { st.held = true; s._seek(t); };
-    window.__dur = () => DUR;
-    return dt => {
-      if (st.held) return; st.t += Math.max(0, dt);
-      if (st.tour) { if (st.t >= DUR) st.t = 0; s._seek(st.t); return; }
-      if (st.t >= SPAN + 3) st.t = 0;
-      drawRC(g, runs, Math.min(SPAN, st.t), st.price);
-      info(st.price === 0 ? 'Free: the bar never runs out, so the defender never acts. The price is what keeps the cancel fair.' : `At ${st.price}% a cancel, the attacker keeps the turn ${runs[2].rcs} times in 20 s, and the defender acts ${Math.round(100 * runs[2].def / SPAN)}% of the time.`);
+    const api = {
+      dur: 30,
+      reset(tour) { if (tour) { cost = 50; auto = true; api.mark('cost', '50'); } z = { t: 0, ten: 50, p: { st: 'idle', f: 0, wait: 10 }, r: { st: 'guard', f: 0 }, php: 100, rhp: 100, rcs: 0, pun: 0, hits: 0, turns: 0, strip: { cut: -1, res: '', rs: -1 }, ringT: 0, slow: 0, fx: [], msg: '', over: 0, deny: 0, pf: 0, rf: 0 }; },
+      step(h) {
+        z.t += h; z.deny = Math.max(0, z.deny - h); z.pf = Math.max(0, z.pf - h * 3); z.rf = Math.max(0, z.rf - h * 3); z.fx = z.fx.filter(f => (f.t += h) < 1);
+        if (z.ringT) { z.ringT += h; if (z.ringT > .7) z.ringT = 0; }
+        if (z.over) { z.over += h; if (z.over > 2.5) { z.php = z.rhp = 100; z.over = 0; z.p = { st: 'idle', f: 0, wait: 10 }; z.r = { st: 'guard', f: 0 }; } return; }
+        z.slow = Math.max(0, z.slow - h); const df = h * FPS * (z.slow > 0 ? .25 : 1), p = z.p, r = z.r;
+        if (p.st === 'idle') { p.f += df; if (auto && p.f > (p.wait ?? 10)) slash(); }
+        else if (p.st === 'stun') { p.f += df; if (p.f > 16) z.p = { st: 'idle', f: 0, wait: 8 }; }
+        else if (p.st === 'slash') {
+          p.f += df;
+          if (!p.hit && p.f >= MV.su) { p.hit = true;
+            if (r.st === 'jab' || r.st === 'stun') { z.rhp -= 14; z.hits++; z.ten = Math.min(100, z.ten + 8); z.r = { st: 'stun', f: 0 }; z.rf = 1; z.strip.res = 'hit'; z.fx.push({ x: 600, s: 'counter hit', col: C.green, t: 0 }); z.msg = 'Rook was already reaching for his punish, so the next slash hits him clean.'; SCN.noise({ dur: .15, vol: .2 }); }
+            else { z.r = { st: 'block', f: 0 }; z.ten = Math.min(100, z.ten + 14); z.strip.res = 'blocked'; z.strip.rs = p.f; z.msg = 'Blocked. Now 20 frames of recovery, and Rook only needs 17.'; SCN.tone({ f: 300, dur: .06, type: 'square', vol: .06 }); } }
+          if (auto && p.hit && z.strip.res === 'blocked' && p.f >= MV.act && z.ten >= cost) rc();
+          else if (p.f >= MV.total) z.p = { st: 'idle', f: 0, wait: 10 };
+        }
+        if (r.st === 'block') { r.f += df; if (r.f >= STUN) z.r = { st: 'jab', f: 0 }; }
+        else if (r.st === 'jab') { r.f += df; if (r.f >= JAB && !r.done) { r.done = true; if (z.p.st === 'slash') { z.php -= 10; z.pun++; z.turns++; z.p = { st: 'stun', f: 0 }; z.pf = 1; z.strip.res = 'punished'; z.fx.push({ x: 420, s: 'punished', col: C.red, t: 0 }); z.msg = 'Punished: Rook\'s jab lands inside the recovery. That risk is what the slash costs.'; SCN.noise({ dur: .15, vol: .2 }); } } if (r.f > JAB + 8) z.r = { st: 'guard', f: 0 }; }
+        else if (r.st === 'stun') { r.f += df; if (r.f > 18) z.r = { st: 'guard', f: 0 }; }
+        if (z.php <= 0 || z.rhp <= 0) z.over = 1e-6;
+      },
+      script: [[15, () => { cost = 0; api.mark('cost', '0'); z.ten = 0; z.pun = z.rcs = z.hits = 0; z.php = z.rhp = 100; }]],
+      caption: t => t < 4 ? 'Pip\'s heavy slash is strong and slow to recover. When Rook blocks it, Rook\'s jab lands before Pip can move again.'
+        : t < 9 ? 'A Roman Cancel ends the recovery on the spot, with a red burst. The second slash catches Rook reaching for his punish.'
+        : t < 15 ? 'It costs half the Tension bar. So most slashes still carry their risk, and Pip has to choose which one to make safe.'
+        : t < 22 ? 'Now set the price to nothing. Every slash is cancelled, so every slash is safe.'
+        : 'Rook never gets a turn. A universal cancel is only fair because of what it costs: remove the price and the other player stops playing.',
+      status: () => z.msg || 'J to slash, K to Roman Cancel once the slash has connected. Watch the Tension bar.',
+      stats: () => `<div class="r"><b>${z.pun}</b><span>times Rook punished the recovery</span></div><div class="y"><b>${z.rcs}</b><span>Roman Cancels (${cost}% Tension each)</span></div><div class="g"><b>${z.hits}</b><span>clean hits Pip landed after a cancel</span></div>`,
+      acts: { slash() { auto = false; api.mark('auto', 'no'); slash(); }, rc() { rc(); } }, keys: { j: 'slash', k: 'rc' },
+      set(k, v) { if (k === 'cost') cost = +v; if (k === 'auto') auto = v === 'yes'; },
+      draw(g) {
+        g.clearRect(0, 0, W, H); g.save(); SCN.clipStage(g, W, H);
+        const bg = g.createLinearGradient(0, 0, 0, FLOOR); bg.addColorStop(0, '#2b2540'); bg.addColorStop(1, '#5a3f5c'); g.fillStyle = bg; g.fillRect(0, 0, W, FLOOR + 30);
+        g.fillStyle = 'rgba(255,255,255,.05)'; for (let i = 0; i < 9; i++) g.fillRect(40 + i * 120, 60, 60, FLOOR - 60);
+        g.fillStyle = '#2a2233'; g.fillRect(0, FLOOR + 6, W, 30); g.fillStyle = '#8a6a8c'; g.fillRect(0, FLOOR + 6, W, 4);
+        g.fillStyle = 'rgba(255,252,244,.96)'; g.fillRect(0, FLOOR + 36, W, H);
+        // health and tension
+        bar(g, 40, 26, 380, 18, z.php / 100, { col: '#f0c23c', back: 'rgba(0,0,0,.4)', stroke: '#fff' }); bar(g, W - 420, 26, 380, 18, z.rhp / 100, { col: '#f0c23c', back: 'rgba(0,0,0,.4)', stroke: '#fff' });
+        txt(g, 'PIP', 40, 60, { size: 16, w: 800, col: '#9fd8f5', display: true }); txt(g, 'ROOK', W - 40, 60, { size: 16, w: 800, col: '#f5b0aa', display: true, align: 'right' });
+        const p = z.p, r = z.r, PX = 430, RX = 590;
+        const ppose = p.st === 'slash' ? CAST.swing(p.f, MV.su, MV.act, MV.total).pose : p.st === 'stun' ? 'hit' : 'guard';
+        const rpose = r.st === 'block' ? 'block' : r.st === 'jab' ? CAST.swing(r.f, JAB, JAB + 3, JAB + 9, 'thrust').pose : r.st === 'stun' ? 'hit' : 'guard';
+        if (z.ringT) { const k = z.ringT / .7; ring(g, PX, FLOOR - 70, 20 + k * 260, `rgba(255,60,50,${1 - k})`, 14 * (1 - k) + 2); g.fillStyle = `rgba(255,40,40,${.25 * (1 - k)})`; g.fillRect(0, 0, W, FLOOR + 36); txt(g, 'ROMAN CANCEL', W / 2, 110, { size: 44, w: 800, col: `rgba(255,255,255,${1 - k})`, align: 'center', display: true, halo: `rgba(200,20,20,${1 - k})`, haloW: 8 }); }
+        CAST.draw(g, 'rook', { x: RX, y: FLOOR + 6, face: -1, pose: rpose, flash: z.rf, s: 1.25 });
+        CAST.draw(g, 'pip', { x: PX, y: FLOOR + 6, pose: ppose, flash: z.pf, s: 1.25 });
+        z.fx.forEach(f => txt(g, f.s, f.x, FLOOR - 220 - f.t * 30, { size: 26, w: 800, col: '#fff', align: 'center', display: true, halo: f.col, haloW: 7 }));
+        // Tension
+        const ty = FLOOR + 58; txt(g, 'TENSION', 40, ty + 10, { size: 15, w: 800, display: true }); bar(g, 140, ty, 460, 22, z.ten / 100, { col: z.ten >= cost ? '#35c9a5' : '#9bb8b0', r: 6 });
+        if (cost) { const cx = 140 + 460 * cost / 100; g.fillStyle = C.red; g.fillRect(cx - 2, ty - 6, 4, 34); txt(g, `Roman Cancel: ${cost}%`, cx + 8, ty + 38, { size: 13, w: 800, col: C.red, align: cost > 60 ? 'right' : 'left' }); } else txt(g, 'Roman Cancel: free', 140, ty + 38, { size: 13, w: 800, col: C.red });
+        txt(g, `${Math.round(z.ten)}%`, 612, ty + 11, { size: 18, w: 800 }); if (z.deny > 0) ring(g, 370, ty + 11, 240, C.red, 3, z.deny);
+        box(g, 690, ty - 8, 330, 62, { r: 10, fill: z.turns || !z.rcs ? '#fffaf0' : '#fde3e0', stroke: '#cdbf9f' }); txt(g, 'Rook\'s turns to act', 706, ty + 10, { size: 14, w: 700, col: C.muted }); txt(g, z.pun, 706, ty + 34, { size: 26, w: 800, display: true, col: z.pun ? C.ink : C.red }); txt(g, z.pun ? 'punishes landed' : 'none: he only ever blocks', 746, ty + 36, { size: 14, w: 700, col: C.muted });
+        // frame strips
+        const sx = 140, sy = FLOOR + 132, cw = 22.5, st = z.strip;
+        txt(g, 'Pip: heavy slash', 40, sy - 16, { size: 14, w: 800 }); txt(g, 'Rook', 40, sy + 62, { size: 14, w: 800 });
+        for (let i = 0; i < MV.total; i++) { const ph = i < MV.su ? '#7ccf8a' : i < MV.act ? '#e5322d' : '#6f9fe0', cut = st.cut >= 0 && i >= Math.ceil(st.cut); box(g, sx + i * cw, sy, cw - 2, 30, { r: 4, fill: cut ? 'rgba(20,26,54,.08)' : ph, stroke: cut ? '#cdbf9f' : C.navy, lw: 1.5 }); }
+        txt(g, 'startup 9', sx, sy + 42, { size: 12, w: 700, col: '#2f7a40' }); txt(g, 'active 3', sx + 9 * cw, sy + 42, { size: 12, w: 700, col: C.red }); txt(g, st.cut >= 0 ? 'recovery: cancelled' : 'recovery 20', sx + 12 * cw, sy + 42, { size: 12, w: 700, col: st.cut >= 0 ? C.red : '#2f5fa8' });
+        if (st.cut >= 0) { const x = sx + Math.ceil(st.cut) * cw; g.strokeStyle = C.red; g.lineWidth = 4; g.beginPath(); g.moveTo(x - 1, sy - 8); g.lineTo(x - 1, sy + 38); g.stroke(); pill(g, 'RC', x - 1, sy - 16, { size: 12, w: 800, fill: C.red, pad: 10, padY: 6 }); }
+        for (let i = MV.su; i < MV.total; i++) { const k = i - MV.su, col = k < STUN ? '#c9b98c' : k < STUN + JAB ? '#f0a23c' : k === STUN + JAB ? '#e5322d' : null; if (col) box(g, sx + i * cw, sy + 62 - 14, cw - 2, 28, { r: 4, fill: st.res && st.res !== 'hit' ? col : 'rgba(20,26,54,.08)', stroke: '#8d8fa6', lw: 1.5 }); }
+        txt(g, 'blockstun 12', sx + 9 * cw, sy + 90, { size: 12, w: 700, col: '#7a6a3a' }); txt(g, 'jab startup 5', sx + 21 * cw, sy + 90, { size: 12, w: 700, col: '#a15a00' }); txt(g, 'lands on frame 26', sx + 27 * cw, sy + 90, { size: 12, w: 800, col: C.red });
+        if (p.st === 'slash') { const x = sx + p.f * cw; g.fillStyle = C.navy; g.fillRect(x - 1.5, sy - 6, 3, 88); }
+        if (z.over) pill(g, z.rhp <= 0 ? 'Rook is down' : 'Pip is down', W / 2, 170, { size: 24, w: 800, fill: 'rgba(0,0,0,.8)', pad: 30, padY: 18 });
+        g.restore();
+      },
     };
+    return api;
   });
 
-  /* ---------- 2. Go's ko rule ---------- */
-  const N = 9, CELL = 40;
-  const BASE = { B: [[3, 3], [2, 4], [3, 5], [2, 3], [2, 5], [6, 6], [6, 7], [1, 6]], W: [[4, 3], [5, 4], [4, 5], [3, 4], [5, 3], [5, 5], [6, 2], [2, 7]] };
-  const key = (x, y) => x + ',' + y;
-  const board = moves => { const b = new Map(); BASE.B.forEach(p => b.set(key(...p), 'B')); BASE.W.forEach(p => b.set(key(...p), 'W')); moves.forEach(m => { if (m.cap) b.delete(key(...m.cap)); if (m.at && !m.ghost) b.set(key(...m.at), m.c); }); return b; };
-  const TAKE_B = { c: 'B', at: [4, 4], cap: [3, 4] }, TAKE_W = { c: 'W', at: [3, 4], cap: [4, 4] };
-  const RULE = [
-    { m: null, cap: 'The ko shape. White\'s marked stone has one liberty left.' },
-    { m: { ...TAKE_B, lab: 'takes' }, cap: 'Black takes the ko, capturing one white stone.' },
-    { m: { c: 'W', at: [3, 4], ghost: true, lab: 'not yet' }, cap: 'White may not take back at once: the board would repeat.' },
-    { m: { c: 'W', at: [7, 1], lab: 'threat' }, cap: 'So white plays a threat elsewhere first.' },
-    { m: { c: 'B', at: [7, 2], lab: 'answer' }, cap: 'Black answers the threat.' },
-    { m: { ...TAKE_W, lab: 'retakes' }, cap: 'Now white may retake, capturing black\'s stone.' },
-    { m: { c: 'B', at: [4, 4], ghost: true, lab: 'not yet' }, cap: 'Black may not retake at once either.' },
-    { m: { c: 'B', at: [1, 1], lab: 'no threat' }, cap: 'Black has no threat that matters, so plays elsewhere.' },
-    { m: { c: 'W', at: [4, 4], lab: 'fills' }, cap: 'White fills the gap. The fight is over, and it cost each side moves elsewhere.' },
-  ];
-  function drawBoard(g, x0, y0, b, last, ghost, title, sub) {
-    txt(g, title, x0 + CELL * 4, y0 - 52, { font: '800 18px Montserrat', align: 'center' });
-    txt(g, sub, x0 + CELL * 4, y0 - 30, { font: '600 13px Jost', col: C.muted, align: 'center' });
-    rr(g, x0 - 24, y0 - 24, CELL * 8 + 48, CELL * 8 + 48, 8, '#e3bd77');
-    g.strokeStyle = '#6b4a1d'; g.lineWidth = 1.2;
-    for (let i = 0; i < N; i++) { g.beginPath(); g.moveTo(x0, y0 + i * CELL); g.lineTo(x0 + 8 * CELL, y0 + i * CELL); g.moveTo(x0 + i * CELL, y0); g.lineTo(x0 + i * CELL, y0 + 8 * CELL); g.stroke(); }
-    [[2, 2], [6, 2], [4, 4], [2, 6], [6, 6]].forEach(([x, y]) => { g.fillStyle = '#6b4a1d'; g.beginPath(); g.arc(x0 + x * CELL, y0 + y * CELL, 3, 0, TAU); g.fill(); });
-    const stone = (x, y, c, a = 1) => { const cx = x0 + x * CELL, cy = y0 + y * CELL, gr = g.createRadialGradient(cx - 5, cy - 6, 2, cx, cy, 18); if (c === 'B') { gr.addColorStop(0, '#555'); gr.addColorStop(1, '#111'); } else { gr.addColorStop(0, '#fff'); gr.addColorStop(1, '#cfcfcf'); } g.globalAlpha = a; g.fillStyle = gr; g.beginPath(); g.arc(cx, cy, 18, 0, TAU); g.fill(); g.globalAlpha = 1; };
-    b.forEach((c, k) => { const [x, y] = k.split(',').map(Number); stone(x, y, c); });
-    g.strokeStyle = 'rgba(229,50,45,.8)'; g.lineWidth = 2; g.setLineDash([3, 3]); g.strokeRect(x0 + 3 * CELL - 22, y0 + 4 * CELL - 22, 2 * CELL + 44, 44); g.setLineDash([]);
-    if (ghost) { stone(ghost.at[0], ghost.at[1], ghost.c, 0.35); const cx = x0 + ghost.at[0] * CELL, cy = y0 + ghost.at[1] * CELL; g.strokeStyle = C.red; g.lineWidth = 4; g.beginPath(); g.moveTo(cx - 12, cy - 12); g.lineTo(cx + 12, cy + 12); g.moveTo(cx + 12, cy - 12); g.lineTo(cx - 12, cy + 12); g.stroke(); }
-    const mk = ghost || last;
-    if (last && !ghost) { const cx = x0 + last.at[0] * CELL, cy = y0 + last.at[1] * CELL; g.strokeStyle = last.c === 'B' ? '#fff' : '#111'; g.lineWidth = 2.5; g.beginPath(); g.arc(cx, cy, 8, 0, TAU); g.stroke(); }
-    if (mk && mk.lab) T.label(mk.lab, x0 + mk.at[0] * CELL, y0 + mk.at[1] * CELL - 32, 'center', ghost ? '#fff' : C.navy, 13, ghost ? C.red : 'rgba(255,252,244,.95)');
-  }
-  function drawKo(g, k) {
-    bg(g);
-    const kk = Math.min(k, RULE.length - 1);
-    // left: no rule, the same two moves forever
-    const lm = k === 0 ? [] : [k % 2 ? TAKE_B : TAKE_W], lb = k % 2 ? board([TAKE_B]) : board([]);
-    drawBoard(g, 70, 110, lb, k ? (k % 2 ? { ...TAKE_B, lab: 'takes' } : { ...TAKE_W, lab: 'takes back' }) : null, null, 'No ko rule', 'take, take back, take, take back…');
-    txt(g, `${k} moves played · board repeated ${Math.floor(k / 2)} times`, 70 + CELL * 4, 110 + CELL * 8 + 52, { font: '800 15px Montserrat', col: k > 2 ? C.red : C.navy, align: 'center' });
-    // right: with the rule
-    const real = RULE.slice(1, kk + 1).map(r => r.m).filter(m => !m.ghost), cur = RULE[kk].m;
-    drawBoard(g, 610, 110, board(real), cur && !cur.ghost ? cur : null, cur && cur.ghost ? cur : null, 'With the ko rule', 'retake only after a move elsewhere');
-    txt(g, kk >= RULE.length - 1 ? `Settled after ${real.length} moves` : `${real.length} moves played · board never repeats`, 610 + CELL * 4, 110 + CELL * 8 + 52, { font: '800 15px Montserrat', col: kk >= RULE.length - 1 ? C.good : C.navy, align: 'center' });
-    g.strokeStyle = 'rgba(38,44,106,.15)'; g.lineWidth = 2; g.beginPath(); g.moveTo(W / 2, 40); g.lineTo(W / 2, H - 40); g.stroke();
-    txt(g, 'red box: the ko', W / 2, H - 16, { font: '600 12px Jost', col: C.muted, align: 'center' });
-  }
-  canvasDemo('ko', (s, cv, g) => {
-    const st = { tour: true, held: false, t: 0, k: 0, key: '' }, tourBtn = $(s, '.ko-tour');
-    tourBtn.onclick = () => { st.tour = true; st.t = 0; tourBtn.classList.add('on'); };
-    $(s, '.ko-step').onclick = () => { if (st.tour) { st.tour = false; tourBtn.classList.remove('on'); st.k = 0; } else st.k = st.k >= RULE.length - 1 ? 0 : st.k + 1; st.key = ''; };
-    function info(k) {
-      const kk = Math.min(k, RULE.length - 1), kkey = 'k' + kk; if (kkey === st.key) return; st.key = kkey;
-      const real = RULE.slice(1, kk + 1).filter(r => !r.m.ghost).length;
-      say($(s, '.ko-stats'), `<div class="r"><b>${Math.floor(kk / 2)}</b><span>repeats of the same board without the rule</span></div><div class="g"><b>${RULE.slice(1, kk + 1).filter(r => r.m && ['threat', 'no threat'].includes(r.m.lab)).length}</b><span>moves elsewhere the rule has forced (${real} moves in all)</span></div>`);
-      say($(s, '.ko-out'), RULE[kk].cap);
+  SCN.run('ko', s => {
+    const OX = 50, OY = 62, CL = 54, B0 = [[3, 2], [2, 3], [3, 4], [1, 1], [6, 2], [2, 6], [6, 6]], W0 = [[4, 2], [5, 3], [4, 4], [6, 5], [5, 7], [1, 5]];
+    let z, rule = true, speed;
+    // each step is one event; pos is what sits on the two ko points ('W' on a = white stone at (3,3), 'B' on b = black at (4,3))
+    function next() {
+      const last = z.hist[z.hist.length - 1];
+      if (!rule) { const pos = last.pos === 'A' ? 'B' : 'A'; z.hist.push({ pos, who: pos === 'B' ? 'Black' : 'White', what: 'takes the ko', loop: z.hist.filter(h => h.pos === pos).length }); z.banned = 0; return; }
+      const n = z.phase++ % 4;
+      if (n === 0) z.hist.push({ pos: last.pos === 'A' ? 'B' : 'A', who: last.pos === 'A' ? 'Black' : 'White', what: 'takes the ko' });
+      else if (n === 1) { z.banned = 1e-6; z.hist.push({ pos: last.pos, who: last.pos === 'B' ? 'White' : 'Black', what: 'may not take straight back', ban: true }); }
+      else if (n === 2) { const k = z.extra.length / 2; z.extra.push({ c: last.pos === 'B' ? 'W' : 'B', at: [[7, 4], [1, 7], [7, 7], [0, 3]][k % 4] }); z.hist.push({ pos: last.pos, who: last.pos === 'B' ? 'White' : 'Black', what: 'plays a threat elsewhere' }); }
+      else { const k = (z.extra.length - 1) / 2; z.extra.push({ c: last.pos === 'B' ? 'B' : 'W', at: [[7, 3], [0, 7], [8, 7], [0, 2]][k % 4] }); z.hist.push({ pos: last.pos, who: last.pos === 'B' ? 'Black' : 'White', what: 'answers it' }); }
     }
-    const STEP = 2, DUR = STEP * RULE.length + 2;
-    s._seek = t => { const k = Math.min(RULE.length - 1, Math.floor(t / STEP)); drawKo(g, k); info(k); };
-    window.__seek = t => { st.held = true; s._seek(t); };
-    window.__dur = () => DUR;
-    return dt => {
-      if (st.held) return; st.t += Math.max(0, dt);
-      if (st.tour) { if (st.t >= DUR) st.t = 0; s._seek(st.t); return; }
-      drawKo(g, st.k); info(st.k);
+    const api = {
+      dur: 34,
+      reset(tour) { if (tour) { rule = true; api.mark('rule', 'on'); } speed = 0; z = { t: 0, acc: 0, phase: 0, banned: 0, extra: [], hist: [{ pos: 'A', who: '', what: 'start' }] }; },
+      step(h) { z.t += h; if (z.banned) { z.banned += h; if (z.banned > 2.2) z.banned = 0; } if (speed) { z.acc += h * speed; while (z.acc >= 1) { z.acc--; next(); } } },
+      script: [[2, 0], [5.5, 0], [9, 0], [12, 0], [15, 0], [18, () => { rule = false; api.mark('rule', 'off'); z = { t: 0, acc: 0, phase: 0, banned: 0, extra: [], hist: [{ pos: 'A', who: '', what: 'start' }] }; }], [20, 0], [21.5, 0], [23, 0], [24, () => { speed = 1.5; }], [27, () => { speed = 6; }], [31, () => { speed = 0; }]].map(([t, f]) => [t, f || next]),
+      caption: t => t < 2 ? 'A ko. The white stone in the middle has one liberty left, so Black can capture it.'
+        : t < 5.5 ? 'Black takes. But now the capturing stone has one liberty, and White could take it straight back.'
+        : t < 9 ? 'The ko rule: you may not play a move that repeats the position from one turn ago. White\'s recapture is forbidden, for now.'
+        : t < 15 ? 'So White plays a threat somewhere else, and Black has to decide whether to answer it.'
+        : t < 18 ? 'The board has changed, so White may take the ko. Every retake is paid for with a move elsewhere.'
+        : t < 24 ? 'Now remove the rule. Black takes, White takes back, Black takes back.'
+        : 'The same two positions, forever. One sentence in the rulebook is the price that stops an infinite loop, just as the Tension bar does for a cancel.',
+      status() { const l = z.hist[z.hist.length - 1]; return l.what === 'start' ? 'Step through the ko with the rule on, then switch it off.' : rule ? `${l.who} ${l.what}.` + (l.ban ? ' That move would repeat the position from one turn ago.' : '') : `${l.who} takes the ko. This exact position has now been on the board ${l.loop + 1} times.`; },
+      stats() { const rep = Math.max(0, z.hist.length - 2); return rule ? `<div class="g"><b>${z.extra.length}</b><span>moves played elsewhere to earn a retake</span></div><div><b>${z.hist.filter(h => h.what === 'takes the ko').length}</b><span>ko captures so far</span></div>` : `<div class="r"><b>${rep}</b><span>times a position has repeated</span></div><div class="r"><b>0</b><span>moves played anywhere else</span></div>`; },
+      acts: { next() { speed = 0; next(); } }, keys: { j: 'next' },
+      set(k, v) { if (k === 'rule') rule = v === 'on'; },
+      draw(g) {
+        SCN.paper(g, W, H);
+        const bw = CL * 8; box(g, OX - 34, OY - 34, bw + 68, bw + 68, { r: 10, fill: '#dcb36a', stroke: '#8a6428', lw: 4 });
+        g.strokeStyle = '#5a4016'; g.lineWidth = 1.6; for (let i = 0; i < 9; i++) { g.beginPath(); g.moveTo(OX + i * CL, OY); g.lineTo(OX + i * CL, OY + bw); g.moveTo(OX, OY + i * CL); g.lineTo(OX + bw, OY + i * CL); g.stroke(); }
+        [[2, 2], [6, 2], [4, 4], [2, 6], [6, 6]].forEach(([x, y]) => dot(g, OX + x * CL, OY + y * CL, 4, '#5a4016'));
+        const stone = (x, y, c, a = 1, r = 24) => { const px = OX + x * CL, py = OY + y * CL; g.save(); g.globalAlpha *= a; dot(g, px + 2, py + 3, r, 'rgba(0,0,0,.25)'); const gr = g.createRadialGradient(px - 7, py - 8, 2, px, py, r); if (c === 'B') { gr.addColorStop(0, '#555a66'); gr.addColorStop(1, '#0d0f14'); } else { gr.addColorStop(0, '#ffffff'); gr.addColorStop(1, '#cfd3da'); } dot(g, px, py, r, gr); g.restore(); };
+        B0.forEach(p => stone(p[0], p[1], 'B')); W0.forEach(p => stone(p[0], p[1], 'W')); z.extra.forEach(e => stone(e.at[0], e.at[1], e.c));
+        const l = z.hist[z.hist.length - 1]; if (l.pos === 'A') stone(3, 3, 'W'); else stone(4, 3, 'B');
+        const ex = l.pos === 'A' ? 4 : 3, kx = OX + ex * CL, ky = OY + 3 * CL;
+        ring(g, OX + 3.5 * CL, ky, 62, 'rgba(229,50,45,.5)', 3); pill(g, 'the ko', OX + 3.5 * CL, ky - 84, { size: 13, w: 800, fill: '#7a1c15', pad: 12, padY: 7 });
+        if (z.banned) { stone(ex, 3, l.pos === 'B' ? 'W' : 'B', .35); g.strokeStyle = C.red; g.lineWidth = 7; g.lineCap = 'round'; g.beginPath(); g.moveTo(kx - 17, ky - 17); g.lineTo(kx + 17, ky + 17); g.moveTo(kx + 17, ky - 17); g.lineTo(kx - 17, ky + 17); g.stroke(); pill(g, 'ko rule: not yet', kx, ky + 44, { size: 14, w: 800, fill: C.red }); }
+        if (z.extra.length && rule) { const e = z.extra[z.extra.length - 1]; ring(g, OX + e.at[0] * CL, OY + e.at[1] * CL, 30, C.blue, 3); }
+        // history of positions: the little 4 x 3 corner of the board, one card per move
+        const hx = 560; txt(g, rule ? 'Ko rule on: each position, in order' : 'Ko rule off: each position, in order', hx, 36, { size: 20, w: 800, display: true });
+        const show = z.hist.slice(-12), cw2 = 112, ch2 = 118;
+        show.forEach((h, i) => {
+          const x = hx + (i % 4) * (cw2 + 6), y = 62 + Math.floor(i / 4) * (ch2 + 8), rep = !rule && h.loop;
+          box(g, x, y, cw2, ch2, { r: 10, fill: h.ban ? '#fde3e0' : rep ? '#fbe2df' : '#fffaf0', stroke: h.ban || rep ? C.red : i === show.length - 1 ? C.blue : '#cdbf9f', lw: i === show.length - 1 ? 4 : 2 });
+          const mx = x + 18, my = y + 16, c2 = 25; box(g, mx - 10, my - 10, c2 * 3 + 20, c2 * 2 + 20, { r: 4, fill: '#dcb36a' });
+          g.strokeStyle = '#5a4016'; g.lineWidth = 1; for (let a = 0; a < 4; a++) { g.beginPath(); g.moveTo(mx + a * c2, my); g.lineTo(mx + a * c2, my + 2 * c2); g.stroke(); } for (let b = 0; b < 3; b++) { g.beginPath(); g.moveTo(mx, my + b * c2); g.lineTo(mx + 3 * c2, my + b * c2); g.stroke(); }
+          const mini = (cx, cy, c) => { dot(g, mx + cx * c2, my + cy * c2, 10.5, c === 'B' ? '#14161c' : '#f4f5f7'); ring(g, mx + cx * c2, my + cy * c2, 10.5, '#14161c', 1); };
+          mini(1, 0, 'B'); mini(0, 1, 'B'); mini(1, 2, 'B'); mini(2, 0, 'W'); mini(3, 1, 'W'); mini(2, 2, 'W'); if (h.pos === 'A') mini(1, 1, 'W'); else mini(2, 1, 'B');
+          const L = SCN.lines(g, h.what === 'start' ? 'start' : `${h.who} ${h.what}`, cw2 - 10, { size: 12, w: 700 }); L.slice(0, 2).forEach((ln, j) => txt(g, ln, x + cw2 / 2, y + 88 + j * 14, { size: 12, w: 700, align: 'center', col: h.ban ? C.red : C.ink }));
+          if (rep) pill(g, `seen ${h.loop + 1}×`, x + cw2 - 26, y + 12, { size: 11, w: 800, fill: C.red, pad: 8, padY: 6 });
+        });
+        const by = 456; box(g, hx, by, 464, 116, { r: 12, fill: rule ? '#e7f3e4' : '#fbe2df', stroke: rule ? '#5fb47c' : C.red, lw: 3 });
+        txt(g, rule ? 'Taking the ko back has a price' : 'Taking the ko back is free', hx + 18, by + 26, { size: 20, w: 800, display: true, col: rule ? '#145c33' : '#8a1c15' });
+        SCN.wrap(g, rule ? 'You must first play a move somewhere else, and your opponent gets to answer it. The fight moves around the whole board and always ends.' : `Each player simply undoes the other's last move. ${Math.max(0, z.hist.length - 2)} repeats so far and nothing can ever end it.`, hx + 18, by + 52, 430, { size: 15, w: 600, lh: 20 });
+      },
     };
+    return api;
   });
 })();

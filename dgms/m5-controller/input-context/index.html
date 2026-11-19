@@ -9,46 +9,46 @@
 <link rel="stylesheet" href="../../../assets/deck.css">
 <link rel="stylesheet" href="../../../assets/kit.css">
 <link rel="stylesheet" href="../../shared/dgms.css">
-<style>
-  .ic-pad { display: grid; grid-template-columns: repeat(3, 44px); grid-template-rows: repeat(3, 40px); gap: 4px; justify-content: center; }
-  .ic-pad button { font-size: 18px; font-weight: 800; padding: 0; }
-  .mt-side p.ic-keys { font-size: 13px; line-height: 1.3; opacity: .8; margin: 2px 0 0; }
-</style>
+<link rel="stylesheet" href="../../../assets/scene.css">
 <script>
-  window.DECK = { title: 'Directing Game Mechanics · Module 5 · Input Plus Context (mock-up)', home: '../index.html', audio: false, cues: null };
+  window.DECK = { title: "Directing Game Mechanics · Module 5 · Input Plus Context (mock-up)", home: '../index.html', audio: false, cues: null };
 </script>
 <script src="notes.js"></script>
 </head>
 <body>
 <div class="viewport"><div class="stage">
 
-<section class="slide" data-title="The stick picks the target" data-demo="freeflow">
+<section class="slide" data-title="One strike button" data-demo="freeflow">
   <div class="kicker">3Cs: controller · interaction plus context · Batman: Arkham</div>
   <h2 class="sm">One strike button, <span class="accent">the stick picks who</span></h2>
   <div class="mt-wrap">
     <canvas class="demo" width="1040" height="585"></canvas>
     <div class="mt-side">
-      <div class="row wrap"><button class="btn ff-tour on">▶ Walk-through</button><button class="btn ff-strike">Strike</button></div>
-      <p class="ic-keys">Click in the arena to point the stick, then press Strike (or click again). With the stick centred, Strike picks the nearest thug.</p>
-      <div class="mt-stats ff-stats"></div>
-      <p class="mt-out ff-out"></p>
-      <p class="src">After Batman: Arkham Asylum (Rocksteady, 2009) and its sequels: the strike button attacks whichever thug lies closest to the direction the stick points, leaping across the room if needed, so the combo flows from one target to the next. The scoring rule here (angle first, then distance) is a simplification.</p>
+      <div class="row wrap"><button class="btn big" data-do="strike">Strike</button></div>
+      <p class="keys">Point the stick with <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd>, or move the mouse over the arena. <kbd>J</kbd> or a click strikes.</p>
+      <div class="row wrap"><button class="btn tour on">▶ Walk-through</button><button class="btn" data-do="reset">↻ Start over</button></div>
+      <div class="mt-stats"></div>
+      <p class="mt-out"></p>
+      <p class="src">After Batman: Arkham Asylum (Rocksteady, 2009) and its sequels: the strike button attacks whichever thug lies closest to the direction the stick points, leaping across the room if needed, so a combo flows from one target to the next. The scoring rule here (closest angle within a cone, nearest when the stick is centred) is a simplification. Pip plays Batman; Rook, Bram, Wisp and Sam play the thugs.</p>
     </div>
   </div>
 </section>
 
-<section class="slide" data-title="Codes typed under fire" data-demo="strat">
-  <div class="kicker">3Cs: controller · input as a skill test · Helldivers 2</div>
-  <h2 class="sm">Calling an airstrike <span class="accent">is a test of nerve</span></h2>
+<section class="slide" data-title="Codes under fire" data-demo="stratagem">
+  <div class="kicker">input as a skill test · Helldivers 2</div>
+  <h2 class="sm">Type the code <span class="accent">while they are on you</span></h2>
   <div class="mt-wrap">
     <canvas class="demo" width="1040" height="585"></canvas>
     <div class="mt-side">
-      <div class="row wrap"><button class="btn st-tour on">▶ Walk-through</button><button class="btn st-reset">↺ Start over</button></div>
-      <div class="ic-pad"><span></span><button class="btn st-d" data-d="U">↑</button><span></span><button class="btn st-d" data-d="L">←</button><span></span><button class="btn st-d" data-d="R">→</button><span></span><button class="btn st-d" data-d="D">↓</button><span></span></div>
-      <p class="ic-keys">or type with W A S D, as on PC</p>
-      <div class="mt-stats st-stats"></div>
-      <p class="mt-out st-out"></p>
-      <p class="src">After Helldivers 2 (Arrowhead, 2024): each stratagem is called by a short directional code entered while you hold the stratagem key, and a wrong direction clears the entry. Codes shown: Reinforce, Eagle Airstrike, Resupply and Orbital Precision Strike. The bugs and timings are illustrative.</p>
+      <h4>Pressure</h4>
+      <div class="seg"><button class="btn on" data-set="swarm" data-v="no">A few bugs</button><button class="btn" data-set="swarm" data-v="yes">Swarm</button></div>
+      <div class="row wrap"><button class="btn big" data-do="U">▲</button></div>
+      <div class="row wrap"><button class="btn big" data-do="L">◀</button><button class="btn big" data-do="D">▼</button><button class="btn big" data-do="R">▶</button></div>
+      <p class="keys"><kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> are the D-pad.</p>
+      <div class="row wrap"><button class="btn tour on">▶ Walk-through</button><button class="btn" data-do="reset">↻ Start over</button></div>
+      <div class="mt-stats"></div>
+      <p class="mt-out"></p>
+      <p class="src">After Helldivers 2 (Arrowhead, 2024): stratagems are called by typing a direction code, in real time. The three codes shown are the game's. Wiping the code when Pip is hit stands in for being knocked down, and the bugs, timings and blast sizes are our own. Pip plays the Helldiver and Grub plays every bug.</p>
     </div>
   </div>
 </section>
@@ -56,7 +56,8 @@
 </div></div>
 <script src="../../../assets/deck.js"></script>
 <script src="../../../assets/kit.js"></script>
-<script src="../../shared/topdown.js"></script>
+<script src="../../../assets/cast.js"></script>
+<script src="../../../assets/scene.js"></script>
 <script src="input-context.js"></script>
 </body>
 </html>
