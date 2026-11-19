@@ -30,6 +30,7 @@
     g.drawImage(im, b[0], b[1], sw, sh, -w / 2, -h, w, h); g.restore();
   }
   // classic sprites in img/ (The Legend of Zelda, Zelda II, Castlevania), trimmed to their own pixels, one file per frame.
+  // Native facing, checked against the art (see CLAUDE.md): cv-* face right, z2-* face left, the sideways z-* sprites face left.
   // P draws one with its feet at x,y at k units per pixel. o: flip, vflip, a, rot (about its centre), c (centre it on y),
   // dx (shift in sprite pixels, for poses where the body is not the middle of the image).
   const IDIR = new URL('img/', document.currentScript.src).href, PI = {};
