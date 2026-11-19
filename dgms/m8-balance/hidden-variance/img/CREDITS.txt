@@ -1,0 +1,4 @@
+lyn.png, batta.png   Character portraits from Fire Emblem: The Blazing Blade (Intelligent Systems / Nintendo, 2003),
+                     via fireemblemwiki.org. Used here for teaching commentary on the game's hit-rate rule.
+sectoid.png          Sectoid from XCOM: Enemy Unknown (Firaxis / 2K, 2012), via ufopaedia.org. Used here for
+                     teaching commentary on the game's hidden aim assistance.
