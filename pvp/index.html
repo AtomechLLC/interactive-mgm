@@ -38,6 +38,12 @@
   /* GDS Member badge: marks course material from MGM, RGF and DGMS */
   .gds { display: inline-block; margin-left: 8px; padding: 2px 8px; border-radius: 999px; background: #152044; color: #ffb951; font-family: Jost, system-ui, sans-serif; font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; vertical-align: middle; white-space: nowrap; }
   .band .gds, .kicker .gds { background: #ffb951; color: #152044; margin-left: 10px; }
+  /* slide GIFs, as on the other module pages */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 18px; padding-bottom: 40px; }
+  figure { margin: 0; background: rgba(255, 252, 244, .82); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  figure img { display: block; width: 100%; aspect-ratio: 16 / 9; background: #e9e1d2; }
+  figcaption { padding: 10px 14px 12px; font-size: 15px; color: var(--muted); }
+  figcaption b { color: var(--ink); font-family: Montserrat, sans-serif; display: block; font-size: 16px; }
 </style>
 </head>
 <body>
@@ -99,5 +105,34 @@
     </div>
   </div>
 </section>
+
+<section>
+  <h2>Slide GIFs</h2>
+  <p>1920×1080, looping, in deck order. Right-click a GIF to save it, or open it full size.</p>
+  <div class="grid">
+    <figure><a href="counterplay/gifs/old-vs-new-sion.gif"><img src="counterplay/gifs/old-vs-new-sion.gif" alt="Old Sion and new Sion, ten casts each" loading="lazy"></a><figcaption><b>Old Sion vs New Sion</b>A point-and-click stun lands every time; a telegraphed charge gives the target a window to walk out. Deck slides 96 to 143.</figcaption></figure>
+    <figure><a href="zoning/gifs/zoning-lane.gif"><img src="zoning/gifs/zoning-lane.gif" alt="Ashe kiting Zed on a lane" loading="lazy"></a><figcaption><b>Who Gets to Deal Damage?</b>Ashe holds Zed at range while the danger-by-distance chart shows who can hit whom. Deck slides 147 to 213.</figcaption></figure>
+    <figure><a href="footsies/gifs/footsies.gif"><img src="footsies/gifs/footsies.gif" alt="Ryu and Chun-Li crouching medium kicks" loading="lazy"></a><figcaption><b>Land It, Whiff It, or Get Punished</b>Street Fighter III: 3rd Strike crouching medium kicks at each spacing, with the game’s hitboxes. Part 5.</figcaption></figure>
+    <figure><a href="trading/gifs/trading-hits.gif"><img src="trading/gifs/trading-hits.gif" alt="Greatsword against dagger under four reaction rules" loading="lazy"></a><figcaption><b>Greatsword vs Dagger</b>The same exchange under first-to-hit, heavier-hit-wins, both-land and poise. Deck slides 217 to 246.</figcaption></figure>
+    <figure><a href="strike-trades/gifs/same-hit-different-answers.gif"><img src="strike-trades/gifs/same-hit-different-answers.gif" alt="One jab against no protection, armor, super armor and immunity, then a throw" loading="lazy"></a><figcaption><b>Same Hit, Different Answers</b>The monster’s jab against each protection on your hammer wind-up, then a throw that super armor can’t stop. Deck slides 265 to 272.</figcaption></figure>
+    <figure><a href="payoffs/gifs/same-swing-three-weapons.gif"><img src="payoffs/gifs/same-swing-three-weapons.gif" alt="Neutral, swing, their opening and follow-up for fists, sword and spear" loading="lazy"></a><figcaption><b>Same Swing, Three Weapons</b>Fists, sword and spear each step through neutral, the swing, their opening and your follow-up. Deck slides 299 to 302.</figcaption></figure>
+    <figure><a href="core-actions/gifs/sidestep-thrust-backstep-sweep.gif"><img src="core-actions/gifs/sidestep-thrust-backstep-sweep.gif" alt="Quickstep directions against a thrust and a sweep" loading="lazy"></a><figcaption><b>Sidestep a Thrust, Backstep a Sweep</b>All three quicksteps at once, then left, back, right and standing still against both attacks. Deck slide 433.</figcaption></figure>
+    <figure><a href="counter-cycles/gifs/slide2-rts-rush-turtle-expand.gif"><img src="counter-cycles/gifs/slide2-rts-rush-turtle-expand.gif" alt="Rush, Turtle, Expand wheel" loading="lazy"></a><figcaption><b>Rush · Turtle · Expand</b>Each RTS opening is a bet on what the opponent is doing. Counter Cycles.</figcaption></figure>
+    <figure><a href="counter-cycles/gifs/slide3-rts-openings-one-clock.gif"><img src="counter-cycles/gifs/slide3-rts-openings-one-clock.gif" alt="Three RTS openings on one clock" loading="lazy"></a><figcaption><b>Three Openings, One Clock</b>Rush, Turtle and Expand spend the same money on the same clock. Counter Cycles.</figcaption></figure>
+    <figure><a href="counter-cycles/gifs/slide4-rts-turtle-beats-rush.gif"><img src="counter-cycles/gifs/slide4-rts-turtle-beats-rush.gif" alt="Turtle holds a Rush" loading="lazy"></a><figcaption><b>Turtle Holds Rush</b>Each counter played out on the map. Counter Cycles.</figcaption></figure>
+    <figure><a href="counter-cycles/gifs/slide4-rts-expand-beats-turtle.gif"><img src="counter-cycles/gifs/slide4-rts-expand-beats-turtle.gif" alt="Expand outgrows a Turtle" loading="lazy"></a><figcaption><b>Expand Outgrows Turtle</b>Each counter played out on the map. Counter Cycles.</figcaption></figure>
+    <figure><a href="counter-cycles/gifs/slide4-rts-rush-beats-expand.gif"><img src="counter-cycles/gifs/slide4-rts-rush-beats-expand.gif" alt="Rush breaks an Expand" loading="lazy"></a><figcaption><b>Rush Breaks Expand</b>Each counter played out on the map. Counter Cycles.</figcaption></figure>
+    <figure><a href="counter-cycles/gifs/slide3-fighting-attack-block-grab.gif"><img src="counter-cycles/gifs/slide3-fighting-attack-block-grab.gif" alt="Attack, Block, Grab wheel" loading="lazy"></a><figcaption><b>Attack · Block · Grab</b>The same triangle at a scale of fractions of a second. Counter Cycles.</figcaption></figure>
+    <figure><a href="counter-cycles/gifs/slide6-fighting-block-attack.gif"><img src="counter-cycles/gifs/slide6-fighting-block-attack.gif" alt="Block beats Attack, Ryu vs Chun-Li" loading="lazy"></a><figcaption><b>Block Beats Attack</b>Each mix-up played out with 3rd Strike sprites and frame data. Counter Cycles.</figcaption></figure>
+    <figure><a href="counter-cycles/gifs/slide6-fighting-grab-block.gif"><img src="counter-cycles/gifs/slide6-fighting-grab-block.gif" alt="Grab beats Block, Ryu vs Chun-Li" loading="lazy"></a><figcaption><b>Grab Beats Block</b>Each mix-up played out with 3rd Strike sprites and frame data. Counter Cycles.</figcaption></figure>
+    <figure><a href="counter-cycles/gifs/slide6-fighting-attack-grab.gif"><img src="counter-cycles/gifs/slide6-fighting-attack-grab.gif" alt="Attack beats Grab, Ryu vs Chun-Li" loading="lazy"></a><figcaption><b>Attack Beats Grab</b>Each mix-up played out with 3rd Strike sprites and frame data. Counter Cycles.</figcaption></figure>
+    <figure><a href="counter-cycles/gifs/slide4-moba-five-role-cycle.gif"><img src="counter-cycles/gifs/slide4-moba-five-role-cycle.gif" alt="Five-role MOBA counter cycle" loading="lazy"></a><figcaption><b>A Five-Role Cycle</b>Marksman, Mage, Assassin, Tank and Bruiser as a ring, then a star. Counter Cycles.</figcaption></figure>
+    <figure><a href="bruiser-meta/gifs/breaking-the-bruiser-meta.gif"><img src="bruiser-meta/gifs/breaking-the-bruiser-meta.gif" alt="League of Legends bruiser meta fixes switched on one at a time" loading="lazy"></a><figcaption><b>No Single Fix</b>Systems and content fixes go in one at a time; the bruiser’s pick share only falls to a fair level once both kinds are in. Unbalanced Meta: Bruisers.</figcaption></figure>
+    <figure><a href="elusives/gifs/elusive-meta-three-patches.gif"><img src="elusives/gifs/elusive-meta-three-patches.gif" alt="Legends of Runeterra ladder share over a season under three patches" loading="lazy"></a><figcaption><b>The Only Counter Is Itself</b>A season with no fix, with weaker Elusive stats, and with answers in every region. Unbalanced Meta: Elusives.</figcaption></figure>
+    <figure><a href="build-orders/gifs/reading-a-build-order.gif"><img src="build-orders/gifs/reading-a-build-order.gif" alt="A standard build order playing out from 0:00 to 4:30" loading="lazy"></a><figcaption><b>Reading a Build Order</b>Each line of the build explained as its supply count is reached, with the base and timeline filling in. Build Orders.</figcaption></figure>
+  </div>
+</section>
+
+<script src="../assets/gif-sections.js" defer></script>
 </body>
 </html>

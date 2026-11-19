@@ -142,8 +142,22 @@
           : `<b class="accent-2">Meta broken</b> with ${n} changes${sys && con ? ', using both systems and content' : ''}. Now it’s one choice among many.`);
       };
       box.onchange = update; update();
+      // GIF tour: switch the fixes on one at a time, then hold with all of them in
+      const STEP = 1.4, HOLD = 3;
+      leversApi = {
+        seek(T) {
+          const n = Math.min(LEVERS.length, Math.floor(T / STEP));
+          const boxes = $$(box, 'input');
+          if (boxes.filter(c => c.checked).length !== n) { boxes.forEach((c, i) => (c.checked = i < n)); update(); }
+        },
+        dur: () => STEP * (LEVERS.length + 1) + HOLD,
+      };
     },
   });
+  // the GIF recorder's hooks (../../tools/record-slide-gif.js): which = 'levers'
+  let leversApi = null;
+  window.__seek = t => leversApi.seek(t);
+  window.__dur = () => leversApi.dur();
 
   /* ---------- 5: video wall ---------- */
   const VIDS = [

@@ -39,6 +39,8 @@ Shared engine, theme and art stay in `assets/` at the root, so a deck one level 
 
 Each deck's home button goes back to `pvp/index.html`. Add a card there when you make a new PvP deck.
 
+`pvp/index.html` ends with a collapsible **Slide GIFs** section (like the other modules) listing every PvP GIF in deck order; each GIF lives in its deck's own `gifs/` folder. Add a `<figure>` there when you record a new one. `pvp/tools/record-all.sh` re-records the Core Actions, Strike Trades, Payoffs, Bruiser Meta, Elusives and Build Orders GIFs through each page's `window.__seek` / `__dur` hooks (serve the repo on 127.0.0.1:8181 first).
+
 - `pvp/core-actions/`: **Core Gameplay Actions**, from *MGM C4 M4 - Fundamentals for Designing Engaging PvP Interactions*, deck slides 428 to 434.
   1. Title
   2. The anatomy of an attack (428): anticipation, slash and recovery frames, the human reaction window and online latency. Press K to block.
