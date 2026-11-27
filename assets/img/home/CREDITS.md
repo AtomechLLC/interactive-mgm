@@ -74,6 +74,7 @@ From [game-icons.net](https://game-icons.net), licensed [CC BY 3.0](https://crea
 | `composition--systems.svg` | [gears](https://game-icons.net/1x1/lorc/gears.html) | Lorc |
 | `composition--counter-circle.svg` | [linked-rings](https://game-icons.net/1x1/lorc/linked-rings.html) | Lorc |
 | `composition--whats-next.svg` | [direction-signs](https://game-icons.net/1x1/delapouite/direction-signs.html) | Delapouite |
+| `design-code.svg` | [scroll-unfurled](https://game-icons.net/1x1/lorc/scroll-unfurled.html) | Lorc |
 | `blog-posts.svg` | [quill-ink](https://game-icons.net/1x1/lorc/quill-ink.html) | Lorc |
 | `blog-posts--aran.svg` | [wizard-staff](https://game-icons.net/1x1/lorc/wizard-staff.html) | Lorc |
 | `blog-posts--best-button.svg` | [button-finger](https://game-icons.net/1x1/delapouite/button-finger.html) | Delapouite |

@@ -1,0 +1,18 @@
+/* The Design Code pages: the site's navy, parchment and gold theme around one animated stage. */
+:root { --navy: #152044; --ink: #262c6a; --muted: #5d618c; --gold: #ffb951; --gold-ink: #9a5a06; --line: #cdbf9f; }
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; background: #ede7e7 url("../assets/img/theme/paper.jpg") center / cover fixed; color: var(--ink); font-family: Jost, system-ui, sans-serif; font-size: 17px; line-height: 1.5; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 20px 16px 48px; }
+.back { font-size: 15px; margin: 0 0 10px; } a { color: var(--gold-ink); }
+h1 { font-family: Montserrat, sans-serif; font-weight: 800; font-size: clamp(26px, 4vw, 40px); line-height: 1.15; margin: 0 0 6px; text-wrap: balance; }
+.kicker { color: var(--gold-ink); font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; margin: 0; }
+.lede { margin: 0 0 14px; max-width: 70ch; }
+canvas { width: 100%; height: auto; display: block; border-radius: 10px; border: 1px solid var(--line); background: #f4eee0; }
+.controls { display: flex; gap: 12px; align-items: center; margin: 10px 0 16px; }
+button { font: 600 15px Jost, sans-serif; color: #fff; background: var(--navy); border: 0; border-radius: 8px; padding: 8px 16px; cursor: pointer; min-width: 78px; }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--gold-ink); outline-offset: 2px; }
+input[type=range] { flex: 1; accent-color: var(--navy); }
+.why { background: rgba(255, 252, 244, .82); border: 1px solid var(--line); border-radius: 12px; padding: 14px 18px; max-width: 80ch; }
+.why h2 { font-family: Montserrat, sans-serif; font-size: 17px; margin: 0 0 4px; }
+.why p { margin: 0 0 8px; } .why p:last-child { margin: 0; }
+.small { font-size: 14px; color: var(--muted); }
